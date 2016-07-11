@@ -1,12 +1,13 @@
 package org.reactome.server.tools;
 
 import com.martiansoftware.jsap.*;
-import org.reactome.server.graph.domain.model.Pathway;
-import org.reactome.server.graph.domain.model.Species;
+import org.reactome.server.graph.domain.model.*;
 import org.reactome.server.graph.service.DatabaseObjectService;
 import org.reactome.server.graph.service.GeneralService;
 import org.reactome.server.graph.service.SchemaService;
 import org.reactome.server.graph.utils.ReactomeGraphCore;
+
+import java.util.List;
 
 /**
  * @author Sarah Keating <skeating@ebi.ac.uk>
@@ -38,14 +39,85 @@ public class SBMLExporterLauncher {
         System.out.println(homoSapiens);
 
         SchemaService schemaService = ReactomeGraphCore.getService(SchemaService.class);
-        int count = 0;
-        for (Pathway pathway : schemaService.getByClass(Pathway.class, homoSapiens)) {
-            System.out.println(pathway.getDisplayName());
-            count++;
-            WriteSBML writer = new WriteSBML(pathway);
-            writer.toStdOut();
-            break;
+
+//        int count = 0;
+//        for (Pathway pathway : schemaService.getByClass(Pathway.class, homoSapiens)) {
+//            count++;
+//            printPathway(pathway);
+//            break;
+//        }
+//        System.out.println("Found " + count + " pathways in " + homoSapiens.getDisplayName() + " to be exported");
+
+//        long dbid = 5663205L; // infectious disease
+//        long dbid = 167168L;  // HIV transcription termination
+//        long dbid = 180627L; // reaction
+        long dbid = 168275L; // pathway with a single child reaction
+        try {
+            Event pathway = (Event) databaseObjectService.findById(dbid);
+            printPathway(pathway, databaseObjectService);
         }
-        System.out.println("Found " + count + " pathways in " + homoSapiens.getDisplayName() + " to be exported");
+        catch(ClassCastException except) {
+            Reaction pathway = (Reaction) databaseObjectService.findById(dbid);
+            printPathway(pathway);
+        }
+    }
+
+    static void printPathway(Event pathway, DatabaseObjectService databaseObjectService) {
+        System.out.println("*********************");
+        System.out.println("Pathway:" + pathway.getDbId());
+        System.out.println("*********************");
+        System.out.println("Name: " + pathway.getDisplayName());
+//        System.out.println("Doi: " + pathway.getDoi());
+//        System.out.println("IsCanonical: " + pathway.getIsCanonical());
+//        System.out.println("hasEvents: " + pathway.getHasEvent());
+//        System.out.println("Normal pathway: " + pathway.getNormalPathway());
+        Pathway p = null;
+        int numEvents = 0;
+        try {
+            p = (Pathway) (pathway);
+            if (p != null && p.getHasEvent() != null) numEvents = p.getHasEvent().size();
+        } catch (ClassCastException e) {
+
+        }
+
+
+
+//        System.out.println("Explanation: " + pathway.getExplanation());
+        for (int i = 0; i < numEvents; i++)
+        {
+            Event event = p.getHasEvent().get(i);
+            try {
+                Pathway path = (Pathway) databaseObjectService.findById(event.getDbId());
+                System.out.println("Child " + (i+1) + "/" + (numEvents));
+                if (path != null) printPathway(path, databaseObjectService);
+            }
+            catch(ClassCastException except) {
+ //               System.out.println("Child " + i + " is not a Pathway");
+                ReactionLikeEvent path = (ReactionLikeEvent) databaseObjectService.findById(event.getDbId());
+                System.out.println("Child " + (i+1) + "/" + numEvents);
+                if (path != null) printPathway(path);
+
+            }
+
+        }
+
+    }
+    static void printPathway(ReactionLikeEvent pathway){
+        System.out.println("-----------------");
+        System.out.println("Reaction " + pathway.getDbId());
+        System.out.println("------------------");
+//        System.out.println("Chimeric: " + pathway.getIsChimeric());
+//        System.out.println("Systemic Name: " + pathway.getSystematicName());
+// //       System.out.println("Reverse: " + pathway.getReverseReaction());
+//        System.out.println("catActivity: " + pathway.getCatalystActivity());
+//        System.out.println("func status: " + pathway.getEntityFunctionalStatus());
+//        System.out.println("other cell: " + pathway.getEntityOnOtherCell());
+//        System.out.println("normal rn: " + pathway.getNormalReaction());
+//        System.out.println("reqd input: " + pathway.getRequiredInputComponent());
+        System.out.println("input: " + pathway.getInput());
+        System.out.println("output: " + pathway.getOutput());
+
+//        System.out.println("Explanation: " + pathway.getExplanation());
+
     }
 }
