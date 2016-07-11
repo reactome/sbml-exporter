@@ -48,21 +48,29 @@ public class SBMLExporterLauncher {
 //        }
 //        System.out.println("Found " + count + " pathways in " + homoSapiens.getDisplayName() + " to be exported");
 
-//        long dbid = 5663205L; // infectious disease
+        long dbid = 5663205L; // infectious disease
 //        long dbid = 167168L;  // HIV transcription termination
 //        long dbid = 180627L; // reaction
-        long dbid = 168275L; // pathway with a single child reaction
-        try {
-            Event pathway = (Event) databaseObjectService.findById(dbid);
+//        long dbid = 168275L; // pathway with a single child reaction
+//        try {
+//            Event pathway = (Event) databaseObjectService.findById(dbid);
+//            printPathway(pathway, databaseObjectService);
+//        }
+//        catch(ClassCastException except) {
+//            Reaction pathway = (Reaction) databaseObjectService.findById(dbid);
+//            printPathway(pathway);
+//        }
+        Event pathway = (Event) databaseObjectService.findById(dbid);
+        if (pathway instanceof ReactionLikeEvent) {
+            printPathway((ReactionLikeEvent)(pathway));
+        }
+        else {
             printPathway(pathway, databaseObjectService);
         }
-        catch(ClassCastException except) {
-            Reaction pathway = (Reaction) databaseObjectService.findById(dbid);
-            printPathway(pathway);
-        }
+
     }
 
-    static void printPathway(Event pathway, DatabaseObjectService databaseObjectService) {
+    private static void printPathway(Event pathway, DatabaseObjectService databaseObjectService) {
         System.out.println("*********************");
         System.out.println("Pathway:" + pathway.getDbId());
         System.out.println("*********************");
@@ -73,10 +81,9 @@ public class SBMLExporterLauncher {
 //        System.out.println("Normal pathway: " + pathway.getNormalPathway());
         Pathway p = null;
         int numEvents = 0;
-        try {
+        if (pathway instanceof Pathway){
             p = (Pathway) (pathway);
-            if (p != null && p.getHasEvent() != null) numEvents = p.getHasEvent().size();
-        } catch (ClassCastException e) {
+            if (p.getHasEvent() != null) numEvents = p.getHasEvent().size();
 
         }
 
@@ -86,23 +93,22 @@ public class SBMLExporterLauncher {
         for (int i = 0; i < numEvents; i++)
         {
             Event event = p.getHasEvent().get(i);
-            try {
-                Pathway path = (Pathway) databaseObjectService.findById(event.getDbId());
+            Event path = (Event) databaseObjectService.findById(event.getDbId());
+            if (path instanceof Pathway){
                 System.out.println("Child " + (i+1) + "/" + (numEvents));
-                if (path != null) printPathway(path, databaseObjectService);
+                printPathway(path, databaseObjectService);
+
             }
-            catch(ClassCastException except) {
- //               System.out.println("Child " + i + " is not a Pathway");
-                ReactionLikeEvent path = (ReactionLikeEvent) databaseObjectService.findById(event.getDbId());
+            else {
                 System.out.println("Child " + (i+1) + "/" + numEvents);
-                if (path != null) printPathway(path);
+                printPathway((ReactionLikeEvent)(path));
 
             }
 
         }
 
     }
-    static void printPathway(ReactionLikeEvent pathway){
+     private static void printPathway(ReactionLikeEvent pathway){
         System.out.println("-----------------");
         System.out.println("Reaction " + pathway.getDbId());
         System.out.println("------------------");
