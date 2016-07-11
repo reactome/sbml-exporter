@@ -42,6 +42,9 @@ public class SBMLExporterLauncher {
         for (Pathway pathway : schemaService.getByClass(Pathway.class, homoSapiens)) {
             System.out.println(pathway.getDisplayName());
             count++;
+            WriteSBML writer = new WriteSBML(pathway);
+            writer.toStdOut();
+            break;
         }
         System.out.println("Found " + count + " pathways in " + homoSapiens.getDisplayName() + " to be exported");
     }
