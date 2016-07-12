@@ -2,7 +2,10 @@ package org.reactome.server.tools;
 
 import org.reactome.server.graph.domain.model.Pathway;
 import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SBMLWriter;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.TidySBMLWriter;
 
 /**
  * @author Sarah Keating <skeating@ebi.ac.uk>
@@ -15,6 +18,7 @@ class WriteSBML {
      */
     private static final short sbmlLevel = 3;
     private static final short sbmlVersion = 1;
+    private static int metaid_count = 0;
 
     private final Pathway thisPathway;
 
@@ -28,17 +32,60 @@ class WriteSBML {
         sbmlDocument = new SBMLDocument(sbmlLevel, sbmlVersion);
     }
 
+
+
+    /**
+     * retrieve SBMLDocument
+     * @return SBMLDocument
+     */
     public SBMLDocument getSBMLDocument(){
         return sbmlDocument;
+    }
+
+    /**
+     * create the model
+     */
+    public void createModel(){
+        if (thisPathway != null) {
+            Model model = sbmlDocument.createModel("pathway_" + thisPathway.getDbId());
+            model.setName(thisPathway.getDisplayName());
+            setMetaid(model);
+        }
+    }
+
+
+    /**
+     * function to set metaid and increase count
+     */
+    public void setMetaid(SBase object){
+        object.setMetaId("metaid_" + metaid_count);
+        metaid_count++;
     }
     /**
      * function to let me see whats going on
      */
     public void toStdOut()    {
-        sbmlDocument.createModel();
-        System.out.println(sbmlDocument.toString());
-        Species s = new Species(3,1);
-        s.setId("s");
-        System.out.println(s.toString());
+        SBMLWriter sbmlWriter = new TidySBMLWriter();
+        String output;
+        try {
+            output = sbmlWriter.writeSBMLToString(sbmlDocument);
+        }
+        catch (Exception e)
+        {
+            output = "failed to write";
+        }
+        System.out.println(output);
+    }
+    public String toString()    {
+        SBMLWriter sbmlWriter = new TidySBMLWriter();
+        String output;
+        try {
+            output = sbmlWriter.writeSBMLToString(sbmlDocument);
+        }
+        catch (Exception e)
+        {
+            output = "failed to write";
+        }
+        return output;
     }
 }

@@ -15,6 +15,9 @@ import java.util.List;
  */
 public class SBMLExporterLauncher {
 
+
+
+
     public static void main(String[] args) throws JSAPException {
 
         SimpleJSAP jsap = new SimpleJSAP(SBMLExporterLauncher.class.getName(), "A tool for generating SBML files",
@@ -48,10 +51,10 @@ public class SBMLExporterLauncher {
 //        }
 //        System.out.println("Found " + count + " pathways in " + homoSapiens.getDisplayName() + " to be exported");
 
-        long dbid = 5663205L; // infectious disease
-//        long dbid = 167168L;  // HIV transcription termination
+//        long dbid = 5663205L; // infectious disease
+//        long dbid = 167168L;  // HIV transcription termination (pathway no events)
 //        long dbid = 180627L; // reaction
-//        long dbid = 168275L; // pathway with a single child reaction
+        long dbid = 168275L; // pathway with a single child reaction
 //        try {
 //            Event pathway = (Event) databaseObjectService.findById(dbid);
 //            printPathway(pathway, databaseObjectService);
@@ -68,6 +71,9 @@ public class SBMLExporterLauncher {
             printPathway(pathway, databaseObjectService);
         }
 
+        WriteSBML sbml = new WriteSBML((Pathway)(pathway));
+        sbml.createModel();
+        sbml.toStdOut();
     }
 
     private static void printPathway(Event pathway, DatabaseObjectService databaseObjectService) {
@@ -75,6 +81,7 @@ public class SBMLExporterLauncher {
         System.out.println("Pathway:" + pathway.getDbId());
         System.out.println("*********************");
         System.out.println("Name: " + pathway.getDisplayName());
+        System.out.println("Event Of: " + pathway.getEventOf());
 //        System.out.println("Doi: " + pathway.getDoi());
 //        System.out.println("IsCanonical: " + pathway.getIsCanonical());
 //        System.out.println("hasEvents: " + pathway.getHasEvent());
@@ -92,8 +99,8 @@ public class SBMLExporterLauncher {
 //        System.out.println("Explanation: " + pathway.getExplanation());
         for (int i = 0; i < numEvents; i++)
         {
-            Event event = p.getHasEvent().get(i);
-            Event path = (Event) databaseObjectService.findById(event.getDbId());
+            Event path = p.getHasEvent().get(i);
+//            Event path = (Event) databaseObjectService.findById(event.getDbId());
             if (path instanceof Pathway){
                 System.out.println("Child " + (i+1) + "/" + (numEvents));
                 printPathway(path, databaseObjectService);
@@ -122,6 +129,7 @@ public class SBMLExporterLauncher {
 //        System.out.println("reqd input: " + pathway.getRequiredInputComponent());
         System.out.println("input: " + pathway.getInput());
         System.out.println("output: " + pathway.getOutput());
+         System.out.println("Event Of: " + pathway.getEventOf());
 
 //        System.out.println("Explanation: " + pathway.getExplanation());
 

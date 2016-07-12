@@ -19,7 +19,8 @@
 
         <maven.compiler.version>3.5.1</maven.compiler.version>
         <jdk.version>1.8</jdk.version>
-        <junit.version>3.8.1</junit.version>
+<!--        <junit.version>3.8.1</junit.version> -->
+        <junit.version>4.8</junit.version>
     </properties>
 
     <developers>
