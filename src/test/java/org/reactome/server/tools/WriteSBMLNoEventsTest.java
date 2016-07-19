@@ -26,12 +26,14 @@ public class WriteSBMLNoEventsTest
         private static WriteSBML testWrite;
 
         private String empty_doc = String.format("<?xml version='1.0' encoding='utf-8' standalone='no'?>%n" +
-        "<sbml xmlns=\"http://www.sbml.org/sbml/level3/version1/core\" level=\"3\" version=\"1\"></sbml>%n");
+                "<sbml xmlns=\"http://www.sbml.org/sbml/level3/version1/core\" level=\"3\" version=\"1\"></sbml>%n");
 
         private String model = String.format("<?xml version='1.0' encoding='utf-8' standalone='no'?>%n" +
-        "<sbml xmlns=\"http://www.sbml.org/sbml/level3/version1/core\" level=\"3\" version=\"1\">%n" +
-        "  <model name=\"HIV Transcription Termination\" id=\"pathway_167168\" metaid=\"metaid_0\"></model>%n" +
-        "</sbml>%n");
+                "<sbml xmlns=\"http://www.sbml.org/sbml/level3/version1/core\" level=\"3\" version=\"1\">%n" +
+                "  <model name=\"HIV Transcription Termination\" id=\"pathway_167168\" metaid=\"metaid_0\"></model>%n" +
+                "</sbml>%n");
+
+
 
         @BeforeClass
         public static void setup()  throws JSAPException {

@@ -7,7 +7,8 @@ import org.junit.runners.Suite;
  * @author Sarah Keating <skeating@ebi.ac.uk>
  */
 @RunWith(value=Suite.class)
-@Suite.SuiteClasses(value={WriteSBMLNoEventsTest.class, WriteSBMLNoPathwayTest.class})
+@Suite.SuiteClasses(value={WriteSBMLNoEventsTest.class, WriteSBMLNoPathwayTest.class,
+                            WriteSBMLSingleReactionTest.class})
 public class Test {
 
 }

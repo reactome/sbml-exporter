@@ -1,11 +1,23 @@
 package org.reactome.server.tools;
 
 import org.reactome.server.graph.domain.model.Pathway;
+import org.reactome.server.graph.domain.model.Event;
+import org.reactome.server.graph.domain.model.PhysicalEntity;
+
+
 import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.SpeciesReference;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.TidySBMLWriter;
+
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Sarah Keating <skeating@ebi.ac.uk>
@@ -24,12 +36,17 @@ class WriteSBML {
 
     private SBMLDocument sbmlDocument;
 
+    private List <String> loggedSpecies;
+    private List <String> loggedCompartments;
+
     /**
      *  construct a version of the writer from the given pathway
      */
     public WriteSBML(Pathway pathway){
         thisPathway = pathway;
         sbmlDocument = new SBMLDocument(sbmlLevel, sbmlVersion);
+        loggedSpecies = new ArrayList<String>();
+        loggedCompartments = new ArrayList<String>();
     }
 
 
@@ -50,9 +67,103 @@ class WriteSBML {
             Model model = sbmlDocument.createModel("pathway_" + thisPathway.getDbId());
             model.setName(thisPathway.getDisplayName());
             setMetaid(model);
+
+            if (thisPathway.getHasEvent() != null) {
+                for (Event event : thisPathway.getHasEvent()) {
+                    addReaction(event);
+                }
+            }
         }
     }
 
+    /**
+     * add Reaction
+     */
+    public void addReaction(Event event){
+        if (event instanceof org.reactome.server.graph.domain.model.Reaction) {
+            addReaction((org.reactome.server.graph.domain.model.Reaction ) (event));
+        }
+    }
+
+    public void addReaction(org.reactome.server.graph.domain.model.Reaction  event){
+        Model model = sbmlDocument.getModel();
+
+        Reaction rn = model.createReaction("reaction_" + event.getDbId());
+        setMetaid(rn);
+        rn.setFast(false);
+        rn.setReversible(false);
+        rn.setName(event.getDisplayName());
+        for (PhysicalEntity pe: event.getInput()){
+            addParticipant("reactant", rn, pe, event.getDbId());
+        }
+        for (PhysicalEntity pe: event.getOutput()){
+            addParticipant("product", rn, pe, event.getDbId());
+        }
+    }
+
+    /**
+     * add Participant in the reaction
+     */
+    public void addParticipant(String type, Reaction rn, PhysicalEntity pe, Long event_no) {
+
+        String speciesId = "species_" + pe.getDbId();
+        addSpecies(pe, speciesId);
+        if (type.equals("reactant")) {
+            String sr_id = "speciesreference_" + event_no + "_input_" + pe.getDbId();
+            SpeciesReference sr = rn.createReactant(sr_id, speciesId);
+            sr.setConstant(true);
+        }
+        else if (type.equals("product")){
+            String sr_id = "speciesreference_" + event_no + "_output_" + pe.getDbId();
+            SpeciesReference sr = rn.createProduct(sr_id, speciesId);
+            sr.setConstant(true);
+        }
+
+    }
+
+    /**
+     * addSpecies
+     */
+    public void addSpecies(PhysicalEntity pe, String id){
+        Model model = sbmlDocument.getModel();
+
+        //TO DO: what if there is more than one compartment listed
+        org.reactome.server.graph.domain.model.Compartment comp = pe.getCompartment().get(0);
+        String comp_id = "compartment_" + comp.getDbId();
+
+        if (loggedSpecies == null || !loggedSpecies.contains(id)) {
+            Species s = model.createSpecies(id);
+            setMetaid(s);
+            s.setName(pe.getDisplayName());
+            s.setCompartment(comp_id);
+            // set other required fields for SBML L3
+            s.setBoundaryCondition(false);
+            s.setHasOnlySubstanceUnits(false);
+            s.setConstant(false);
+
+            loggedSpecies.add(id);
+        }
+
+        addCompartment(comp, comp_id);
+    }
+
+    /**
+     * addSpecies
+     */
+    public void addCompartment(org.reactome.server.graph.domain.model.Compartment comp, String id){
+         Model model = sbmlDocument.getModel();
+
+         if (loggedCompartments == null || !loggedCompartments.contains(id)){
+             Compartment c = model.createCompartment(id);
+             setMetaid(c);
+             c.setName(comp.getDisplayName());
+             c.setConstant(true);
+
+            loggedCompartments.add(id);
+        }
+
+
+    }
 
     /**
      * function to set metaid and increase count

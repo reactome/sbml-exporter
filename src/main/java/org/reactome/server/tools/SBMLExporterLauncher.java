@@ -41,7 +41,7 @@ public class SBMLExporterLauncher {
         Species homoSapiens = (Species) databaseObjectService.findByIdNoRelations(48887L);
         System.out.println(homoSapiens);
 
-        SchemaService schemaService = ReactomeGraphCore.getService(SchemaService.class);
+//        SchemaService schemaService = ReactomeGraphCore.getService(SchemaService.class);
 
 //        int count = 0;
 //        for (Pathway pathway : schemaService.getByClass(Pathway.class, homoSapiens)) {
@@ -128,10 +128,26 @@ public class SBMLExporterLauncher {
 //        System.out.println("normal rn: " + pathway.getNormalReaction());
 //        System.out.println("reqd input: " + pathway.getRequiredInputComponent());
         System.out.println("input: " + pathway.getInput());
+         for (PhysicalEntity input: pathway.getInput()){
+             printPhysicalEntity(input);
+         }
         System.out.println("output: " + pathway.getOutput());
-         System.out.println("Event Of: " + pathway.getEventOf());
+         for (PhysicalEntity input: pathway.getOutput()){
+             printPhysicalEntity(input);
+         }
+//         System.out.println("Event Of: " + pathway.getEventOf());
 
 //        System.out.println("Explanation: " + pathway.getExplanation());
 
     }
+
+    private static void printPhysicalEntity(PhysicalEntity pe){
+        System.out.println("^^^^^^^^^^^^^^^^^^^^");
+        System.out.println("PhysicalEntity " + pe.getDbId());
+        System.out.println("^^^^^^^^^^^^^^^^^^^^");
+        System.out.println("compartment " + pe.getCompartment());
+        System.out.println("name " + pe.getDisplayName());
+        System.out.println("GO comp " + pe.getGoCellularComponent());
+        System.out.println();
+        System.out.println();    }
 }

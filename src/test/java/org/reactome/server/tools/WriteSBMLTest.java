@@ -23,23 +23,16 @@ public class WriteSBMLTest
 
 {
         private static WriteSBML testWrite;
-//        /**
-//         * Create the test case
-//         *
-//         * @param testName name of the test case
-//         */
-//        public WriteSBMLTest(String testName )
-//        {
-//            super( testName );
-//        }
-//
-//        /**
-//         * @return the suite of tests being tested
-//         */
-//        public static Test suite()
-//        {
-//            return new TestSuite( WriteSBMLTest.class );
-//        }
+
+        private String empty_doc = String.format("<?xml version='1.0' encoding='utf-8' standalone='no'?>%n" +
+                "<sbml xmlns=\"http://www.sbml.org/sbml/level3/version1/core\" level=\"3\" version=\"1\"></sbml>%n");
+
+        private String model = String.format("<?xml version='1.0' encoding='utf-8' standalone='no'?>%n" +
+                "<sbml xmlns=\"http://www.sbml.org/sbml/level3/version1/core\" level=\"3\" version=\"1\">%n" +
+                "  <model name=\"HIV Transcription Termination\" id=\"pathway_167168\" metaid=\"metaid_0\"></model>%n" +
+                "</sbml>%n");
+
+
 
         @BeforeClass
         public static void setup()  throws JSAPException {
@@ -77,28 +70,18 @@ public class WriteSBMLTest
             assertTrue( "Document level failed", doc.getLevel() == 3);
             assertTrue( "Document version failed", doc.getVersion() == 1);
             // depending on how junit orders the test we might already have the model here
-            String expected;
             if (doc.isSetModel()) {
-                expected = String.format("<?xml version='1.0' encoding='utf-8' standalone='no'?>%n" +
-                        "<sbml xmlns=\"http://www.sbml.org/sbml/level3/version1/core\" level=\"3\" version=\"1\">%n" +
-                        "  <model name=\"Entry of Influenza Virion into Host Cell via Endocytosis\" id=\"pathway_168275\" metaid=\"metaid_0\"></model>%n" +
-                        "</sbml>%n");
+                assertEquals(model, testWrite.toString());
             }
             else {
-                expected = String.format("<?xml version='1.0' encoding='utf-8' standalone='no'?>%n" +
-                        "<sbml xmlns=\"http://www.sbml.org/sbml/level3/version1/core\" level=\"3\" version=\"1\"></sbml>%n");
+                assertEquals(empty_doc, testWrite.toString());
             }
-            assertEquals(expected, testWrite.toString());
         }
 
         @Test
         public void testCreateModel()
         {
             testWrite.createModel();
-            String expected = String.format("<?xml version='1.0' encoding='utf-8' standalone='no'?>%n" +
-                    "<sbml xmlns=\"http://www.sbml.org/sbml/level3/version1/core\" level=\"3\" version=\"1\">%n" +
-                    "  <model name=\"Entry of Influenza Virion into Host Cell via Endocytosis\" id=\"pathway_168275\" metaid=\"metaid_0\"></model>%n" +
-                    "</sbml>%n");
-            assertEquals(expected, testWrite.toString());
+            assertEquals(model, testWrite.toString());
         }
 }
