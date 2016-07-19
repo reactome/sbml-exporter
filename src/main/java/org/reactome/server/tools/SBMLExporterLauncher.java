@@ -7,8 +7,6 @@ import org.reactome.server.graph.service.GeneralService;
 import org.reactome.server.graph.service.SchemaService;
 import org.reactome.server.graph.utils.ReactomeGraphCore;
 
-import java.util.List;
-
 /**
  * @author Sarah Keating <skeating@ebi.ac.uk>
  * @author Antonio Fabregat <fabregat@ebi.ac.uk>
@@ -65,15 +63,16 @@ public class SBMLExporterLauncher {
 //        }
         Event pathway = (Event) databaseObjectService.findById(dbid);
         if (pathway instanceof ReactionLikeEvent) {
-            printPathway((ReactionLikeEvent)(pathway));
+            printPathway((ReactionLikeEvent)(pathway), databaseObjectService);
         }
         else {
             printPathway(pathway, databaseObjectService);
         }
 
-        WriteSBML sbml = new WriteSBML((Pathway)(pathway));
+        @SuppressWarnings("ConstantConditions") WriteSBML sbml = new WriteSBML((Pathway)(pathway));
         sbml.createModel();
         sbml.toStdOut();
+        sbml.toFile("out.xml");
     }
 
     private static void printPathway(Event pathway, DatabaseObjectService databaseObjectService) {
@@ -108,14 +107,14 @@ public class SBMLExporterLauncher {
             }
             else {
                 System.out.println("Child " + (i+1) + "/" + numEvents);
-                printPathway((ReactionLikeEvent)(path));
+                printPathway((ReactionLikeEvent)(path), databaseObjectService);
 
             }
 
         }
 
     }
-     private static void printPathway(ReactionLikeEvent pathway){
+     private static void printPathway(ReactionLikeEvent pathway, DatabaseObjectService databaseObjectService){
         System.out.println("-----------------");
         System.out.println("Reaction " + pathway.getDbId());
         System.out.println("------------------");
@@ -129,11 +128,11 @@ public class SBMLExporterLauncher {
 //        System.out.println("reqd input: " + pathway.getRequiredInputComponent());
         System.out.println("input: " + pathway.getInput());
          for (PhysicalEntity input: pathway.getInput()){
-             printPhysicalEntity(input);
+             printPhysicalEntity(input, databaseObjectService);
          }
         System.out.println("output: " + pathway.getOutput());
          for (PhysicalEntity input: pathway.getOutput()){
-             printPhysicalEntity(input);
+             printPhysicalEntity(input, databaseObjectService);
          }
 //         System.out.println("Event Of: " + pathway.getEventOf());
 
@@ -141,7 +140,7 @@ public class SBMLExporterLauncher {
 
     }
 
-    private static void printPhysicalEntity(PhysicalEntity pe){
+    private static void printPhysicalEntity(PhysicalEntity pe, DatabaseObjectService databaseObjectService){
         System.out.println("^^^^^^^^^^^^^^^^^^^^");
         System.out.println("PhysicalEntity " + pe.getDbId());
         System.out.println("^^^^^^^^^^^^^^^^^^^^");
@@ -149,5 +148,12 @@ public class SBMLExporterLauncher {
         System.out.println("name " + pe.getDisplayName());
         System.out.println("GO comp " + pe.getGoCellularComponent());
         System.out.println();
-        System.out.println();    }
+        System.out.println();
+
+        PhysicalEntity pe1 = (PhysicalEntity) databaseObjectService.findById(pe.getDbId());
+        System.out.println("compartment " + pe1.getCompartment());
+        System.out.println("name " + pe1.getDisplayName());
+        System.out.println("GO comp " + pe1.getGoCellularComponent());
+
+    }
 }

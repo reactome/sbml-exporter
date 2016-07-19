@@ -6,8 +6,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 
-
-import org.aspectj.lang.annotation.Before;
 import org.junit.BeforeClass;
 
 import org.reactome.server.graph.domain.model.Pathway;
@@ -25,7 +23,7 @@ public class WriteSBMLSingleReactionTest
 {
         private static WriteSBML testWrite;
 
-        private String empty_doc = String.format("<?xml version='1.0' encoding='utf-8' standalone='no'?>%n" +
+        private final String empty_doc = String.format("<?xml version='1.0' encoding='utf-8' standalone='no'?>%n" +
                 "<sbml xmlns=\"http://www.sbml.org/sbml/level3/version1/core\" level=\"3\" version=\"1\"></sbml>%n");
 
         private String model_out = String.format("<?xml version='1.0' encoding='utf-8' standalone='no'?>%n" +
@@ -109,7 +107,7 @@ public class WriteSBMLSingleReactionTest
         public void testCreateModel()
         {
             testWrite.createModel();
-            String ss = testWrite.toString();
+//            String ss = testWrite.toString();
 //            testWrite.toStdOut();
 //            System.out.print(ss);
 //            System.out.print(model_out);

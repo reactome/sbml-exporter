@@ -4,8 +4,6 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 
-
-import org.aspectj.lang.annotation.Before;
 import org.junit.BeforeClass;
 import org.sbml.jsbml.SBMLDocument;
 
@@ -16,7 +14,7 @@ public class WriteSBMLNoPathwayTest
 {
     private static WriteSBML testWrite;
 
-    private String empty_doc = String.format("<?xml version='1.0' encoding='utf-8' standalone='no'?>%n" +
+    private final String empty_doc = String.format("<?xml version='1.0' encoding='utf-8' standalone='no'?>%n" +
             "<sbml xmlns=\"http://www.sbml.org/sbml/level3/version1/core\" level=\"3\" version=\"1\"></sbml>%n");
 
 

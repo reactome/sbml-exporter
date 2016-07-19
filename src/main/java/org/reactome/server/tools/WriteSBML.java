@@ -34,10 +34,10 @@ class WriteSBML {
 
     private final Pathway thisPathway;
 
-    private SBMLDocument sbmlDocument;
+    private final SBMLDocument sbmlDocument;
 
-    private List <String> loggedSpecies;
-    private List <String> loggedCompartments;
+    private final List <String> loggedSpecies;
+    private final List <String> loggedCompartments;
 
     /**
      *  construct a version of the writer from the given pathway
@@ -79,13 +79,13 @@ class WriteSBML {
     /**
      * add Reaction
      */
-    public void addReaction(Event event){
+    private void addReaction(Event event){
         if (event instanceof org.reactome.server.graph.domain.model.Reaction) {
             addReaction((org.reactome.server.graph.domain.model.Reaction ) (event));
         }
     }
 
-    public void addReaction(org.reactome.server.graph.domain.model.Reaction  event){
+    private void addReaction(org.reactome.server.graph.domain.model.Reaction event){
         Model model = sbmlDocument.getModel();
 
         Reaction rn = model.createReaction("reaction_" + event.getDbId());
@@ -104,7 +104,7 @@ class WriteSBML {
     /**
      * add Participant in the reaction
      */
-    public void addParticipant(String type, Reaction rn, PhysicalEntity pe, Long event_no) {
+    private void addParticipant(String type, Reaction rn, PhysicalEntity pe, Long event_no) {
 
         String speciesId = "species_" + pe.getDbId();
         addSpecies(pe, speciesId);
@@ -124,14 +124,14 @@ class WriteSBML {
     /**
      * addSpecies
      */
-    public void addSpecies(PhysicalEntity pe, String id){
+    private void addSpecies(PhysicalEntity pe, String id){
         Model model = sbmlDocument.getModel();
 
         //TO DO: what if there is more than one compartment listed
         org.reactome.server.graph.domain.model.Compartment comp = pe.getCompartment().get(0);
         String comp_id = "compartment_" + comp.getDbId();
 
-        if (loggedSpecies == null || !loggedSpecies.contains(id)) {
+        if (!loggedSpecies.contains(id)) {
             Species s = model.createSpecies(id);
             setMetaid(s);
             s.setName(pe.getDisplayName());
@@ -150,10 +150,10 @@ class WriteSBML {
     /**
      * addSpecies
      */
-    public void addCompartment(org.reactome.server.graph.domain.model.Compartment comp, String id){
+    private void addCompartment(org.reactome.server.graph.domain.model.Compartment comp, String id){
          Model model = sbmlDocument.getModel();
 
-         if (loggedCompartments == null || !loggedCompartments.contains(id)){
+         if (!loggedCompartments.contains(id)){
              Compartment c = model.createCompartment(id);
              setMetaid(c);
              c.setName(comp.getDisplayName());
@@ -168,7 +168,7 @@ class WriteSBML {
     /**
      * function to set metaid and increase count
      */
-    public void setMetaid(SBase object){
+    private void setMetaid(SBase object){
         object.setMetaId("metaid_" + metaid_count);
         metaid_count++;
     }
@@ -187,6 +187,18 @@ class WriteSBML {
         }
         System.out.println(output);
     }
+
+    public void toFile(@SuppressWarnings("SameParameterValue") String filename)    {
+        SBMLWriter sbmlWriter = new TidySBMLWriter();
+        try {
+            sbmlWriter.writeSBMLToFile(sbmlDocument, filename);
+        }
+        catch (Exception e)
+        {
+            System.out.println("failed to write " + filename);
+        }
+    }
+
     public String toString()    {
         SBMLWriter sbmlWriter = new TidySBMLWriter();
         String output;
