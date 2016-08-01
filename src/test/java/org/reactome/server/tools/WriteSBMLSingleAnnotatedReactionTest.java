@@ -72,12 +72,49 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "    </listOfCompartments>%n" +
                 "    <listOfSpecies>%n" +
                 "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_2\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_876\"%n" +
-                "      name=\"Sialic Acid Bound Influenza A Viral Particle [plasma membrane]\" id=\"species_188954\" />%n" +
+                "      name=\"Sialic Acid Bound Influenza A Viral Particle [plasma membrane]\" id=\"species_188954\">%n" +
+                "        <annotation>%n" +
+                "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
+                "            <rdf:Description rdf:about=\"#metaid_2\">%n" +
+                "              <bqbiol:is>%n" +
+                "                <rdf:Bag>%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome/REACTOME:R-FLU-188954\" />%n" +
+                "                </rdf:Bag>%n" +
+                "              </bqbiol:is>%n" +
+                "            </rdf:Description>%n" +
+                "          </rdf:RDF>%n" +
+                "        </annotation>%n" +
+                "      </species>%n" +
                 "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_4\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_24337\"" +
-                " name=\"SA [endocytic vesicle membrane]\" id=\"species_189161\" />%n" +
+                " name=\"SA [endocytic vesicle membrane]\" id=\"species_189161\">%n" +
+                "        <annotation>%n" +
+                "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
+                "            <rdf:Description rdf:about=\"#metaid_4\">%n" +
+                "              <bqbiol:is>%n" +
+                "                <rdf:Bag>%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome/REACTOME:R-ALL-189161\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/chebi/CHEBI:26667\" />%n" +
+                "                </rdf:Bag>%n" +
+                "              </bqbiol:is>%n" +
+                "            </rdf:Description>%n" +
+                "          </rdf:RDF>%n" +
+                "        </annotation>%n" +
+                "      </species>%n" +
                 "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_6\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_171907\"" +
                 " name=\"Influenza A Viral Particle [endosome lumen]\"%n" +
-                "      id=\"species_189171\" />%n" +
+                "      id=\"species_189171\">%n" +
+                "        <annotation>%n" +
+                "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
+                "            <rdf:Description rdf:about=\"#metaid_6\">%n" +
+                "              <bqbiol:is>%n" +
+                "                <rdf:Bag>%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome/REACTOME:R-FLU-189171\" />%n" +
+                "                </rdf:Bag>%n" +
+                "              </bqbiol:is>%n" +
+                "            </rdf:Description>%n" +
+                "          </rdf:RDF>%n" +
+                "        </annotation>%n" +
+                "      </species>%n" +
                 "    </listOfSpecies>%n" +
                 "    <listOfReactions>%n" +
                 "      <reaction name=\"Clathrin-Mediated Pit Formation And Endocytosis Of The Influenza Virion\" fast=\"false\" id=\"reaction_168285\" metaid=\"metaid_1\" reversible=\"false\">%n" +

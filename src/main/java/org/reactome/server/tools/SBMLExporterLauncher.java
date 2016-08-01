@@ -1,20 +1,24 @@
+
 package org.reactome.server.tools;
 
 import com.martiansoftware.jsap.*;
-import org.reactome.server.graph.domain.model.*;
+import org.reactome.server.graph.domain.model.Pathway;
+import org.reactome.server.graph.domain.model.PhysicalEntity;
+import org.reactome.server.graph.domain.model.Species;
+import org.reactome.server.graph.domain.model.Complex;
+import org.reactome.server.graph.domain.model.Event;
 import org.reactome.server.graph.service.DatabaseObjectService;
 import org.reactome.server.graph.service.GeneralService;
 import org.reactome.server.graph.service.SchemaService;
 import org.reactome.server.graph.utils.ReactomeGraphCore;
+
+import java.util.List;
 
 /**
  * @author Sarah Keating <skeating@ebi.ac.uk>
  * @author Antonio Fabregat <fabregat@ebi.ac.uk>
  */
 public class SBMLExporterLauncher {
-
-
-
 
     public static void main(String[] args) throws JSAPException {
 
@@ -39,113 +43,28 @@ public class SBMLExporterLauncher {
         Species homoSapiens = (Species) databaseObjectService.findByIdNoRelations(48887L);
         System.out.println(homoSapiens);
 
-//        SchemaService schemaService = ReactomeGraphCore.getService(SchemaService.class);
-
-//        int count = 0;
-//        for (Pathway pathway : schemaService.getByClass(Pathway.class, homoSapiens)) {
-//            count++;
-//            printPathway(pathway);
-//            break;
+        SchemaService schemaService = ReactomeGraphCore.getService(SchemaService.class);
+        int count = 0;
+        int total = 0;
+//        for (Complex complex : schemaService.getByClass(Complex.class, homoSapiens)) {
+//            List<PhysicalEntity> components = complex.getEntityOnOtherCell();
+//            if (components != null && components.size() > 0) {
+//                System.out.println(complex.getDisplayName() + ": " + components);
+//                count++;
+//            }
+//            total++;
 //        }
-//        System.out.println("Found " + count + " pathways in " + homoSapiens.getDisplayName() + " to be exported");
+//        System.out.println("Found " + count + " of " + total + " complex with components in " + homoSapiens.getDisplayName() + " to be exported");
 
 //        long dbid = 5663205L; // infectious disease
 //        long dbid = 167168L;  // HIV transcription termination (pathway no events)
 //        long dbid = 180627L; // reaction
         long dbid = 168275L; // pathway with a single child reaction
+//        long dbid = 168255L; // influenza life cycle - which is where my pathway 168275 comes from
         Event pathway = (Event) databaseObjectService.findById(dbid);
-//        if (pathway instanceof ReactionLikeEvent) {
-//            printPathway((ReactionLikeEvent)(pathway), databaseObjectService);
-//        }
-//        else {
-//            printPathway(pathway, databaseObjectService);
-//        }
-
         @SuppressWarnings("ConstantConditions") WriteSBML sbml = new WriteSBML((Pathway)(pathway));
         sbml.createModel();
         sbml.toStdOut();
- //       sbml.toFile("out.xml");
-    }
-
-    private static void printPathway(Event pathway, DatabaseObjectService databaseObjectService) {
-        System.out.println("*********************");
-        System.out.println("Pathway:" + pathway.getDbId());
-        System.out.println("*********************");
-        System.out.println("Name: " + pathway.getDisplayName());
-        System.out.println("Event Of: " + pathway.getEventOf());
-//        System.out.println("Doi: " + pathway.getDoi());
-//        System.out.println("IsCanonical: " + pathway.getIsCanonical());
-//        System.out.println("hasEvents: " + pathway.getHasEvent());
-//        System.out.println("Normal pathway: " + pathway.getNormalPathway());
-        Pathway p = null;
-        int numEvents = 0;
-        if (pathway instanceof Pathway){
-            p = (Pathway) (pathway);
-            if (p.getHasEvent() != null) numEvents = p.getHasEvent().size();
-
-        }
-
-
-
-//        System.out.println("Explanation: " + pathway.getExplanation());
-        for (int i = 0; i < numEvents; i++)
-        {
-            Event path = p.getHasEvent().get(i);
-//            Event path = (Event) databaseObjectService.findById(event.getDbId());
-            if (path instanceof Pathway){
-                System.out.println("Child " + (i+1) + "/" + (numEvents));
-                printPathway(path, databaseObjectService);
-
-            }
-            else {
-                System.out.println("Child " + (i+1) + "/" + numEvents);
-                printPathway((ReactionLikeEvent)(path), databaseObjectService);
-
-            }
-
-        }
-
-    }
-     private static void printPathway(ReactionLikeEvent pathway, DatabaseObjectService databaseObjectService){
-        System.out.println("-----------------");
-        System.out.println("Reaction " + pathway.getDbId());
-        System.out.println("------------------");
-//        System.out.println("Chimeric: " + pathway.getIsChimeric());
-//        System.out.println("Systemic Name: " + pathway.getSystematicName());
-// //       System.out.println("Reverse: " + pathway.getReverseReaction());
-//        System.out.println("catActivity: " + pathway.getCatalystActivity());
-//        System.out.println("func status: " + pathway.getEntityFunctionalStatus());
-//        System.out.println("other cell: " + pathway.getEntityOnOtherCell());
-//        System.out.println("normal rn: " + pathway.getNormalReaction());
-//        System.out.println("reqd input: " + pathway.getRequiredInputComponent());
-        System.out.println("input: " + pathway.getInput());
-         for (PhysicalEntity input: pathway.getInput()){
-             printPhysicalEntity(input, databaseObjectService);
-         }
-        System.out.println("output: " + pathway.getOutput());
-         for (PhysicalEntity input: pathway.getOutput()){
-             printPhysicalEntity(input, databaseObjectService);
-         }
-//         System.out.println("Event Of: " + pathway.getEventOf());
-
-//        System.out.println("Explanation: " + pathway.getExplanation());
-
-    }
-
-    private static void printPhysicalEntity(PhysicalEntity pe, DatabaseObjectService databaseObjectService){
-        System.out.println("^^^^^^^^^^^^^^^^^^^^");
-        System.out.println("PhysicalEntity " + pe.getDbId());
-        System.out.println("^^^^^^^^^^^^^^^^^^^^");
-        System.out.println("compartment " + pe.getCompartment());
-        System.out.println("name " + pe.getDisplayName());
-        System.out.println("GO comp " + pe.getGoCellularComponent());
-        System.out.println();
-        System.out.println();
-
-        PhysicalEntity pe1 = (PhysicalEntity) databaseObjectService.findById(pe.getDbId());
-        System.out.println("compartment " + pe1.getCompartment());
-        System.out.println("name " + pe1.getDisplayName());
-        System.out.println("GO comp " + pe1.getGoCellularComponent());
-
+//        sbml.toFile("out.xml");
     }
 }
