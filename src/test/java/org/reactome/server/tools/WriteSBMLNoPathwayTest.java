@@ -21,7 +21,9 @@ public class WriteSBMLNoPathwayTest
 
     @BeforeClass
     public static void setup() {
+
         testWrite = new WriteSBML(null);
+        testWrite.setAnnotationFlag(false);
     }
     /**
      * test the document is created

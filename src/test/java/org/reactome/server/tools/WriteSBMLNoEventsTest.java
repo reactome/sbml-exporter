@@ -50,6 +50,7 @@ public class WriteSBMLNoEventsTest
             Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
 
             testWrite = new WriteSBML(pathway);
+            testWrite.setAnnotationFlag(false);
         }
         /**
          * test the document is created

@@ -39,6 +39,8 @@ class WriteSBML {
     private final List <String> loggedSpecies;
     private final List <String> loggedCompartments;
 
+    private Boolean addAnnotations = true;
+
     /**
      *  construct a version of the writer from the given pathway
      */
@@ -47,6 +49,8 @@ class WriteSBML {
         sbmlDocument = new SBMLDocument(sbmlLevel, sbmlVersion);
         loggedSpecies = new ArrayList<String>();
         loggedCompartments = new ArrayList<String>();
+        // reset metaid count
+        metaid_count= 0;
     }
 
 
@@ -75,6 +79,18 @@ class WriteSBML {
             }
         }
     }
+
+    /**
+     * set the addAnnotation flag
+     * this allows testing with and without annotations
+     */
+    public void setAnnotationFlag(Boolean flag){
+        addAnnotations = flag;
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////
+
+    // Private functions
 
     /**
      * add Reaction

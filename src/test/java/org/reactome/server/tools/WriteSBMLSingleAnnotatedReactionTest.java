@@ -18,7 +18,7 @@ import org.sbml.jsbml.Model;
 /**
  * @author Sarah Keating <skeating@ebi.ac.uk>
  */
-public class WriteSBMLSingleReactionTest
+public class WriteSBMLSingleAnnotatedReactionTest
 
 {
         private static WriteSBML testWrite;
