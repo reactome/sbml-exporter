@@ -53,26 +53,18 @@ public class SBMLExporterLauncher {
 //        long dbid = 167168L;  // HIV transcription termination (pathway no events)
 //        long dbid = 180627L; // reaction
         long dbid = 168275L; // pathway with a single child reaction
-//        try {
-//            Event pathway = (Event) databaseObjectService.findById(dbid);
+        Event pathway = (Event) databaseObjectService.findById(dbid);
+//        if (pathway instanceof ReactionLikeEvent) {
+//            printPathway((ReactionLikeEvent)(pathway), databaseObjectService);
+//        }
+//        else {
 //            printPathway(pathway, databaseObjectService);
 //        }
-//        catch(ClassCastException except) {
-//            Reaction pathway = (Reaction) databaseObjectService.findById(dbid);
-//            printPathway(pathway);
-//        }
-        Event pathway = (Event) databaseObjectService.findById(dbid);
-        if (pathway instanceof ReactionLikeEvent) {
-            printPathway((ReactionLikeEvent)(pathway), databaseObjectService);
-        }
-        else {
-            printPathway(pathway, databaseObjectService);
-        }
 
         @SuppressWarnings("ConstantConditions") WriteSBML sbml = new WriteSBML((Pathway)(pathway));
         sbml.createModel();
         sbml.toStdOut();
-        sbml.toFile("out.xml");
+ //       sbml.toFile("out.xml");
     }
 
     private static void printPathway(Event pathway, DatabaseObjectService databaseObjectService) {

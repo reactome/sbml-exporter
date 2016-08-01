@@ -1,19 +1,12 @@
 package org.reactome.server.tools;
 
+import org.reactome.server.graph.domain.model.GO_Term;
 import org.reactome.server.graph.domain.model.Pathway;
 import org.reactome.server.graph.domain.model.Event;
 import org.reactome.server.graph.domain.model.PhysicalEntity;
 
 
-import org.sbml.jsbml.SBMLDocument;
-import org.sbml.jsbml.SBMLWriter;
-import org.sbml.jsbml.Model;
-import org.sbml.jsbml.Reaction;
-import org.sbml.jsbml.Species;
-import org.sbml.jsbml.Compartment;
-import org.sbml.jsbml.SpeciesReference;
-import org.sbml.jsbml.SBase;
-import org.sbml.jsbml.TidySBMLWriter;
+import org.sbml.jsbml.*;
 
 
 import java.util.ArrayList;
@@ -144,6 +137,7 @@ class WriteSBML {
         Model model = sbmlDocument.getModel();
 
         //TO DO: what if there is more than one compartment listed
+        // what if there is none
         org.reactome.server.graph.domain.model.Compartment comp = pe.getCompartment().get(0);
         String comp_id = "compartment_" + comp.getDbId();
 
@@ -174,6 +168,12 @@ class WriteSBML {
              setMetaid(c);
              c.setName(comp.getDisplayName());
              c.setConstant(true);
+
+             if (addAnnotations){
+                 CVTermBuilder cvterms = new CVTermBuilder(c);
+                 cvterms.addGOTerm(CVTerm.Qualifier.BQB_IS, comp.getAccession());
+
+             }
 
             loggedCompartments.add(id);
         }

@@ -110,6 +110,8 @@ public class WriteSBMLSingleReactionTest
 
             Model model = testWrite.getSBMLDocument().getModel();
 
+            assertEquals(model_out, testWrite.toString());
+
             assertTrue("wrong number of reactions", model.getNumReactions() == 1);
             assertTrue("wrong number of species", model.getNumSpecies() == 3);
             assertTrue("wrong number of compartments", model.getNumCompartments() == 3);

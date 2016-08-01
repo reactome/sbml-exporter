@@ -30,9 +30,45 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "<sbml xmlns=\"http://www.sbml.org/sbml/level3/version1/core\" level=\"3\" version=\"1\">%n" +
                 "  <model name=\"Entry of Influenza Virion into Host Cell via Endocytosis\" id=\"pathway_168275\" metaid=\"metaid_0\">%n" +
                 "    <listOfCompartments>%n" +
-                "      <compartment name=\"plasma membrane\" constant=\"true\" id=\"compartment_876\" metaid=\"metaid_3\" />%n" +
-                "      <compartment name=\"endocytic vesicle membrane\" constant=\"true\" id=\"compartment_24337\" metaid=\"metaid_5\" />%n" +
-                "      <compartment name=\"endosome lumen\" constant=\"true\" id=\"compartment_171907\" metaid=\"metaid_7\" />%n" +
+                "      <compartment name=\"plasma membrane\" constant=\"true\" id=\"compartment_876\" metaid=\"metaid_3\">%n" +
+                "        <annotation>%n" +
+                "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
+                "            <rdf:Description rdf:about=\"#metaid_3\">%n" +
+                "              <bqbiol:is>%n" +
+                "                <rdf:Bag>%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/go/GO:0005886\" />%n" +
+                "                </rdf:Bag>%n" +
+                "              </bqbiol:is>%n" +
+                "            </rdf:Description>%n" +
+                "          </rdf:RDF>%n" +
+                "        </annotation>%n" +
+                "      </compartment>%n" +
+                "      <compartment name=\"endocytic vesicle membrane\" constant=\"true\" id=\"compartment_24337\" metaid=\"metaid_5\">%n" +
+                "        <annotation>%n" +
+                "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
+                "            <rdf:Description rdf:about=\"#metaid_5\">%n" +
+                "              <bqbiol:is>%n" +
+                "                <rdf:Bag>%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/go/GO:0030666\" />%n" +
+                "                </rdf:Bag>%n" +
+                "              </bqbiol:is>%n" +
+                "            </rdf:Description>%n" +
+                "          </rdf:RDF>%n" +
+                "        </annotation>%n" +
+                "      </compartment>%n" +
+                "      <compartment name=\"endosome lumen\" constant=\"true\" id=\"compartment_171907\" metaid=\"metaid_7\">%n" +
+                "        <annotation>%n" +
+                "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
+                "            <rdf:Description rdf:about=\"#metaid_7\">%n" +
+                "              <bqbiol:is>%n" +
+                "                <rdf:Bag>%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/go/GO:0031904\" />%n" +
+                "                </rdf:Bag>%n" +
+                "              </bqbiol:is>%n" +
+                "            </rdf:Description>%n" +
+                "          </rdf:RDF>%n" +
+                "        </annotation>%n" +
+                "      </compartment>%n" +
                 "    </listOfCompartments>%n" +
                 "    <listOfSpecies>%n" +
                 "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_2\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_876\"%n" +
@@ -76,7 +112,7 @@ public class WriteSBMLSingleAnnotatedReactionTest
             long dbid = 168275L; // pathway with a single child reaction
             Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
             testWrite = new WriteSBML(pathway);
-            testWrite.setAnnotationFlag(false);
+            testWrite.setAnnotationFlag(true);
         }
         /**
          * test the document is created
@@ -109,6 +145,8 @@ public class WriteSBMLSingleAnnotatedReactionTest
             testWrite.createModel();
 
             Model model = testWrite.getSBMLDocument().getModel();
+
+            assertEquals(model_out, testWrite.toString());
 
             assertTrue("wrong number of reactions", model.getNumReactions() == 1);
             assertTrue("wrong number of species", model.getNumSpecies() == 3);
