@@ -21,6 +21,16 @@ class CVTermBuilder {
         this.sbase = sbase;
     }
 
+    void createModelAnnotations(Pathway path) {
+        addResource("reactome", CVTerm.Qualifier.BQB_IS, path.getStId());
+        for (Publication pub : path.getLiteratureReference()) {
+            if (pub instanceof LiteratureReference) {
+                addResource("pubmed", CVTerm.Qualifier.BQB_IS_DESCRIBED_BY, ((LiteratureReference)(pub)).getPubMedIdentifier().toString());
+            }
+        }
+        createCVTerms();
+    }
+
     void createReactionAnnotations(org.reactome.server.graph.domain.model.Reaction event) {
         addResource("reactome", CVTerm.Qualifier.BQB_IS, event.getStId());
         if (event.getGoBiologicalProcess() != null) {

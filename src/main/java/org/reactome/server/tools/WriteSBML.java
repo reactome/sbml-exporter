@@ -65,6 +65,10 @@ class WriteSBML {
             setMetaid(model);
 
             addAllReactions(thisPathway);
+//            if (addAnnotations){
+//                CVTermBuilder cvterms = new CVTermBuilder(model);
+//                cvterms.createModelAnnotations(thisPathway);
+//            }
         }
     }
 
@@ -96,7 +100,7 @@ class WriteSBML {
 
     }
 
-    private void addReaction(Event event){
+    private void addReaction(org.reactome.server.graph.domain.model.Event event){
         if (event instanceof org.reactome.server.graph.domain.model.Reaction) {
             addReaction((org.reactome.server.graph.domain.model.Reaction ) (event));
         }
