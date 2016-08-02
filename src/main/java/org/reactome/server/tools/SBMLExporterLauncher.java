@@ -44,15 +44,15 @@ public class SBMLExporterLauncher {
         SchemaService schemaService = ReactomeGraphCore.getService(SchemaService.class);
         int count = 0;
         int total = 0;
-        for (Complex complex : schemaService.getByClass(Complex.class, homoSapiens)) {
-            List<PhysicalEntity> components = complex.getHasComponent();
-            if (components != null && components.size() > 0) {
-                System.out.println(complex.getDisplayName() + ": " + components);
-                count++;
-            }
-            total++;
-        }
-        System.out.println("Found " + count + " of " + total + " complex with components in " + homoSapiens.getDisplayName() + " to be exported");
+//        for (Complex complex : schemaService.getByClass(Complex.class, homoSapiens)) {
+//            List<PhysicalEntity> components = complex.getHasComponent();
+//            if (components != null && components.size() > 0) {
+//                System.out.println(complex.getDisplayName() + ": " + components);
+//                count++;
+//            }
+//            total++;
+//        }
+//        System.out.println("Found " + count + " of " + total + " complex with components in " + homoSapiens.getDisplayName() + " to be exported");
 
 //        long dbid = 5663205L; // infectious disease
 //        long dbid = 167168L;  // HIV transcription termination (pathway no events)

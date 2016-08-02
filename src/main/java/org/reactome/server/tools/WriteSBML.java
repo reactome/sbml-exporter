@@ -1,7 +1,6 @@
 package org.reactome.server.tools;
 
 import org.reactome.server.graph.domain.model.*;
-import org.reactome.server.graph.domain.model.Complex;
 import org.reactome.server.graph.domain.model.Event;
 import org.sbml.jsbml.*;
 import org.sbml.jsbml.Compartment;
@@ -117,6 +116,10 @@ class WriteSBML {
         for (PhysicalEntity pe: event.getOutput()){
             addParticipant("product", rn, pe, event.getDbId());
         }
+        if (addAnnotations){
+            CVTermBuilder cvterms = new CVTermBuilder(rn);
+            cvterms.createReactionAnnotations(event);
+        }
     }
 
     /**
@@ -162,25 +165,9 @@ class WriteSBML {
 
             if (addAnnotations){
                 CVTermBuilder cvterms = new CVTermBuilder(s);
-                cvterms.addResource("reactome", CVTerm.Qualifier.BQB_IS, pe.getStId());
-                if (pe instanceof SimpleEntity){
-                    SimpleEntity spe = ((SimpleEntity)(pe));
-                    ReferenceEntity re = spe.getReferenceEntity();
-                    cvterms.addResource("chebi", CVTerm.Qualifier.BQB_IS, re.getIdentifier());
-                }
-                else if (pe instanceof Complex){
-                    Complex cpe = ((Complex)(pe));
-                    List <PhysicalEntity> components = cpe.getEntityOnOtherCell();
-                    System.out.println("components: " + cpe.getHasComponent());
-                    System.out.println("getEntityOnOtherCell: " + cpe.getEntityOnOtherCell());
-                }
-                cvterms.createCVTerms();
-//                System.out.println("schema class: " + pe.getSchemaClass());
-//                System.out.println("name: " + pe.getName());
-//                System.out.println("getResources: " + pe.getCrossReference());
-//                System.out.println("=============");
-
+                cvterms.createSpeciesAnnotations(pe);
             }
+
             loggedSpecies.add(id);
         }
 
@@ -201,8 +188,7 @@ class WriteSBML {
 
              if (addAnnotations){
                  CVTermBuilder cvterms = new CVTermBuilder(c);
-                 cvterms.addResource("go", CVTerm.Qualifier.BQB_IS, comp.getAccession());
-                 cvterms.createCVTerms();
+                 cvterms.createCompartmentAnnotations(comp);
              }
 
             loggedCompartments.add(id);

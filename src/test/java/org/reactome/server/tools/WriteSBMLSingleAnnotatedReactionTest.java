@@ -116,6 +116,18 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "    </listOfSpecies>%n" +
                 "    <listOfReactions>%n" +
                 "      <reaction name=\"Clathrin-Mediated Pit Formation And Endocytosis Of The Influenza Virion\" fast=\"false\" id=\"reaction_168285\" metaid=\"metaid_1\" reversible=\"false\">%n" +
+                "        <annotation>%n" +
+                "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
+                "            <rdf:Description rdf:about=\"#metaid_1\">%n" +
+                "              <bqbiol:is>%n" +
+                "                <rdf:Bag>%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome/REACTOME:R-HSA-168285\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/go/GO:0019065\" />%n" +
+                "                </rdf:Bag>%n" +
+                "              </bqbiol:is>%n" +
+                "            </rdf:Description>%n" +
+                "          </rdf:RDF>%n" +
+                "        </annotation>%n" +
                 "        <listOfReactants>%n" +
                 "          <speciesReference constant=\"true\" id=\"speciesreference_168285_input_188954\" species=\"species_188954\" />%n" +
                 "        </listOfReactants>%n" +

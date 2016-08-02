@@ -1,5 +1,9 @@
 package org.reactome.server.tools;
 
+import org.reactome.server.graph.domain.model.Complex;
+import org.reactome.server.graph.domain.model.PhysicalEntity;
+import org.reactome.server.graph.domain.model.ReferenceEntity;
+import org.reactome.server.graph.domain.model.SimpleEntity;
 import org.sbml.jsbml.CVTerm;
 import org.sbml.jsbml.SBase;
 
@@ -15,16 +19,44 @@ class CVTermBuilder {
     private SBase sbase = null;
     private Map<CVTerm.Qualifier,List<String>> resources = new HashMap<CVTerm.Qualifier,List<String>>();
 
-    public CVTermBuilder(SBase sbase) {
+    CVTermBuilder(SBase sbase) {
+
         this.sbase = sbase;
     }
 
-    public void addResource(String dbname, CVTerm.Qualifier qualifier, String accessionNo){
+    void createReactionAnnotations(org.reactome.server.graph.domain.model.Reaction event) {
+        addResource("reactome", CVTerm.Qualifier.BQB_IS, event.getStId());
+        if (event.getGoBiologicalProcess() != null) {
+            addResource("go", CVTerm.Qualifier.BQB_IS, event.getGoBiologicalProcess().getAccession());
+        }
+        createCVTerms();
+    }
+
+    void createSpeciesAnnotations(PhysicalEntity pe){
+        addResource("reactome", CVTerm.Qualifier.BQB_IS, pe.getStId());
+        if (pe instanceof SimpleEntity){
+            SimpleEntity spe = ((SimpleEntity)(pe));
+            ReferenceEntity re = spe.getReferenceEntity();
+            addResource("chebi", CVTerm.Qualifier.BQB_IS, re.getIdentifier());
+        }
+        else if (pe instanceof Complex){
+            Complex cpe = ((Complex)(pe));
+            List <PhysicalEntity> components = cpe.getHasComponent();
+        }
+        createCVTerms();
+    }
+
+    void createCompartmentAnnotations(org.reactome.server.graph.domain.model.Compartment comp){
+        addResource("go", CVTerm.Qualifier.BQB_IS, comp.getAccession());
+        createCVTerms();
+    }
+
+    private void addResource(String dbname, CVTerm.Qualifier qualifier, String accessionNo){
         String resource = getSpecificTerm(dbname, accessionNo);
         addResources(qualifier, resource);
     }
 
-    public void createCVTerms(){
+    private void createCVTerms(){
         for (CVTerm.Qualifier qualifier : resources.keySet()){
             CVTerm term = new CVTerm(qualifier);
             for (String res : resources.get(qualifier)){
