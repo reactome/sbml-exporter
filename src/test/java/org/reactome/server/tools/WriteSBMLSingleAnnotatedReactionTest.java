@@ -154,6 +154,11 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/go/GO:0019065\" />%n" +
                 "                </rdf:Bag>%n" +
                 "              </bqbiol:is>%n" +
+                "              <bqbiol:isDescribedBy>%n" +
+                "                <rdf:Bag>%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/pubmed/0\" />%n" +
+                "                </rdf:Bag>%n" +
+                "              </bqbiol:isDescribedBy>%n" +
                 "            </rdf:Description>%n" +
                 "          </rdf:RDF>%n" +
                 "        </annotation>%n" +
