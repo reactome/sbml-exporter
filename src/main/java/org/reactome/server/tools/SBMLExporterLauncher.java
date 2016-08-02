@@ -2,15 +2,12 @@
 package org.reactome.server.tools;
 
 import com.martiansoftware.jsap.*;
-import org.reactome.server.graph.domain.model.Pathway;
-import org.reactome.server.graph.domain.model.PhysicalEntity;
-import org.reactome.server.graph.domain.model.Species;
-import org.reactome.server.graph.domain.model.Complex;
-import org.reactome.server.graph.domain.model.Event;
+import org.reactome.server.graph.domain.model.*;
 import org.reactome.server.graph.service.DatabaseObjectService;
 import org.reactome.server.graph.service.GeneralService;
 import org.reactome.server.graph.service.SchemaService;
 import org.reactome.server.graph.utils.ReactomeGraphCore;
+import org.reactome.server.tools.config.GraphQANeo4jConfig;
 
 import java.util.List;
 
@@ -24,16 +21,17 @@ public class SBMLExporterLauncher {
 
         SimpleJSAP jsap = new SimpleJSAP(SBMLExporterLauncher.class.getName(), "A tool for generating SBML files",
                 new Parameter[]{
-                        new FlaggedOption("host", JSAP.STRING_PARSER, "http://localhost:7474", JSAP.REQUIRED, 'h', "host", "The neo4j host"),
-                        new FlaggedOption("user", JSAP.STRING_PARSER, null, JSAP.REQUIRED, 'u', "user", "The neo4j user"),
-                        new FlaggedOption("password", JSAP.STRING_PARSER, null, JSAP.REQUIRED, 'p', "password", "The neo4j password")
+                        new FlaggedOption(  "host",     JSAP.STRING_PARSER, "localhost",     JSAP.REQUIRED,     'h', "host",     "The neo4j host"),
+                        new FlaggedOption(  "port",     JSAP.STRING_PARSER, "7474",          JSAP.NOT_REQUIRED, 'b', "port",     "The neo4j port"),
+                        new FlaggedOption(  "user",     JSAP.STRING_PARSER, "neo4j",         JSAP.REQUIRED,     'u', "user",     "The neo4j user"),
+                        new FlaggedOption(  "password", JSAP.STRING_PARSER, "reactome",      JSAP.REQUIRED,     'p', "password", "The neo4j password"),
                 }
         );
         JSAPResult config = jsap.parse(args);
         if (jsap.messagePrinted()) System.exit(1);
 
         //Initialising ReactomeCore Neo4j configuration
-        ReactomeGraphCore.initialise(config.getString("host"), config.getString("user"), config.getString("password"));
+        ReactomeGraphCore.initialise(config.getString("host"), config.getString("port"), config.getString("user"), config.getString("password"), GraphQANeo4jConfig.class);
 
         GeneralService genericService = ReactomeGraphCore.getService(GeneralService.class);
         System.out.println("Database name: " + genericService.getDBName());
@@ -46,15 +44,15 @@ public class SBMLExporterLauncher {
         SchemaService schemaService = ReactomeGraphCore.getService(SchemaService.class);
         int count = 0;
         int total = 0;
-//        for (Complex complex : schemaService.getByClass(Complex.class, homoSapiens)) {
-//            List<PhysicalEntity> components = complex.getEntityOnOtherCell();
-//            if (components != null && components.size() > 0) {
-//                System.out.println(complex.getDisplayName() + ": " + components);
-//                count++;
-//            }
-//            total++;
-//        }
-//        System.out.println("Found " + count + " of " + total + " complex with components in " + homoSapiens.getDisplayName() + " to be exported");
+        for (Complex complex : schemaService.getByClass(Complex.class, homoSapiens)) {
+            List<PhysicalEntity> components = complex.getHasComponent();
+            if (components != null && components.size() > 0) {
+                System.out.println(complex.getDisplayName() + ": " + components);
+                count++;
+            }
+            total++;
+        }
+        System.out.println("Found " + count + " of " + total + " complex with components in " + homoSapiens.getDisplayName() + " to be exported");
 
 //        long dbid = 5663205L; // infectious disease
 //        long dbid = 167168L;  // HIV transcription termination (pathway no events)

@@ -1,17 +1,16 @@
 package org.reactome.server.tools;
 
 import com.martiansoftware.jsap.*;
-
-import org.junit.Test;
-import static org.junit.Assert.*;
-
-
 import org.junit.BeforeClass;
-
+import org.junit.Test;
 import org.reactome.server.graph.domain.model.Pathway;
 import org.reactome.server.graph.service.DatabaseObjectService;
 import org.reactome.server.graph.utils.ReactomeGraphCore;
+import org.reactome.server.tools.config.GraphQANeo4jConfig;
 import org.sbml.jsbml.SBMLDocument;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 
 /**
@@ -36,7 +35,8 @@ public class WriteSBMLNoEventsTest
         public static void setup()  throws JSAPException {
             SimpleJSAP jsap = new SimpleJSAP(SBMLExporterLauncher.class.getName(), "A tool for generating SBML files",
                     new Parameter[]{
-                            new FlaggedOption("host", JSAP.STRING_PARSER, "http://localhost:7474", JSAP.REQUIRED, 'h', "host", "The neo4j host"),
+                            new FlaggedOption("host", JSAP.STRING_PARSER, "localhost", JSAP.REQUIRED, 'h', "host", "The neo4j host"),
+                            new FlaggedOption("port", JSAP.STRING_PARSER, "7474", JSAP.REQUIRED, 'b', "port", "The neo4j port"),
                             new FlaggedOption("user", JSAP.STRING_PARSER, null, JSAP.REQUIRED, 'u', "user", "The neo4j user"),
                             new FlaggedOption("password", JSAP.STRING_PARSER, null, JSAP.REQUIRED, 'p', "password", "The neo4j password")
                     }
@@ -44,7 +44,7 @@ public class WriteSBMLNoEventsTest
             String[] args = {"-h", "http://localhost:7474", "-u", "neo4j", "-p", "j16a3s27"};
             JSAPResult config = jsap.parse(args);
             if (jsap.messagePrinted()) System.exit(1);
-            ReactomeGraphCore.initialise(config.getString("host"), config.getString("user"), config.getString("password"));
+            ReactomeGraphCore.initialise(config.getString("host"), config.getString("port"), config.getString("user"), config.getString("password"), GraphQANeo4jConfig.class);
             DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
             long dbid = 167168L;  // HIV transcription termination (pathway no events)
             Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
