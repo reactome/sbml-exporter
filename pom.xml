@@ -13,13 +13,12 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <graph.version>0.0.6-SNAPSHOT</graph.version>
+        <graph.version>0.0.7-SNAPSHOT</graph.version>
         <sbml.lib.version>1.1</sbml.lib.version>
         <jasp.version>2.1</jasp.version>
 
         <maven.compiler.version>3.5.1</maven.compiler.version>
         <jdk.version>1.8</jdk.version>
-<!--        <junit.version>3.8.1</junit.version> -->
         <junit.version>4.12</junit.version>
     </properties>
 
