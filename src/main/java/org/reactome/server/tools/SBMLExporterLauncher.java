@@ -63,6 +63,6 @@ public class SBMLExporterLauncher {
         @SuppressWarnings("ConstantConditions") WriteSBML sbml = new WriteSBML((Pathway)(pathway));
         sbml.createModel();
         sbml.toStdOut();
-//        sbml.toFile("out.xml");
+        sbml.toFile("out.xml");
     }
 }

@@ -75,9 +75,6 @@ class CVTermBuilder {
         }
     }
     private void addResource(String dbname, CVTerm.Qualifier qualifier, String accessionNo){
-        if (dbname.toLowerCase().equals("embl")){
-            return;
-        }
         String resource = getSpecificTerm(dbname, accessionNo);
         addResources(qualifier, resource);
     }
@@ -96,6 +93,10 @@ class CVTermBuilder {
         Boolean shortVersion = false;
         if (lowerDB.equals("uniprot") || lowerDB.equals("pubmed")) {
             shortVersion = true;
+        }
+        else if (lowerDB.equals("embl")){
+            shortVersion = true;
+            lowerDB = "ena.embl";
         }
         String resource = "http://identifiers.org/" + lowerDB + "/" + dbname.toUpperCase() +
                 ":" + accessionNo;

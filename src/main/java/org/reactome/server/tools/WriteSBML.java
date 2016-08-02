@@ -65,10 +65,10 @@ class WriteSBML {
             setMetaid(model);
 
             addAllReactions(thisPathway);
-//            if (addAnnotations){
-//                CVTermBuilder cvterms = new CVTermBuilder(model);
-//                cvterms.createModelAnnotations(thisPathway);
-//            }
+            if (addAnnotations){
+                CVTermBuilder cvterms = new CVTermBuilder(model);
+                cvterms.createModelAnnotations(thisPathway);
+            }
         }
     }
 
