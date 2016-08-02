@@ -1,9 +1,6 @@
 package org.reactome.server.tools;
 
-import org.reactome.server.graph.domain.model.Complex;
-import org.reactome.server.graph.domain.model.PhysicalEntity;
-import org.reactome.server.graph.domain.model.ReferenceEntity;
-import org.reactome.server.graph.domain.model.SimpleEntity;
+import org.reactome.server.graph.domain.model.*;
 import org.sbml.jsbml.CVTerm;
 import org.sbml.jsbml.SBase;
 
@@ -34,15 +31,17 @@ class CVTermBuilder {
 
     void createSpeciesAnnotations(PhysicalEntity pe){
         addResource("reactome", CVTerm.Qualifier.BQB_IS, pe.getStId());
-        if (pe instanceof SimpleEntity){
-            SimpleEntity spe = ((SimpleEntity)(pe));
-            ReferenceEntity re = spe.getReferenceEntity();
-            addResource("chebi", CVTerm.Qualifier.BQB_IS, re.getIdentifier());
-        }
-        else if (pe instanceof Complex){
-            Complex cpe = ((Complex)(pe));
-            List <PhysicalEntity> components = cpe.getHasComponent();
-        }
+        createPhysicalEntityAnnotations(pe, CVTerm.Qualifier.BQB_IS);
+//        if (pe instanceof SimpleEntity){
+//            addResource("chebi", CVTerm.Qualifier.BQB_IS, ((SimpleEntity)(pe)).getReferenceEntity().getIdentifier());
+//        }
+//        else if (pe instanceof Complex){
+//            Complex cpe = ((Complex)(pe));
+//            List <PhysicalEntity> components = cpe.getHasComponent();
+//            for (PhysicalEntity component : cpe.getHasComponent()){
+//                System.out.println(component);
+//            }
+//        }
         createCVTerms();
     }
 
@@ -51,7 +50,29 @@ class CVTermBuilder {
         createCVTerms();
     }
 
+    private void createPhysicalEntityAnnotations(PhysicalEntity pe, CVTerm.Qualifier qualifier){
+        if (pe instanceof SimpleEntity){
+            addResource("chebi", qualifier, ((SimpleEntity)(pe)).getReferenceEntity().getIdentifier());
+        }
+        else if (pe instanceof EntityWithAccessionedSequence){
+            ReferenceEntity ref = ((EntityWithAccessionedSequence)(pe)).getReferenceEntity();
+            addResource(ref.getDatabaseName(), qualifier, ref.getIdentifier());
+        }
+        else if (pe instanceof Complex){
+            for (PhysicalEntity component : ((Complex)(pe)).getHasComponent()){
+                createPhysicalEntityAnnotations(component, CVTerm.Qualifier.BQB_HAS_PART);
+            }
+        }
+        else {
+            if (!(pe instanceof OtherEntity)) {
+                addResource("TODO", qualifier, "class not dealt with");
+            }
+        }
+    }
     private void addResource(String dbname, CVTerm.Qualifier qualifier, String accessionNo){
+        if (dbname.toLowerCase().equals("embl")){
+            return;
+        }
         String resource = getSpecificTerm(dbname, accessionNo);
         addResources(qualifier, resource);
     }
@@ -66,8 +87,13 @@ class CVTermBuilder {
         }
     }
     private String getSpecificTerm(String dbname, String accessionNo){
-        return "http://identifiers.org/" + dbname.toLowerCase() + "/" + dbname.toUpperCase() +
+        String lowerDB = dbname.toLowerCase();
+        String resource = "http://identifiers.org/" + lowerDB + "/" + dbname.toUpperCase() +
                 ":" + accessionNo;
+        if (lowerDB.equals("uniprot")) {
+            resource = "http://identifiers.org/" + lowerDB + "/" + accessionNo;
+        }
+        return resource;
     }
 
     private void addResources(CVTerm.Qualifier qualifier, String resource) {

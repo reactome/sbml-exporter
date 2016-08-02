@@ -74,6 +74,21 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "        <annotation>%n" +
                 "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
                 "            <rdf:Description rdf:about=\"#metaid_2\">%n" +
+                "              <bqbiol:hasPart>%n" +
+                "                <rdf:Bag>%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03452\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03452\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03468\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P06821\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03485\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03508\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03466\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03433\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03431\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03428\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/chebi/CHEBI:26667\" />%n" +
+                "                </rdf:Bag>%n" +
+                "              </bqbiol:hasPart>%n" +
                 "              <bqbiol:is>%n" +
                 "                <rdf:Bag>%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome/REACTOME:R-FLU-188954\" />%n" +
@@ -89,6 +104,20 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "        <annotation>%n" +
                 "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
                 "            <rdf:Description rdf:about=\"#metaid_4\">%n" +
+                "              <bqbiol:hasPart>%n" +
+                "                <rdf:Bag>%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03452\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03452\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03468\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P06821\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03485\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03508\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03466\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03433\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03431\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03428\" />%n" +
+                "                </rdf:Bag>%n" +
+                "              </bqbiol:hasPart>%n" +
                 "              <bqbiol:is>%n" +
                 "                <rdf:Bag>%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome/REACTOME:R-FLU-189171\" />%n" +
