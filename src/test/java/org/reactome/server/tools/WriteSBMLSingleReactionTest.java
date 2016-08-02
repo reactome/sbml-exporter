@@ -29,17 +29,17 @@ public class WriteSBMLSingleReactionTest
                 "  <model name=\"Entry of Influenza Virion into Host Cell via Endocytosis\" id=\"pathway_168275\" metaid=\"metaid_0\">%n" +
                 "    <listOfCompartments>%n" +
                 "      <compartment name=\"plasma membrane\" constant=\"true\" id=\"compartment_876\" metaid=\"metaid_3\" />%n" +
-                "      <compartment name=\"endocytic vesicle membrane\" constant=\"true\" id=\"compartment_24337\" metaid=\"metaid_5\" />%n" +
-                "      <compartment name=\"endosome lumen\" constant=\"true\" id=\"compartment_171907\" metaid=\"metaid_7\" />%n" +
+                "      <compartment name=\"endosome lumen\" constant=\"true\" id=\"compartment_171907\" metaid=\"metaid_5\" />%n" +
+                "      <compartment name=\"endocytic vesicle membrane\" constant=\"true\" id=\"compartment_24337\" metaid=\"metaid_7\" />%n" +
                 "    </listOfCompartments>%n" +
                 "    <listOfSpecies>%n" +
                 "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_2\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_876\"%n" +
                 "      name=\"Sialic Acid Bound Influenza A Viral Particle [plasma membrane]\" id=\"species_188954\" />%n" +
-                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_4\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_24337\"" +
-                " name=\"SA [endocytic vesicle membrane]\" id=\"species_189161\" />%n" +
-                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_6\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_171907\"" +
+                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_4\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_171907\"" +
                 " name=\"Influenza A Viral Particle [endosome lumen]\"%n" +
                 "      id=\"species_189171\" />%n" +
+                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_6\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_24337\"" +
+                " name=\"SA [endocytic vesicle membrane]\" id=\"species_189161\" />%n" +
                 "    </listOfSpecies>%n" +
                 "    <listOfReactions>%n" +
                 "      <reaction name=\"Clathrin-Mediated Pit Formation And Endocytosis Of The Influenza Virion\" fast=\"false\" id=\"reaction_168285\" metaid=\"metaid_1\" reversible=\"false\">%n" +
@@ -47,8 +47,8 @@ public class WriteSBMLSingleReactionTest
                 "          <speciesReference constant=\"true\" id=\"speciesreference_168285_input_188954\" species=\"species_188954\" />%n" +
                 "        </listOfReactants>%n" +
                 "        <listOfProducts>%n" +
-                "          <speciesReference constant=\"true\" id=\"speciesreference_168285_output_189161\" species=\"species_189161\" />%n" +
                 "          <speciesReference constant=\"true\" id=\"speciesreference_168285_output_189171\" species=\"species_189171\" />%n" +
+                "          <speciesReference constant=\"true\" id=\"speciesreference_168285_output_189161\" species=\"species_189161\" />%n" +
                 "        </listOfProducts>%n" +
                 "      </reaction>%n" +
                 "    </listOfReactions>%n" +
@@ -67,7 +67,7 @@ public class WriteSBMLSingleReactionTest
                             new FlaggedOption("password", JSAP.STRING_PARSER, null, JSAP.REQUIRED, 'p', "password", "The neo4j password")
                     }
             );
-            String[] args = {"-h", "http://localhost:7474", "-u", "neo4j", "-p", "j16a3s27"};
+            String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27"};
             JSAPResult config = jsap.parse(args);
             if (jsap.messagePrinted()) System.exit(1);
             ReactomeGraphCore.initialise(config.getString("host"), config.getString("port"), config.getString("user"), config.getString("password"), GraphQANeo4jConfig.class);

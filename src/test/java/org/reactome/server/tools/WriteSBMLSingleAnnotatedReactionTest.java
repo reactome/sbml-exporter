@@ -41,26 +41,26 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "          </rdf:RDF>%n" +
                 "        </annotation>%n" +
                 "      </compartment>%n" +
-                "      <compartment name=\"endocytic vesicle membrane\" constant=\"true\" id=\"compartment_24337\" metaid=\"metaid_5\">%n" +
+                "      <compartment name=\"endosome lumen\" constant=\"true\" id=\"compartment_171907\" metaid=\"metaid_5\">%n" +
                 "        <annotation>%n" +
                 "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
                 "            <rdf:Description rdf:about=\"#metaid_5\">%n" +
                 "              <bqbiol:is>%n" +
                 "                <rdf:Bag>%n" +
-                "                  <rdf:li rdf:resource=\"http://identifiers.org/go/GO:0030666\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/go/GO:0031904\" />%n" +
                 "                </rdf:Bag>%n" +
                 "              </bqbiol:is>%n" +
                 "            </rdf:Description>%n" +
                 "          </rdf:RDF>%n" +
                 "        </annotation>%n" +
                 "      </compartment>%n" +
-                "      <compartment name=\"endosome lumen\" constant=\"true\" id=\"compartment_171907\" metaid=\"metaid_7\">%n" +
+                "      <compartment name=\"endocytic vesicle membrane\" constant=\"true\" id=\"compartment_24337\" metaid=\"metaid_7\">%n" +
                 "        <annotation>%n" +
                 "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
                 "            <rdf:Description rdf:about=\"#metaid_7\">%n" +
                 "              <bqbiol:is>%n" +
                 "                <rdf:Bag>%n" +
-                "                  <rdf:li rdf:resource=\"http://identifiers.org/go/GO:0031904\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/go/GO:0030666\" />%n" +
                 "                </rdf:Bag>%n" +
                 "              </bqbiol:is>%n" +
                 "            </rdf:Description>%n" +
@@ -83,30 +83,30 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "          </rdf:RDF>%n" +
                 "        </annotation>%n" +
                 "      </species>%n" +
-                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_4\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_24337\"" +
-                " name=\"SA [endocytic vesicle membrane]\" id=\"species_189161\">%n" +
+                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_4\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_171907\"" +
+                " name=\"Influenza A Viral Particle [endosome lumen]\"%n" +
+                "      id=\"species_189171\">%n" +
                 "        <annotation>%n" +
                 "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
                 "            <rdf:Description rdf:about=\"#metaid_4\">%n" +
                 "              <bqbiol:is>%n" +
                 "                <rdf:Bag>%n" +
-                "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome/REACTOME:R-ALL-189161\" />%n" +
-                "                  <rdf:li rdf:resource=\"http://identifiers.org/chebi/CHEBI:26667\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome/REACTOME:R-FLU-189171\" />%n" +
                 "                </rdf:Bag>%n" +
                 "              </bqbiol:is>%n" +
                 "            </rdf:Description>%n" +
                 "          </rdf:RDF>%n" +
                 "        </annotation>%n" +
                 "      </species>%n" +
-                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_6\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_171907\"" +
-                " name=\"Influenza A Viral Particle [endosome lumen]\"%n" +
-                "      id=\"species_189171\">%n" +
+                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_6\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_24337\"" +
+                " name=\"SA [endocytic vesicle membrane]\" id=\"species_189161\">%n" +
                 "        <annotation>%n" +
                 "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
                 "            <rdf:Description rdf:about=\"#metaid_6\">%n" +
                 "              <bqbiol:is>%n" +
                 "                <rdf:Bag>%n" +
-                "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome/REACTOME:R-FLU-189171\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome/REACTOME:R-ALL-189161\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/chebi/CHEBI:26667\" />%n" +
                 "                </rdf:Bag>%n" +
                 "              </bqbiol:is>%n" +
                 "            </rdf:Description>%n" +
@@ -120,8 +120,8 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "          <speciesReference constant=\"true\" id=\"speciesreference_168285_input_188954\" species=\"species_188954\" />%n" +
                 "        </listOfReactants>%n" +
                 "        <listOfProducts>%n" +
-                "          <speciesReference constant=\"true\" id=\"speciesreference_168285_output_189161\" species=\"species_189161\" />%n" +
                 "          <speciesReference constant=\"true\" id=\"speciesreference_168285_output_189171\" species=\"species_189171\" />%n" +
+                "          <speciesReference constant=\"true\" id=\"speciesreference_168285_output_189161\" species=\"species_189161\" />%n" +
                 "        </listOfProducts>%n" +
                 "      </reaction>%n" +
                 "    </listOfReactions>%n" +
@@ -140,7 +140,7 @@ public class WriteSBMLSingleAnnotatedReactionTest
                             new FlaggedOption("password", JSAP.STRING_PARSER, null, JSAP.REQUIRED, 'p', "password", "The neo4j password")
                     }
             );
-            String[] args = {"-h", "http://localhost:7474", "-u", "neo4j", "-p", "j16a3s27"};
+            String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27"};
             JSAPResult config = jsap.parse(args);
             if (jsap.messagePrinted()) System.exit(1);
             ReactomeGraphCore.initialise(config.getString("host"), config.getString("port"), config.getString("user"), config.getString("password"), GraphQANeo4jConfig.class);
