@@ -27,6 +27,22 @@ public class WriteSBMLSingleAnnotatedReactionTest
         private String model_out = String.format("<?xml version='1.0' encoding='utf-8' standalone='no'?>%n" +
                 "<sbml xmlns=\"http://www.sbml.org/sbml/level3/version1/core\" level=\"3\" version=\"1\">%n" +
                 "  <model name=\"Entry of Influenza Virion into Host Cell via Endocytosis\" id=\"pathway_168275\" metaid=\"metaid_0\">%n" +
+                "    <annotation>%n" +
+                "      <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
+                "        <rdf:Description rdf:about=\"#metaid_0\">%n" +
+                "          <bqbiol:is>%n" +
+                "            <rdf:Bag>%n" +
+                "              <rdf:li rdf:resource=\"http://identifiers.org/reactome/REACTOME:R-HSA-168275\" />%n" +
+                "            </rdf:Bag>%n" +
+                "          </bqbiol:is>%n" +
+                "          <bqbiol:isDescribedBy>%n" +
+                "            <rdf:Bag>%n" +
+                "              <rdf:li rdf:resource=\"http://identifiers.org/pubmed/0\" />%n" +
+                "            </rdf:Bag>%n" +
+                "          </bqbiol:isDescribedBy>%n" +
+                "        </rdf:Description>%n" +
+                "      </rdf:RDF>%n" +
+                "    </annotation>%n" +
                 "    <listOfCompartments>%n" +
                 "      <compartment name=\"plasma membrane\" constant=\"true\" id=\"compartment_876\" metaid=\"metaid_3\">%n" +
                 "        <annotation>%n" +
@@ -74,6 +90,11 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "        <annotation>%n" +
                 "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
                 "            <rdf:Description rdf:about=\"#metaid_2\">%n" +
+                "              <bqbiol:is>%n" +
+                "                <rdf:Bag>%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome/REACTOME:R-FLU-188954\" />%n" +
+                "                </rdf:Bag>%n" +
+                "              </bqbiol:is>%n" +
                 "              <bqbiol:hasPart>%n" +
                 "                <rdf:Bag>%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03452\" />%n" +
@@ -82,6 +103,14 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P06821\" />%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03485\" />%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03508\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/ena.embl/AF389115\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/ena.embl/AF389116\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/ena.embl/AF389117\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/ena.embl/AF389118\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/ena.embl/AF389119\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/ena.embl/AF389120\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/ena.embl/AF389121\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/ena.embl/AF389122\" />%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03466\" />%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03433\" />%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03431\" />%n" +
@@ -89,11 +118,6 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/chebi/CHEBI:26667\" />%n" +
                 "                </rdf:Bag>%n" +
                 "              </bqbiol:hasPart>%n" +
-                "              <bqbiol:is>%n" +
-                "                <rdf:Bag>%n" +
-                "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome/REACTOME:R-FLU-188954\" />%n" +
-                "                </rdf:Bag>%n" +
-                "              </bqbiol:is>%n" +
                 "            </rdf:Description>%n" +
                 "          </rdf:RDF>%n" +
                 "        </annotation>%n" +
@@ -104,6 +128,11 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "        <annotation>%n" +
                 "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
                 "            <rdf:Description rdf:about=\"#metaid_4\">%n" +
+                "              <bqbiol:is>%n" +
+                "                <rdf:Bag>%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome/REACTOME:R-FLU-189171\" />%n" +
+                "                </rdf:Bag>%n" +
+                "              </bqbiol:is>%n" +
                 "              <bqbiol:hasPart>%n" +
                 "                <rdf:Bag>%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03452\" />%n" +
@@ -112,17 +141,20 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P06821\" />%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03485\" />%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03508\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/ena.embl/AF389115\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/ena.embl/AF389116\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/ena.embl/AF389117\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/ena.embl/AF389118\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/ena.embl/AF389119\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/ena.embl/AF389120\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/ena.embl/AF389121\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/ena.embl/AF389122\" />%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03466\" />%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03433\" />%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03431\" />%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03428\" />%n" +
                 "                </rdf:Bag>%n" +
                 "              </bqbiol:hasPart>%n" +
-                "              <bqbiol:is>%n" +
-                "                <rdf:Bag>%n" +
-                "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome/REACTOME:R-FLU-189171\" />%n" +
-                "                </rdf:Bag>%n" +
-                "              </bqbiol:is>%n" +
                 "            </rdf:Description>%n" +
                 "          </rdf:RDF>%n" +
                 "        </annotation>%n" +
@@ -148,17 +180,17 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "        <annotation>%n" +
                 "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
                 "            <rdf:Description rdf:about=\"#metaid_1\">%n" +
-                "              <bqbiol:isDescribedBy>%n" +
-                "                <rdf:Bag>%n" +
-                "                  <rdf:li rdf:resource=\"http://identifiers.org/pubmed/0\" />%n" +
-                "                </rdf:Bag>%n" +
-                "              </bqbiol:isDescribedBy>%n" +
                 "              <bqbiol:is>%n" +
                 "                <rdf:Bag>%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome/REACTOME:R-HSA-168285\" />%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/go/GO:0019065\" />%n" +
                 "                </rdf:Bag>%n" +
                 "              </bqbiol:is>%n" +
+                "              <bqbiol:isDescribedBy>%n" +
+                "                <rdf:Bag>%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/pubmed/0\" />%n" +
+                "                </rdf:Bag>%n" +
+                "              </bqbiol:isDescribedBy>%n" +
                 "            </rdf:Description>%n" +
                 "          </rdf:RDF>%n" +
                 "        </annotation>%n" +
@@ -228,7 +260,7 @@ public class WriteSBMLSingleAnnotatedReactionTest
 
             Model model = testWrite.getSBMLDocument().getModel();
 
- //           assertEquals(model_out, testWrite.toString());
+            assertEquals(model_out, testWrite.toString());
 
             assertTrue("wrong number of reactions", model.getNumReactions() == 1);
             assertTrue("wrong number of species", model.getNumSpecies() == 3);
