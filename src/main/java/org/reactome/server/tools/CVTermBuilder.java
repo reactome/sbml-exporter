@@ -5,7 +5,7 @@ import org.sbml.jsbml.CVTerm;
 import org.sbml.jsbml.SBase;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -14,7 +14,7 @@ import java.util.Map;
  */
 class CVTermBuilder {
     private SBase sbase = null;
-    private Map<CVTerm.Qualifier,List<String>> resources = new HashMap<CVTerm.Qualifier,List<String>>();
+    private Map<CVTerm.Qualifier,List<String>> resources = new LinkedHashMap<CVTerm.Qualifier,List<String>>();
 
     CVTermBuilder(SBase sbase) {
 
