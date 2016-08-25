@@ -57,8 +57,8 @@ public class SBMLExporterLauncher {
 //        long dbid = 5663205L; // infectious disease
 //        long dbid = 167168L;  // HIV transcription termination (pathway no events)
 //        long dbid = 180627L; // reaction
-        long dbid = 168275L; // pathway with a single child reaction
-//        long dbid = 168255L; // influenza life cycle - which is where my pathway 168275 comes from
+//        long dbid = 168275L; // pathway with a single child reaction
+        long dbid = 168255L; // influenza life cycle - which is where my pathway 168275 comes from
         Event pathway = (Event) databaseObjectService.findById(dbid);
         @SuppressWarnings("ConstantConditions") WriteSBML sbml = new WriteSBML((Pathway)(pathway));
         sbml.createModel();
