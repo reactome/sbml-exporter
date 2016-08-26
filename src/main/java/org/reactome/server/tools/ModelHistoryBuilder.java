@@ -137,9 +137,11 @@ class ModelHistoryBuilder extends AnnotationBuilder {
         entry = ((editor.getEMailAddress() == null) ? "" : editor.getEMailAddress());
         creator.setEmail(entry);
 
-        for (Affiliation a : editor.getAffiliation()){
-            for (String s : a.getName()){
-                creator.setOrganisation(s);
+        if (editor.getAffiliation() != null) {
+            for (Affiliation a : editor.getAffiliation()) {
+                for (String s : a.getName()) {
+                    creator.setOrganisation(s);
+                }
             }
         }
         return creator;
