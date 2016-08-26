@@ -38,31 +38,65 @@ public class SBMLExporterLauncher {
         System.out.println("Database version: " + genericService.getDBVersion());
 
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-        Species homoSapiens = (Species) databaseObjectService.findByIdNoRelations(48887L);
-        System.out.println(homoSapiens);
-
-        SchemaService schemaService = ReactomeGraphCore.getService(SchemaService.class);
-        int count = 0;
-        int total = 0;
-//        for (Complex complex : schemaService.getByClass(Complex.class, homoSapiens)) {
-//            List<PhysicalEntity> components = complex.getHasComponent();
-//            if (components != null && components.size() > 0) {
-//                System.out.println(complex.getDisplayName() + ": " + components);
-//                count++;
-//            }
-//            total++;
-//        }
-//        System.out.println("Found " + count + " of " + total + " complex with components in " + homoSapiens.getDisplayName() + " to be exported");
 
 //        long dbid = 5663205L; // infectious disease
 //        long dbid = 167168L;  // HIV transcription termination (pathway no events)
 //        long dbid = 180627L; // reaction
 //        long dbid = 168275L; // pathway with a single child reaction
-        long dbid = 168255L; // influenza life cycle - which is where my pathway 168275 comes from
+//        long dbid = 168255L; // influenza life cycle - which is where my pathway 168275 comes from
+//        long dbid = 2978092L; // pathway with a catalysis
+//        long dbid = 5619071L; // failed reaction
+//        long dbid = 69205L; // black box event
+//        long dbid = 392023L; // reaction
+
+//        long dbid = 453279L;// path with black box
+        long dbid = 76009L; // path with reaction
+
+        int option = 1;
+
+        switch (option) {
+            case 1:
+                outputFile(dbid, databaseObjectService);
+                break;
+            case 2:
+                lookupPaths(databaseObjectService);
+                break;
+
+        }
+    }
+
+    static void lookupPaths(DatabaseObjectService databaseObjectService){
+        Species homoSapiens = (Species) databaseObjectService.findByIdNoRelations(48887L);
+        SchemaService schemaService = ReactomeGraphCore.getService(SchemaService.class);
+        int count = 0;
+        int total = 0;
+        for (Pathway path : schemaService.getByClass(Pathway.class, homoSapiens)) {
+            List<Event> events = path.getHasEvent();
+            if (events != null && events.size() == 1) {
+                for (Event e : events) {
+                    if (e instanceof Reaction) {
+                        if (((ReactionLikeEvent) e).getCatalystActivity() == null || ((ReactionLikeEvent) e).getCatalystActivity().size() == 0) {
+                            System.out.println("Pathway " + path.getDbId() + " matches");
+                            count++;
+                            break;
+                        }
+                    }
+                }
+            }
+            total++;
+        }
+        System.out.println("Found " + count + " of " + total);
+
+
+    }
+
+    static void outputFile(long dbid, DatabaseObjectService databaseObjectService){
         Event pathway = (Event) databaseObjectService.findById(dbid);
         @SuppressWarnings("ConstantConditions") WriteSBML sbml = new WriteSBML((Pathway)(pathway));
         sbml.createModel();
         sbml.toStdOut();
         sbml.toFile("out.xml");
+
     }
 }
+
