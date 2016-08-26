@@ -27,7 +27,7 @@ class ModelHistoryBuilder extends AnnotationBuilder {
 
     }
 
-    public void createHistory(Pathway path){
+    void createHistory(Pathway path){
         createHistoryFromEvent(path);
         for (Event e: path.getHasEvent()) {
             createHistoryFromEvent(e);
@@ -45,33 +45,25 @@ class ModelHistoryBuilder extends AnnotationBuilder {
      private void createHistoryFromEvent(Event path){
         addCreatedInformation(path.getCreated());
         addInformation(path.getModified());
-        try {
+        if (path.getAuthored() != null) {
             for (InstanceEdit edit : path.getAuthored()) {
                 addInformation(edit);
             }
         }
-        catch (NullPointerException e) {
-        }
-        try {
+        if (path.getEdited() != null) {
             for (InstanceEdit edit : path.getEdited()) {
                 addInformation(edit);
             }
         }
-        catch (NullPointerException e) {
-        }
-        try {
+        if (path.getReviewed() != null) {
             for (InstanceEdit edit : path.getReviewed()) {
                 addInformation(edit);
             }
         }
-        catch (NullPointerException e) {
-        }
-        try {
+        if (path.getRevised() != null) {
             for (InstanceEdit edit : path.getRevised()) {
                 addInformation(edit);
             }
-        }
-        catch (NullPointerException e) {
         }
     }
 
@@ -122,20 +114,29 @@ class ModelHistoryBuilder extends AnnotationBuilder {
 
     private Date formatDate(String datetime){
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH);
-        Date date = null;
+        Date date;
         try {
             date = format.parse(datetime);
         } catch(ParseException e){
+            date = null;
         }
         return date;
 
     }
 
     private Creator createCreator(Person editor){
+        String entry;
         Creator creator = new Creator();
-        creator.setFamilyName(editor.getSurname());
-        creator.setGivenName(editor.getFirstname());
-        creator.setEmail(editor.getEMailAddress());
+
+        entry = ((editor.getSurname() == null) ? "" : editor.getSurname());
+        creator.setFamilyName(entry);
+
+        entry = ((editor.getFirstname() == null) ? "" : editor.getFirstname());
+        creator.setGivenName(entry);
+
+        entry = ((editor.getEMailAddress() == null) ? "" : editor.getEMailAddress());
+        creator.setEmail(entry);
+
         for (Affiliation a : editor.getAffiliation()){
             for (String s : a.getName()){
                 creator.setOrganisation(s);

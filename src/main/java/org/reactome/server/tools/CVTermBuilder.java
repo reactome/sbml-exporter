@@ -17,9 +17,11 @@ class CVTermBuilder extends AnnotationBuilder {
 
     void createModelAnnotations(Pathway path) {
         addResource("reactome", CVTerm.Qualifier.BQB_IS, path.getStId());
-        for (Publication pub : path.getLiteratureReference()) {
-            if (pub instanceof LiteratureReference) {
-                addResource("pubmed", CVTerm.Qualifier.BQB_IS_DESCRIBED_BY, ((LiteratureReference)(pub)).getPubMedIdentifier().toString());
+        if (path.getLiteratureReference() != null) {
+            for (Publication pub : path.getLiteratureReference()) {
+                if (pub instanceof LiteratureReference) {
+                    addResource("pubmed", CVTerm.Qualifier.BQB_IS_DESCRIBED_BY, ((LiteratureReference) (pub)).getPubMedIdentifier().toString());
+                }
             }
         }
         createCVTerms();
@@ -30,9 +32,11 @@ class CVTermBuilder extends AnnotationBuilder {
         if (event.getGoBiologicalProcess() != null) {
             addResource("go", CVTerm.Qualifier.BQB_IS, event.getGoBiologicalProcess().getAccession());
         }
-        for (Publication pub : event.getLiteratureReference()) {
-            if (pub instanceof LiteratureReference) {
-                addResource("pubmed", CVTerm.Qualifier.BQB_IS_DESCRIBED_BY, ((LiteratureReference)(pub)).getPubMedIdentifier().toString());
+        if (event.getLiteratureReference() != null) {
+            for (Publication pub : event.getLiteratureReference()) {
+                if (pub instanceof LiteratureReference) {
+                    addResource("pubmed", CVTerm.Qualifier.BQB_IS_DESCRIBED_BY, ((LiteratureReference) (pub)).getPubMedIdentifier().toString());
+                }
             }
         }
         createCVTerms();
