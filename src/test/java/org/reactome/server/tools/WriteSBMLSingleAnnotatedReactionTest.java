@@ -28,8 +28,42 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "<sbml xmlns=\"http://www.sbml.org/sbml/level3/version1/core\" level=\"3\" version=\"1\">%n" +
                 "  <model name=\"Entry of Influenza Virion into Host Cell via Endocytosis\" id=\"pathway_168275\" metaid=\"metaid_0\">%n" +
                 "    <annotation>%n" +
-                "      <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
-                "        <rdf:Description rdf:about=\"#metaid_0\">%n" +
+                "      <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:vCard=\"http://www.w3.org/2001/vcard-rdf/3.0#\"%n" +
+                "      xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
+                "        <rdf:Description rdf:about=\"#metaid_0\">%n" + 
+                "          <dc:creator>%n" +
+                "            <rdf:Bag>%n" +
+                "              <rdf:li rdf:parseType=\"Resource\">%n" +
+                "                <vCard:N rdf:parseType=\"Resource\">%n" +
+                "                  <vCard:Family>Gillespie</vCard:Family>%n" +
+                "                  <vCard:Given>Marc E</vCard:Given>%n" +
+                "                </vCard:N>%n" +
+                "                <vCard:EMAIL>gillespm@cshl.org</vCard:EMAIL>%n" +
+                "                <vCard:ORG rdf:parseType=\"Resource\">%n" +
+                "                  <vCard:Orgname>St. John's University</vCard:Orgname>%n" +
+                "                </vCard:ORG>%n" +
+                "              </rdf:li>%n" +
+                "              <rdf:li rdf:parseType=\"Resource\">%n" +
+                "                <vCard:N rdf:parseType=\"Resource\">%n" +
+                "                  <vCard:Family>Matthews</vCard:Family>%n" +
+                "                  <vCard:Given>Lisa</vCard:Given>%n" +
+                "                </vCard:N>%n" +
+                "                <vCard:EMAIL>lisa.matthews@cshl.edu</vCard:EMAIL>%n" +
+                "                <vCard:ORG rdf:parseType=\"Resource\">%n" +
+                "                  <vCard:Orgname>CSHL</vCard:Orgname>%n" +
+                "                </vCard:ORG>%n" +
+                "              </rdf:li>%n" +
+                "            </rdf:Bag>%n" +
+                "          </dc:creator>%n" +
+                "          <dcterms:created rdf:parseType=\"Resource\">%n" +
+                "            <dcterms:W3CDTF>2005-11-14T22:18:07Z</dcterms:W3CDTF>%n" +
+                "          </dcterms:created>%n" +
+                "          <dcterms:modified rdf:parseType=\"Resource\">%n" +
+                "            <dcterms:W3CDTF>2014-08-30T01:08:10Z</dcterms:W3CDTF>%n" +
+                "          </dcterms:modified>%n" +
+                "          <dcterms:modified rdf:parseType=\"Resource\">%n" +
+                "            <dcterms:W3CDTF>2016-01-26T00:13:56Z</dcterms:W3CDTF>%n" +
+                "          </dcterms:modified>%n" +
                 "          <bqbiol:is>%n" +
                 "            <rdf:Bag>%n" +
                 "              <rdf:li rdf:resource=\"http://identifiers.org/reactome/REACTOME:R-HSA-168275\" />%n" +
