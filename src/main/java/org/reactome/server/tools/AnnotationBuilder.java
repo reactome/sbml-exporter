@@ -3,13 +3,13 @@ package org.reactome.server.tools;
 import org.sbml.jsbml.CVTerm;
 import org.sbml.jsbml.History;
 import org.sbml.jsbml.SBase;
+import org.sbml.jsbml.xml.XMLNode;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
-import static sun.plugin.javascript.navig.JSType.History;
+import static org.sbml.jsbml.JSBML.getJSBMLDottedVersion;
 
 /**
  * @author Sarah Keating <skeating@ebi.ac.uk>
@@ -44,6 +44,29 @@ class AnnotationBuilder {
                 term.addResourceURI(res);
             }
             sbase.addCVTerm(term);
+        }
+    }
+
+    void addProvenanceAnnotation(Integer version){
+        Date date = new Date();
+        DateFormat dateFormat = new SimpleDateFormat();
+        String jsbml = "<annotation>" + "<p xmlns=\"http://www.w3.org/1999/xhtml\">" +
+                "SBML generated from Reactome ";
+        if (version != 0) {
+            jsbml += "version " + version + " ";
+        }
+        jsbml += "on " + dateFormat.format(date)  + " using JSBML version " +
+                    getJSBMLDottedVersion() + ". </p></annotation>";
+        XMLNode node;
+        try {
+            node = XMLNode.convertStringToXMLNode(jsbml);
+        }
+        catch(Exception e) {
+            node = null;
+        }
+
+        if (node != null) {
+            sbase.appendAnnotation(node);
         }
     }
 

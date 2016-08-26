@@ -252,6 +252,7 @@ public class WriteSBMLSingleAnnotatedReactionTest
             Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
             testWrite = new WriteSBML(pathway);
             testWrite.setAnnotationFlag(true);
+            testWrite.setInTestModeFlag(true);
         }
         /**
          * test the document is created

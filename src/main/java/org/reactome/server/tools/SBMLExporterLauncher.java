@@ -56,7 +56,7 @@ public class SBMLExporterLauncher {
 
         switch (option) {
             case 1:
-                outputFile(dbid, databaseObjectService);
+                outputFile(dbid, databaseObjectService, genericService.getDBVersion());
                 break;
             case 2:
                 lookupPaths(databaseObjectService);
@@ -90,9 +90,10 @@ public class SBMLExporterLauncher {
 
     }
 
-    static void outputFile(long dbid, DatabaseObjectService databaseObjectService){
+    static void outputFile(long dbid, DatabaseObjectService databaseObjectService, Integer dbVersion){
         Event pathway = (Event) databaseObjectService.findById(dbid);
         @SuppressWarnings("ConstantConditions") WriteSBML sbml = new WriteSBML((Pathway)(pathway));
+        sbml.setDBVersion(dbVersion);
         sbml.createModel();
         sbml.toStdOut();
         sbml.toFile("out.xml");

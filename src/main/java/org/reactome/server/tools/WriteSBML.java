@@ -31,7 +31,10 @@ class WriteSBML {
     private final List <String> loggedSpecies;
     private final List <String> loggedCompartments;
 
+    private static Integer dbVersion = 0;
+
     private Boolean addAnnotations = true;
+    private Boolean inTestMode = false;
 
     /**
      * Construct an instance of the SBMLWriter for the specified
@@ -60,14 +63,26 @@ class WriteSBML {
             addAllReactions(thisPathway);
 
             if (addAnnotations){
+                if (!inTestMode) {
+                    AnnotationBuilder annot = new AnnotationBuilder(sbmlDocument);
+                    annot.addProvenanceAnnotation(dbVersion);
+                }
                 CVTermBuilder cvterms = new CVTermBuilder(model);
                 cvterms.createModelAnnotations(thisPathway);
                 ModelHistoryBuilder history = new ModelHistoryBuilder(model);
                 history.createHistory(thisPathway);
-            }
+             }
         }
     }
 
+    /**
+     * Set the database version number.
+     *
+     * @param version  Integer the ReactomeDB version number being used.
+     */
+    public void setDBVersion(Integer version) {
+        dbVersion = version;
+    }
     ///////////////////////////////////////////////////////////////////////////////////
 
     // functions to output resulting document
@@ -143,6 +158,16 @@ class WriteSBML {
      */
     void setAnnotationFlag(Boolean flag){
         addAnnotations = flag;
+    }
+
+    /**
+     * Set the inTestMode flag.
+     * This allows testing with/without certain things
+     *
+     * @param flag  Boolean indicating whether tests are running
+     */
+    void setInTestModeFlag(Boolean flag){
+        inTestMode = flag;
     }
 
     //////////////////////////////////////////////////////////////////////////////////
