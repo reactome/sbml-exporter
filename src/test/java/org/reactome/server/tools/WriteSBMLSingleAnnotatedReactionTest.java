@@ -59,6 +59,9 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "            <dcterms:W3CDTF>2005-11-14T22:18:07Z</dcterms:W3CDTF>%n" +
                 "          </dcterms:created>%n" +
                 "          <dcterms:modified rdf:parseType=\"Resource\">%n" +
+                "            <dcterms:W3CDTF>2007-04-17T02:35:07Z</dcterms:W3CDTF>%n" +
+                "          </dcterms:modified>%n" +
+                "          <dcterms:modified rdf:parseType=\"Resource\">%n" +
                 "            <dcterms:W3CDTF>2014-08-30T01:08:10Z</dcterms:W3CDTF>%n" +
                 "          </dcterms:modified>%n" +
                 "          <dcterms:modified rdf:parseType=\"Resource\">%n" +

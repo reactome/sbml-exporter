@@ -22,12 +22,22 @@ class AnnotationBuilder {
         this.sbase = sbase;
     }
 
-    protected void addResource(String dbname, CVTerm.Qualifier qualifier, String accessionNo){
+    /**
+     *  creates the appropriate url from arguments and adds it to the map of qualifiers
+     *
+     *  @param dbname      String name of the database being used
+     *  @param qualifier   The MIRIAM qualifier for the reference
+     *  @param accessionNo the  number used by the database
+     */
+    void addResource(String dbname, CVTerm.Qualifier qualifier, String accessionNo){
         String resource = getSpecificTerm(dbname, accessionNo);
         addResources(qualifier, resource);
     }
 
-    protected void createCVTerms(){
+    /**
+     * creates the CVTerms from the map of qualifiers and adds them to the SBase object
+     */
+    void createCVTerms(){
         for (CVTerm.Qualifier qualifier : resources.keySet()){
             CVTerm term = new CVTerm(qualifier);
             for (String res : resources.get(qualifier)){
@@ -37,10 +47,23 @@ class AnnotationBuilder {
         }
     }
 
-    protected void addModelHistory(History history ){
+    /**
+     * Adds the given History object to the model
+     *
+     * @param history  SBML History object to add to model.
+     */
+    void addModelHistory(History history ){
         sbase.setHistory(history);
     }
 
+    /**
+     * Creates the appropriate URL String for the database. This will use
+     * identifiers.org
+     *
+     * @param dbname       String name of the database being used
+     * @param accessionNo  the  number used by the database
+     * @return             String representation of the appropriate URL
+     */
     private String getSpecificTerm(String dbname, String accessionNo){
         String lowerDB = dbname.toLowerCase();
         Boolean shortVersion = false;
@@ -59,6 +82,12 @@ class AnnotationBuilder {
         return resource;
     }
 
+    /**
+     * Adds the resource to the qualifier entry in the map
+     *
+     * @param qualifier  The MIRIAM qualifier for the reference
+     * @param resource   The appropriate identifiers.org URL
+     */
     private void addResources(CVTerm.Qualifier qualifier, String resource) {
         List<String> l = resources.get(qualifier);
         if (l == null){

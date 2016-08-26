@@ -34,7 +34,10 @@ class WriteSBML {
     private Boolean addAnnotations = true;
 
     /**
-     *  construct a version of the writer from the given pathway
+     * Construct an instance of the SBMLWriter for the specified
+     * Pathway.
+     *
+     * @param pathway  Pathway from ReactomeDB
      */
     public WriteSBML(Pathway pathway){
         thisPathway = pathway;
@@ -45,18 +48,8 @@ class WriteSBML {
         metaid_count= 0;
     }
 
-
-
     /**
-     * retrieve SBMLDocument
-     * @return SBMLDocument
-     */
-    public SBMLDocument getSBMLDocument(){
-        return sbmlDocument;
-    }
-
-    /**
-     * create the model
+     * Create the SBML model using the Reactome Pathway specified in the constructor.
      */
     public void createModel(){
         if (thisPathway != null) {
@@ -75,11 +68,80 @@ class WriteSBML {
         }
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////
+
+    // functions to output resulting document
+
     /**
-     * set the addAnnotation flag
-     * this allows testing with and without annotations
+     * Write the SBMLDocument to std output.
      */
-    public void setAnnotationFlag(Boolean flag){
+    public void toStdOut()    {
+        SBMLWriter sbmlWriter = new TidySBMLWriter();
+        String output;
+        try {
+            output = sbmlWriter.writeSBMLToString(sbmlDocument);
+        }
+        catch (Exception e)
+        {
+            output = "failed to write";
+        }
+        System.out.println(output);
+    }
+
+    /**
+     * Write the SBMLDocument to a file.
+     *
+     * @param filename  String representing the filename to use.
+     */
+    public void toFile(@SuppressWarnings("SameParameterValue") String filename)    {
+        SBMLWriter sbmlWriter = new TidySBMLWriter();
+        try {
+            sbmlWriter.writeSBMLToFile(sbmlDocument, filename);
+        }
+        catch (Exception e)
+        {
+            System.out.println("failed to write " + filename);
+        }
+    }
+
+    /**
+     * Write the SBMLDocument to a String.
+     *
+     * @return  String representing the SBMLDocument.
+     */
+    public String toString()    {
+        SBMLWriter sbmlWriter = new TidySBMLWriter();
+        String output;
+        try {
+            output = sbmlWriter.writeSBMLToString(sbmlDocument);
+        }
+        catch (Exception e)
+        {
+            output = "failed to write";
+        }
+        return output;
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////
+
+    // functions to facilitate testing
+
+    /**
+     * Retrieve the SBMLDocument object.
+     *
+     * @return SBMLDocument
+     */
+    SBMLDocument getSBMLDocument(){
+        return sbmlDocument;
+    }
+
+    /**
+     * Set the addAnnotation flag.
+     * This allows testing with and without annotations
+     *
+     * @param flag  Boolean indicating whether to write out annotations
+     */
+    void setAnnotationFlag(Boolean flag){
         addAnnotations = flag;
     }
 
@@ -88,7 +150,10 @@ class WriteSBML {
     // Private functions
 
     /**
-     * add Reaction
+     * Add SBML Reactions from the given Pathway. This will rescurse
+     * through child Events that represent Pathways.
+     *
+     * @param pathway  Pathway from ReactomeDB
      */
     private void addAllReactions(Pathway pathway){
         if (pathway.getHasEvent() != null) {
@@ -103,13 +168,25 @@ class WriteSBML {
 
     }
 
+    /**
+     * Overloaded addReaction function to cast an Event to a Reaction.
+     *
+     * @param event  Event from ReactomeDB
+     */
     private void addReaction(org.reactome.server.graph.domain.model.Event event){
         if (event instanceof org.reactome.server.graph.domain.model.Reaction) {
             addReaction((org.reactome.server.graph.domain.model.Reaction ) (event));
         }
     }
 
+    /**
+     * Adds the given Reactome Reaction to the SBML model as an SBML Reaction.
+     * This in turn adds SBML species and SBML compartments.
+     *
+     * @param event  Reaction from ReactomeDB
+     */
     private void addReaction(org.reactome.server.graph.domain.model.Reaction event){
+        // TODO is Reaction teh right class
         Model model = sbmlDocument.getModel();
 
         Reaction rn = model.createReaction("reaction_" + event.getDbId());
@@ -130,7 +207,14 @@ class WriteSBML {
     }
 
     /**
-     * add Participant in the reaction
+     * Adds the participants in a Reaction to the SBML Reaction as speciesReferences
+     * and adds the associated SBML Species where necessary.
+     *
+     * @param type      String representing "reactant" or "product"
+     * @param rn        SBML Reaction to add to
+     * @param pe        PhysicalEntity from ReactomeDB - the participant being added
+     * @param event_no  Long number respresenting the ReactomeDB id of the Reactome Event being processed.
+     *                  (This is used in the speciesreference id.)
      */
     private void addParticipant(String type, Reaction rn, PhysicalEntity pe, Long event_no) {
 
@@ -149,13 +233,18 @@ class WriteSBML {
 
     }
 
+
     /**
-     * addSpecies
+     * Adds an SBML species to the model.
+     *
+     * @param pe    PhysicalEntity from ReactomeDB
+     * @param id    String representing the id to use for the SBML species.
+     *              (This was already created so may as well just pass as argument.)
      */
     private void addSpecies(PhysicalEntity pe, String id){
         Model model = sbmlDocument.getModel();
 
-        //TO DO: what if there is more than one compartment listed
+        // TODO: what if there is more than one compartment listed
         // what if there is none
         org.reactome.server.graph.domain.model.Compartment comp = pe.getCompartment().get(0);
         String comp_id = "compartment_" + comp.getDbId();
@@ -182,7 +271,11 @@ class WriteSBML {
     }
 
     /**
-     * addSpecies
+     * Add an SBML compartment to the model.
+     *
+     * @param comp  Compartment from ReactomeDB
+     * @param id    String representing the id to use for the SBML compartment.
+     *              (This was already created so may as well just pass as argument.)
      */
     private void addCompartment(org.reactome.server.graph.domain.model.Compartment comp, String id){
          Model model = sbmlDocument.getModel();
@@ -200,54 +293,15 @@ class WriteSBML {
 
             loggedCompartments.add(id);
         }
-
-
     }
 
     /**
-     * function to set metaid and increase count
+     * Set the metaid of the object and increase the count to ensure uniqueness.
+     *
+     * @param object    SBML SBase object
      */
     private void setMetaid(SBase object){
         object.setMetaId("metaid_" + metaid_count);
         metaid_count++;
-    }
-    /**
-     * function to let me see whats going on
-     */
-    public void toStdOut()    {
-        SBMLWriter sbmlWriter = new TidySBMLWriter();
-        String output;
-        try {
-            output = sbmlWriter.writeSBMLToString(sbmlDocument);
-        }
-        catch (Exception e)
-        {
-            output = "failed to write";
-        }
-        System.out.println(output);
-    }
-
-    public void toFile(@SuppressWarnings("SameParameterValue") String filename)    {
-        SBMLWriter sbmlWriter = new TidySBMLWriter();
-        try {
-            sbmlWriter.writeSBMLToFile(sbmlDocument, filename);
-        }
-        catch (Exception e)
-        {
-            System.out.println("failed to write " + filename);
-        }
-    }
-
-    public String toString()    {
-        SBMLWriter sbmlWriter = new TidySBMLWriter();
-        String output;
-        try {
-            output = sbmlWriter.writeSBMLToString(sbmlDocument);
-        }
-        catch (Exception e)
-        {
-            output = "failed to write";
-        }
-        return output;
     }
 }

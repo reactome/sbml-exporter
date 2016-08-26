@@ -27,6 +27,12 @@ class ModelHistoryBuilder extends AnnotationBuilder {
 
     }
 
+    /**
+     * Creates an SBML History object from the pathway. It recurses through
+     * all Events contained in the Pathway.
+     *
+     * @param path   Pathway from ReactomeDB
+     */
     void createHistory(Pathway path){
         createHistoryFromEvent(path);
         for (Event e: path.getHasEvent()) {
@@ -41,8 +47,13 @@ class ModelHistoryBuilder extends AnnotationBuilder {
         addModelHistory(thisHistory);
     }
 
-
-     private void createHistoryFromEvent(Event path){
+    /**
+     * Gathers information from a particular Event regarding contributors
+     * and dates.
+     *
+     * @param path  Event from ReactomeDB
+     */
+    private void createHistoryFromEvent(Event path){
         addCreatedInformation(path.getCreated());
         addInformation(path.getModified());
         if (path.getAuthored() != null) {
@@ -67,17 +78,18 @@ class ModelHistoryBuilder extends AnnotationBuilder {
         }
     }
 
+    /**
+     * Adds information regarding the creator of a model.
+     * This differs from addInformation in that it uses teh dates to establish the earliest
+     * created date.
+     *
+     * @param edit  InstanceEdit from ReactomeDB
+     */
     private void addCreatedInformation(InstanceEdit edit) {
-        if (edit == null || edit.getAuthor() == null) {
+        if (edit == null) {
             return;
         }
-        for (Person p : edit.getAuthor()){
-            if (!authors.containsKey(p.getSurname())) {
-                thisHistory.addCreator(createCreator(p));
-                authors.put(p.getSurname(), p);
-            }
-        }
-
+        addCreators(edit.getAuthor());
         Date thisdate = formatDate(edit.getDateTime());
         if (earliestCreatedDate == null) {
             earliestCreatedDate = thisdate;
@@ -96,22 +108,48 @@ class ModelHistoryBuilder extends AnnotationBuilder {
 
     }
 
+    /**
+     * Adds information about any modifications to the model. It adds additional
+     * creators and lists the dates modified.
+     *
+     * @param edit  InstanceEdit from ReactomeDB
+     */
     private void addInformation(InstanceEdit edit) {
         if (edit == null) {
             return;
         }
-        for (Person p : edit.getAuthor()){
-            if (!authors.containsKey(p.getSurname())) {
-                thisHistory.addCreator(createCreator(p));
-                authors.put(p.getSurname(), p);
-            }
-        }
+        addCreators(edit.getAuthor());
         Date thisdate = formatDate(edit.getDateTime());
         if (!modified.contains(thisdate)) {
             modified.add(thisdate);
         }
     }
 
+    /**
+     * Adds any person listed to the creators of the model ensuring
+     * no repetitions.
+     *
+     * @param editors  List<Person> from the InstanceEdit (from ReactomeDB)
+     */
+    private void addCreators(List<Person> editors){
+        if (editors != null && editors.size() > 0) {
+            for (Person p : editors) {
+                if (!authors.containsKey(p.getSurname())) {
+                    thisHistory.addCreator(createCreator(p));
+                    authors.put(p.getSurname(), p);
+                }
+            }
+        }
+    }
+
+    /**
+     * Creates a Date object from the string stored in ReactomeDB.
+     *
+     * @param datetime  String the date times as stored in ReactomeDB
+     *
+     * @return          Date object created from the String or null if this
+     *                  cannot be parsed.
+     */
     private Date formatDate(String datetime){
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH);
         Date date;
@@ -124,6 +162,13 @@ class ModelHistoryBuilder extends AnnotationBuilder {
 
     }
 
+    /**
+     * Creates an SBML Creator object from the information from ReactomeDB.
+     *
+     * @param editor    Person from ReactomeDB
+     *
+     * @return          Creator object for JSBML
+     */
     private Creator createCreator(Person editor){
         String entry;
         Creator creator = new Creator();
