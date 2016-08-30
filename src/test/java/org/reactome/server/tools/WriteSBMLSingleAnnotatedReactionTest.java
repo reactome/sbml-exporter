@@ -128,6 +128,10 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "    <listOfSpecies>%n" +
                 "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_2\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_876\"%n" +
                 "      name=\"Sialic Acid Bound Influenza A Viral Particle [plasma membrane]\" id=\"species_188954\">%n" +
+                "        <notes>%n" +
+                "          <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a Reactome Complex. Reactome uses a nested structure for complexes, which cannot be fully represented in SBML Level 3 Version 1%n" +
+                "          core.</p>%n" +
+                "        </notes>%n" +
                 "        <annotation>%n" +
                 "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
                 "            <rdf:Description rdf:about=\"#metaid_2\">%n" +
@@ -166,6 +170,10 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_4\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_171907\"" +
                 " name=\"Influenza A Viral Particle [endosome lumen]\"%n" +
                 "      id=\"species_189171\">%n" +
+                "        <notes>%n" +
+                "          <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a Reactome Complex. Reactome uses a nested structure for complexes, which cannot be fully represented in SBML Level 3 Version 1%n" +
+                "          core.</p>%n" +
+                "        </notes>%n" +
                 "        <annotation>%n" +
                 "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
                 "            <rdf:Description rdf:about=\"#metaid_4\">%n" +
@@ -202,6 +210,9 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "      </species>%n" +
                 "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_6\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_24337\"" +
                 " name=\"SA [endocytic vesicle membrane]\" id=\"species_189161\">%n" +
+                "        <notes>%n" +
+                "          <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a Reactome SimpleEntity. This is a small compound.</p>%n" +
+                "        </notes>%n" +
                 "        <annotation>%n" +
                 "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
                 "            <rdf:Description rdf:about=\"#metaid_6\">%n" +

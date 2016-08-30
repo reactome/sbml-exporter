@@ -296,6 +296,9 @@ class WriteSBML {
             if (addAnnotations){
                 CVTermBuilder cvterms = new CVTermBuilder(s);
                 cvterms.createSpeciesAnnotations(pe);
+                NotesBuilder notes = new NotesBuilder(s);
+                notes.createSpeciesNotes(pe);
+                notes.addNotes();
             }
 
             loggedSpecies.add(id);
