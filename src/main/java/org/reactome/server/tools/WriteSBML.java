@@ -202,8 +202,8 @@ class WriteSBML {
      * @param event  Event from ReactomeDB
      */
     private void addReaction(org.reactome.server.graph.domain.model.Event event){
-        if (event instanceof org.reactome.server.graph.domain.model.Reaction) {
-            addReaction((org.reactome.server.graph.domain.model.Reaction ) (event));
+        if (event instanceof org.reactome.server.graph.domain.model.ReactionLikeEvent) {
+            addReaction((org.reactome.server.graph.domain.model.ReactionLikeEvent ) (event));
         }
     }
 
@@ -213,8 +213,7 @@ class WriteSBML {
      *
      * @param event  Reaction from ReactomeDB
      */
-    private void addReaction(org.reactome.server.graph.domain.model.Reaction event){
-        // TODO is Reaction teh right class
+    private void addReaction(org.reactome.server.graph.domain.model.ReactionLikeEvent event){
         Model model = sbmlDocument.getModel();
 
         Reaction rn = model.createReaction("reaction_" + event.getDbId());
@@ -222,11 +221,15 @@ class WriteSBML {
         rn.setFast(false);
         rn.setReversible(false);
         rn.setName(event.getDisplayName());
-        for (PhysicalEntity pe: event.getInput()){
-            addParticipant("reactant", rn, pe, event.getDbId());
+        if (event.getInput() != null) {
+            for (PhysicalEntity pe : event.getInput()) {
+                addParticipant("reactant", rn, pe, event.getDbId());
+            }
         }
-        for (PhysicalEntity pe: event.getOutput()){
-            addParticipant("product", rn, pe, event.getDbId());
+        if (event.getOutput() != null) {
+            for (PhysicalEntity pe : event.getOutput()) {
+                addParticipant("product", rn, pe, event.getDbId());
+            }
         }
         if (event.getCatalystActivity() != null) {
             for (CatalystActivity cat : event.getCatalystActivity()) {

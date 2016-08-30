@@ -1,14 +1,11 @@
 package org.reactome.server.tools;
 
 import com.martiansoftware.jsap.JSAPException;
-import org.junit.*;
-import org.reactome.server.graph.domain.model.*;
+import org.junit.BeforeClass;
+import org.reactome.server.graph.domain.model.Pathway;
 import org.reactome.server.graph.service.DatabaseObjectService;
 import org.reactome.server.graph.utils.ReactomeGraphCore;
 import org.sbml.jsbml.*;
-import org.sbml.jsbml.Reaction;
-import org.sbml.jsbml.Species;
-
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -16,7 +13,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Sarah Keating <skeating@ebi.ac.uk>
  */
-public class WriteSBMLCatalystTest {
+public class WriteSBMLFailedReaction {
     private static WriteSBML testWrite;
 
     private final String empty_doc = String.format("<?xml version='1.0' encoding='utf-8' standalone='no'?>%n" +
@@ -26,7 +23,7 @@ public class WriteSBMLCatalystTest {
     @BeforeClass
     public static void setup()  throws JSAPException {
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-        long dbid = 2978092L; // pathway with a catalysis
+        long dbid = 5619071L; // failed reaction
         Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
 
         testWrite = new WriteSBML(pathway);
@@ -65,35 +62,19 @@ public class WriteSBMLCatalystTest {
         Model model = doc.getModel();
         assertTrue("Model failed", model != null);
 
-        assertEquals("Num compartments failed", model.getNumCompartments(), 1);
-        assertEquals("Num species failed", model.getNumSpecies(), 6);
+        assertEquals("Num compartments failed", model.getNumCompartments(), 2);
+        assertEquals("Num species failed", model.getNumSpecies(), 2);
         assertEquals("Num reactions failed", model.getNumReactions(), 1);
 
         Reaction reaction = model.getReaction(0);
 
-        assertEquals("Num reactants failed", reaction.getNumReactants(), 3);
-        assertEquals("Num products failed", reaction.getNumProducts(), 2);
-        assertEquals("Num modifiers failed", reaction.getNumModifiers(), 1);
+        assertEquals("Num reactants failed", reaction.getNumReactants(), 2);
+        assertEquals("Num products failed", reaction.getNumProducts(), 0);
+        assertEquals("Num modifiers failed", reaction.getNumModifiers(), 0);
 
-        // test things that mismatched with my first attempt
-
-        Species species = model.getSpecies(0);
-        assertEquals("num cvterms on species", species.getNumCVTerms(), 1);
-
-        CVTerm cvTerm = species.getCVTerm(0);
-        assertEquals("num resources on species cvterm", cvTerm.getNumResources(), 3);
-
-        species = model.getSpecies("species_880004");
-        assertTrue("species_880004", species!= null);
-        assertEquals("num cvterms on species 880004", species.getNumCVTerms(), 2);
-
-        cvTerm = reaction.getCVTerm(0);
-        // TODO sort this out
-        //assertEquals("num resources on reaction cvterm", cvTerm.getNumResources(), 2);
-
-        ModifierSpeciesReference msr = reaction.getModifier(0);
-        assertEquals("id of modifier", msr.getId(), "modifierspeciesreference_880053_catalyst_880004");
+        assertTrue("model notes failed", model.isSetNotes());
 
     }
+
 
 }
