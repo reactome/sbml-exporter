@@ -45,8 +45,8 @@ public class SBMLExporterLauncher {
 //        long dbid = 168275L; // pathway with a single child reaction
 //        long dbid = 168255L; // influenza life cycle - which is where my pathway 168275 comes from
 //        long dbid = 2978092L; // pathway with a catalysis
-        long dbid = 5619071L; // failed reaction
-//        long dbid = 69205L; // black box event
+//        long dbid = 5619071L; // failed reaction
+        long dbid = 69205L; // black box event
 //        long dbid = 392023L; // reaction
 
 //        long dbid = 453279L;// path with black box
@@ -61,11 +61,14 @@ public class SBMLExporterLauncher {
             case 2:
                 lookupPaths(databaseObjectService);
                 break;
+            case 3:
+                outputFileNoAnnot(dbid, databaseObjectService, genericService.getDBVersion());
+                break;
 
         }
     }
 
-    static void lookupPaths(DatabaseObjectService databaseObjectService){
+    private static void lookupPaths(DatabaseObjectService databaseObjectService){
         Species homoSapiens = (Species) databaseObjectService.findByIdNoRelations(48887L);
         SchemaService schemaService = ReactomeGraphCore.getService(SchemaService.class);
         int count = 0;
@@ -90,10 +93,21 @@ public class SBMLExporterLauncher {
 
     }
 
-    static void outputFile(long dbid, DatabaseObjectService databaseObjectService, Integer dbVersion){
+    private static void outputFile(long dbid, DatabaseObjectService databaseObjectService, Integer dbVersion){
         Event pathway = (Event) databaseObjectService.findById(dbid);
         @SuppressWarnings("ConstantConditions") WriteSBML sbml = new WriteSBML((Pathway)(pathway));
         sbml.setDBVersion(dbVersion);
+        sbml.createModel();
+        sbml.toStdOut();
+        sbml.toFile("out.xml");
+
+    }
+
+    private static void outputFileNoAnnot(long dbid, DatabaseObjectService databaseObjectService, Integer dbVersion){
+        Event pathway = (Event) databaseObjectService.findById(dbid);
+        @SuppressWarnings("ConstantConditions") WriteSBML sbml = new WriteSBML((Pathway)(pathway));
+        sbml.setDBVersion(dbVersion);
+        sbml.setAnnotationFlag(false);
         sbml.createModel();
         sbml.toStdOut();
         sbml.toFile("out.xml");

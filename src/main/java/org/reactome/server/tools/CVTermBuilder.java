@@ -44,7 +44,6 @@ class CVTermBuilder extends AnnotationBuilder {
      * @param event   Event instance from ReactomeDB
      */
     void createReactionAnnotations(org.reactome.server.graph.domain.model.ReactionLikeEvent event) {
-//        TODO is this type appropriate
         addResource("reactome", CVTerm.Qualifier.BQB_IS, event.getStId());
         if (event.getGoBiologicalProcess() != null) {
             addResource("go", CVTerm.Qualifier.BQB_IS, event.getGoBiologicalProcess().getAccession());
@@ -108,7 +107,10 @@ class CVTermBuilder extends AnnotationBuilder {
             }
         }
         else if (pe instanceof CandidateSet){
-            for (PhysicalEntity cand : ((CandidateSet)(pe)).getHasCandidate()){
+//            for (PhysicalEntity cand : ((CandidateSet)(pe)).getHasCandidate()){
+//                createPhysicalEntityAnnotations(cand, CVTerm.Qualifier.BQB_HAS_PART);
+//            }
+            for (PhysicalEntity cand : ((CandidateSet)(pe)).getHasMember()){
                 createPhysicalEntityAnnotations(cand, CVTerm.Qualifier.BQB_HAS_PART);
             }
         }

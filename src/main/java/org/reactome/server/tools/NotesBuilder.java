@@ -33,6 +33,8 @@ public class NotesBuilder {
             node = XMLNode.convertStringToXMLNode(notes);
         }
         catch(Exception e) {
+            System.out.println(e.getMessage());
+            System.out.println(notes);
             node = null;
         }
 
@@ -105,7 +107,7 @@ public class NotesBuilder {
         }
         else {
             if (!(pe instanceof OtherEntity)) {
-                // TODO
+                // TODO deal with other entity
                 appendDerivedFromStatement("deal with this");
             }
         }
@@ -144,8 +146,9 @@ public class NotesBuilder {
      */
     private String removeTags(String notes) {
         // if we have an xhtml tags in the text it messes up parsing
-        notes = notes.replaceAll("(<.?>)", " ");
-        notes = notes.replaceAll("</.?>", " ");
+        notes = notes.replaceAll("(<..?>)", " ");
+        notes = notes.replaceAll("</..?>", " ");
+        notes = notes.replaceAll("&", "and");
         return notes;
     }
 
