@@ -71,14 +71,8 @@ class WriteSBML {
                 cvterms.createModelAnnotations(thisPathway);
                 ModelHistoryBuilder history = new ModelHistoryBuilder(model);
                 history.createHistory(thisPathway);
-
-                if (thisPathway.getSummation() != null) {
-                    NotesBuilder notes = new NotesBuilder(model);
-                    for (Summation s : thisPathway.getSummation()) {
-                        notes.appendNotes(s.getText());
-                    }
-                    notes.addNotes();
-                }
+                NotesBuilder notes = new NotesBuilder(model);
+                notes.addPathwayNotes(thisPathway.getSummation());
             }
 
         }
@@ -237,6 +231,8 @@ class WriteSBML {
         if (addAnnotations){
             CVTermBuilder cvterms = new CVTermBuilder(rn);
             cvterms.createReactionAnnotations(event);
+            NotesBuilder notes = new NotesBuilder(rn);
+            notes.addPathwayNotes(event.getSummation());
         }
     }
 

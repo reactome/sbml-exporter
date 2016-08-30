@@ -229,6 +229,10 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "    </listOfSpecies>%n" +
                 "    <listOfReactions>%n" +
                 "      <reaction name=\"Clathrin-Mediated Pit Formation And Endocytosis Of The Influenza Virion\" fast=\"false\" id=\"reaction_168285\" metaid=\"metaid_1\" reversible=\"false\">%n" +
+                "        <notes>%n" +
+                "          <p xmlns=\"http://www.w3.org/1999/xhtml\">Virus particles bound to the cell surface can be internalized by four mechanisms. Most internalization appears to be mediated by clathrin-coated%n" +
+                "          pits.</p>%n" +
+                "        </notes>%n" +
                 "        <annotation>%n" +
                 "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
                 "            <rdf:Description rdf:about=\"#metaid_1\">%n" +

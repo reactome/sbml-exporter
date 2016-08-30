@@ -4,6 +4,9 @@ import org.reactome.server.graph.domain.model.*;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.xml.XMLNode;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author Sarah Keating <skeating@ebi.ac.uk>
  */
@@ -43,7 +46,7 @@ public class NotesBuilder {
      *
      * @param notes     String to append
      */
-    void appendNotes(String notes) {
+    private void appendNotes(String notes) {
         notes = removeTags(notes);
         if (contents.length() == 0) {
             contents += notes;
@@ -54,6 +57,26 @@ public class NotesBuilder {
         }
     }
 
+    /**
+     * Add notes about the pathway from the given summation
+     *
+     * @param summations    List of Reactome Summation
+     */
+    void addPathwayNotes(List<Summation> summations){
+        if (summations != null) {
+            for (Summation s : summations) {
+                appendNotes(s.getText());
+            }
+            addNotes();
+        }
+
+    }
+
+    /**
+     * create notes for a PhysicalEntity (SBML species)
+     *
+     * @param pe    PhysicalEntity
+     */
     void createSpeciesNotes(PhysicalEntity pe){
         // TODO make sure all physicalentity types are covered
         if (pe instanceof SimpleEntity){
@@ -85,9 +108,16 @@ public class NotesBuilder {
 
     }
 
+    /**
+     * create string describing the complex structure within Reactome
+     *
+     * @param complex   Reactome Complex to describe
+     *
+     * @return          String representing the complex structure
+     */
     private String extractComplexStructure(Complex complex){
         String structure = "";
-
+        // TODO create complex srtructure
         return structure;
     }
 
