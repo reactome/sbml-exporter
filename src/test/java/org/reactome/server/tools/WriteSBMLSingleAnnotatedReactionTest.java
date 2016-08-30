@@ -143,7 +143,6 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "              <bqbiol:hasPart>%n" +
                 "                <rdf:Bag>%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03452\" />%n" +
-                "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03452\" />%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03468\" />%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P06821\" />%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03485\" />%n" +
@@ -184,7 +183,6 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "              </bqbiol:is>%n" +
                 "              <bqbiol:hasPart>%n" +
                 "                <rdf:Bag>%n" +
-                "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03452\" />%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03452\" />%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P03468\" />%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/uniprot/P06821\" />%n" +

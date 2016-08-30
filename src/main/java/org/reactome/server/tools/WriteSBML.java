@@ -228,6 +228,11 @@ class WriteSBML {
         for (PhysicalEntity pe: event.getOutput()){
             addParticipant("product", rn, pe, event.getDbId());
         }
+        if (event.getCatalystActivity() != null) {
+            for (CatalystActivity cat : event.getCatalystActivity()) {
+                addParticipant("modifier", rn, cat.getPhysicalEntity(), event.getDbId());
+            }
+        }
         if (addAnnotations){
             CVTermBuilder cvterms = new CVTermBuilder(rn);
             cvterms.createReactionAnnotations(event);
@@ -259,6 +264,10 @@ class WriteSBML {
             String sr_id = "speciesreference_" + event_no + "_output_" + pe.getDbId();
             SpeciesReference sr = rn.createProduct(sr_id, speciesId);
             sr.setConstant(true);
+        }
+        else if (type.equals("modifier")){
+            String sr_id = "modifierspeciesreference_" + event_no + "_catalyst_" + pe.getDbId();
+            ModifierSpeciesReference sr = rn.createModifier(sr_id, speciesId);
         }
 
     }

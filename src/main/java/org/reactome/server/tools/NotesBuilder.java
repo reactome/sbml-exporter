@@ -99,6 +99,10 @@ public class NotesBuilder {
                 appendNotes("deal with complex");
             }
         }
+        else if (pe instanceof CandidateSet){
+            appendDerivedFromStatement("CandidiateSet");
+            appendNotes("A list of entities, one or more of which might perform the given function.");
+        }
         else {
             if (!(pe instanceof OtherEntity)) {
                 // TODO

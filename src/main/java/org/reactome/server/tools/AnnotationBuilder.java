@@ -116,7 +116,9 @@ class AnnotationBuilder {
         if (l == null){
             resources.put(qualifier, l = new ArrayList<String>());
         }
-        l.add(resource);
+        if (!l.contains(resource)) {
+            l.add(resource);
+        }
     }
 
 }

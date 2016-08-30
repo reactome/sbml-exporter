@@ -3,6 +3,9 @@ package org.reactome.server.tools;
 import org.reactome.server.graph.domain.model.*;
 import org.sbml.jsbml.CVTerm;
 import org.sbml.jsbml.SBase;
+import org.reactome.server.graph.domain.model.CandidateSet;
+
+import java.util.List;
 
 /**
  * @author Sarah Keating <skeating@ebi.ac.uk>
@@ -88,7 +91,12 @@ class CVTermBuilder extends AnnotationBuilder {
     private void createPhysicalEntityAnnotations(PhysicalEntity pe, CVTerm.Qualifier qualifier){
         // TODO make sure all physicalentity types are covered
         if (pe instanceof SimpleEntity){
-            addResource("chebi", qualifier, ((SimpleEntity)(pe)).getReferenceEntity().getIdentifier());
+            SimpleEntity se = (SimpleEntity)(pe);
+            addResource("chebi", qualifier, (se.getReferenceEntity().getIdentifier()));
+            String ref = getKeggReference(se.getCrossReference());
+            if (ref.length() > 0){
+                addResource("kegg", qualifier, ref);
+            }
         }
         else if (pe instanceof EntityWithAccessionedSequence){
             ReferenceEntity ref = ((EntityWithAccessionedSequence)(pe)).getReferenceEntity();
@@ -99,10 +107,26 @@ class CVTermBuilder extends AnnotationBuilder {
                 createPhysicalEntityAnnotations(component, CVTerm.Qualifier.BQB_HAS_PART);
             }
         }
+        else if (pe instanceof CandidateSet){
+            for (PhysicalEntity cand : ((CandidateSet)(pe)).getHasCandidate()){
+                createPhysicalEntityAnnotations(cand, CVTerm.Qualifier.BQB_HAS_PART);
+            }
+        }
         else {
             if (!(pe instanceof OtherEntity)) {
                 addResource("TODO", qualifier, "class not dealt with");
             }
         }
+    }
+
+    private String getKeggReference(List<DatabaseIdentifier> references){
+        if (references != null) {
+            for (DatabaseIdentifier ref : references) {
+                if (ref.getDatabaseName().equals("COMPOUND")) {
+                    return ref.getIdentifier();
+                }
+            }
+        }
+        return "";
     }
 }
