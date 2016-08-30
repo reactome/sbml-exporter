@@ -27,6 +27,10 @@ public class WriteSBMLSingleAnnotatedReactionTest
         private String model_out = String.format("<?xml version='1.0' encoding='utf-8' standalone='no'?>%n" +
                 "<sbml xmlns=\"http://www.sbml.org/sbml/level3/version1/core\" level=\"3\" version=\"1\">%n" +
                 "  <model name=\"Entry of Influenza Virion into Host Cell via Endocytosis\" id=\"pathway_168275\" metaid=\"metaid_0\">%n" +
+                "    <notes>%n" +
+                "      <p xmlns=\"http://www.w3.org/1999/xhtml\">Virus particles bound to the cell surface can be internalized by four mechanisms. Most internalization appears to be mediated by clathrin-coated pits,%n" +
+                "      but internalization via caveolae, macropinocytosis, and by non-clathrin, non-caveolae pathways has also been described for influenza viruses.</p>%n" +
+                "    </notes>%n" +
                 "    <annotation>%n" +
                 "      <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:dc=\"http://purl.org/dc/elements/1.1/\" xmlns:vCard=\"http://www.w3.org/2001/vcard-rdf/3.0#\"%n" +
                 "      xmlns:dcterms=\"http://purl.org/dc/terms/\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
