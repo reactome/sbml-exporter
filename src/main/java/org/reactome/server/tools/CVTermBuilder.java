@@ -45,9 +45,7 @@ class CVTermBuilder extends AnnotationBuilder {
      */
     void createReactionAnnotations(org.reactome.server.graph.domain.model.ReactionLikeEvent event) {
         addResource("reactome", CVTerm.Qualifier.BQB_IS, event.getStId());
-        if (event.getGoBiologicalProcess() != null) {
-            addResource("go", CVTerm.Qualifier.BQB_IS, event.getGoBiologicalProcess().getAccession());
-        }
+        addGOTerm(event);
         if (event.getLiteratureReference() != null) {
             for (Publication pub : event.getLiteratureReference()) {
                 if (pub instanceof LiteratureReference) {
@@ -80,6 +78,20 @@ class CVTermBuilder extends AnnotationBuilder {
         createCVTerms();
     }
 
+
+    private void addGOTerm(org.reactome.server.graph.domain.model.ReactionLikeEvent event){
+        if (event.getGoBiologicalProcess() != null) {
+            addResource("go", CVTerm.Qualifier.BQB_IS, event.getGoBiologicalProcess().getAccession());
+        }
+        else if (event.getCatalystActivity() != null && event.getCatalystActivity().size() > 0) {
+            CatalystActivity cat = event.getCatalystActivity().get(0);
+            GO_MolecularFunction goterm = cat.getActivity();
+            if (goterm != null){
+                addResource("go", CVTerm.Qualifier.BQB_IS, cat.getActivity().getAccession());
+            }
+        }
+
+    }
     /**
      * Adds the resources relating to different types of PhysicalEntity. In the case of a Complex
      * it will iterate through all the components.
