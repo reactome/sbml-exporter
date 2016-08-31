@@ -118,12 +118,9 @@ class CVTermBuilder extends AnnotationBuilder {
                 createPhysicalEntityAnnotations(component, CVTerm.Qualifier.BQB_HAS_PART);
             }
         }
-        else if (pe instanceof CandidateSet){
-//            for (PhysicalEntity cand : ((CandidateSet)(pe)).getHasCandidate()){
-//                createPhysicalEntityAnnotations(cand, CVTerm.Qualifier.BQB_HAS_PART);
-//            }
-            for (PhysicalEntity cand : ((CandidateSet)(pe)).getHasMember()){
-                createPhysicalEntityAnnotations(cand, CVTerm.Qualifier.BQB_HAS_PART);
+        else if (pe instanceof EntitySet){
+            for (PhysicalEntity member : ((EntitySet)(pe)).getHasMember()){
+                createPhysicalEntityAnnotations(member, CVTerm.Qualifier.BQB_HAS_PART);
             }
         }
         else {

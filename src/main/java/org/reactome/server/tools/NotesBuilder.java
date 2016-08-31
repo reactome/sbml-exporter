@@ -105,6 +105,10 @@ public class NotesBuilder {
             appendDerivedFromStatement("CandidiateSet");
             appendNotes("A list of entities, one or more of which might perform the given function.");
         }
+        else if (pe instanceof DefinedSet){
+            appendDerivedFromStatement("DefinedSet");
+            appendNotes("This is a list of alternative entities, any of which can perform the given function.");
+        }
         else {
             if (!(pe instanceof OtherEntity)) {
                 // TODO deal with other entity

@@ -44,10 +44,10 @@ public class SBMLExporterLauncher {
 //        long dbid = 180627L; // reaction
 //        long dbid = 168275L; // pathway with a single child reaction
 //        long dbid = 168255L; // influenza life cycle - which is where my pathway 168275 comes from
-        long dbid = 2978092L; // pathway with a catalysis
+//        long dbid = 2978092L; // pathway with a catalysis
 //        long dbid = 5619071L; // failed reaction
 //        long dbid = 69205L; // black box event
-//        long dbid = 392023L; // reaction
+        long dbid = 392023L; // reaction
 
 //        long dbid = 453279L;// path with black box
 //        long dbid = 76009L; // path with reaction
