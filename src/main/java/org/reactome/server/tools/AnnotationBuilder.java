@@ -97,6 +97,10 @@ class AnnotationBuilder {
             shortVersion = true;
             lowerDB = "ena.embl";
         }
+        else if (lowerDB.equals("kegg")){
+            shortVersion = true;
+            lowerDB += ".compound";
+        }
         String resource = "http://identifiers.org/" + lowerDB + "/" + dbname.toUpperCase() +
                 ":" + accessionNo;
         if (shortVersion) {
