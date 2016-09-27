@@ -144,6 +144,9 @@ class CVTermBuilder extends AnnotationBuilder {
                 createPhysicalEntityAnnotations(member, CVTerm.Qualifier.BQB_HAS_PART, false);
             }
         }
+        else if (pe instanceof GenomeEncodedEntity){
+            // TODO currently no further annotations get added
+        }
         else {
             if (!(pe instanceof OtherEntity)) {
                 addResource("TODO", qualifier, "class not dealt with");

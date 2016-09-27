@@ -112,6 +112,9 @@ public class NotesBuilder {
         else if (pe instanceof OtherEntity){
             appendDerivedFromStatement("OtherEntity");
         }
+        else if (pe instanceof GenomeEncodedEntity){
+            appendDerivedFromStatement("GenomeEncodedEntity");
+        }
         else {
                 // TODO deal with other entity
                 appendDerivedFromStatement("deal with this");

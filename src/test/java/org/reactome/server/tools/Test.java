@@ -14,11 +14,14 @@ import org.reactome.server.tools.config.GraphQANeo4jConfig;
  * @author Sarah Keating <skeating@ebi.ac.uk>
  */
 @RunWith(value=Suite.class)
+
+//@Suite.SuiteClasses(value={WriteSBMLGenomeEncodedEntityTest.class})
+
 @Suite.SuiteClasses(value={WriteSBMLNoEventsTest.class, WriteSBMLNoPathwayTest.class,
                             WriteSBMLSingleReactionTest.class, WriteSBMLSingleAnnotatedReactionTest.class,
                             WriteSBMLCatalystTest.class, WriteSBMLFailedReaction.class,
                             WriteSBMLBlackBoxTest.class, WriteSBMLReactionTest.class,
-                            WriteSBMLEntityTest.class})
+                            WriteSBMLEntityTest.class, WriteSBMLGenomeEncodedEntityTest.class})
 public class Test {
 
     @BeforeClass
