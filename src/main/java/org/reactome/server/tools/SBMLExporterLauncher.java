@@ -46,8 +46,8 @@ public class SBMLExporterLauncher {
 //        long dbid = 168255L; // influenza life cycle - which is where my pathway 168275 comes from
 //        long dbid = 2978092L; // pathway with a catalysis
 //        long dbid = 5619071L; // failed reaction
-//        long dbid = 69205L; // black box event
-        long dbid = 392023L; // reaction
+        long dbid = 69205L; // black box event
+//        long dbid = 392023L; // reaction
 
 //        long dbid = 453279L;// path with black box
 //        long dbid = 76009L; // path with reaction
@@ -80,11 +80,15 @@ public class SBMLExporterLauncher {
             List<Event> events = path.getHasEvent();
             if (events != null && events.size() == 1) {
                 for (Event e : events) {
-                    if (e instanceof Reaction) {
-                        if (((ReactionLikeEvent) e).getCatalystActivity() == null || ((ReactionLikeEvent) e).getCatalystActivity().size() == 0) {
-                            System.out.println("Pathway " + path.getDbId() + " matches");
-                            count++;
-                            break;
+                    if (e instanceof ReactionLikeEvent) {
+                        if (((ReactionLikeEvent) e).getInput() != null) {
+                            for (PhysicalEntity pe : ((ReactionLikeEvent) e).getInput()) {
+                                if (pe instanceof Polymer) {
+                                    System.out.println("Pathway " + path.getDbId() + " matches");
+                                    count++;
+                                    break;
+                                }
+                            }
                         }
                     }
                 }

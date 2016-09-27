@@ -109,11 +109,12 @@ public class NotesBuilder {
             appendDerivedFromStatement("DefinedSet");
             appendNotes("This is a list of alternative entities, any of which can perform the given function.");
         }
+        else if (pe instanceof OtherEntity){
+            appendDerivedFromStatement("OtherEntity");
+        }
         else {
-            if (!(pe instanceof OtherEntity)) {
                 // TODO deal with other entity
                 appendDerivedFromStatement("deal with this");
-            }
         }
 
     }

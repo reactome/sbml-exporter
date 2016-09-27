@@ -64,7 +64,7 @@ class CVTermBuilder extends AnnotationBuilder {
      */
     void createSpeciesAnnotations(PhysicalEntity pe){
         addResource("reactome", CVTerm.Qualifier.BQB_IS, pe.getStId());
-        createPhysicalEntityAnnotations(pe, CVTerm.Qualifier.BQB_IS);
+        createPhysicalEntityAnnotations(pe, CVTerm.Qualifier.BQB_IS, true);
         createCVTerms();
     }
 
@@ -99,7 +99,7 @@ class CVTermBuilder extends AnnotationBuilder {
      * @param pe            PhysicalEntity from ReactomeDB
      * @param qualifier     The MIRIAM qualifier for the reference
      */
-    private void createPhysicalEntityAnnotations(PhysicalEntity pe, CVTerm.Qualifier qualifier){
+    private void createPhysicalEntityAnnotations(PhysicalEntity pe, CVTerm.Qualifier qualifier, boolean recurse){
         // TODO make sure all physicalentity types are covered
         if (pe instanceof SimpleEntity){
             SimpleEntity se = (SimpleEntity)(pe);
@@ -112,15 +112,36 @@ class CVTermBuilder extends AnnotationBuilder {
         else if (pe instanceof EntityWithAccessionedSequence){
             ReferenceEntity ref = ((EntityWithAccessionedSequence)(pe)).getReferenceEntity();
             addResource(ref.getDatabaseName(), qualifier, ref.getIdentifier());
+            if (recurse) {
+                List<PhysicalEntity> inferences = pe.getInferredTo();
+                if (inferences != null) {
+                    for (PhysicalEntity inf : inferences) {
+                        addResource("reactome", CVTerm.Qualifier.BQB_IS_HOMOLOG_TO, inf.getStId());
+                        // TODO my inclination would be to recurse through the types  but need to check with someone
+//                    createPhysicalEntityAnnotations(inf, CVTerm.Qualifier.BQB_IS_HOMOLOG_TO);
+                    }
+                }
+                inferences = pe.getInferredFrom();
+                if (inferences != null) {
+                    for (PhysicalEntity inf : inferences) {
+                        addResource("reactome", CVTerm.Qualifier.BQB_IS_HOMOLOG_TO, inf.getStId());
+                        // TODO my inclination would be to recurse through the types  but need to check with someone
+//                    createPhysicalEntityAnnotations(inf, CVTerm.Qualifier.BQB_IS_HOMOLOG_TO);
+                    }
+                }
+            }
         }
+
         else if (pe instanceof Complex){
             for (PhysicalEntity component : ((Complex)(pe)).getHasComponent()){
-                createPhysicalEntityAnnotations(component, CVTerm.Qualifier.BQB_HAS_PART);
+                createPhysicalEntityAnnotations(component, CVTerm.Qualifier.BQB_HAS_PART, false);
             }
         }
         else if (pe instanceof EntitySet){
             for (PhysicalEntity member : ((EntitySet)(pe)).getHasMember()){
-                createPhysicalEntityAnnotations(member, CVTerm.Qualifier.BQB_HAS_PART);
+                // TODO when I added the entitywithaccession I get more cvterms on these sets
+                // need to clarify with someone
+                createPhysicalEntityAnnotations(member, CVTerm.Qualifier.BQB_HAS_PART, false);
             }
         }
         else {

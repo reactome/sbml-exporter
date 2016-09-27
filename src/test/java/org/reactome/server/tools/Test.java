@@ -17,7 +17,8 @@ import org.reactome.server.tools.config.GraphQANeo4jConfig;
 @Suite.SuiteClasses(value={WriteSBMLNoEventsTest.class, WriteSBMLNoPathwayTest.class,
                             WriteSBMLSingleReactionTest.class, WriteSBMLSingleAnnotatedReactionTest.class,
                             WriteSBMLCatalystTest.class, WriteSBMLFailedReaction.class,
-                            WriteSBMLBlackBoxTest.class, WriteSBMLReactionTest.class})
+                            WriteSBMLBlackBoxTest.class, WriteSBMLReactionTest.class,
+                            WriteSBMLEntityTest.class})
 public class Test {
 
     @BeforeClass
