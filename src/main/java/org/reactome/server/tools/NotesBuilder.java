@@ -10,7 +10,7 @@ import java.util.List;
 /**
  * @author Sarah Keating <skeating@ebi.ac.uk>
  */
-public class NotesBuilder {
+class NotesBuilder {
     private SBase sbase = null;
     private String openNotes = "<notes><p xmlns=\"http://www.w3.org/1999/xhtml\">";
     private String closeNotes = "</p></notes>";
@@ -92,13 +92,13 @@ public class NotesBuilder {
         else if (pe instanceof Complex){
             appendDerivedFromStatement("Complex");
             String structure = extractComplexStructure((Complex)(pe));
-            if (structure.length() == 0) {
+            if (structure == null || structure.length() == 0) {
                 appendNotes("Reactome uses a nested structure for complexes, which cannot be fully represented " +
                         "in SBML Level " + sbase.getLevel() + " Version " + sbase.getVersion() + " core.");
             }
             else {
                 // TODO complex nested structure
-                appendNotes("deal with complex");
+                appendNotes("Here is Reactomes nested structure for this complex: " + structure);
             }
         }
         else if (pe instanceof CandidateSet){
@@ -130,11 +130,76 @@ public class NotesBuilder {
      * @return          String representing the complex structure
      */
     private String extractComplexStructure(Complex complex){
-        String structure = "";
-        // TODO create complex srtructure
+        String structure = null;
+        List<String> ids = new ArrayList<String>();
+        if (complex.getHasComponent() != null){
+            for (PhysicalEntity component: complex.getHasComponent() ){
+                if (!getListOfComponentIds(ids, component)) {
+                    return null;
+                }
+            }
+        }
+        int num = ids.size();
+        int count = 0;
+        if (num > 0) {
+            structure = "(";
+            for (String id : ids){
+                structure += id;
+                count++;
+                if (count < num){
+                    structure += ", ";
+                }
+            }
+            structure += ")";
+        }
         return structure;
     }
 
+    private boolean getListOfComponentIds(List<String> ids, PhysicalEntity pe){
+        boolean complete = true;
+        if (pe instanceof Complex){
+            if (((Complex)pe).getHasComponent() != null) {
+                for (PhysicalEntity component : ((Complex) pe).getHasComponent()) {
+                    if(!getListOfComponentIds(ids, component)) {
+                        complete = false;
+                    }
+                }
+            }
+        }
+        else {
+            if (!getComponentId(ids, pe)) {
+                complete = false;
+            }
+        }
+        return complete;
+    }
+
+    private boolean getComponentId(List<String> ids, PhysicalEntity pe) {
+        // TODO old code only used references to these two types why ?
+        boolean complete = true;
+        if (pe instanceof SimpleEntity){
+            ReferenceMolecule ref = ((SimpleEntity)pe).getReferenceEntity();
+            if (ref == null) {
+                complete = false;
+            }
+            else {
+                ids.add(ref.getIdentifier());
+            }
+        }
+        else if (pe instanceof EntityWithAccessionedSequence){
+            ReferenceSequence ref = ((EntityWithAccessionedSequence)pe).getReferenceEntity();
+            if (ref == null) {
+                complete = false;
+            }
+            else {
+                ids.add(ref.getIdentifier());
+            }
+        }
+        else {
+            complete = false;
+        }
+        return complete;
+    }
 
     /**
      * Add a note about teh physical entity type recorded in Reactome
