@@ -30,6 +30,16 @@ public class WriteSBMLEntityTest {
             "Reactome Complex. Here is Reactomes nested structure for this complex: (P03433, P03431, P03428)</p>%n"
             + "</notes>");
 
+    private final String defined_notes = String.format("<notes>%n" +
+            "  <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a Reactome DefinedSet. " +
+            "This is a list of alternative entities, any of which can perform the given function.</p>%n"
+            + "</notes>");
+
+    private final String access_notes = String.format("<notes>%n" +
+            "  <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a Reactome EntityWithAccessionedSequence. " +
+            "This is a protein.</p>%n"
+            + "</notes>");
+
     @BeforeClass
     public static void setup()  throws JSAPException {
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
@@ -75,6 +85,7 @@ public class WriteSBMLEntityTest {
         assertEquals("Num compartments failed", model.getNumCompartments(), 9);
         assertEquals("Num species failed", model.getNumSpecies(), 115);
 
+        // species from EntityWithAccesssionSequence
         Species species = model.getSpecies("species_165529");
         assertTrue("species_165529", species != null);
         assertEquals("num cvterms on species", species.getNumCVTerms(), 2);
@@ -87,6 +98,15 @@ public class WriteSBMLEntityTest {
         assertEquals("num resources on species cvterm", cvTerm.getNumResources(), 18);
         assertEquals("qualifier on species incorrect", cvTerm.getBiologicalQualifierType(), CVTerm.Qualifier.BQB_IS_HOMOLOG_TO);
 
+        try {
+            String output = species.getNotesString().replace("\n", System.getProperty("line.separator"));
+            assertEquals("species notes", access_notes, output);
+        }
+        catch(Exception e){
+            System.out.println("getNotesString failed");
+        }
+
+        // species from OtherEntity
         species = model.getSpecies("species_158444");
         assertTrue("species_158444", species!= null);
         assertEquals("num cvterms on species 158444", species.getNumCVTerms(), 1);
@@ -98,6 +118,8 @@ public class WriteSBMLEntityTest {
         catch(Exception e){
             System.out.println("getNotesString failed");
         }
+
+        // species from Complex
         species = model.getSpecies("species_192720");
         assertTrue("species_192720", species!= null);
         assertEquals("num cvterms on species 192720", species.getNumCVTerms(), 2);
@@ -109,6 +131,20 @@ public class WriteSBMLEntityTest {
         catch(Exception e){
             System.out.println("getNotesString failed");
         }
+
+        // species from DefinedSet
+        species = model.getSpecies("species_192988");
+        assertTrue("species_192988", species!= null);
+        assertEquals("num cvterms on species species_192988", species.getNumCVTerms(), 2);
+
+        try {
+            String output = species.getNotesString().replace("\n", System.getProperty("line.separator"));
+            assertEquals("species notes", defined_notes, output);
+        }
+        catch(Exception e){
+            System.out.println("getNotesString failed");
+        }
+
     }
 
 }
