@@ -102,7 +102,7 @@ class NotesBuilder {
             }
         }
         else if (pe instanceof CandidateSet){
-            appendDerivedFromStatement("CandidiateSet");
+            appendDerivedFromStatement("CandidateSet");
             appendNotes("A list of entities, one or more of which might perform the given function.");
         }
         else if (pe instanceof DefinedSet){
