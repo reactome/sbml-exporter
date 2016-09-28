@@ -80,7 +80,7 @@ class NotesBuilder {
      * @param pe    PhysicalEntity
      */
     void createSpeciesNotes(PhysicalEntity pe){
-        // TODO make sure all physicalentity types are covered
+        // TODO polymer is only pe type not covered
         if (pe instanceof SimpleEntity){
             appendDerivedFromStatement("SimpleEntity");
             appendNotes("This is a small compound.");
@@ -97,7 +97,6 @@ class NotesBuilder {
                         "in SBML Level " + sbase.getLevel() + " Version " + sbase.getVersion() + " core.");
             }
             else {
-                // TODO complex nested structure
                 appendNotes("Here is Reactomes nested structure for this complex: " + structure);
             }
         }
@@ -119,10 +118,12 @@ class NotesBuilder {
         else if (pe instanceof GenomeEncodedEntity){
             appendDerivedFromStatement("GenomeEncodedEntity");
         }
-        else {
-                // TODO deal with other entity
-                appendDerivedFromStatement("deal with this");
+        else if (pe instanceof Polymer){
+            appendDerivedFromStatement("POLYMER _ TO DO");
         }
+        else {
+            System.err.println("NotesBuilder.createSpeciesNotes: WARNING - encountered a non existent PhysicalEntity type!");
+       }
 
     }
 
@@ -159,6 +160,14 @@ class NotesBuilder {
         return structure;
     }
 
+    /**
+     * get a list of molecules referred to by complex
+     *
+     * @param ids List<String> to be populated
+     * @param pe  PhysicalEntity to process
+     *
+     * @return true if all components have been referenced, false otherwise
+     */
     private boolean getListOfComponentIds(List<String> ids, PhysicalEntity pe){
         boolean complete = true;
         if (pe instanceof Complex){
@@ -178,6 +187,15 @@ class NotesBuilder {
         return complete;
     }
 
+    /**
+     * Get the identifier of the referenced entity
+     *
+     *
+     * @param ids List<String> to be populated
+     * @param pe  PhysicalEntity to process
+     *
+     * @return true if all components have been referenced, false otherwise
+     */
     private boolean getComponentId(List<String> ids, PhysicalEntity pe) {
         // TODO old code only used references to these two types why ?
         boolean complete = true;
@@ -206,7 +224,7 @@ class NotesBuilder {
     }
 
     /**
-     * Add a note about teh physical entity type recorded in Reactome
+     * Add a note about the physical entity type recorded in Reactome
      *
      * @param type  String representing the type
      */

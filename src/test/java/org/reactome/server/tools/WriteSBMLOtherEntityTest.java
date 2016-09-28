@@ -97,6 +97,14 @@ public class WriteSBMLOtherEntityTest {
         assertTrue("species_72323", species!= null);
         assertEquals("num cvterms on species species_72323", species.getNumCVTerms(), 2);
 
+        cvTerm = species.getCVTerm(0);
+        assertEquals("num resources on species cvterm", cvTerm.getNumResources(), 1);
+        assertEquals("qualifier on species incorrect", cvTerm.getBiologicalQualifierType(), CVTerm.Qualifier.BQB_IS);
+
+        cvTerm = species.getCVTerm(1);
+        assertEquals("num resources on species cvterm", cvTerm.getNumResources(), 1);
+        assertEquals("qualifier on species incorrect", cvTerm.getBiologicalQualifierType(), CVTerm.Qualifier.BQB_HAS_PART);
+
         try {
             String output = species.getNotesString().replace("\n", System.getProperty("line.separator"));
             assertEquals("species notes", openset_notes, output);

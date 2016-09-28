@@ -111,6 +111,10 @@ public class WriteSBMLEntityTest {
         assertTrue("species_158444", species!= null);
         assertEquals("num cvterms on species 158444", species.getNumCVTerms(), 1);
 
+        cvTerm = species.getCVTerm(0);
+        assertEquals("num resources on species cvterm", cvTerm.getNumResources(), 1);
+        assertEquals("qualifier on species incorrect", cvTerm.getBiologicalQualifierType(), CVTerm.Qualifier.BQB_IS);
+
         try {
             String output = species.getNotesString().replace("\n", System.getProperty("line.separator"));
             assertEquals("species notes", notes, output);
@@ -124,6 +128,14 @@ public class WriteSBMLEntityTest {
         assertTrue("species_192720", species!= null);
         assertEquals("num cvterms on species 192720", species.getNumCVTerms(), 2);
 
+        cvTerm = species.getCVTerm(0);
+        assertEquals("num resources on species cvterm", cvTerm.getNumResources(), 1);
+        assertEquals("qualifier on species incorrect", cvTerm.getBiologicalQualifierType(), CVTerm.Qualifier.BQB_IS);
+
+        cvTerm = species.getCVTerm(1);
+        assertEquals("num resources on species cvterm", cvTerm.getNumResources(), 3);
+        assertEquals("qualifier on species incorrect", cvTerm.getBiologicalQualifierType(), CVTerm.Qualifier.BQB_HAS_PART);
+
         try {
             String output = species.getNotesString().replace("\n", System.getProperty("line.separator"));
             assertEquals("species notes", complex_notes, output);
@@ -136,6 +148,14 @@ public class WriteSBMLEntityTest {
         species = model.getSpecies("species_192988");
         assertTrue("species_192988", species!= null);
         assertEquals("num cvterms on species species_192988", species.getNumCVTerms(), 2);
+
+        cvTerm = species.getCVTerm(0);
+        assertEquals("num resources on species cvterm", cvTerm.getNumResources(), 1);
+        assertEquals("qualifier on species incorrect", cvTerm.getBiologicalQualifierType(), CVTerm.Qualifier.BQB_IS);
+
+        cvTerm = species.getCVTerm(1);
+        assertEquals("num resources on species cvterm", cvTerm.getNumResources(), 7);
+        assertEquals("qualifier on species incorrect", cvTerm.getBiologicalQualifierType(), CVTerm.Qualifier.BQB_HAS_PART);
 
         try {
             String output = species.getNotesString().replace("\n", System.getProperty("line.separator"));

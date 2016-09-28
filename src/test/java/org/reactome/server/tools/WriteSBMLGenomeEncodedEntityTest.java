@@ -71,6 +71,7 @@ public class WriteSBMLGenomeEncodedEntityTest {
         assertEquals("Num species failed", model.getNumSpecies(), 2);
 
 
+        // GenomeEncodedEntity
         Species species = model.getSpecies("species_6791257");
         assertTrue("species_6791257", species != null);
         assertEquals("num cvterms on species", species.getNumCVTerms(), 1);
