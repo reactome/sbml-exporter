@@ -103,7 +103,9 @@ class CVTermBuilder extends AnnotationBuilder {
         // TODO make sure all physicalentity types are covered
         if (pe instanceof SimpleEntity){
             SimpleEntity se = (SimpleEntity)(pe);
-            addResource("chebi", qualifier, (se.getReferenceEntity().getIdentifier()));
+            if (se.getReferenceEntity() != null) {
+                addResource("chebi", qualifier, (se.getReferenceEntity().getIdentifier()));
+            }
             String ref = getKeggReference(se.getCrossReference());
             if (ref.length() > 0){
                 addResource("kegg", qualifier, ref);
@@ -111,7 +113,9 @@ class CVTermBuilder extends AnnotationBuilder {
         }
         else if (pe instanceof EntityWithAccessionedSequence){
             ReferenceEntity ref = ((EntityWithAccessionedSequence)(pe)).getReferenceEntity();
-            addResource(ref.getDatabaseName(), qualifier, ref.getIdentifier());
+            if (ref != null) {
+                addResource(ref.getDatabaseName(), qualifier, ref.getIdentifier());
+            }
             if (recurse) {
                 List<PhysicalEntity> inferences = pe.getInferredTo();
                 if (inferences != null) {
@@ -133,15 +137,19 @@ class CVTermBuilder extends AnnotationBuilder {
         }
 
         else if (pe instanceof Complex){
-            for (PhysicalEntity component : ((Complex)(pe)).getHasComponent()){
-                createPhysicalEntityAnnotations(component, CVTerm.Qualifier.BQB_HAS_PART, false);
+            if (((Complex)(pe)).getHasComponent() != null) {
+                for (PhysicalEntity component : ((Complex) (pe)).getHasComponent()) {
+                    createPhysicalEntityAnnotations(component, CVTerm.Qualifier.BQB_HAS_PART, false);
+                }
             }
         }
         else if (pe instanceof EntitySet){
-            for (PhysicalEntity member : ((EntitySet)(pe)).getHasMember()){
-                // TODO when I added the entitywithaccession I get more cvterms on these sets
-                // need to clarify with someone
-                createPhysicalEntityAnnotations(member, CVTerm.Qualifier.BQB_HAS_PART, false);
+            if (((EntitySet)(pe)).getHasMember() != null) {
+                for (PhysicalEntity member : ((EntitySet) (pe)).getHasMember()) {
+                    // TODO when I added the entitywithaccession I get more cvterms on these sets
+                    // need to clarify with someone
+                    createPhysicalEntityAnnotations(member, CVTerm.Qualifier.BQB_HAS_PART, false);
+                }
             }
         }
         else if (pe instanceof GenomeEncodedEntity){

@@ -109,6 +109,10 @@ class NotesBuilder {
             appendDerivedFromStatement("DefinedSet");
             appendNotes("This is a list of alternative entities, any of which can perform the given function.");
         }
+        else if (pe instanceof OpenSet){
+            appendDerivedFromStatement("OpenSet");
+            appendNotes("A set of examples characterizing a very large but not explicitly enumerated set, e.g. mRNAs.");
+        }
         else if (pe instanceof OtherEntity){
             appendDerivedFromStatement("OtherEntity");
         }
