@@ -6,6 +6,7 @@ import org.reactome.server.graph.domain.model.*;
 import org.reactome.server.graph.service.DatabaseObjectService;
 import org.reactome.server.graph.service.GeneralService;
 import org.reactome.server.graph.service.SchemaService;
+import org.reactome.server.graph.service.SpeciesService;
 import org.reactome.server.graph.utils.ReactomeGraphCore;
 import org.reactome.server.tools.config.GraphQANeo4jConfig;
 
@@ -42,16 +43,17 @@ public class SBMLExporterLauncher {
 //        long dbid = 5663205L; // infectious disease
 //        long dbid = 167168L;  // HIV transcription termination (pathway no events)
 //        long dbid = 180627L; // reaction
-        long dbid = 168275L; // pathway with a single child reaction
+//        long dbid = 168275L; // pathway with a single child reaction
 //        long dbid = 168255L; // influenza life cycle - which is where my pathway 168275 comes from
 //        long dbid = 2978092L; // pathway with a catalysis
 //        long dbid = 5619071L; // failed reaction
 //        long dbid = 69205L; // black box event
 //        long dbid = 392023L; // reaction
 //        long dbid = 5602410L; // species genome encoded entity
-
+        long dbid = 9609481L; // polymer entity
 //        long dbid = 453279L;// path with black box
 //        long dbid = 76009L; // path with reaction
+
 
         int option = 1;
 
@@ -66,14 +68,14 @@ public class SBMLExporterLauncher {
                 outputFileNoAnnot(dbid, databaseObjectService, genericService.getDBVersion());
                 break;
             case 4:
-                showGOProcessBug(databaseObjectService);
+                lookupSpecies(databaseObjectService);
                 break;
 
         }
     }
 
     private static void lookupPaths(DatabaseObjectService databaseObjectService){
-        Species homoSapiens = (Species) databaseObjectService.findByIdNoRelations(48887L);
+        Species homoSapiens = (Species) databaseObjectService.findByIdNoRelations(170905L);
         SchemaService schemaService = ReactomeGraphCore.getService(SchemaService.class);
         int count = 0;
         int total = 0;
@@ -83,6 +85,7 @@ public class SBMLExporterLauncher {
                 for (Event e : events) {
                     if (e instanceof ReactionLikeEvent) {
                         if (((ReactionLikeEvent) e).getInput() != null) {
+                            boolean hasOpen = false;
                             for (PhysicalEntity pe : ((ReactionLikeEvent) e).getInput()) {
                                 if (pe instanceof Polymer) {
                                     System.out.println("Pathway " + path.getDbId() + " matches");
@@ -120,38 +123,12 @@ public class SBMLExporterLauncher {
         sbml.toFile("out.xml");
     }
 
-    private static void showGOProcessBug(DatabaseObjectService databaseObjectService){
-        Species homoSapiens = (Species) databaseObjectService.findByIdNoRelations(48887L);
-        SchemaService schemaService = ReactomeGraphCore.getService(SchemaService.class);
-        int count = 0;
-        int total = 0;
-        for (Pathway path : schemaService.getByClass(Pathway.class, homoSapiens)) {
-            List<Event> events = path.getHasEvent();
-            if (events != null && events.size() == 1) {
-                for (Event e : events) {
-                    if (e instanceof Reaction) {
-                        List<CatalystActivity> cats = ((Reaction) e).getCatalystActivity();
-                        if (cats != null) {
-                            GO_MolecularFunction goterms = cats.get(0).getActivity();
-                            if (goterms == null) {
-                                System.out.println("Catalyst activity " + path.getDbId() + " has NULL GOBiologicalProcess");
-                            }
-                            else{
-                                System.out.println("Catalyst activity  " + path.getDbId() + " has " + goterms.getName() + " GOBiologicalProcess");
-                            }
-                            count++;
-                            break;
-                        }
-                    }
-                }
-            }
-            total++;
+    private static void lookupSpecies(DatabaseObjectService databaseObjectService) {
+//        Species homoSapiens = (Species) databaseObjectService.findByIdNoRelations(48887L);
+        SpeciesService schemaService = ReactomeGraphCore.getService(SpeciesService.class);
+        for (Species s : schemaService.getSpecies()){
+            System.out.println("Species: " + s.getName() + " has id " + s.getDbId());
         }
-        System.out.println("Found " + count + " of " + total);
-
-
     }
-
-
 }
 

@@ -155,6 +155,13 @@ class CVTermBuilder extends AnnotationBuilder {
         else if (pe instanceof GenomeEncodedEntity){
             // TODO currently no further annotations get added
         }
+        else if (pe instanceof Polymer){
+            if (((Polymer) pe).getRepeatedUnit() != null) {
+                for (PhysicalEntity component : ((Polymer) (pe)).getRepeatedUnit()) {
+                    createPhysicalEntityAnnotations(component, CVTerm.Qualifier.BQB_HAS_PART, false);
+                }
+            }
+        }
         else {
             if (!(pe instanceof OtherEntity)) {
                 addResource("TODO", qualifier, "class not dealt with");

@@ -119,7 +119,7 @@ class NotesBuilder {
             appendDerivedFromStatement("GenomeEncodedEntity");
         }
         else if (pe instanceof Polymer){
-            appendDerivedFromStatement("POLYMER _ TO DO");
+            appendDerivedFromStatement("Polymer");
         }
         else {
             System.err.println("NotesBuilder.createSpeciesNotes: WARNING - encountered a non existent PhysicalEntity type!");
@@ -241,9 +241,17 @@ class NotesBuilder {
      */
     private String removeTags(String notes) {
         // if we have an xhtml tags in the text it messes up parsing
-        notes = notes.replaceAll("(<..?>)", " ");
-        notes = notes.replaceAll("</..?>", " ");
-        notes = notes.replaceAll("&", "and");
+        // copied from old reactome code
+        notes = notes.replaceAll("\\p{Cntrl}+", " ");
+//        notes = notes.replaceAll("\\cm+", "B");
+        notes = notes.replaceAll("</*[a-zA-Z][^>]*>", " ");
+        notes = notes.replaceAll("<>", " interconverts to ");
+        notes = notes.replaceAll("\n+", "  ");
+        notes = notes.replaceAll("&+", "  ");
+        // my replacements - which are covered above
+//        notes = notes.replaceAll("(<..?>)", " ");
+//        notes = notes.replaceAll("</..?>", " ");
+//        notes = notes.replaceAll("&", "and");
         return notes;
     }
 

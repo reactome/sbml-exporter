@@ -30,6 +30,7 @@ class WriteSBML {
 
     private final List <String> loggedSpecies;
     private final List <String> loggedCompartments;
+    private final List <String> loggedReactions;
 
     private static Integer dbVersion = 0;
 
@@ -47,6 +48,7 @@ class WriteSBML {
         sbmlDocument = new SBMLDocument(sbmlLevel, sbmlVersion);
         loggedSpecies = new ArrayList<String>();
         loggedCompartments = new ArrayList<String>();
+        loggedReactions = new ArrayList<String>();
         // reset metaid count
         metaid_count= 0;
     }
@@ -216,31 +218,36 @@ class WriteSBML {
     private void addReaction(org.reactome.server.graph.domain.model.ReactionLikeEvent event){
         Model model = sbmlDocument.getModel();
 
-        Reaction rn = model.createReaction("reaction_" + event.getDbId());
-        setMetaid(rn);
-        rn.setFast(false);
-        rn.setReversible(false);
-        rn.setName(event.getDisplayName());
-        if (event.getInput() != null) {
-            for (PhysicalEntity pe : event.getInput()) {
-                addParticipant("reactant", rn, pe, event.getDbId());
+        String id = "reaction_" + event.getDbId();
+        if (!loggedReactions.contains(id)) {
+            Reaction rn = model.createReaction(id);
+            setMetaid(rn);
+            rn.setFast(false);
+            rn.setReversible(false);
+            rn.setName(event.getDisplayName());
+            if (event.getInput() != null) {
+                for (PhysicalEntity pe : event.getInput()) {
+                    addParticipant("reactant", rn, pe, event.getDbId());
+                }
             }
-        }
-        if (event.getOutput() != null) {
-            for (PhysicalEntity pe : event.getOutput()) {
-                addParticipant("product", rn, pe, event.getDbId());
+            if (event.getOutput() != null) {
+                for (PhysicalEntity pe : event.getOutput()) {
+                    addParticipant("product", rn, pe, event.getDbId());
+                }
             }
-        }
-        if (event.getCatalystActivity() != null) {
-            for (CatalystActivity cat : event.getCatalystActivity()) {
-                addParticipant("modifier", rn, cat.getPhysicalEntity(), event.getDbId());
+            if (event.getCatalystActivity() != null) {
+                for (CatalystActivity cat : event.getCatalystActivity()) {
+                    addParticipant("modifier", rn, cat.getPhysicalEntity(), event.getDbId());
+                }
             }
-        }
-        if (addAnnotations){
-            CVTermBuilder cvterms = new CVTermBuilder(rn);
-            cvterms.createReactionAnnotations(event);
-            NotesBuilder notes = new NotesBuilder(rn);
-            notes.addPathwayNotes(event.getSummation());
+            if (addAnnotations) {
+                CVTermBuilder cvterms = new CVTermBuilder(rn);
+                cvterms.createReactionAnnotations(event);
+                NotesBuilder notes = new NotesBuilder(rn);
+                notes.addPathwayNotes(event.getSummation());
+            }
+
+            loggedReactions.add(id);
         }
     }
 
