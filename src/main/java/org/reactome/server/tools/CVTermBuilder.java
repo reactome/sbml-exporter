@@ -133,6 +133,15 @@ class CVTermBuilder extends AnnotationBuilder {
 //                    createPhysicalEntityAnnotations(inf, CVTerm.Qualifier.BQB_IS_HOMOLOG_TO);
                     }
                 }
+                List<AbstractModifiedResidue> mods = ((EntityWithAccessionedSequence) pe).getHasModifiedResidue();
+                if (mods != null) {
+                    for (AbstractModifiedResidue inf : mods) {
+                        if (((TranslationalModification)(inf)).getPsiMod() != null){
+                            PsiMod psi = ((TranslationalModification)(inf)).getPsiMod();
+                            addResource(psi.getDatabaseName(), CVTerm.Qualifier.BQB_HAS_VERSION, psi.getIdentifier());
+                        }
+                    }
+                }
             }
         }
 

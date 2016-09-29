@@ -89,6 +89,7 @@ class AnnotationBuilder {
      */
     private String getSpecificTerm(String dbname, String accessionNo){
         String lowerDB = dbname.toLowerCase();
+        String upperDB = dbname.toUpperCase();
         Boolean shortVersion = false;
         if (lowerDB.equals("uniprot") || lowerDB.equals("pubmed")) {
             shortVersion = true;
@@ -101,7 +102,10 @@ class AnnotationBuilder {
             shortVersion = true;
             lowerDB += ".compound";
         }
-        String resource = "http://identifiers.org/" + lowerDB + "/" + dbname.toUpperCase() +
+        else if (lowerDB.equals("mod")){
+            lowerDB = "psimod";
+        }
+        String resource = "http://identifiers.org/" + lowerDB + "/" + upperDB +
                 ":" + accessionNo;
         if (shortVersion) {
             resource = "http://identifiers.org/" + lowerDB + "/" + accessionNo;
