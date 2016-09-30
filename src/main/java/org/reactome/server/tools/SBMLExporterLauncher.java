@@ -50,9 +50,13 @@ public class SBMLExporterLauncher {
 //        long dbid = 69205L; // black box event
 //        long dbid = 392023L; // reaction
 //        long dbid = 5602410L; // species genome encoded entity
-        long dbid = 9609481L; // polymer entity
+//        long dbid = 9609481L; // polymer entity
 //        long dbid = 453279L;// path with black box
 //        long dbid = 76009L; // path with reaction
+//        long dbid = 2022090L; // polymerisation
+//        long dbid = 162585L; //depoly
+//        long dbid = 844615;
+        long dbid = 5653656; // toplevel pathway
 
 
         int option = 1;
@@ -70,38 +74,73 @@ public class SBMLExporterLauncher {
             case 4:
                 lookupSpecies(databaseObjectService);
                 break;
+            case 5:
+                lookupEvents(dbid, databaseObjectService);
+                break;
 
         }
     }
 
     private static void lookupPaths(DatabaseObjectService databaseObjectService){
-        Species homoSapiens = (Species) databaseObjectService.findByIdNoRelations(170905L);
+        long sp = 48887L; // homo sapiens
+ //       long sp = 170905L;// arapidoosis
+
+        Species homoSapiens = (Species) databaseObjectService.findByIdNoRelations(sp);
         SchemaService schemaService = ReactomeGraphCore.getService(SchemaService.class);
         int count = 0;
         int total = 0;
         for (Pathway path : schemaService.getByClass(Pathway.class, homoSapiens)) {
-            List<Event> events = path.getHasEvent();
-            if (events != null && events.size() == 1) {
-                for (Event e : events) {
-                    if (e instanceof ReactionLikeEvent) {
-                        if (((ReactionLikeEvent) e).getInput() != null) {
-                            boolean hasOpen = false;
-                            for (PhysicalEntity pe : ((ReactionLikeEvent) e).getInput()) {
-                                if (pe instanceof Polymer) {
-                                    System.out.println("Pathway " + path.getDbId() + " matches");
-                                    count++;
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
+            if (isMatch(path)) {
+                count++;
+                printMatch(path);
             }
             total++;
         }
         System.out.println("Found " + count + " of " + total);
+    }
 
+    private static boolean isMatch(Pathway path) {
+        boolean match = false;
 
+        // is the path top level
+        if (path instanceof TopLevelPathway) {
+            match = true;
+        }
+
+        // has events of particular kind
+/*
+        List<Event> events = path.getHasEvent();
+        if (events != null && events.size() < 5) {
+            for (Event e : events) {
+                if (e instanceof Polymerisation) {
+                    match = true;
+                }
+            }
+        }
+*/
+
+        // has particular physical entities
+/*
+        List<Event> events = path.getHasEvent();
+        if (events != null && events.size() < 5) {
+            for (Event e : events) {
+                if (((ReactionLikeEvent) e).getInput() != null) {
+                    boolean hasOpen = false;
+                    for (PhysicalEntity pe : ((ReactionLikeEvent) e).getInput()) {
+                        if (pe instanceof Polymer) {
+                            match = true;
+                        }
+                    }
+                }
+            }
+        }
+*/
+
+        return match;
+    }
+
+    private static void printMatch(Pathway path) {
+        System.out.println("Pathway " + path.getDbId() + " matches");
     }
 
     private static void outputFile(long dbid, DatabaseObjectService databaseObjectService, Integer dbVersion){
@@ -109,7 +148,7 @@ public class SBMLExporterLauncher {
         @SuppressWarnings("ConstantConditions") WriteSBML sbml = new WriteSBML((Pathway)(pathway));
         sbml.setDBVersion(dbVersion);
         sbml.createModel();
-        sbml.toStdOut();
+//        sbml.toStdOut();
         sbml.toFile("out.xml");
     }
 
@@ -130,5 +169,44 @@ public class SBMLExporterLauncher {
             System.out.println("Species: " + s.getName() + " has id " + s.getDbId());
         }
     }
+
+    private static void lookupEvents(long dbid, DatabaseObjectService databaseObjectService){
+        Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
+        List<Event> events = pathway.getHasEvent();
+        if (events != null) {
+            for (Event e : events) {
+                System.out.println(getDescription(e));
+                displayHierarchy(e);
+            }
+        }
+    }
+
+    private static String getDescription(Event e){
+        String type;
+        if (e instanceof Reaction)
+            type = "Reaction";
+        else if (e instanceof Polymerisation)
+            type = "Polymerisation";
+        else if (e instanceof FailedReaction)
+            type = "failedReaction";
+        else if (e instanceof  Depolymerisation)
+            type = "Depolymerisation";
+        else if (e instanceof  BlackBoxEvent)
+            type = "BlackBoxEvent";
+        else
+            type = "UNKNOWN";
+        return  "Event: " + e.getName() + " has id " + e.getDbId() + " and type " + type;
+    }
+
+    private static void displayHierarchy(Event e) {
+        if (e.getPrecedingEvent() != null) {
+            System.out.println("Hierarchy of " + e.getDbId());
+            for (Event ee : e.getPrecedingEvent()) {
+                System.out.println(ee.getDbId());
+
+            }
+        }
+    }
+
 }
 

@@ -31,6 +31,7 @@ class WriteSBML {
     private final List <String> loggedSpecies;
     private final List <String> loggedCompartments;
     private final List <String> loggedReactions;
+    private final List <String> loggedSpeciesReferences;
 
     private static Integer dbVersion = 0;
 
@@ -49,6 +50,7 @@ class WriteSBML {
         loggedSpecies = new ArrayList<String>();
         loggedCompartments = new ArrayList<String>();
         loggedReactions = new ArrayList<String>();
+        loggedSpeciesReferences = new ArrayList<String>();
         // reset metaid count
         metaid_count= 0;
     }
@@ -267,17 +269,26 @@ class WriteSBML {
         addSpecies(pe, speciesId);
         if (type.equals("reactant")) {
             String sr_id = "speciesreference_" + event_no + "_input_" + pe.getDbId();
-            SpeciesReference sr = rn.createReactant(sr_id, speciesId);
-            sr.setConstant(true);
+            if (!loggedSpeciesReferences.contains(sr_id)) {
+                SpeciesReference sr = rn.createReactant(sr_id, speciesId);
+                sr.setConstant(true);
+                loggedSpeciesReferences.add(sr_id);
+            }
         }
         else if (type.equals("product")){
             String sr_id = "speciesreference_" + event_no + "_output_" + pe.getDbId();
-            SpeciesReference sr = rn.createProduct(sr_id, speciesId);
-            sr.setConstant(true);
+            if (!loggedSpeciesReferences.contains(sr_id)) {
+                SpeciesReference sr = rn.createProduct(sr_id, speciesId);
+                sr.setConstant(true);
+                loggedSpeciesReferences.add(sr_id);
+            }
         }
         else if (type.equals("modifier")){
             String sr_id = "modifierspeciesreference_" + event_no + "_catalyst_" + pe.getDbId();
-            ModifierSpeciesReference sr = rn.createModifier(sr_id, speciesId);
+            if (!loggedSpeciesReferences.contains(sr_id)) {
+                ModifierSpeciesReference sr = rn.createModifier(sr_id, speciesId);
+                loggedSpeciesReferences.add(sr_id);
+            }
         }
 
     }
