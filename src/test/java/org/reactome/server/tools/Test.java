@@ -15,20 +15,20 @@ import org.reactome.server.tools.config.GraphQANeo4jConfig;
  */
 @RunWith(value=Suite.class)
 
-@Suite.SuiteClasses(value={WriteSBMLSingleAnnotatedReactionTest.class})
+//@Suite.SuiteClasses(value={WriteSBMLPolymerEntityTest.class})
 
-//@Suite.SuiteClasses(value={WriteSBMLPathwayTest.class, WriteSBMLBlackBoxTest.class, WriteSBMLPathwayTest.class})
-//@Suite.SuiteClasses(value={
-//                            WriteSBMLNoEventsTest.class, WriteSBMLNoEventsAnnotTest.class,
-//                            WriteSBMLNoPathwayTest.class, WriteSBMLNoPathwayAnnotTest.class,
-//                            WriteSBMLSingleReactionTest.class, WriteSBMLSingleAnnotatedReactionTest.class,
-//                            WriteSBMLCatalystTest.class, WriteSBMLFailedReaction.class,
-//                            WriteSBMLReactionTest.class, WriteSBMLPathwayTest.class,
-//                            WriteSBMLTopLevelPathTest.class, WriteSBMLBlackBoxTest.class,
-//                            WriteSBMLEntityTest.class, WriteSBMLGenomeEncodedEntityTest.class,
-//                            WriteSBMLOtherEntityTest.class, WriteSBMLCandidateSetEntityTest.class,
-//                            WriteSBMLPolymerEntityTest.class, WriteSBMLPolymerisationTest.class,
-//                            WriteSBMLDepolymerisationTest.class})
+//@Suite.SuiteClasses(value={WriteSBMLBlackBoxTest.class, WriteSBMLTopLevelPathTest.class})
+@Suite.SuiteClasses(value={
+                            WriteSBMLNoEventsTest.class, WriteSBMLNoEventsAnnotTest.class,
+                            WriteSBMLNoPathwayTest.class, WriteSBMLNoPathwayAnnotTest.class,
+                            WriteSBMLSingleReactionTest.class, WriteSBMLSingleAnnotatedReactionTest.class,
+                            WriteSBMLCatalystTest.class, WriteSBMLFailedReaction.class,
+                            WriteSBMLReactionTest.class, WriteSBMLPathwayTest.class,
+                            WriteSBMLTopLevelPathTest.class, WriteSBMLBlackBoxTest.class,
+                            WriteSBMLEntityTest.class, WriteSBMLGenomeEncodedEntityTest.class,
+                            WriteSBMLOtherEntityTest.class, WriteSBMLCandidateSetEntityTest.class,
+                            WriteSBMLPolymerEntityTest.class, WriteSBMLPolymerisationTest.class,
+                            WriteSBMLDepolymerisationTest.class})
 public class Test {
 
     @BeforeClass

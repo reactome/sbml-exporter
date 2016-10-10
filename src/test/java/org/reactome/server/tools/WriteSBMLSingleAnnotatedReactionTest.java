@@ -42,7 +42,6 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "                  <vCard:Family>Gillespie</vCard:Family>%n" +
                 "                  <vCard:Given>Marc E</vCard:Given>%n" +
                 "                </vCard:N>%n" +
-                "                <vCard:EMAIL>gillespm@cshl.org</vCard:EMAIL>%n" +
                 "                <vCard:ORG rdf:parseType=\"Resource\">%n" +
                 "                  <vCard:Orgname>St. John's University</vCard:Orgname>%n" +
                 "                </vCard:ORG>%n" +
@@ -52,7 +51,6 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "                  <vCard:Family>Matthews</vCard:Family>%n" +
                 "                  <vCard:Given>Lisa</vCard:Given>%n" +
                 "                </vCard:N>%n" +
-                "                <vCard:EMAIL>lisa.matthews@cshl.edu</vCard:EMAIL>%n" +
                 "                <vCard:ORG rdf:parseType=\"Resource\">%n" +
                 "                  <vCard:Orgname>CSHL</vCard:Orgname>%n" +
                 "                </vCard:ORG>%n" +

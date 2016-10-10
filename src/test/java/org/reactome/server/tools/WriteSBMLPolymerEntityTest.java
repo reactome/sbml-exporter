@@ -27,7 +27,7 @@ public class WriteSBMLPolymerEntityTest {
     @BeforeClass
     public static void setup()  throws JSAPException {
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-        long dbid = 9609481L; // pathway with a various entity types
+        long dbid = 9719495L; // pathway with a various entity types
         Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
 
         testWrite = new WriteSBML(pathway);
@@ -71,8 +71,8 @@ public class WriteSBMLPolymerEntityTest {
 
 
         // Polymer
-        Species species = model.getSpecies("species_2160848");
-        assertTrue("species_2160848", species != null);
+        Species species = model.getSpecies("species_9703057");
+        assertTrue("species_9703057", species != null);
         assertEquals("num cvterms on species", species.getNumCVTerms(), 2);
 
         CVTerm cvTerm = species.getCVTerm(0);
@@ -80,7 +80,7 @@ public class WriteSBMLPolymerEntityTest {
         assertEquals("qualifier on species incorrect", cvTerm.getBiologicalQualifierType(), CVTerm.Qualifier.BQB_IS);
 
         cvTerm = species.getCVTerm(1);
-        assertEquals("num resources on species cvterm", cvTerm.getNumResources(), 1);
+        assertEquals("num resources on species cvterm", cvTerm.getNumResources(), 8);
         assertEquals("qualifier on species incorrect", cvTerm.getBiologicalQualifierType(), CVTerm.Qualifier.BQB_HAS_PART);
 
         try {
