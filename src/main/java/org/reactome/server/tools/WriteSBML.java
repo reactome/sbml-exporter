@@ -242,6 +242,15 @@ class WriteSBML {
                     addParticipant("modifier", rn, cat.getPhysicalEntity(), event.getDbId());
                 }
             }
+            // TODO: regulation
+//            if (event.getPositivelyRegulatedBy() != null) {
+//                for (Regulation reg : event.getPositivelyRegulatedBy()) {
+//                    DatabaseObject pe = reg.getRegulator();
+//                    if (pe instanceof PhysicalEntity) {
+//                        addParticipant("modifier", rn, (PhysicalEntity)(pe), event.getDbId());
+//                    }
+//                }
+//            }
             if (addAnnotations) {
                 CVTermBuilder cvterms = new CVTermBuilder(rn);
                 cvterms.createReactionAnnotations(event);

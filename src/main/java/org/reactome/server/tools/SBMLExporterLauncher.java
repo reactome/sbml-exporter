@@ -44,7 +44,7 @@ public class SBMLExporterLauncher {
 //        long dbid = 5663205L; // infectious disease
 //        long dbid = 167168L;  // HIV transcription termination (pathway no events)
 //        long dbid = 180627L; // reaction
-//        long dbid = 168275L; // pathway with a single child reaction
+        long dbid = 168275L; // pathway with a single child reaction
 //        long dbid = 168255L; // influenza life cycle - which is where my pathway 168275 comes from
 //        long dbid = 2978092L; // pathway with a catalysis
 //        long dbid = 5619071L; // failed reaction
@@ -56,11 +56,12 @@ public class SBMLExporterLauncher {
 //        long dbid = 76009L; // path with reaction
 //        long dbid = 2022090L; // polymerisation
 //        long dbid = 162585L; //depoly
-        long dbid = 1640170L;
+//        long dbid = 1640170L;
 //        long dbid = 5653656; // toplevel pathway
+//        long dbid = 5619507L;
 
 
-        int option = 6;
+        int option = 7;
 
         switch (option) {
             case 1:
@@ -81,11 +82,32 @@ public class SBMLExporterLauncher {
             case 6:
                 investigate2(databaseObjectService);
  //               investigate(databaseObjectService);
+            case 7:
+                missingEmail(databaseObjectService);
                 break;
 
         }
     }
 
+    private static void missingEmail(DatabaseObjectService databaseObjectService) {
+        long dbid = 168275L;
+        Species homoSapiens = (Species) databaseObjectService.findByIdNoRelations(48887L);
+        SchemaService schemaService = ReactomeGraphCore.getService(SchemaService.class);
+        for (Pathway pathway : schemaService.getByClass(Pathway.class, homoSapiens)) {
+            InstanceEdit edit = pathway.getCreated();
+            if (edit == null)
+                continue;
+            List<Person> editors = edit.getAuthor();
+            if (editors != null && editors.size() > 0) {
+                for (Person p : editors) {
+                    if (p.getEMailAddress() == null) {
+                        System.out.println(p.getFirstname() + " " + p.getSurname() + " has no email");
+                    }
+                }
+            }
+        }
+
+    }
     private static void lookupPaths(DatabaseObjectService databaseObjectService){
         long sp = 48887L; // homo sapiens
  //       long sp = 170905L;// arapidoosis
@@ -108,22 +130,50 @@ public class SBMLExporterLauncher {
         boolean match = false;
 
         // is the not path top level
-        if (path instanceof Pathway && !(path instanceof TopLevelPathway)) {
+//        if (path instanceof Pathway && !(path instanceof TopLevelPathway)) {
+//            match = true;
+//        }
+//
+//        if (!match)
+//            return match;
+
+        // pathway with no events
+        List<Event> events = path.getHasEvent();
+        if (path instanceof Pathway && (events == null || events.size() == 0)) {
             match = true;
         }
 
-        if (!match)
-            return match;
 
-        // has events of particular kind
-        List<Event> events = path.getHasEvent();
-        if (events != null && events.size() == 1) {
-            for (Event e : events) {
-                if (e instanceof Pathway) {
-                    match = true;
-                }
-            }
-        }
+//        match = false;
+//        // has events of particular kind
+// //       List<Event> events = path.getHasEvent();
+//        if (events != null) {
+//            for (Event e : events) {
+//                if (e instanceof ReactionLikeEvent) {
+//                    ReactionLikeEvent event = (ReactionLikeEvent) (e);
+//
+//                    if (event.getInput() != null) {
+//                        for (PhysicalEntity pe : event.getInput()) {
+//                            if (pe.getCompartment() == null || pe.getCompartment().size() > 1){
+//                                match = true;
+//                                break;
+//                            }
+//                        }
+//                    }
+//                    if (event.getOutput() != null) {
+//                        for (PhysicalEntity pe : event.getOutput()) {
+//                            if (pe.getCompartment() == null || pe.getCompartment().size() > 1){
+//                                match = true;
+//                                break;
+//                            }
+//                        }
+//                    }
+//                }
+//                if (e.getPositivelyRegulatedBy() != null && e.getPositivelyRegulatedBy().size() == 1) {
+//                    match = true;
+//                }
+//            }
+//        }
 
         // has particular physical entities
 /*
@@ -153,7 +203,7 @@ public class SBMLExporterLauncher {
         Event pathway = (Event) databaseObjectService.findById(dbid);
         @SuppressWarnings("ConstantConditions") WriteSBML sbml = new WriteSBML((Pathway)(pathway));
         sbml.setDBVersion(dbVersion);
-        sbml.setAnnotationFlag(false);
+        sbml.setAnnotationFlag(true);
         sbml.createModel();
         sbml.toStdOut();
         sbml.toFile("out.xml");

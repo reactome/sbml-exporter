@@ -33,6 +33,7 @@ public class WriteSBMLNoEventsAnnotTest
 
         @BeforeClass
         public static void setup()  throws JSAPException {
+            // as of v58 this id does not exist and there are no pathways with no events
             DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
             long dbid = 167168L;  // HIV transcription termination (pathway no events)
             Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
@@ -63,25 +64,12 @@ public class WriteSBMLNoEventsAnnotTest
         public void testCreateModel()
         {
             testWrite.createModel();
+            // as of v58 this id does not exist and there are no pathways with no events
             SBMLDocument doc = testWrite.getSBMLDocument();
             assertTrue( "Document creation failed", doc != null);
 
             Model model = doc.getModel();
-            assertTrue("Model failed", model != null);
+            assertTrue("Model failed", model == null);
 
-            assertEquals("Num compartments failed", model.getNumCompartments(), 0);
-            assertEquals("Num species failed", model.getNumSpecies(), 0);
-            assertEquals("Num reactions failed", model.getNumReactions(), 0);
-
-            assertTrue("model history failed", model.isSetHistory());
-
-            History history = model.getHistory();
-
-            assertEquals("num authors", history.getNumCreators(), 2);
-            assertEquals("cv terms", model.getNumCVTerms(), 1);
-
-            CVTerm cvterm = model.getCVTerm(0);
-
-            assertEquals("num resources", cvterm.getNumResources(), 1);
         }
 }
