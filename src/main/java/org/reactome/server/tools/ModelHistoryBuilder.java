@@ -35,8 +35,10 @@ class ModelHistoryBuilder extends AnnotationBuilder {
      */
     void createHistory(Pathway path){
         createHistoryFromEvent(path);
-        for (Event e: path.getHasEvent()) {
-            createHistoryFromEvent(e);
+        if (path.getHasEvent() != null) {
+            for (Event e : path.getHasEvent()) {
+                createHistoryFromEvent(e);
+            }
         }
 
         thisHistory.setCreatedDate(earliestCreatedDate);

@@ -18,6 +18,7 @@ import java.util.List;
  */
 public class SBMLExporterLauncher {
 
+    static int level = 0;
     public static void main(String[] args) throws JSAPException {
 
         SimpleJSAP jsap = new SimpleJSAP(SBMLExporterLauncher.class.getName(), "A tool for generating SBML files",
@@ -55,11 +56,11 @@ public class SBMLExporterLauncher {
 //        long dbid = 76009L; // path with reaction
 //        long dbid = 2022090L; // polymerisation
 //        long dbid = 162585L; //depoly
-//        long dbid = 844615;
-        long dbid = 5653656; // toplevel pathway
+        long dbid = 1640170L;
+//        long dbid = 5653656; // toplevel pathway
 
 
-        int option = 1;
+        int option = 6;
 
         switch (option) {
             case 1:
@@ -76,6 +77,10 @@ public class SBMLExporterLauncher {
                 break;
             case 5:
                 lookupEvents(dbid, databaseObjectService);
+                break;
+            case 6:
+                investigate2(databaseObjectService);
+ //               investigate(databaseObjectService);
                 break;
 
         }
@@ -102,22 +107,23 @@ public class SBMLExporterLauncher {
     private static boolean isMatch(Pathway path) {
         boolean match = false;
 
-        // is the path top level
-        if (path instanceof TopLevelPathway) {
+        // is the not path top level
+        if (path instanceof Pathway && !(path instanceof TopLevelPathway)) {
             match = true;
         }
 
+        if (!match)
+            return match;
+
         // has events of particular kind
-/*
         List<Event> events = path.getHasEvent();
-        if (events != null && events.size() < 5) {
+        if (events != null && events.size() == 1) {
             for (Event e : events) {
-                if (e instanceof Polymerisation) {
+                if (e instanceof Pathway) {
                     match = true;
                 }
             }
         }
-*/
 
         // has particular physical entities
 /*
@@ -147,8 +153,9 @@ public class SBMLExporterLauncher {
         Event pathway = (Event) databaseObjectService.findById(dbid);
         @SuppressWarnings("ConstantConditions") WriteSBML sbml = new WriteSBML((Pathway)(pathway));
         sbml.setDBVersion(dbVersion);
+        sbml.setAnnotationFlag(false);
         sbml.createModel();
-//        sbml.toStdOut();
+        sbml.toStdOut();
         sbml.toFile("out.xml");
     }
 
@@ -181,6 +188,98 @@ public class SBMLExporterLauncher {
         }
     }
 
+    private static void displayHierarchy(Event e) {
+        if (e.getPrecedingEvent() != null) {
+            System.out.println("Hierarchy of " + e.getDbId());
+            for (Event ee : e.getPrecedingEvent()) {
+                System.out.println(ee.getDbId());
+
+            }
+        }
+    }
+
+    private static void investigate(DatabaseObjectService service) {
+        Long dbid;
+        Pathway pathway, p1, p2;
+        WriteSBML sbml, s1, s2;
+
+//        dbid = 1640170L;
+//        pathway = (Pathway) service.findById(dbid);
+//        sbml = new WriteSBML((Pathway)(pathway));
+//        sbml.createModel();
+//        sbml.toFile("1640170-before.xml");
+//        System.out.println("===================================");
+
+        dbid= 69205L;
+        p1 = (Pathway) service.findById(dbid);
+        s1 = new WriteSBML((Pathway)(p1));
+        s1.createModel();
+//        s1.toFile("69205-1.xml");
+//        printHierarchy(pathway, 0);
+
+        System.out.println("===================================");
+        dbid = 1640170L;
+        p2 = (Pathway) service.findById(dbid);
+        s2 = new WriteSBML((Pathway)(p2));
+        s2.createModel();
+        s2.toFile("1640170-after.xml");
+//        sbml.toStdOut();
+//        printHierarchy(pathway, 0);
+    }
+
+    private static void investigate2(DatabaseObjectService service) {
+        Long dbid;
+        Pathway pathway, p1, p2;
+        WriteSBML sbml, s1, s2;
+
+        dbid = 1640170L;
+        pathway = (Pathway) service.findById(dbid);
+        sbml = new WriteSBML((Pathway)(pathway));
+        sbml.createModel();
+        sbml.toFile("1640170-before-2.xml");
+        System.out.println("===================================");
+
+        DatabaseObjectService sr1 = ReactomeGraphCore.getService(DatabaseObjectService.class);
+        dbid= 69205L;
+        p1 = (Pathway) sr1.findById(dbid);
+        s1 = new WriteSBML((Pathway)(p1));
+        s1.createModel();
+//        s1.toFile("69205-2.xml");
+//        printHierarchy(pathway, 0);
+
+        System.out.println("===================================");
+        dbid = 1640170L;
+        p2 = (Pathway) sr1.findById(dbid);
+        s2 = new WriteSBML((Pathway)(p2));
+        s2.createModel();
+        s2.toFile("1640170-after-2.xml");
+//        sbml.toStdOut();
+//        printHierarchy(pathway, 0);
+    }
+
+    private static void printHierarchy(Pathway path, int thislevel) {
+        printHierarchy((Event)(path), thislevel);
+        List<Event> le = path.getHasEvent();
+        if (le != null) {
+            for (Event e : le) {
+                if (e instanceof Pathway){
+                    printHierarchy((Pathway)(e), thislevel+1);
+                }
+                else {
+                    printHierarchy(e, thislevel+1);
+                }
+            }
+        }
+    }
+
+    private static void printHierarchy(Event event, int thislevel) {
+        System.out.println(getDetails(thislevel, event.getDbId(), getDescription(event)));
+    }
+    private static String getDetails(int level, Long dbid, String type){
+        String line = "Level " + level + ": " + dbid + " " + type;
+        return line;
+    }
+
     private static String getDescription(Event e){
         String type;
         if (e instanceof Reaction)
@@ -193,20 +292,14 @@ public class SBMLExporterLauncher {
             type = "Depolymerisation";
         else if (e instanceof  BlackBoxEvent)
             type = "BlackBoxEvent";
+        else if (e instanceof Pathway){
+            type = "Pathway";
+        }
         else
             type = "UNKNOWN";
         return  "Event: " + e.getName() + " has id " + e.getDbId() + " and type " + type;
     }
 
-    private static void displayHierarchy(Event e) {
-        if (e.getPrecedingEvent() != null) {
-            System.out.println("Hierarchy of " + e.getDbId());
-            for (Event ee : e.getPrecedingEvent()) {
-                System.out.println(ee.getDbId());
-
-            }
-        }
-    }
 
 }
 

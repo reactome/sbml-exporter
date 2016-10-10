@@ -17,12 +17,14 @@ import org.reactome.server.tools.config.GraphQANeo4jConfig;
 
 //@Suite.SuiteClasses(value={WriteSBMLTopLevelPathTest.class})
 
-//@Suite.SuiteClasses(value={WriteSBMLPolymerisationTest.class,WriteSBMLDepolymerisationTest.class,  WriteSBMLTopLevelPathTest.class})
-
-@Suite.SuiteClasses(value={ WriteSBMLTopLevelPathTest.class, WriteSBMLNoEventsTest.class, WriteSBMLNoPathwayTest.class,
+//@Suite.SuiteClasses(value={WriteSBMLTopLevelPathTest.class, WriteSBMLBlackBoxTest.class, WriteSBMLTopLevelPathTest.class})
+@Suite.SuiteClasses(value={
+                            WriteSBMLNoEventsTest.class, WriteSBMLNoEventsAnnotTest.class,
+                            WriteSBMLNoPathwayTest.class, WriteSBMLNoPathwayAnnotTest.class,
                             WriteSBMLSingleReactionTest.class, WriteSBMLSingleAnnotatedReactionTest.class,
                             WriteSBMLCatalystTest.class, WriteSBMLFailedReaction.class,
-                            WriteSBMLBlackBoxTest.class, WriteSBMLReactionTest.class,
+                            WriteSBMLReactionTest.class,
+                            WriteSBMLTopLevelPathTest.class, WriteSBMLBlackBoxTest.class,
                             WriteSBMLEntityTest.class, WriteSBMLGenomeEncodedEntityTest.class,
                             WriteSBMLOtherEntityTest.class, WriteSBMLCandidateSetEntityTest.class,
                             WriteSBMLPolymerEntityTest.class, WriteSBMLPolymerisationTest.class,
