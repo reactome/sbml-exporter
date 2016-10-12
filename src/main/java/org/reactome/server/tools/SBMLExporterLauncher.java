@@ -86,12 +86,7 @@ public class SBMLExporterLauncher {
                 break;
             case 7:
                 Long id = 192869L;
-                org.reactome.server.graph.domain.model.Event event = (Event) databaseObjectService.findById(id);
-                // 1 alone correct
-//                mismatchedRegulators(databaseObjectService, id);
-                System.out.println("====================");
-                // 2 alone incorrect
-                mismatchedRegulators2(event);
+                mismatchedRegulators(databaseObjectService, id);
                 break;
 
         }
@@ -104,8 +99,9 @@ public class SBMLExporterLauncher {
             Pathway p = (Pathway)(event);
             if (p.getHasEvent() != null) {
                 for (org.reactome.server.graph.domain.model.Event e: p.getHasEvent()){
-                    org.reactome.server.graph.domain.model.Event e1 = (org.reactome.server.graph.domain.model.Event) databaseObjectService.findById(e.getDbId());
-                    reportRegulators(e1);
+                    reportRegulators(e);
+//                    org.reactome.server.graph.domain.model.Event e1 = (org.reactome.server.graph.domain.model.Event) databaseObjectService.findById(e.getDbId());
+//                    reportRegulators(e);
                 }
             }
         }
