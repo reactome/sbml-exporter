@@ -63,7 +63,7 @@ public class WriteSBMLPathwayTest {
         assertTrue("Model failed", model != null);
 
         assertEquals("Num compartments failed", model.getNumCompartments(), 2);
-        assertEquals("Num species failed", model.getNumSpecies(), 85);
+        assertEquals("Num species failed", model.getNumSpecies(), 88);
         assertEquals("Num reactions failed", model.getNumReactions(), 43);
 
     }

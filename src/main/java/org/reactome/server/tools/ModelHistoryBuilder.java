@@ -58,11 +58,14 @@ class ModelHistoryBuilder extends AnnotationBuilder {
     private void createHistoryFromEvent(Event path){
         addCreatedInformation(path.getCreated());
         addInformation(path.getModified());
+
+        // Steve suggests adding authored and revised but not reviewed/edited
         if (path.getAuthored() != null) {
             for (InstanceEdit edit : path.getAuthored()) {
                 addInformation(edit);
             }
         }
+/*
         if (path.getEdited() != null) {
             for (InstanceEdit edit : path.getEdited()) {
                 addInformation(edit);
@@ -73,6 +76,7 @@ class ModelHistoryBuilder extends AnnotationBuilder {
                 addInformation(edit);
             }
         }
+*/
         if (path.getRevised() != null) {
             for (InstanceEdit edit : path.getRevised()) {
                 addInformation(edit);

@@ -9,6 +9,7 @@ import org.reactome.server.graph.utils.ReactomeGraphCore;
 import org.reactome.server.tools.config.GraphQANeo4jConfig;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.Reaction;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -40,6 +41,7 @@ public class WriteSBMLSingleReactionTest
                 "      id=\"species_189171\" />%n" +
                 "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_6\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_24337\"" +
                 " name=\"SA [endocytic vesicle membrane]\" id=\"species_189161\" />%n" +
+                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_8\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_876\" name=\"Clathrin [plasma membrane]\" id=\"species_177482\" />%n" +
                 "    </listOfSpecies>%n" +
                 "    <listOfReactions>%n" +
                 "      <reaction name=\"Clathrin-Mediated Pit Formation And Endocytosis Of The Influenza Virion\" fast=\"false\" id=\"reaction_168285\" metaid=\"metaid_1\" reversible=\"false\">%n" +
@@ -50,6 +52,9 @@ public class WriteSBMLSingleReactionTest
                 "          <speciesReference constant=\"true\" id=\"speciesreference_168285_output_189171\" species=\"species_189171\" />%n" +
                 "          <speciesReference constant=\"true\" id=\"speciesreference_168285_output_189161\" species=\"species_189161\" />%n" +
                 "        </listOfProducts>%n" +
+                "        <listOfModifiers>%n" +
+                "          <modifierSpeciesReference species=\"species_177482\" id=\"modifierspeciesreference_168285_positiveregulator_177482\" />%n" +
+                "        </listOfModifiers>%n" +
                 "      </reaction>%n" +
                 "    </listOfReactions>%n" +
                 "  </model>%n" +
@@ -100,7 +105,12 @@ public class WriteSBMLSingleReactionTest
             assertEquals(model_out, testWrite.toString());
 
             assertTrue("wrong number of reactions", model.getNumReactions() == 1);
-            assertTrue("wrong number of species", model.getNumSpecies() == 3);
+            assertTrue("wrong number of species", model.getNumSpecies() == 4);
             assertTrue("wrong number of compartments", model.getNumCompartments() == 3);
+
+            Reaction rn = model.getReaction(0);
+            assertTrue("wrong number of reactants", rn.getNumReactants() == 1);
+            assertTrue("wrong number of products", rn.getNumProducts() == 2);
+            assertTrue("wrong number of modifiers", rn.getNumModifiers() == 1);
         }
 }

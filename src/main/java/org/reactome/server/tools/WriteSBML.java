@@ -229,28 +229,42 @@ class WriteSBML {
             rn.setName(event.getDisplayName());
             if (event.getInput() != null) {
                 for (PhysicalEntity pe : event.getInput()) {
-                    addParticipant("reactant", rn, pe, event.getDbId());
+                    addParticipant("reactant", rn, pe, event.getDbId(), null);
                 }
             }
             if (event.getOutput() != null) {
                 for (PhysicalEntity pe : event.getOutput()) {
-                    addParticipant("product", rn, pe, event.getDbId());
+                    addParticipant("product", rn, pe, event.getDbId(), null);
                 }
             }
             if (event.getCatalystActivity() != null) {
                 for (CatalystActivity cat : event.getCatalystActivity()) {
-                    addParticipant("modifier", rn, cat.getPhysicalEntity(), event.getDbId());
+                    addParticipant("catalyst", rn, cat.getPhysicalEntity(), event.getDbId(), null);
                 }
             }
             // TODO: regulation
-//            if (event.getPositivelyRegulatedBy() != null) {
-//                for (Regulation reg : event.getPositivelyRegulatedBy()) {
-//                    DatabaseObject pe = reg.getRegulator();
-//                    if (pe instanceof PhysicalEntity) {
-//                        addParticipant("modifier", rn, (PhysicalEntity)(pe), event.getDbId());
-//                    }
-//                }
-//            }
+            if (event.getPositivelyRegulatedBy() != null) {
+                for (Regulation reg : event.getPositivelyRegulatedBy()) {
+                    // // TODO: 11/10/2016 sort out getting negative from positive
+                    if (reg instanceof PositiveRegulation) {
+                        DatabaseObject pe = reg.getRegulator();
+                        if (pe instanceof PhysicalEntity) {
+                            addParticipant("pos_regulator", rn, (PhysicalEntity) (pe), event.getDbId(), reg);
+                        }
+                    }
+                }
+            }
+            if (event.getNegativelyRegulatedBy() != null) {
+                for (Regulation reg : event.getNegativelyRegulatedBy()) {
+                    // // TODO: 11/10/2016 sort out getting negative from positive
+                    if (reg instanceof NegativeRegulation) {
+                        DatabaseObject pe = reg.getRegulator();
+                        if (pe instanceof PhysicalEntity) {
+                            addParticipant("neg_regulator", rn, (PhysicalEntity) (pe), event.getDbId(), reg);
+                        }
+                    }
+                }
+            }
             if (addAnnotations) {
                 CVTermBuilder cvterms = new CVTermBuilder(rn);
                 cvterms.createReactionAnnotations(event);
@@ -272,7 +286,7 @@ class WriteSBML {
      * @param event_no  Long number respresenting the ReactomeDB id of the Reactome Event being processed.
      *                  (This is used in the speciesreference id.)
      */
-    private void addParticipant(String type, Reaction rn, PhysicalEntity pe, Long event_no) {
+    private void addParticipant(String type, Reaction rn, PhysicalEntity pe, Long event_no, Regulation reg) {
 
         String speciesId = "species_" + pe.getDbId();
         addSpecies(pe, speciesId);
@@ -292,10 +306,34 @@ class WriteSBML {
                 loggedSpeciesReferences.add(sr_id);
             }
         }
-        else if (type.equals("modifier")){
+        else if (type.equals("catalyst")){
             String sr_id = "modifierspeciesreference_" + event_no + "_catalyst_" + pe.getDbId();
             if (!loggedSpeciesReferences.contains(sr_id)) {
                 ModifierSpeciesReference sr = rn.createModifier(sr_id, speciesId);
+                loggedSpeciesReferences.add(sr_id);
+            }
+        }
+        else if (type.equals("pos_regulator")){
+            String sr_id = "modifierspeciesreference_" + event_no + "_positiveregulator_" + pe.getDbId();
+            if (!loggedSpeciesReferences.contains(sr_id)) {
+                ModifierSpeciesReference sr = rn.createModifier(sr_id, speciesId);
+                if (addAnnotations && reg != null) {
+                    NotesBuilder notes = new NotesBuilder(sr);
+                    notes.createSpeciesReferenceNotes(reg);
+                    notes.addNotes();
+                }
+                loggedSpeciesReferences.add(sr_id);
+            }
+        }
+        else if (type.equals("neg_regulator")){
+            String sr_id = "modifierspeciesreference_" + event_no + "_negativeregulator_" + pe.getDbId();
+            if (!loggedSpeciesReferences.contains(sr_id)) {
+                ModifierSpeciesReference sr = rn.createModifier(sr_id, speciesId);
+                if (addAnnotations && reg != null) {
+                    NotesBuilder notes = new NotesBuilder(sr);
+                    notes.createSpeciesReferenceNotes(reg);
+                    notes.addNotes();
+                }
                 loggedSpeciesReferences.add(sr_id);
             }
         }

@@ -127,6 +127,10 @@ class NotesBuilder {
 
     }
 
+    void createSpeciesReferenceNotes(Regulation reg){
+        appendNotes(reg.getExplanation());
+    }
+
     /**
      * create string describing the complex structure within Reactome
      *

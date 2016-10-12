@@ -63,7 +63,7 @@ public class WriteSBMLTopLevelPathTest {
         assertTrue("Model failed", model != null);
 
         assertEquals("Num compartments failed", model.getNumCompartments(), 8);
-        assertEquals("Num species failed", model.getNumSpecies(), 695);
+        assertEquals("Num species failed", model.getNumSpecies(), 704);
         assertEquals("Num reactions failed", model.getNumReactions(), 382);
 
     }

@@ -15,9 +15,8 @@ import org.reactome.server.tools.config.GraphQANeo4jConfig;
  */
 @RunWith(value=Suite.class)
 
-//@Suite.SuiteClasses(value={WriteSBMLPolymerEntityTest.class})
+//@Suite.SuiteClasses(value={WriteSBMLNegativeRegulatorTest.class})
 
-//@Suite.SuiteClasses(value={WriteSBMLBlackBoxTest.class, WriteSBMLTopLevelPathTest.class})
 @Suite.SuiteClasses(value={
                             WriteSBMLNoEventsTest.class, WriteSBMLNoEventsAnnotTest.class,
                             WriteSBMLNoPathwayTest.class, WriteSBMLNoPathwayAnnotTest.class,
@@ -28,7 +27,7 @@ import org.reactome.server.tools.config.GraphQANeo4jConfig;
                             WriteSBMLEntityTest.class, WriteSBMLGenomeEncodedEntityTest.class,
                             WriteSBMLOtherEntityTest.class, WriteSBMLCandidateSetEntityTest.class,
                             WriteSBMLPolymerEntityTest.class, WriteSBMLPolymerisationTest.class,
-                            WriteSBMLDepolymerisationTest.class})
+                            WriteSBMLDepolymerisationTest.class, WriteSBMLNegativeRegulatorTest.class})
 public class Test {
 
     @BeforeClass

@@ -13,17 +13,22 @@ import static org.junit.Assert.assertTrue;
 /**
  * @author Sarah Keating <skeating@ebi.ac.uk>
  */
-public class WriteSBMLBlackBoxTest {
+public class WriteSBMLNegativeRegulatorTest {
     private static WriteSBML testWrite;
 
     private final String empty_doc = String.format("<?xml version='1.0' encoding='utf-8' standalone='no'?>%n" +
             "<sbml xmlns=\"http://www.sbml.org/sbml/level3/version1/core\" level=\"3\" version=\"1\"></sbml>%n");
 
 
+    private final String notes = String.format("<notes>%n" +
+            "  <p xmlns=\"http://www.w3.org/1999/xhtml\">This describes an Event/CatalystActivity that is " +
+            "negatively regulated by the Regulator (e.g., allosteric inhibition, competitive inhibition</p>%n" + "</notes>");
+
+
     @BeforeClass
     public static void setup()  throws JSAPException {
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-        long dbid = 69205L; // black box event
+        long dbid = 168276L;
         Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
 
         testWrite = new WriteSBML(pathway);
@@ -62,25 +67,26 @@ public class WriteSBMLBlackBoxTest {
         Model model = doc.getModel();
         assertTrue("Model failed", model != null);
 
-        assertEquals("Num compartments failed", model.getNumCompartments(), 1);
-        assertEquals("Num species failed", model.getNumSpecies(), 2);
-        assertEquals("Num reactions failed", model.getNumReactions(), 1);
+        assertEquals("Num compartments failed", model.getNumCompartments(), 3);
+        assertEquals("Num species failed", model.getNumSpecies(), 15);
+        assertEquals("Num reactions failed", model.getNumReactions(), 6);
 
-        Reaction reaction = model.getReaction(0);
+        Reaction reaction = model.getReaction("reaction_1176059");
 
-        assertEquals("Num reactants failed", reaction.getNumReactants(), 0);
+        assertEquals("Num reactants failed", reaction.getNumReactants(), 2);
         assertEquals("Num products failed", reaction.getNumProducts(), 1);
-        assertEquals("Num modifiers failed", reaction.getNumModifiers(), 1);
+        assertEquals("Num modifiers failed", reaction.getNumModifiers(), 2);
 
-        // test things that mismatched with my first attempt
+        ModifierSpeciesReference msr = reaction.getModifierForSpecies("species_1169392");
+        assertEquals("Modifier id failed", msr.getId(), "modifierspeciesreference_1176059_negativeregulator_1169392");
 
-        Species species = model.getSpecies("species_539110");
-        assertEquals("num cvterms on species", species.getNumCVTerms(), 2);
-
-        CVTerm cvTerm = species.getCVTerm(1);
-        assertEquals("num resources on species cvterm", cvTerm.getNumResources(), 13);
-
-        assertTrue("reaction notes", reaction.isSetNotes());
+        try {
+            String output = msr.getNotesString().replace("\n", System.getProperty("line.separator"));
+            assertEquals("modifier notes", notes, output);
+        }
+        catch(Exception e){
+            System.out.println("getNotesString failed");
+        }
 
     }
 

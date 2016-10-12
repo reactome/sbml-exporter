@@ -82,8 +82,8 @@ public class WriteSBMLEntityTest {
         Model model = doc.getModel();
         assertTrue("Model failed", model != null);
 
-        assertEquals("Num compartments failed", model.getNumCompartments(), 9);
-        assertEquals("Num species failed", model.getNumSpecies(), 115);
+        assertEquals("Num compartments failed", model.getNumCompartments(), 10);
+        assertEquals("Num species failed", model.getNumSpecies(), 125);
 
         // species from EntityWithAccesssionSequence
         Species species = model.getSpecies("species_165529");
