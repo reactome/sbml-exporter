@@ -101,7 +101,7 @@ public class SBMLExporterLauncher {
                 for (org.reactome.server.graph.domain.model.Event e: p.getHasEvent()){
                     reportRegulators(e);
 //                    org.reactome.server.graph.domain.model.Event e1 = (org.reactome.server.graph.domain.model.Event) databaseObjectService.findById(e.getDbId());
-//                    reportRegulators(e);
+//                    reportRegulators(e1);
                 }
             }
         }
