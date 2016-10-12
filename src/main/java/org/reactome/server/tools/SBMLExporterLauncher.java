@@ -2,6 +2,7 @@
 package org.reactome.server.tools;
 
 import com.martiansoftware.jsap.*;
+import com.sun.org.apache.xpath.internal.operations.Neg;
 import org.reactome.server.graph.domain.model.*;
 import org.reactome.server.graph.service.DatabaseObjectService;
 import org.reactome.server.graph.service.GeneralService;
@@ -44,7 +45,7 @@ public class SBMLExporterLauncher {
 //        long dbid = 5663205L; // infectious disease
 //        long dbid = 167168L;  // HIV transcription termination (pathway no events)
 //        long dbid = 180627L; // reaction
-        long dbid = 168275L; // pathway with a single child reaction
+//        long dbid = 168275L; // pathway with a single child reaction
 //        long dbid = 168255L; // influenza life cycle - which is where my pathway 168275 comes from
 //        long dbid = 2978092L; // pathway with a catalysis
 //        long dbid = 5619071L; // failed reaction
@@ -56,7 +57,7 @@ public class SBMLExporterLauncher {
 //        long dbid = 76009L; // path with reaction
 //        long dbid = 2022090L; // polymerisation
 //        long dbid = 162585L; //depoly
-//        long dbid = 1640170L;
+        long dbid = 192869;
 //        long dbid = 5653656; // toplevel pathway
 //        long dbid = 5619507L;
 
@@ -80,34 +81,90 @@ public class SBMLExporterLauncher {
                 lookupEvents(dbid, databaseObjectService);
                 break;
             case 6:
-                investigate2(databaseObjectService);
- //               investigate(databaseObjectService);
+                investigate(databaseObjectService);
+  //              investigate2(databaseObjectService);
+                break;
             case 7:
-                missingEmail(databaseObjectService);
+                Long id = 192869L;
+                org.reactome.server.graph.domain.model.Event event = (Event) databaseObjectService.findById(id);
+                // 1 alone correct
+//                mismatchedRegulators(databaseObjectService, id);
+                System.out.println("====================");
+                // 2 alone incorrect
+                mismatchedRegulators2(event);
                 break;
 
         }
     }
 
-    private static void missingEmail(DatabaseObjectService databaseObjectService) {
-        long dbid = 168275L;
-        Species homoSapiens = (Species) databaseObjectService.findByIdNoRelations(48887L);
-        SchemaService schemaService = ReactomeGraphCore.getService(SchemaService.class);
-        for (Pathway pathway : schemaService.getByClass(Pathway.class, homoSapiens)) {
-            InstanceEdit edit = pathway.getCreated();
-            if (edit == null)
-                continue;
-            List<Person> editors = edit.getAuthor();
-            if (editors != null && editors.size() > 0) {
-                for (Person p : editors) {
-                    if (p.getEMailAddress() == null) {
-                        System.out.println(p.getFirstname() + " " + p.getSurname() + " has no email");
+    private static void mismatchedRegulators(DatabaseObjectService databaseObjectService, Long dbid) {
+        org.reactome.server.graph.domain.model.Event event = (org.reactome.server.graph.domain.model.Event) databaseObjectService.findById(dbid);
+        reportRegulators(event);
+        if (event instanceof Pathway){
+            Pathway p = (Pathway)(event);
+            if (p.getHasEvent() != null) {
+                for (org.reactome.server.graph.domain.model.Event e: p.getHasEvent()){
+                    org.reactome.server.graph.domain.model.Event e1 = (org.reactome.server.graph.domain.model.Event) databaseObjectService.findById(e.getDbId());
+                    reportRegulators(e1);
+                }
+            }
+        }
+    }
+
+    private static void mismatchedRegulators2(org.reactome.server.graph.domain.model.Event event) {
+        reportRegulators(event);
+        if (event instanceof Pathway){
+            Pathway p = (Pathway) (event);
+            if (p.getHasEvent() != null) {
+                for (org.reactome.server.graph.domain.model.Event e: p.getHasEvent()){
+                    reportRegulators(e);
+                }
+            }
+        }
+    }
+
+    private static void reportRegulators(org.reactome.server.graph.domain.model.Event event){
+        System.out.println("Event dbid: " + event.getDbId());
+        if (event.getPositivelyRegulatedBy() != null) {
+            try {
+                for (PositiveRegulation reg: event.getPositivelyRegulatedBy()){
+                    System.out.println("correct: list of positive regulators contains positive regulator " + reg.getDbId());
+                }
+
+            }
+            catch (Exception ex){
+                System.out.println("caught exception: " + ex.getMessage());
+                for (Regulation reg: event.getPositivelyRegulatedBy()){
+                    if (reg instanceof NegativeRegulation) {
+                        System.out.println("incorrect: list of positive regulators contains negative regulator " + reg.getDbId());
                     }
                 }
             }
         }
+        else  {
+            System.out.println("no positive regulators found");
+        }
+        if (event.getNegativelyRegulatedBy() != null) {
+            try {
+                for (NegativeRegulation reg: event.getNegativelyRegulatedBy()){
+                    System.out.println("correct: list of neg regulators contains neg regulator " + reg.getDbId());
+                }
 
+            }
+            catch (Exception ex){
+                System.out.println("caught exception: " + ex.getMessage());
+                for (Regulation reg: event.getNegativelyRegulatedBy()){
+                    if (reg instanceof PositiveRegulation) {
+                        System.out.println("incorrect: list of negative regulators contains positive regulator " + reg.getDbId());
+                    }
+                }
+            }
+        }
+        else  {
+            System.out.println("no negative regulators found");
+        }
     }
+
     private static void lookupPaths(DatabaseObjectService databaseObjectService){
         long sp = 48887L; // homo sapiens
  //       long sp = 170905L;// arapidoosis
@@ -138,17 +195,17 @@ public class SBMLExporterLauncher {
 //            return match;
 
         // pathway with no events
+//        List<Event> events = path.getHasEvent();
+//        if (path instanceof Pathway && (events == null || events.size() == 0)) {
+//            match = true;
+//        }
+
+
+        match = false;
+        // has events of particular kind
         List<Event> events = path.getHasEvent();
-        if (path instanceof Pathway && (events == null || events.size() == 0)) {
-            match = true;
-        }
-
-
-//        match = false;
-//        // has events of particular kind
-// //       List<Event> events = path.getHasEvent();
-//        if (events != null) {
-//            for (Event e : events) {
+        if (events != null) {
+            for (Event e : events) {
 //                if (e instanceof ReactionLikeEvent) {
 //                    ReactionLikeEvent event = (ReactionLikeEvent) (e);
 //
@@ -169,18 +226,21 @@ public class SBMLExporterLauncher {
 //                        }
 //                    }
 //                }
-//                if (e.getPositivelyRegulatedBy() != null && e.getPositivelyRegulatedBy().size() == 1) {
-//                    match = true;
-//                }
-//            }
-//        }
+                if (e.getPositivelyRegulatedBy() != null && e.getPositivelyRegulatedBy().size() == 1) {
+                    Regulation reg = e.getPositivelyRegulatedBy().get(0);
+                    if ((reg instanceof PositiveRegulation) && !(reg instanceof Requirement)&& !(reg instanceof PositiveGeneExpressionRegulation)) {
+                        match = true;
+                    }
+                }
+            }
+        }
 
         // has particular physical entities
 /*
         List<Event> events = path.getHasEvent();
         if (events != null && events.size() < 5) {
             for (Event e : events) {
-                if (((ReactionLikeEvent) e).getInput() != null) {
+                if ((e instanceof ReactionLikeEvent) && ((ReactionLikeEvent) e).getInput() != null) {
                     boolean hasOpen = false;
                     for (PhysicalEntity pe : ((ReactionLikeEvent) e).getInput()) {
                         if (pe instanceof Polymer) {
@@ -264,7 +324,7 @@ public class SBMLExporterLauncher {
         p1 = (Pathway) service.findById(dbid);
         s1 = new WriteSBML((Pathway)(p1));
         s1.createModel();
-//        s1.toFile("69205-1.xml");
+        s1.toFile("69205-1.xml");
 //        printHierarchy(pathway, 0);
 
         System.out.println("===================================");
@@ -294,7 +354,7 @@ public class SBMLExporterLauncher {
         p1 = (Pathway) sr1.findById(dbid);
         s1 = new WriteSBML((Pathway)(p1));
         s1.createModel();
-//        s1.toFile("69205-2.xml");
+        s1.toFile("69205-2.xml");
 //        printHierarchy(pathway, 0);
 
         System.out.println("===================================");
