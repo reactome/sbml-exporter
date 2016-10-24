@@ -20,11 +20,13 @@ class WriteSBML {
      * sbml information variables
      * these can be changed if we decide to target a different sbml level and version
      */
-    private static final short sbmlLevel = 3;
-    private static final short sbmlVersion = 1;
-    private static int metaid_count = 0;
+    private final short sbmlLevel = 3;
+    private final short sbmlVersion = 1;
+    private static long metaid_count = 0;
 
     private final Pathway thisPathway;
+    private final List<Event> thisListEvents;
+    private Pathway parentPathway;
 
     private final SBMLDocument sbmlDocument;
 
@@ -35,8 +37,26 @@ class WriteSBML {
 
     private static Integer dbVersion = 0;
 
-    private Boolean addAnnotations = true;
-    private Boolean inTestMode = false;
+    private boolean addAnnotations = true;
+    private boolean inTestMode = false;
+
+    private boolean useEventOf = true;
+
+    /**
+     * Construct an instance of the SBMLWriter
+     */
+    public WriteSBML(){
+        thisPathway = null;
+        thisListEvents = null;
+        parentPathway = null;
+        sbmlDocument = new SBMLDocument(sbmlLevel, sbmlVersion);
+        loggedSpecies = new ArrayList<String>();
+        loggedCompartments = new ArrayList<String>();
+        loggedReactions = new ArrayList<String>();
+        loggedSpeciesReferences = new ArrayList<String>();
+        // reset metaid count
+        metaid_count= 0;
+    }
 
     /**
      * Construct an instance of the SBMLWriter for the specified
@@ -46,6 +66,49 @@ class WriteSBML {
      */
     public WriteSBML(Pathway pathway){
         thisPathway = pathway;
+        thisListEvents = null;
+        parentPathway = null;
+        sbmlDocument = new SBMLDocument(sbmlLevel, sbmlVersion);
+        loggedSpecies = new ArrayList<String>();
+        loggedCompartments = new ArrayList<String>();
+        loggedReactions = new ArrayList<String>();
+        loggedSpeciesReferences = new ArrayList<String>();
+        // reset metaid count
+        metaid_count= 0;
+    }
+
+    public WriteSBML(Pathway pathway, Integer version){
+        thisPathway = pathway;
+        thisListEvents = null;
+        parentPathway = null;
+        dbVersion = version;
+        sbmlDocument = new SBMLDocument(sbmlLevel, sbmlVersion);
+        loggedSpecies = new ArrayList<String>();
+        loggedCompartments = new ArrayList<String>();
+        loggedReactions = new ArrayList<String>();
+        loggedSpeciesReferences = new ArrayList<String>();
+        // reset metaid count
+        metaid_count= 0;
+    }
+
+    public WriteSBML(List<Event> loe){
+        thisPathway = null;
+        thisListEvents = loe;
+        determineParentPathway();
+        sbmlDocument = new SBMLDocument(sbmlLevel, sbmlVersion);
+        loggedSpecies = new ArrayList<String>();
+        loggedCompartments = new ArrayList<String>();
+        loggedReactions = new ArrayList<String>();
+        loggedSpeciesReferences = new ArrayList<String>();
+        // reset metaid count
+        metaid_count= 0;
+    }
+
+    public WriteSBML(List<Event> loe, Integer version){
+        thisPathway = null;
+        thisListEvents = loe;
+        determineParentPathway();
+        dbVersion = version;
         sbmlDocument = new SBMLDocument(sbmlLevel, sbmlVersion);
         loggedSpecies = new ArrayList<String>();
         loggedCompartments = new ArrayList<String>();
@@ -59,26 +122,32 @@ class WriteSBML {
      * Create the SBML model using the Reactome Pathway specified in the constructor.
      */
     public void createModel(){
+        boolean createModel = false;
+        Long pathNum = 0L;
+        String pathName = "None found";
         if (thisPathway != null) {
-            Model model = sbmlDocument.createModel("pathway_" + thisPathway.getDbId());
-            model.setName(thisPathway.getDisplayName());
+            pathNum = thisPathway.getDbId();
+            pathName = thisPathway.getDisplayName();
+            createModel = true;
+        }
+        else if (thisListEvents != null) {
+            if (parentPathway != null) {
+                pathNum = parentPathway.getDbId();
+                pathName = parentPathway.getDisplayName();
+            }
+            createModel = true;
+        }
+
+        if (createModel) {
+            Model model = sbmlDocument.createModel("pathway_" + pathNum);
+            model.setName(pathName);
             setMetaid(model);
 
-            addAllReactions(thisPathway);
+            addAllReactions();
 
-            if (addAnnotations){
-                if (!inTestMode) {
-                    AnnotationBuilder annot = new AnnotationBuilder(sbmlDocument);
-                    annot.addProvenanceAnnotation(dbVersion);
-                }
-                CVTermBuilder cvterms = new CVTermBuilder(model);
-                cvterms.createModelAnnotations(thisPathway);
-                ModelHistoryBuilder history = new ModelHistoryBuilder(model);
-                history.createHistory(thisPathway);
-                NotesBuilder notes = new NotesBuilder(model);
-                notes.addPathwayNotes(thisPathway.getSummation());
+            if (addAnnotations) {
+                addModelAnnotations(model);
             }
-
         }
     }
 
@@ -181,6 +250,102 @@ class WriteSBML {
 
     // Private functions
 
+    private void determineParentPathway() {
+        if (thisListEvents == null || thisListEvents.size() == 0) {
+            parentPathway = null;
+            return;
+        }
+        List<Long> listDBid = new ArrayList<Long>();
+
+        Event e1 = thisListEvents.get(0);
+        List<Event> loe = e1.getEventOf();
+        if (loe == null) {
+            parentPathway = null;
+            return;
+        }
+        // list of possible parent pathways
+        for (Event e : loe) {
+            if (e instanceof Pathway) {
+                listDBid.add(e.getDbId());
+            }
+        }
+
+        int x = 0;
+        while (x < thisListEvents.size()-1){
+            x++;
+            Event e_loop = thisListEvents.get(x);
+            List<Event> loe_loop = e_loop.getEventOf();
+            if (loe_loop == null) {
+                parentPathway = null;
+                return;
+            }
+            else {
+                List<Long> thisDbId = new ArrayList<Long>();
+                for (Event ee : loe_loop) {
+                    if (ee instanceof Pathway) {
+                        thisDbId.add(ee.getDbId());
+                    }
+                }
+                for (Long p: listDBid) {
+                    if (!thisDbId.contains(p)) {
+                        listDBid.remove(p);
+                    }
+                }
+            }
+        }
+
+        if (listDBid.size() != 1) {
+            parentPathway = null;
+        }
+        else {
+            for (Event e : loe) {
+                if (e.getDbId().equals(listDBid.get(0))) {
+                    parentPathway = (Pathway)(e);
+                }
+            }
+        }
+    }
+
+    private void addModelAnnotations(Model model) {
+        if (!inTestMode) {
+            AnnotationBuilder annot = new AnnotationBuilder(sbmlDocument);
+            annot.addProvenanceAnnotation(dbVersion);
+        }
+        CVTermBuilder cvterms = new CVTermBuilder(model);
+        ModelHistoryBuilder history = new ModelHistoryBuilder(model);
+        NotesBuilder notes = new NotesBuilder(model);
+        if (thisPathway != null) {
+            cvterms.createModelAnnotations(thisPathway);
+            history.createHistory(thisPathway);
+            notes.addPathwayNotes(thisPathway);
+        }
+        else if (thisListEvents != null) {
+            if (parentPathway != null) {
+                cvterms.createModelAnnotations(parentPathway);
+                history.createHistory(parentPathway);
+                notes.addPathwayNotes(parentPathway);
+            }
+            else {
+                cvterms.createModelAnnotations(thisListEvents);
+                history.createHistory(thisListEvents);
+                notes.addPathwayNotes(thisListEvents);
+            }
+        }
+
+    }
+
+    //////////////////////////////////////////////////////////////////////////////////
+
+    private void addAllReactions() {
+        if (thisPathway != null) {
+            addAllReactions(thisPathway);
+        }
+        else if (thisListEvents != null) {
+            addAllReactions(thisListEvents);
+        }
+    }
+
+
     /**
      * Add SBML Reactions from the given Pathway. This will rescurse
      * through child Events that represent Pathways.
@@ -198,6 +363,22 @@ class WriteSBML {
             }
         }
 
+    }
+
+    /**
+     * Add SBML Reactions from the given List<Event></Event>. This will rescurse
+     * through child Events that represent Pathways.
+     *
+     * @param eventList  List<Event></Event> from ReactomeDB
+     */
+    private void addAllReactions(List<Event> eventList){
+        for (Event event : eventList) {
+            addReaction(event);
+            if (event instanceof Pathway){
+                Pathway path = ((Pathway)(event));
+                addAllReactions(path);
+            }
+        }
     }
 
     /**
@@ -268,7 +449,7 @@ class WriteSBML {
                 CVTermBuilder cvterms = new CVTermBuilder(rn);
                 cvterms.createReactionAnnotations(event);
                 NotesBuilder notes = new NotesBuilder(rn);
-                notes.addPathwayNotes(event.getSummation());
+                notes.addPathwayNotes(event);
             }
 
             loggedReactions.add(id);

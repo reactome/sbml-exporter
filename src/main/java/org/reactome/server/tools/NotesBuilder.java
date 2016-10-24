@@ -60,18 +60,26 @@ class NotesBuilder {
     }
 
     /**
-     * Add notes about the pathway from the given summation
+     * Add notes about the pathway
      *
-     * @param summations    List of ReactomeDB Summation
-     */
-    void addPathwayNotes(List<Summation> summations){
-        if (summations != null) {
-            for (Summation s : summations) {
-                appendNotes(s.getText());
-            }
+     * @param pathway    ReactomeDB Summation
+    */
+    void addPathwayNotes(Event pathway){
+        if (appendSummationNotes(pathway.getSummation())) {
             addNotes();
         }
 
+    }
+
+    void addPathwayNotes(List<Event> listOfEvents){
+        appendNotes("This model was created from a list of events NOT a pathway. " +
+                "An appropriate parent pathway could not be detected.");
+        for (Event e : listOfEvents) {
+            if (appendSummationNotes(e.getSummation())) {
+                appendNotes("%n");
+            }
+        }
+        addNotes();
     }
 
     /**
@@ -135,6 +143,17 @@ class NotesBuilder {
         appendNotes(reg.getExplanation());
     }
 
+
+    private boolean appendSummationNotes(List<Summation> summations) {
+        boolean appended = false;
+        if (summations != null) {
+            for (Summation s : summations) {
+                appendNotes(s.getText());
+                appended = true;
+            }
+        }
+        return appended;
+    }
     /**
      * create string describing the complex structure within Reactome
      *

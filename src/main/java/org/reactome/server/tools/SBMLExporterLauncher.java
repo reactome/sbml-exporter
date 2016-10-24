@@ -57,12 +57,12 @@ public class SBMLExporterLauncher {
 //        long dbid = 76009L; // path with reaction
 //        long dbid = 2022090L; // polymerisation
 //        long dbid = 162585L; //depoly
-        long dbid = 192869;
+        long dbid = 73843L;
 //        long dbid = 5653656; // toplevel pathway
 //        long dbid = 5619507L;
 
 
-        int option = 7;
+        int option = 1;
 
         switch (option) {
             case 1:
@@ -88,6 +88,9 @@ public class SBMLExporterLauncher {
                 Long id = 192869L;
                 mismatchedRegulators(databaseObjectService, id);
                 break;
+            case 8:
+                Pathway p = (Pathway)(databaseObjectService.findById(dbid));
+                printHierarchy(p, 0);
 
         }
     }
@@ -99,9 +102,9 @@ public class SBMLExporterLauncher {
             Pathway p = (Pathway)(event);
             if (p.getHasEvent() != null) {
                 for (org.reactome.server.graph.domain.model.Event e: p.getHasEvent()){
-                    reportRegulators(e);
-//                    org.reactome.server.graph.domain.model.Event e1 = (org.reactome.server.graph.domain.model.Event) databaseObjectService.findById(e.getDbId());
-//                    reportRegulators(e1);
+//                    reportRegulators(e);
+                    org.reactome.server.graph.domain.model.Event e1 = (org.reactome.server.graph.domain.model.Event) databaseObjectService.findById(e.getDbId());
+                    reportRegulators(e1);
                 }
             }
         }
@@ -200,8 +203,19 @@ public class SBMLExporterLauncher {
         match = false;
         // has events of particular kind
         List<Event> events = path.getHasEvent();
-        if (events != null) {
+        if (events != null && events.size() == 2) {
+            boolean both = true;
             for (Event e : events) {
+                if (!both) break;
+                if (e instanceof Pathway)
+                {
+                    if (((Pathway)(e)).getHasEvent() != null) {
+                        if (((Pathway)(e)).getHasEvent().size()> 0){
+                            both = false;
+                        }
+                    }
+                }
+
 //                if (e instanceof ReactionLikeEvent) {
 //                    ReactionLikeEvent event = (ReactionLikeEvent) (e);
 //
@@ -222,13 +236,14 @@ public class SBMLExporterLauncher {
 //                        }
 //                    }
 //                }
-                if (e.getPositivelyRegulatedBy() != null && e.getPositivelyRegulatedBy().size() == 1) {
-                    Regulation reg = e.getPositivelyRegulatedBy().get(0);
-                    if ((reg instanceof PositiveRegulation) && !(reg instanceof Requirement)&& !(reg instanceof PositiveGeneExpressionRegulation)) {
-                        match = true;
-                    }
-                }
+//                if (e.getPositivelyRegulatedBy() != null && e.getPositivelyRegulatedBy().size() == 1) {
+//                    Regulation reg = e.getPositivelyRegulatedBy().get(0);
+//                    if ((reg instanceof PositiveRegulation) && !(reg instanceof Requirement)&& !(reg instanceof PositiveGeneExpressionRegulation)) {
+//                        match = true;
+//                    }
+//                }
             }
+            return both;
         }
 
         // has particular physical entities
@@ -256,9 +271,11 @@ public class SBMLExporterLauncher {
     }
 
     private static void outputFile(long dbid, DatabaseObjectService databaseObjectService, Integer dbVersion){
-        Event pathway = (Event) databaseObjectService.findById(dbid);
-        @SuppressWarnings("ConstantConditions") WriteSBML sbml = new WriteSBML((Pathway)(pathway));
-        sbml.setDBVersion(dbVersion);
+        Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
+//        @SuppressWarnings("ConstantConditions") WriteSBML sbml = new WriteSBML(pathway, dbVersion);
+        List<Event> loe = pathway.getHasEvent();
+        WriteSBML sbml = new WriteSBML(loe, dbVersion);
+//        sbml.setDBVersion(dbVersion);
         sbml.setAnnotationFlag(true);
         sbml.createModel();
         sbml.toStdOut();

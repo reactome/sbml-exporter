@@ -49,6 +49,19 @@ class ModelHistoryBuilder extends AnnotationBuilder {
         addModelHistory(thisHistory);
     }
 
+    void createHistory(List<Event> listOfEvents){
+        for (Event e : listOfEvents) {
+            createHistoryFromEvent(e);
+        }
+
+        thisHistory.setCreatedDate(earliestCreatedDate);
+        Collections.sort(modified);
+        for (Date d: modified){
+            thisHistory.setModifiedDate(d);
+        }
+        addModelHistory(thisHistory);
+    }
+
     /**
      * Gathers information from a particular Event regarding contributors
      * and dates.

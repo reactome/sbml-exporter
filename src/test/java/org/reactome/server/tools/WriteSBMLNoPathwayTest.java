@@ -22,7 +22,7 @@ public class WriteSBMLNoPathwayTest
     @BeforeClass
     public static void setup() {
 
-        testWrite = new WriteSBML(null);
+        testWrite = new WriteSBML();
         testWrite.setAnnotationFlag(false);
     }
     /**

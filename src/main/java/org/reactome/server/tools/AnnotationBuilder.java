@@ -96,7 +96,7 @@ class AnnotationBuilder {
         String lowerDB = dbname.toLowerCase();
         String upperDB = dbname.toUpperCase();
         Boolean shortVersion = false;
-        if (lowerDB.equals("uniprot") || lowerDB.equals("pubmed")) {
+        if (lowerDB.equals("uniprot") || lowerDB.equals("pubmed") || (lowerDB.equals("ec-code"))) {
             shortVersion = true;
         }
         else if (lowerDB.equals("embl")){

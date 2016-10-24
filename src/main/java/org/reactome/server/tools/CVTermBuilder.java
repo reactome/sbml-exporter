@@ -26,16 +26,16 @@ class CVTermBuilder extends AnnotationBuilder {
      */
     void createModelAnnotations(Pathway path) {
         addResource("reactome", CVTerm.Qualifier.BQB_IS, path.getStId());
-        if (path.getLiteratureReference() != null) {
-            for (Publication pub : path.getLiteratureReference()) {
-                if (pub instanceof LiteratureReference) {
-                    addResource("pubmed", CVTerm.Qualifier.BQB_IS_DESCRIBED_BY, ((LiteratureReference) (pub)).getPubMedIdentifier().toString());
-                }
-            }
-        }
+        addPublications(path.getLiteratureReference());
         createCVTerms();
     }
 
+    void createModelAnnotations(List<Event> listOfEvents) {
+        for (Event e : listOfEvents) {
+            addPublications(e.getLiteratureReference());
+        }
+        createCVTerms();
+    }
     /**
      * Adds the resources for a SBML reaction. This uses BQB_IS to link to the Reactome entry;
      * BQB_IS to link to any GO biological processes
@@ -46,13 +46,8 @@ class CVTermBuilder extends AnnotationBuilder {
     void createReactionAnnotations(org.reactome.server.graph.domain.model.ReactionLikeEvent event) {
         addResource("reactome", CVTerm.Qualifier.BQB_IS, event.getStId());
         addGOTerm(event);
-        if (event.getLiteratureReference() != null) {
-            for (Publication pub : event.getLiteratureReference()) {
-                if (pub instanceof LiteratureReference) {
-                    addResource("pubmed", CVTerm.Qualifier.BQB_IS_DESCRIBED_BY, ((LiteratureReference) (pub)).getPubMedIdentifier().toString());
-                }
-            }
-        }
+        addECNumber(event);
+        addPublications(event.getLiteratureReference());
         createCVTerms();
     }
 
@@ -78,6 +73,18 @@ class CVTermBuilder extends AnnotationBuilder {
         createCVTerms();
     }
 
+    private void addPublications(List<Publication> publications) {
+        if (publications == null || publications.size() == 0) {
+            return;
+        }
+        for (Publication pub : publications) {
+            if (pub instanceof LiteratureReference) {
+                addResource("pubmed", CVTerm.Qualifier.BQB_IS_DESCRIBED_BY, ((LiteratureReference) (pub)).getPubMedIdentifier().toString());
+            }
+        }
+
+    }
+
 
     /**
      * Function to determine GO terms associated with the event
@@ -95,7 +102,17 @@ class CVTermBuilder extends AnnotationBuilder {
                 addResource("go", CVTerm.Qualifier.BQB_IS, cat.getActivity().getAccession());
             }
         }
+    }
 
+    private void addECNumber(org.reactome.server.graph.domain.model.ReactionLikeEvent event) {
+        if (event.getCatalystActivity() != null && event.getCatalystActivity().size() > 0) {
+            for (CatalystActivity cat : event.getCatalystActivity()) {
+                String ecnum = cat.getActivity().getEcNumber();
+                if (ecnum != null) {
+                    addResource("ec-code", CVTerm.Qualifier.BQB_IS, ecnum);
+                }
+            }
+        }
     }
     /**
      * Adds the resources relating to different types of PhysicalEntity. In the case of a Complex
