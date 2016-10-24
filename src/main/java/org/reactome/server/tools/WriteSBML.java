@@ -242,7 +242,6 @@ class WriteSBML {
                     addParticipant("catalyst", rn, cat.getPhysicalEntity(), event.getDbId(), null);
                 }
             }
-            // TODO: regulation
             if (event.getPositivelyRegulatedBy() != null) {
                 for (Regulation reg : event.getPositivelyRegulatedBy()) {
                     // // TODO: 11/10/2016 sort out getting negative from positive
@@ -337,7 +336,6 @@ class WriteSBML {
                 loggedSpeciesReferences.add(sr_id);
             }
         }
-
     }
 
 
@@ -352,7 +350,6 @@ class WriteSBML {
         Model model = sbmlDocument.getModel();
 
         // TODO: what if there is more than one compartment listed
-        // what if there is none
         org.reactome.server.graph.domain.model.Compartment comp = pe.getCompartment().get(0);
         String comp_id = "compartment_" + comp.getDbId();
 

@@ -62,7 +62,7 @@ class NotesBuilder {
     /**
      * Add notes about the pathway from the given summation
      *
-     * @param summations    List of Reactome Summation
+     * @param summations    List of ReactomeDB Summation
      */
     void addPathwayNotes(List<Summation> summations){
         if (summations != null) {
@@ -77,10 +77,9 @@ class NotesBuilder {
     /**
      * create notes for a PhysicalEntity (SBML species)
      *
-     * @param pe    PhysicalEntity
+     * @param pe    PhysicalEntity from ReactomeDB
      */
     void createSpeciesNotes(PhysicalEntity pe){
-        // TODO polymer is only pe type not covered
         if (pe instanceof SimpleEntity){
             appendDerivedFromStatement("SimpleEntity");
             appendNotes("This is a small compound.");
@@ -127,6 +126,11 @@ class NotesBuilder {
 
     }
 
+    /**
+     * Creates notes for a modifier species reference 
+     * 
+     * @param reg Regulation from ReactomeDB
+     */
     void createSpeciesReferenceNotes(Regulation reg){
         appendNotes(reg.getExplanation());
     }
@@ -247,15 +251,12 @@ class NotesBuilder {
         // if we have an xhtml tags in the text it messes up parsing
         // copied from old reactome code
         notes = notes.replaceAll("\\p{Cntrl}+", " ");
+        // // TODO: 22/10/2016 why does this cause a problem 
 //        notes = notes.replaceAll("\\cm+", "B");
         notes = notes.replaceAll("</*[a-zA-Z][^>]*>", " ");
         notes = notes.replaceAll("<>", " interconverts to ");
         notes = notes.replaceAll("\n+", "  ");
         notes = notes.replaceAll("&+", "  ");
-        // my replacements - which are covered above
-//        notes = notes.replaceAll("(<..?>)", " ");
-//        notes = notes.replaceAll("</..?>", " ");
-//        notes = notes.replaceAll("&", "and");
         return notes;
     }
 

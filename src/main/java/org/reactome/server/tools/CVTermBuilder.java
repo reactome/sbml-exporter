@@ -58,7 +58,7 @@ class CVTermBuilder extends AnnotationBuilder {
 
     /**
      * Adds the resources for a SBML species. This uses BQB_IS to link to the Reactome entry
-     * and then calls createPhysicalEntityAnnotations to deal with the particlar type.
+     * and then calls createPhysicalEntityAnnotations to deal with the particular type.
      *
      * @param pe  PhysicalEntity from ReactomeDB
      */
@@ -79,6 +79,11 @@ class CVTermBuilder extends AnnotationBuilder {
     }
 
 
+    /**
+     * Function to determine GO terms associated with the event
+     *
+     * @param event ReactionLikeEvent from ReactomeDB
+     */
     private void addGOTerm(org.reactome.server.graph.domain.model.ReactionLikeEvent event){
         if (event.getGoBiologicalProcess() != null) {
             addResource("go", CVTerm.Qualifier.BQB_IS, event.getGoBiologicalProcess().getAccession());
@@ -100,7 +105,6 @@ class CVTermBuilder extends AnnotationBuilder {
      * @param qualifier     The MIRIAM qualifier for the reference
      */
     private void createPhysicalEntityAnnotations(PhysicalEntity pe, CVTerm.Qualifier qualifier, boolean recurse){
-        // TODO make sure all physicalentity types are covered
         if (pe instanceof SimpleEntity){
             SimpleEntity se = (SimpleEntity)(pe);
             if (se.getReferenceEntity() != null) {
@@ -121,16 +125,14 @@ class CVTermBuilder extends AnnotationBuilder {
                 if (inferences != null) {
                     for (PhysicalEntity inf : inferences) {
                         addResource("reactome", CVTerm.Qualifier.BQB_IS_HOMOLOG_TO, inf.getStId());
-                        // TODO my inclination would be to recurse through the types  but need to check with someone
-//                    createPhysicalEntityAnnotations(inf, CVTerm.Qualifier.BQB_IS_HOMOLOG_TO);
+                        // could add nested annotation but decided not to at present
                     }
                 }
                 inferences = pe.getInferredFrom();
                 if (inferences != null) {
                     for (PhysicalEntity inf : inferences) {
                         addResource("reactome", CVTerm.Qualifier.BQB_IS_HOMOLOG_TO, inf.getStId());
-                        // TODO my inclination would be to recurse through the types  but need to check with someone
-//                    createPhysicalEntityAnnotations(inf, CVTerm.Qualifier.BQB_IS_HOMOLOG_TO);
+                        // could add nested annotation but decided not to at present
                     }
                 }
                 List<AbstractModifiedResidue> mods = ((EntityWithAccessionedSequence) pe).getHasModifiedResidue();
@@ -144,7 +146,6 @@ class CVTermBuilder extends AnnotationBuilder {
                 }
             }
         }
-
         else if (pe instanceof Complex){
             if (((Complex)(pe)).getHasComponent() != null) {
                 for (PhysicalEntity component : ((Complex) (pe)).getHasComponent()) {
@@ -155,14 +156,9 @@ class CVTermBuilder extends AnnotationBuilder {
         else if (pe instanceof EntitySet){
             if (((EntitySet)(pe)).getHasMember() != null) {
                 for (PhysicalEntity member : ((EntitySet) (pe)).getHasMember()) {
-                    // TODO when I added the entitywithaccession I get more cvterms on these sets
-                    // need to clarify with someone
                     createPhysicalEntityAnnotations(member, CVTerm.Qualifier.BQB_HAS_PART, false);
                 }
             }
-        }
-        else if (pe instanceof GenomeEncodedEntity){
-            // TODO currently no further annotations get added
         }
         else if (pe instanceof Polymer){
             if (((Polymer) pe).getRepeatedUnit() != null) {
@@ -172,12 +168,24 @@ class CVTermBuilder extends AnnotationBuilder {
             }
         }
         else {
-            if (!(pe instanceof OtherEntity)) {
-                addResource("TODO", qualifier, "class not dealt with");
+            // a GenomeEncodedEntity adds no additional annotation
+            if (!(pe instanceof GenomeEncodedEntity)){
+                // the only thing left should be an OtherEntity which
+                // also adds no further annotation
+                if (!(pe instanceof OtherEntity)) {
+                    System.err.println("Encountered unrecognised physical entity");
+                }
             }
         }
     }
 
+    /**
+     * Find the KEGG compound reference
+     *
+     * @param references List<DatabaseIdentifiers> from ReactomeDB that might contain a kegg
+     *
+     * @return the KEGG reference identifier or empty string if none present
+     */
     private String getKeggReference(List<DatabaseIdentifier> references){
         if (references != null) {
             for (DatabaseIdentifier ref : references) {

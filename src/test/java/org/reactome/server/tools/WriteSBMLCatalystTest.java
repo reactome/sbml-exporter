@@ -88,7 +88,6 @@ public class WriteSBMLCatalystTest {
         assertEquals("num cvterms on species 880004", species.getNumCVTerms(), 2);
 
         cvTerm = reaction.getCVTerm(0);
-        // TODO sort this out
         assertEquals("num resources on reaction cvterm", cvTerm.getNumResources(), 2);
 
         ModifierSpeciesReference msr = reaction.getModifier(0);

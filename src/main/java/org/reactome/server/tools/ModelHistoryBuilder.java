@@ -65,6 +65,7 @@ class ModelHistoryBuilder extends AnnotationBuilder {
                 addInformation(edit);
             }
         }
+        // discussion decided that these categories should not be included
 /*
         if (path.getEdited() != null) {
             for (InstanceEdit edit : path.getEdited()) {

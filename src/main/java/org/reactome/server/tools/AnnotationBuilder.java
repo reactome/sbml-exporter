@@ -47,6 +47,11 @@ class AnnotationBuilder {
         }
     }
 
+    /**
+     *  Adds information about the reactomeDB version and jsbml version
+     *
+     * @param version integer version of the database
+     */
     void addProvenanceAnnotation(Integer version){
         Date date = new Date();
         DateFormat dateFormat = new SimpleDateFormat();
