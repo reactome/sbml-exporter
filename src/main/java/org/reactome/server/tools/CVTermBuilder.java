@@ -79,7 +79,10 @@ class CVTermBuilder extends AnnotationBuilder {
         }
         for (Publication pub : publications) {
             if (pub instanceof LiteratureReference) {
-                addResource("pubmed", CVTerm.Qualifier.BQB_IS_DESCRIBED_BY, ((LiteratureReference) (pub)).getPubMedIdentifier().toString());
+                Integer pubmed = ((LiteratureReference) pub).getPubMedIdentifier();
+                if (pubmed != null) {
+                    addResource("pubmed", CVTerm.Qualifier.BQB_IS_DESCRIBED_BY, pubmed.toString());
+                }
             }
         }
 
@@ -155,7 +158,7 @@ class CVTermBuilder extends AnnotationBuilder {
                 List<AbstractModifiedResidue> mods = ((EntityWithAccessionedSequence) pe).getHasModifiedResidue();
                 if (mods != null) {
                     for (AbstractModifiedResidue inf : mods) {
-                        if (((TranslationalModification)(inf)).getPsiMod() != null){
+                        if ((inf instanceof TranslationalModification) && ((TranslationalModification)(inf)).getPsiMod() != null){
                             PsiMod psi = ((TranslationalModification)(inf)).getPsiMod();
                             addResource(psi.getDatabaseName(), CVTerm.Qualifier.BQB_HAS_VERSION, psi.getIdentifier());
                         }

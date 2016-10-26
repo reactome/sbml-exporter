@@ -256,6 +256,7 @@ class WriteSBML {
             return;
         }
         List<Long> listDBid = new ArrayList<Long>();
+        List<Long> firstDBid = new ArrayList<Long>();
 
         Event e1 = thisListEvents.get(0);
         List<Event> loe = e1.getEventOf();
@@ -267,6 +268,7 @@ class WriteSBML {
         for (Event e : loe) {
             if (e instanceof Pathway) {
                 listDBid.add(e.getDbId());
+                firstDBid.add(e.getDbId());
             }
         }
 
@@ -286,7 +288,7 @@ class WriteSBML {
                         thisDbId.add(ee.getDbId());
                     }
                 }
-                for (Long p: listDBid) {
+                for (Long p: firstDBid) {
                     if (!thisDbId.contains(p)) {
                         listDBid.remove(p);
                     }
@@ -420,7 +422,9 @@ class WriteSBML {
             }
             if (event.getCatalystActivity() != null) {
                 for (CatalystActivity cat : event.getCatalystActivity()) {
-                    addParticipant("catalyst", rn, cat.getPhysicalEntity(), event.getDbId(), null);
+                    if (cat.getPhysicalEntity() != null) {
+                        addParticipant("catalyst", rn, cat.getPhysicalEntity(), event.getDbId(), null);
+                    }
                 }
             }
             if (event.getPositivelyRegulatedBy() != null) {
