@@ -54,7 +54,7 @@ class NotesBuilder {
             contents += notes;
         }
         else {
-            contents += " ";
+            contents += System.getProperty("line.separator");
             contents += notes;
         }
     }
@@ -73,11 +73,9 @@ class NotesBuilder {
 
     void addPathwayNotes(List<Event> listOfEvents){
         appendNotes("This model was created from a list of events NOT a pathway. " +
-                "An appropriate parent pathway could not be detected.");
+                "An appropriate parent pathway could not be detected. Events include:");
         for (Event e : listOfEvents) {
-            if (appendSummationNotes(e.getSummation())) {
-                appendNotes("%n");
-            }
+            appendSummationNotes(e.getSummation());
         }
         addNotes();
     }

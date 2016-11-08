@@ -95,6 +95,9 @@ class WriteSBML {
         thisPathway = null;
         thisListEvents = loe;
         determineParentPathway();
+        if (parentPathway == null) {
+            System.out.println("null parent");
+        }
         sbmlDocument = new SBMLDocument(sbmlLevel, sbmlVersion);
         loggedSpecies = new ArrayList<String>();
         loggedCompartments = new ArrayList<String>();
@@ -122,24 +125,30 @@ class WriteSBML {
      * Create the SBML model using the Reactome Pathway specified in the constructor.
      */
     public void createModel(){
+        if (inTestMode && thisListEvents != null){
+            parentPathway = null;
+        }
         boolean createModel = false;
-        Long pathNum = 0L;
-        String pathName = "None found";
+        Long pathNum;
+        String pathName = "No parent pathway detected";
+        String modelId = "no_pathway";
         if (thisPathway != null) {
             pathNum = thisPathway.getDbId();
             pathName = thisPathway.getDisplayName();
+            modelId = "pathway_" + pathNum;
             createModel = true;
         }
         else if (thisListEvents != null) {
             if (parentPathway != null) {
                 pathNum = parentPathway.getDbId();
                 pathName = parentPathway.getDisplayName();
+                modelId = "pathway_" + pathNum;
             }
             createModel = true;
         }
 
         if (createModel) {
-            Model model = sbmlDocument.createModel("pathway_" + pathNum);
+            Model model = sbmlDocument.createModel(modelId);
             model.setName(pathName);
             setMetaid(model);
 
@@ -259,17 +268,21 @@ class WriteSBML {
         List<Long> firstDBid = new ArrayList<Long>();
 
         Event e1 = thisListEvents.get(0);
-        List<Event> loe = e1.getEventOf();
-        if (loe == null) {
+        List<Event> child_list = e1.getEventOf();
+        if (child_list == null) {
             parentPathway = null;
             return;
         }
         // list of possible parent pathways
-        for (Event e : loe) {
+        for (Event e : child_list) {
             if (e instanceof Pathway) {
                 listDBid.add(e.getDbId());
                 firstDBid.add(e.getDbId());
             }
+        }
+
+        if (listDBid.size() > 1){
+            System.out.println("hit");
         }
 
         int x = 0;
@@ -300,7 +313,7 @@ class WriteSBML {
             parentPathway = null;
         }
         else {
-            for (Event e : loe) {
+            for (Event e : child_list) {
                 if (e.getDbId().equals(listDBid.get(0))) {
                     parentPathway = (Pathway)(e);
                 }

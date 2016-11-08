@@ -26,7 +26,7 @@ public class WriteSBMLOtherEntityTest {
 
 
     private final String openset_notes = String.format("<notes>%n" +
-            "  <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a Reactome OpenSet. " +
+            "  <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a Reactome OpenSet.%n" +
             "A set of examples characterizing a very large but not explicitly enumerated set, e.g. mRNAs.</p>%n"
             + "</notes>");
 

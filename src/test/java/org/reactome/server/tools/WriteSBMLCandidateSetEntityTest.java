@@ -21,7 +21,7 @@ public class WriteSBMLCandidateSetEntityTest {
 
 
     private final String notes = String.format("<notes>%n" +
-            "  <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a Reactome CandidateSet. " +
+            "  <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a Reactome CandidateSet.%n" +
             "A list of entities, one or more of which might perform the given function.</p>%n" + "</notes>");
 
 

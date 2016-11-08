@@ -21,7 +21,7 @@ public class WriteSBMLReactionTest {
 
     private final String notes = String.format("<notes>%n" +
             "  <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a " +
-            "Reactome DefinedSet. This is a list of alternative entities, " +
+            "Reactome DefinedSet.%nThis is a list of alternative entities, " +
             "any of which can perform the given function.</p>%n" + "</notes>");
 
 

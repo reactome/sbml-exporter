@@ -27,16 +27,16 @@ public class WriteSBMLEntityTest {
 
     private final String complex_notes = String.format("<notes>%n" +
             "  <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a " +
-            "Reactome Complex. Here is Reactomes nested structure for this complex: (P03433, P03431, P03428)</p>%n"
+            "Reactome Complex.%nHere is Reactomes nested structure for this complex: (P03433, P03431, P03428)</p>%n"
             + "</notes>");
 
     private final String defined_notes = String.format("<notes>%n" +
-            "  <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a Reactome DefinedSet. " +
+            "  <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a Reactome DefinedSet.%n" +
             "This is a list of alternative entities, any of which can perform the given function.</p>%n"
             + "</notes>");
 
     private final String access_notes = String.format("<notes>%n" +
-            "  <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a Reactome EntityWithAccessionedSequence. " +
+            "  <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a Reactome EntityWithAccessionedSequence.%n" +
             "This is a protein.</p>%n"
             + "</notes>");
 
