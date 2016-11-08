@@ -15,7 +15,7 @@ import org.reactome.server.tools.config.GraphQANeo4jConfig;
  */
 @RunWith(value=Suite.class)
 
-//@Suite.SuiteClasses(value={WriteSBMLListEventsNoParentTest.class})
+//@Suite.SuiteClasses(value={WriteSBMLListEventsTest.class})
 
 @Suite.SuiteClasses(value={
                             WriteSBMLNoEventsTest.class, WriteSBMLNoEventsAnnotTest.class,
