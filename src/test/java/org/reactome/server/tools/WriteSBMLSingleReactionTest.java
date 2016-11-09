@@ -29,9 +29,12 @@ public class WriteSBMLSingleReactionTest
                 "<sbml xmlns=\"http://www.sbml.org/sbml/level3/version1/core\" level=\"3\" version=\"1\">%n" +
                 "  <model name=\"Entry of Influenza Virion into Host Cell via Endocytosis\" id=\"pathway_168275\" metaid=\"metaid_0\">%n" +
                 "    <listOfCompartments>%n" +
-                "      <compartment name=\"plasma membrane\" constant=\"true\" id=\"compartment_876\" metaid=\"metaid_3\" />%n" +
-                "      <compartment name=\"endosome lumen\" constant=\"true\" id=\"compartment_171907\" metaid=\"metaid_5\" />%n" +
-                "      <compartment name=\"endocytic vesicle membrane\" constant=\"true\" id=\"compartment_24337\" metaid=\"metaid_7\" />%n" +
+                "      <compartment name=\"plasma membrane\" constant=\"true\" id=\"compartment_876\" " +
+                "metaid=\"metaid_3\" sboTerm=\"SBO:0000290\" />%n" +
+                "      <compartment name=\"endosome lumen\" constant=\"true\" id=\"compartment_171907\" " +
+                "metaid=\"metaid_5\" sboTerm=\"SBO:0000290\" />%n" +
+                "      <compartment name=\"endocytic vesicle membrane\" constant=\"true\" id=\"compartment_24337\" " +
+                "metaid=\"metaid_7\" sboTerm=\"SBO:0000290\" />%n" +
                 "    </listOfCompartments>%n" +
                 "    <listOfSpecies>%n" +
                 "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_2\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_876\"%n" +

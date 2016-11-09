@@ -583,6 +583,7 @@ class WriteSBML {
              setMetaid(c);
              c.setName(comp.getDisplayName());
              c.setConstant(true);
+             c.setSBOTerm(290);
 
              if (addAnnotations){
                  CVTermBuilder cvterms = new CVTermBuilder(c);

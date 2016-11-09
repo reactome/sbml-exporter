@@ -84,7 +84,7 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "      </rdf:RDF>%n" +
                 "    </annotation>%n" +
                 "    <listOfCompartments>%n" +
-                "      <compartment name=\"plasma membrane\" constant=\"true\" id=\"compartment_876\" metaid=\"metaid_3\">%n" +
+                "      <compartment name=\"plasma membrane\" constant=\"true\" id=\"compartment_876\" metaid=\"metaid_3\" sboTerm=\"SBO:0000290\">%n" +
                 "        <annotation>%n" +
                 "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
                 "            <rdf:Description rdf:about=\"#metaid_3\">%n" +
@@ -97,7 +97,7 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "          </rdf:RDF>%n" +
                 "        </annotation>%n" +
                 "      </compartment>%n" +
-                "      <compartment name=\"endosome lumen\" constant=\"true\" id=\"compartment_171907\" metaid=\"metaid_5\">%n" +
+                "      <compartment name=\"endosome lumen\" constant=\"true\" id=\"compartment_171907\" metaid=\"metaid_5\" sboTerm=\"SBO:0000290\">%n" +
                 "        <annotation>%n" +
                 "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
                 "            <rdf:Description rdf:about=\"#metaid_5\">%n" +
@@ -110,7 +110,7 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "          </rdf:RDF>%n" +
                 "        </annotation>%n" +
                 "      </compartment>%n" +
-                "      <compartment name=\"endocytic vesicle membrane\" constant=\"true\" id=\"compartment_24337\" metaid=\"metaid_7\">%n" +
+                "      <compartment name=\"endocytic vesicle membrane\" constant=\"true\" id=\"compartment_24337\" metaid=\"metaid_7\" sboTerm=\"SBO:0000290\">%n" +
                 "        <annotation>%n" +
                 "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +
                 "            <rdf:Description rdf:about=\"#metaid_7\">%n" +
