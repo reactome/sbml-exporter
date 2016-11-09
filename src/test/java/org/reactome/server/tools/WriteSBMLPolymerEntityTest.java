@@ -59,8 +59,12 @@ public class WriteSBMLPolymerEntityTest {
     @org.junit.Test
     public void testCreateModel()
     {
-        testWrite.createModel();
         SBMLDocument doc = testWrite.getSBMLDocument();
+        if (!doc.isSetModel()) {
+            testWrite.createModel();
+            doc = testWrite.getSBMLDocument();
+        }
+
         assertTrue( "Document creation failed", doc != null);
 
         Model model = doc.getModel();
@@ -90,6 +94,23 @@ public class WriteSBMLPolymerEntityTest {
         catch(Exception e){
             System.out.println("getNotesString failed");
         }
+    }
+    @org.junit.Test
+    public void testSpeciesSBOTerms()
+    {
+        SBMLDocument doc = testWrite.getSBMLDocument();
+        if (!doc.isSetModel()) {
+            testWrite.createModel();
+            doc = testWrite.getSBMLDocument();
+        }
+
+        Model model = doc.getModel();
+        assertTrue("Model failed", model != null);
+
+        // species from polymer
+        Species species = model.getSpecies("species_9703057");
+        assertTrue("sbo term set", species.isSetSBOTerm());
+        assertEquals("polymer sbo term", species.getSBOTerm(), 240);
     }
 
 }

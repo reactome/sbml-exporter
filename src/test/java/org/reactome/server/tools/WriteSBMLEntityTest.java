@@ -75,8 +75,11 @@ public class WriteSBMLEntityTest {
     @org.junit.Test
     public void testCreateModel()
     {
-        testWrite.createModel();
         SBMLDocument doc = testWrite.getSBMLDocument();
+        if (!doc.isSetModel()) {
+            testWrite.createModel();
+            doc = testWrite.getSBMLDocument();
+        }
         assertTrue( "Document creation failed", doc != null);
 
         Model model = doc.getModel();
@@ -165,6 +168,38 @@ public class WriteSBMLEntityTest {
             System.out.println("getNotesString failed");
         }
 
+    }
+    @org.junit.Test
+    public void testSpeciesSBOTerms()
+    {
+        SBMLDocument doc = testWrite.getSBMLDocument();
+        if (!doc.isSetModel()) {
+            testWrite.createModel();
+            doc = testWrite.getSBMLDocument();
+        }
+
+        Model model = doc.getModel();
+        assertTrue("Model failed", model != null);
+
+        // species from EWAS
+        Species species = model.getSpecies("species_195756");
+        assertTrue("sbo term set", species.isSetSBOTerm());
+        assertEquals("EWAS sbo term", species.getSBOTerm(), 297);
+
+        // species from DefinedSet
+        species = model.getSpecies("species_30595");
+        assertTrue("sbo term set", !species.isSetSBOTerm());
+//        assertEquals("simple entity sbo term", species.getSBOTerm(), 0);
+
+        // species from Simple entity
+        species = model.getSpecies("species_188957");
+        assertTrue("sbo term set", species.isSetSBOTerm());
+        assertEquals("simple entity sbo term", species.getSBOTerm(), 247);
+
+        // species from Genome encoded entity
+        species = model.getSpecies("species_188957");
+        assertTrue("sbo term set", species.isSetSBOTerm());
+        assertEquals("simple entity sbo term", species.getSBOTerm(), 247);
     }
 
 }

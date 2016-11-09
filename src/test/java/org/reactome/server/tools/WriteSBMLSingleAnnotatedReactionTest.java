@@ -125,7 +125,7 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "      </compartment>%n" +
                 "    </listOfCompartments>%n" +
                 "    <listOfSpecies>%n" +
-                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_2\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_876\"%n" +
+                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_2\" hasOnlySubstanceUnits=\"false\" sboTerm=\"SBO:0000253\" compartment=\"compartment_876\"%n" +
                 "      name=\"Sialic Acid Bound Influenza A Viral Particle [plasma membrane]\" id=\"species_188954\">%n" +
                 "        <notes>%n" +
                 "          <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a Reactome Complex. Reactome uses a nested structure for complexes, which cannot be fully represented in SBML Level 3 Version 1%n" +
@@ -165,9 +165,8 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "          </rdf:RDF>%n" +
                 "        </annotation>%n" +
                 "      </species>%n" +
-                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_4\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_171907\"" +
-                " name=\"Influenza A Viral Particle [endosome lumen]\"%n" +
-                "      id=\"species_189171\">%n" +
+                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_4\" hasOnlySubstanceUnits=\"false\" sboTerm=\"SBO:0000253\" compartment=\"compartment_171907\"%n" +
+                "      name=\"Influenza A Viral Particle [endosome lumen]\" id=\"species_189171\">%n" +
                 "        <notes>%n" +
                 "          <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a Reactome Complex. Reactome uses a nested structure for complexes, which cannot be fully represented in SBML Level 3 Version 1%n" +
                 "          core.</p>%n" +
@@ -205,8 +204,9 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "          </rdf:RDF>%n" +
                 "        </annotation>%n" +
                 "      </species>%n" +
-                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_6\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_24337\"" +
-                " name=\"SA [endocytic vesicle membrane]\" id=\"species_189161\">%n" +
+                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_6\" hasOnlySubstanceUnits=\"false\" sboTerm=\"SBO:0000247\" compartment=\"compartment_24337\"" +
+                " name=\"SA [endocytic vesicle membrane]\"%n" +
+                "      id=\"species_189161\">%n" +
                 "        <notes>%n" +
                 "          <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a Reactome SimpleEntity. This is a small compound.</p>%n" +
                 "        </notes>%n" +
@@ -223,8 +223,9 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "          </rdf:RDF>%n" +
                 "        </annotation>%n" +
                 "      </species>%n" +
-                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_8\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_876\"" +
-                " name=\"Clathrin [plasma membrane]\" id=\"species_177482\">%n" +
+                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_8\" hasOnlySubstanceUnits=\"false\" sboTerm=\"SBO:0000253\" compartment=\"compartment_876\"" +
+                " name=\"Clathrin [plasma membrane]\"%n" +
+                "      id=\"species_177482\">%n" +
                 "        <notes>%n" +
                 "          <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a Reactome Complex. Here is Reactomes nested structure for this complex: (P09496, Q00610)</p>%n" +
                 "        </notes>%n" +

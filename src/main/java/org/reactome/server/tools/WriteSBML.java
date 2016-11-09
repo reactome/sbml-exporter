@@ -560,6 +560,12 @@ class WriteSBML {
             s.setBoundaryCondition(false);
             s.setHasOnlySubstanceUnits(false);
             s.setConstant(false);
+            try {
+                s.setSBOTerm(sbo.getSpeciesTerm((pe)));
+            }
+            catch (IllegalArgumentException e) {
+                // do not set
+            }
 
             if (addAnnotations){
                 CVTermBuilder cvterms = new CVTermBuilder(s);

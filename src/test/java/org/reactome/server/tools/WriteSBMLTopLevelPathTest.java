@@ -55,8 +55,11 @@ public class WriteSBMLTopLevelPathTest {
     @org.junit.Test
     public void testCreateModel()
     {
-        testWrite.createModel();
         SBMLDocument doc = testWrite.getSBMLDocument();
+        if (!doc.isSetModel()) {
+            testWrite.createModel();
+            doc = testWrite.getSBMLDocument();
+        }
         assertTrue( "Document creation failed", doc != null);
 
         Model model = doc.getModel();
@@ -66,6 +69,24 @@ public class WriteSBMLTopLevelPathTest {
         assertEquals("Num species failed", model.getNumSpecies(), 704);
         assertEquals("Num reactions failed", model.getNumReactions(), 382);
 
+    }
+
+    @org.junit.Test
+    public void testSpeciesSBOTerms()
+    {
+        SBMLDocument doc = testWrite.getSBMLDocument();
+        if (!doc.isSetModel()) {
+            testWrite.createModel();
+            doc = testWrite.getSBMLDocument();
+        }
+
+        Model model = doc.getModel();
+        assertTrue("Model failed", model != null);
+
+        // species from genome encoded entity
+        Species species = model.getSpecies("species_141398");
+        assertTrue("sbo term set", species.isSetSBOTerm());
+        assertEquals("genome encoded entity sbo term", species.getSBOTerm(), 297);
     }
 
 }

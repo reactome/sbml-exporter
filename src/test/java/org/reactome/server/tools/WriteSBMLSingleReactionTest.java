@@ -37,14 +37,18 @@ public class WriteSBMLSingleReactionTest
                 "metaid=\"metaid_7\" sboTerm=\"SBO:0000290\" />%n" +
                 "    </listOfCompartments>%n" +
                 "    <listOfSpecies>%n" +
-                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_2\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_876\"%n" +
+                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_2\" hasOnlySubstanceUnits=\"false\" "+
+                "sboTerm=\"SBO:0000253\" compartment=\"compartment_876\"%n" +
                 "      name=\"Sialic Acid Bound Influenza A Viral Particle [plasma membrane]\" id=\"species_188954\" />%n" +
-                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_4\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_171907\"" +
-                " name=\"Influenza A Viral Particle [endosome lumen]\"%n" +
-                "      id=\"species_189171\" />%n" +
-                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_6\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_24337\"" +
-                " name=\"SA [endocytic vesicle membrane]\" id=\"species_189161\" />%n" +
-                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_8\" hasOnlySubstanceUnits=\"false\" compartment=\"compartment_876\" name=\"Clathrin [plasma membrane]\" id=\"species_177482\" />%n" +
+                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_4\" hasOnlySubstanceUnits=\"false\" " +
+                "sboTerm=\"SBO:0000253\" compartment=\"compartment_171907\"%n" +
+                "      name=\"Influenza A Viral Particle [endosome lumen]\" id=\"species_189171\" />%n" +
+                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_6\" hasOnlySubstanceUnits=\"false\" " +
+                "sboTerm=\"SBO:0000247\" compartment=\"compartment_24337\" name=\"SA [endocytic vesicle membrane]\"%n" +
+                "      id=\"species_189161\" />%n" +
+                "      <species boundaryCondition=\"false\" constant=\"false\" metaid=\"metaid_8\" hasOnlySubstanceUnits=\"false\" " +
+                "sboTerm=\"SBO:0000253\" compartment=\"compartment_876\" name=\"Clathrin [plasma membrane]\"%n" +
+                "      id=\"species_177482\" />%n" +
                 "    </listOfSpecies>%n" +
                 "    <listOfReactions>%n" +
                 "      <reaction name=\"Clathrin-Mediated Pit Formation And Endocytosis Of The Influenza Virion\" fast=\"false\" id=\"reaction_168285\" metaid=\"metaid_1\" reversible=\"false\">%n" +

@@ -65,8 +65,11 @@ public class WriteSBMLOtherEntityTest {
     @org.junit.Test
     public void testCreateModel()
     {
-        testWrite.createModel();
         SBMLDocument doc = testWrite.getSBMLDocument();
+        if (!doc.isSetModel()) {
+            testWrite.createModel();
+            doc = testWrite.getSBMLDocument();
+        }
         assertTrue( "Document creation failed", doc != null);
 
         Model model = doc.getModel();
@@ -114,4 +117,30 @@ public class WriteSBMLOtherEntityTest {
         }
     }
 
+    @org.junit.Test
+    public void testSpeciesSBOTerms()
+    {
+        SBMLDocument doc = testWrite.getSBMLDocument();
+        if (!doc.isSetModel()) {
+            testWrite.createModel();
+            doc = testWrite.getSBMLDocument();
+        }
+
+        Model model = doc.getModel();
+        assertTrue("Model failed", model != null);
+
+        // species from OtherEntity
+        Species species = model.getSpecies("species_1799320");
+        assertTrue("sbo term set", species.isSetSBOTerm());
+        assertEquals("other entity sbo term", species.getSBOTerm(), 240);
+
+        // species from OpenSet
+        species = model.getSpecies("species_72323");
+        assertTrue("sbo term set", !species.isSetSBOTerm());
+
+        // species from Complex
+        species = model.getSpecies("species_264960");
+        assertTrue("sbo term set", species.isSetSBOTerm());
+        assertEquals("complex sbo term", species.getSBOTerm(), 253);
+    }
 }
