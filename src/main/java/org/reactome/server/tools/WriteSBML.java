@@ -95,9 +95,6 @@ class WriteSBML {
         thisPathway = null;
         thisListEvents = loe;
         determineParentPathway();
-        if (parentPathway == null) {
-            System.out.println("null parent");
-        }
         sbmlDocument = new SBMLDocument(sbmlLevel, sbmlVersion);
         loggedSpecies = new ArrayList<String>();
         loggedCompartments = new ArrayList<String>();
@@ -279,10 +276,6 @@ class WriteSBML {
                 listDBid.add(e.getDbId());
                 firstDBid.add(e.getDbId());
             }
-        }
-
-        if (listDBid.size() > 1){
-            System.out.println("hit");
         }
 
         int x = 0;

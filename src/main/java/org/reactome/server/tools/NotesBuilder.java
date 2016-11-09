@@ -272,6 +272,7 @@ class NotesBuilder {
 //        notes = notes.replaceAll("\\cm+", "B");
         notes = notes.replaceAll("</*[a-zA-Z][^>]*>", " ");
         notes = notes.replaceAll("<>", " interconverts to ");
+        notes = notes.replaceAll("<", " ");
         notes = notes.replaceAll("\n+", "  ");
         notes = notes.replaceAll("&+", "  ");
         return notes;
