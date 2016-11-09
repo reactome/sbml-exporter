@@ -272,14 +272,14 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "          </rdf:RDF>%n" +
                 "        </annotation>%n" +
                 "        <listOfReactants>%n" +
-                "          <speciesReference constant=\"true\" id=\"speciesreference_168285_input_188954\" species=\"species_188954\" />%n" +
+                "          <speciesReference constant=\"true\" id=\"speciesreference_168285_input_188954\" species=\"species_188954\" sboTerm=\"SBO:0000010\" />%n" +
                 "        </listOfReactants>%n" +
                 "        <listOfProducts>%n" +
-                "          <speciesReference constant=\"true\" id=\"speciesreference_168285_output_189171\" species=\"species_189171\" />%n" +
-                "          <speciesReference constant=\"true\" id=\"speciesreference_168285_output_189161\" species=\"species_189161\" />%n" +
+                "          <speciesReference constant=\"true\" id=\"speciesreference_168285_output_189171\" species=\"species_189171\" sboTerm=\"SBO:0000011\" />%n" +
+                "          <speciesReference constant=\"true\" id=\"speciesreference_168285_output_189161\" species=\"species_189161\" sboTerm=\"SBO:0000011\" />%n" +
                 "        </listOfProducts>%n" +
                 "        <listOfModifiers>%n" +
-                "          <modifierSpeciesReference species=\"species_177482\" id=\"modifierspeciesreference_168285_positiveregulator_177482\">%n" +
+                "          <modifierSpeciesReference id=\"modifierspeciesreference_168285_positiveregulator_177482\" species=\"species_177482\" sboTerm=\"SBO:0000461\">%n" +
                 "            <notes>%n" +
                 "              <p xmlns=\"http://www.w3.org/1999/xhtml\">A regulator that is required for an Event/CatalystActivity to happen</p>%n" +
                 "            </notes>%n" +

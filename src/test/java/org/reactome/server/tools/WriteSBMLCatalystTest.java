@@ -58,8 +58,11 @@ public class WriteSBMLCatalystTest {
     @org.junit.Test
     public void testCreateModel()
     {
-        testWrite.createModel();
         SBMLDocument doc = testWrite.getSBMLDocument();
+        if (!doc.isSetModel()) {
+            testWrite.createModel();
+            doc = testWrite.getSBMLDocument();
+        }
         assertTrue( "Document creation failed", doc != null);
 
         Model model = doc.getModel();
@@ -95,4 +98,23 @@ public class WriteSBMLCatalystTest {
 
     }
 
+    @org.junit.Test
+    public void testSpeciesReferenceSBOTerms()
+    {
+        SBMLDocument doc = testWrite.getSBMLDocument();
+        if (!doc.isSetModel()) {
+            testWrite.createModel();
+            doc = testWrite.getSBMLDocument();
+        }
+
+        Model model = doc.getModel();
+        assertTrue("Model failed", model != null);
+
+        Reaction reaction = model.getReaction(0);
+
+        // catalyst
+        ModifierSpeciesReference species = reaction.getModifier(0);
+        assertTrue("sbo term set", species.isSetSBOTerm());
+        assertEquals("msr sbo term", species.getSBOTerm(), 13);
+    }
 }

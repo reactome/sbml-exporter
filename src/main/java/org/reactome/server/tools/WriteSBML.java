@@ -492,6 +492,7 @@ class WriteSBML {
             if (!loggedSpeciesReferences.contains(sr_id)) {
                 SpeciesReference sr = rn.createReactant(sr_id, speciesId);
                 sr.setConstant(true);
+                sbo.setTerm(type, sr);
                 loggedSpeciesReferences.add(sr_id);
             }
         }
@@ -500,6 +501,7 @@ class WriteSBML {
             if (!loggedSpeciesReferences.contains(sr_id)) {
                 SpeciesReference sr = rn.createProduct(sr_id, speciesId);
                 sr.setConstant(true);
+                sbo.setTerm(type, sr);
                 loggedSpeciesReferences.add(sr_id);
             }
         }
@@ -507,6 +509,7 @@ class WriteSBML {
             String sr_id = "modifierspeciesreference_" + event_no + "_catalyst_" + pe.getDbId();
             if (!loggedSpeciesReferences.contains(sr_id)) {
                 ModifierSpeciesReference sr = rn.createModifier(sr_id, speciesId);
+                sbo.setTerm(type, sr);
                 loggedSpeciesReferences.add(sr_id);
             }
         }
@@ -514,6 +517,7 @@ class WriteSBML {
             String sr_id = "modifierspeciesreference_" + event_no + "_positiveregulator_" + pe.getDbId();
             if (!loggedSpeciesReferences.contains(sr_id)) {
                 ModifierSpeciesReference sr = rn.createModifier(sr_id, speciesId);
+                sbo.setTerm(type, sr);
                 if (addAnnotations && reg != null) {
                     NotesBuilder notes = new NotesBuilder(sr);
                     notes.createSpeciesReferenceNotes(reg);
@@ -526,6 +530,7 @@ class WriteSBML {
             String sr_id = "modifierspeciesreference_" + event_no + "_negativeregulator_" + pe.getDbId();
             if (!loggedSpeciesReferences.contains(sr_id)) {
                 ModifierSpeciesReference sr = rn.createModifier(sr_id, speciesId);
+                sbo.setTerm(type, sr);
                 if (addAnnotations && reg != null) {
                     NotesBuilder notes = new NotesBuilder(sr);
                     notes.createSpeciesReferenceNotes(reg);
@@ -560,12 +565,7 @@ class WriteSBML {
             s.setBoundaryCondition(false);
             s.setHasOnlySubstanceUnits(false);
             s.setConstant(false);
-            try {
-                s.setSBOTerm(sbo.getSpeciesTerm((pe)));
-            }
-            catch (IllegalArgumentException e) {
-                // do not set
-            }
+            sbo.setTerm(s, pe);
 
             if (addAnnotations){
                 CVTermBuilder cvterms = new CVTermBuilder(s);
@@ -596,7 +596,7 @@ class WriteSBML {
              setMetaid(c);
              c.setName(comp.getDisplayName());
              c.setConstant(true);
-             c.setSBOTerm(sbo.getCompartmentTerm(comp));
+             sbo.setTerm(c, comp);
 
              if (addAnnotations){
                  CVTermBuilder cvterms = new CVTermBuilder(c);

@@ -60,8 +60,11 @@ public class WriteSBMLPositiveRegulatorTest {
     @org.junit.Test
     public void testCreateModel()
     {
-        testWrite.createModel();
         SBMLDocument doc = testWrite.getSBMLDocument();
+        if (!doc.isSetModel()) {
+            testWrite.createModel();
+            doc = testWrite.getSBMLDocument();
+        }
         assertTrue( "Document creation failed", doc != null);
 
         Model model = doc.getModel();
@@ -88,6 +91,26 @@ public class WriteSBMLPositiveRegulatorTest {
             System.out.println("getNotesString failed");
         }
 
+    }
+
+    @org.junit.Test
+    public void testSpeciesReferenceSBOTerms()
+    {
+        SBMLDocument doc = testWrite.getSBMLDocument();
+        if (!doc.isSetModel()) {
+            testWrite.createModel();
+            doc = testWrite.getSBMLDocument();
+        }
+
+        Model model = doc.getModel();
+        assertTrue("Model failed", model != null);
+
+        Reaction reaction = model.getReaction("reaction_192832");
+
+        // positive regulator
+        ModifierSpeciesReference msr = reaction.getModifierForSpecies("species_188832");
+        assertTrue("sbo term set", msr.isSetSBOTerm());
+        assertEquals("msr sbo term", msr.getSBOTerm(), 461);
     }
 
 }

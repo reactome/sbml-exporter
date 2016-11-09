@@ -53,14 +53,14 @@ public class WriteSBMLSingleReactionTest
                 "    <listOfReactions>%n" +
                 "      <reaction name=\"Clathrin-Mediated Pit Formation And Endocytosis Of The Influenza Virion\" fast=\"false\" id=\"reaction_168285\" metaid=\"metaid_1\" reversible=\"false\">%n" +
                 "        <listOfReactants>%n" +
-                "          <speciesReference constant=\"true\" id=\"speciesreference_168285_input_188954\" species=\"species_188954\" />%n" +
+                "          <speciesReference constant=\"true\" id=\"speciesreference_168285_input_188954\" species=\"species_188954\" sboTerm=\"SBO:0000010\" />%n" +
                 "        </listOfReactants>%n" +
                 "        <listOfProducts>%n" +
-                "          <speciesReference constant=\"true\" id=\"speciesreference_168285_output_189171\" species=\"species_189171\" />%n" +
-                "          <speciesReference constant=\"true\" id=\"speciesreference_168285_output_189161\" species=\"species_189161\" />%n" +
+                "          <speciesReference constant=\"true\" id=\"speciesreference_168285_output_189171\" species=\"species_189171\" sboTerm=\"SBO:0000011\" />%n" +
+                "          <speciesReference constant=\"true\" id=\"speciesreference_168285_output_189161\" species=\"species_189161\" sboTerm=\"SBO:0000011\" />%n" +
                 "        </listOfProducts>%n" +
                 "        <listOfModifiers>%n" +
-                "          <modifierSpeciesReference species=\"species_177482\" id=\"modifierspeciesreference_168285_positiveregulator_177482\" />%n" +
+                "          <modifierSpeciesReference id=\"modifierspeciesreference_168285_positiveregulator_177482\" species=\"species_177482\" sboTerm=\"SBO:0000461\" />%n" +
                 "        </listOfModifiers>%n" +
                 "      </reaction>%n" +
                 "    </listOfReactions>%n" +
