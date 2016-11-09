@@ -81,6 +81,13 @@ class WriteSBML {
         metaid_count= 0;
     }
 
+    /**
+     * Construct an instance of the SBMLWriter for the specified
+     * Pathway.
+     *
+     * @param pathway Pathway from ReactomeDB
+     * @param version Integer - version number of the database
+     */
     public WriteSBML(Pathway pathway, Integer version){
         thisPathway = pathway;
         thisListEvents = null;
@@ -96,6 +103,12 @@ class WriteSBML {
         metaid_count= 0;
     }
 
+    /**
+     * Construct an instance of the SBMLWriter for the specified
+     * List of Events.
+     *
+     * @param loe list<Event> from ReactomeDB
+     */
     public WriteSBML(List<Event> loe){
         thisPathway = null;
         thisListEvents = loe;
@@ -110,6 +123,13 @@ class WriteSBML {
         metaid_count= 0;
     }
 
+    /**
+     * Construct an instance of the SBMLWriter for the specified
+     * List of Events.
+     *
+     * @param loe list<Event> from ReactomeDB
+     * @param version Integer - version number of the database
+     */
     public WriteSBML(List<Event> loe, Integer version){
         thisPathway = null;
         thisListEvents = loe;
@@ -263,6 +283,10 @@ class WriteSBML {
 
     // Private functions
 
+    /**
+     * Determines a unique parent pathway from the List<Event> argument
+     * and sets the member variable parentPathway if one is found
+     */
     private void determineParentPathway() {
         if (thisListEvents == null || thisListEvents.size() == 0) {
             parentPathway = null;
@@ -285,6 +309,7 @@ class WriteSBML {
             }
         }
 
+        // // TODO: 09/11/2016 must be a better way to do this
         int x = 0;
         while (x < thisListEvents.size()-1){
             x++;
@@ -321,6 +346,11 @@ class WriteSBML {
         }
     }
 
+    /**
+     * Adds annotations and notes to the model
+     *
+     * @param model SBML model to add to
+     */
     private void addModelAnnotations(Model model) {
         if (!inTestMode) {
             AnnotationBuilder annot = new AnnotationBuilder(sbmlDocument);
@@ -346,11 +376,15 @@ class WriteSBML {
                 notes.addPathwayNotes(thisListEvents);
             }
         }
-
     }
 
     //////////////////////////////////////////////////////////////////////////////////
 
+    /**
+     * add SBML reactions to the model
+     * this function calls teh appropriate function dependent
+     * on whether we are working from a Pathway of a List<Event>
+     */
     private void addAllReactions() {
         if (thisPathway != null) {
             addAllReactions(thisPathway);
