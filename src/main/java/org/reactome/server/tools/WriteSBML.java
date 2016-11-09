@@ -35,6 +35,8 @@ class WriteSBML {
     private final List <String> loggedReactions;
     private final List <String> loggedSpeciesReferences;
 
+    private SBOTermLookup sbo;
+
     private static Integer dbVersion = 0;
 
     private boolean addAnnotations = true;
@@ -54,6 +56,7 @@ class WriteSBML {
         loggedCompartments = new ArrayList<String>();
         loggedReactions = new ArrayList<String>();
         loggedSpeciesReferences = new ArrayList<String>();
+        sbo = new SBOTermLookup();
         // reset metaid count
         metaid_count= 0;
     }
@@ -73,6 +76,7 @@ class WriteSBML {
         loggedCompartments = new ArrayList<String>();
         loggedReactions = new ArrayList<String>();
         loggedSpeciesReferences = new ArrayList<String>();
+        sbo = new SBOTermLookup();
         // reset metaid count
         metaid_count= 0;
     }
@@ -87,6 +91,7 @@ class WriteSBML {
         loggedCompartments = new ArrayList<String>();
         loggedReactions = new ArrayList<String>();
         loggedSpeciesReferences = new ArrayList<String>();
+        sbo = new SBOTermLookup();
         // reset metaid count
         metaid_count= 0;
     }
@@ -100,6 +105,7 @@ class WriteSBML {
         loggedCompartments = new ArrayList<String>();
         loggedReactions = new ArrayList<String>();
         loggedSpeciesReferences = new ArrayList<String>();
+        sbo = new SBOTermLookup();
         // reset metaid count
         metaid_count= 0;
     }
@@ -114,6 +120,7 @@ class WriteSBML {
         loggedCompartments = new ArrayList<String>();
         loggedReactions = new ArrayList<String>();
         loggedSpeciesReferences = new ArrayList<String>();
+        sbo = new SBOTermLookup();
         // reset metaid count
         metaid_count= 0;
     }
@@ -583,7 +590,7 @@ class WriteSBML {
              setMetaid(c);
              c.setName(comp.getDisplayName());
              c.setConstant(true);
-             c.setSBOTerm(290);
+             c.setSBOTerm(sbo.getCompartmentTerm(comp));
 
              if (addAnnotations){
                  CVTermBuilder cvterms = new CVTermBuilder(c);
