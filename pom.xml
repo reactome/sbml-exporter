@@ -13,7 +13,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <graph.version>0.1.2-SNAPSHOT</graph.version>
+        <graph.core>1.0.0</graph.core>
         <sbml.lib.version>1.1</sbml.lib.version>
         <jasp.version>2.1</jasp.version>
 
@@ -36,7 +36,7 @@
         <dependency>
             <groupId>org.reactome.server.graph</groupId>
             <artifactId>graph-core</artifactId>
-            <version>${graph.version}</version>
+            <version>${graph.core}</version>
         </dependency>
 
         <!-- SBML lib -->
