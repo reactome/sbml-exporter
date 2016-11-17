@@ -475,24 +475,18 @@ class WriteSBML {
                 }
             }
             if (event.getPositivelyRegulatedBy() != null) {
-                for (Regulation reg : event.getPositivelyRegulatedBy()) {
-                    // // TODO: 11/10/2016 sort out getting negative from positive
-                    if (reg instanceof PositiveRegulation) {
-                        DatabaseObject pe = reg.getRegulator();
-                        if (pe instanceof PhysicalEntity) {
-                            addParticipant("pos_regulator", rn, (PhysicalEntity) (pe), event.getDbId(), reg);
-                        }
+                for (PositiveRegulation reg : event.getPositivelyRegulatedBy()) {
+                    DatabaseObject pe = reg.getRegulator();
+                    if (pe instanceof PhysicalEntity) {
+                        addParticipant("pos_regulator", rn, (PhysicalEntity) (pe), event.getDbId(), reg);
                     }
                 }
             }
             if (event.getNegativelyRegulatedBy() != null) {
-                for (Regulation reg : event.getNegativelyRegulatedBy()) {
-                    // // TODO: 11/10/2016 sort out getting negative from positive
-                    if (reg instanceof NegativeRegulation) {
-                        DatabaseObject pe = reg.getRegulator();
-                        if (pe instanceof PhysicalEntity) {
-                            addParticipant("neg_regulator", rn, (PhysicalEntity) (pe), event.getDbId(), reg);
-                        }
+                for (NegativeRegulation reg : event.getNegativelyRegulatedBy()) {
+                    DatabaseObject pe = reg.getRegulator();
+                    if (pe instanceof PhysicalEntity) {
+                        addParticipant("neg_regulator", rn, (PhysicalEntity) (pe), event.getDbId(), reg);
                     }
                 }
             }
