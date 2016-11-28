@@ -12,7 +12,9 @@ import org.reactome.server.graph.utils.ReactomeGraphCore;
 import org.reactome.server.tools.config.GraphQANeo4jConfig;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
+
 
 /**
  * @author Sarah Keating <skeating@ebi.ac.uk>
@@ -20,7 +22,20 @@ import java.util.List;
  */
 public class SBMLExporterLauncher {
 
-    static int level = 0;
+    private static String outputdir = ".";
+
+    // arguments to determine what to output
+    private static long singleId = 0;
+    private static long speciesId = 0;
+    private static long[] multipleIds;
+
+    private enum Status {
+        SINGLE_PATH, ALL_PATWAYS, ALL_PATHWAYS_SPECIES, MULTIPLE_PATHS, MULTIPLE_EVENTS
+    }
+    private static Status outputStatus = Status.SINGLE_PATH;
+
+    private static int dbVersion = 0;
+
 
     public static void main(String[] args) throws JSAPException {
 
@@ -32,8 +47,14 @@ public class SBMLExporterLauncher {
                         new FlaggedOption("password", JSAP.STRING_PARSER, "reactome", JSAP.REQUIRED, 'p', "password", "The neo4j password"),
                         new FlaggedOption("outdir", JSAP.STRING_PARSER, ".", JSAP.REQUIRED, 'o', "outdir", "The output directory"),
                         new FlaggedOption("toplevelpath", JSAP.LONG_PARSER, "0", JSAP.NOT_REQUIRED, 't', "toplevelpath", "A single id of a pathway"),
+                        new FlaggedOption("species", JSAP.LONG_PARSER, "0", JSAP.NOT_REQUIRED, 's', "species", "The id of a species"),
                 }
         );
+        FlaggedOption m =  new FlaggedOption("multiple", JSAP.LONG_PARSER, "0", JSAP.NOT_REQUIRED, 'm', "multiple", "A list of ids of Pathways");
+        m.setList(true);
+        m.setListSeparator(',');
+        jsap.registerParameter(m);
+
         JSAPResult config = jsap.parse(args);
         if (jsap.messagePrinted()) System.exit(1);
 
@@ -41,26 +62,113 @@ public class SBMLExporterLauncher {
         ReactomeGraphCore.initialise(config.getString("host"), config.getString("port"), config.getString("user"), config.getString("password"), GraphQANeo4jConfig.class);
 
         GeneralService genericService = ReactomeGraphCore.getService(GeneralService.class);
-        System.out.println("Database name: " + genericService.getDBName());
-        System.out.println("Database version: " + genericService.getDBVersion());
-
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
+        SpeciesService speciesService = ReactomeGraphCore.getService(SpeciesService.class);
+        SchemaService schemaService = ReactomeGraphCore.getService(SchemaService.class);
 
-        long dbid = config.getLong("toplevelpath");
+        parseAdditionalArguments(config);
 
+        dbVersion = genericService.getDBVersion();
 
-        File dir =  new File(config.getString("outdir"));
-        String filename = dbid + ".xml";
-        File out = new File(dir, filename);
-        outputFile(dbid, databaseObjectService, genericService.getDBVersion(), out);
+        switch (outputStatus) {
+            case SINGLE_PATH:
+                Pathway pathway = null;
+                try {
+                    pathway = (Pathway) databaseObjectService.findByIdNoRelations(singleId);
+                }
+                catch (Exception e) {
+                    System.err.println(singleId + " is not the identifier of a valid Pathway object");
+                }
+                if (pathway != null) {
+                    outputPath(pathway);
+                }
+                break;
+            case ALL_PATWAYS:
+                for (Species s : speciesService.getSpecies()) {
+                    outputPathsForSpecies(s, schemaService);
+                }
+                break;
+            case ALL_PATHWAYS_SPECIES:
+                Species species = null;
+                try {
+                    species = (Species) databaseObjectService.findByIdNoRelations(speciesId);
+                }
+                catch (Exception e) {
+                    System.err.println(speciesId + " is not the identifier of a valid Species object");
+                }
+                if (species != null){
+                    outputPathsForSpecies(species, schemaService);
+                }
+                break;
+            case MULTIPLE_PATHS:
+                for (long id: multipleIds) {
+                    pathway = null;
+                    try {
+                        pathway = (Pathway) databaseObjectService.findByIdNoRelations(id);
+                    }
+                    catch (Exception e) {
+                        System.err.println(id + " is not the identifier of a valid Pathway object");
+                    }
+                    if (pathway != null) {
+                        outputPath(pathway);
+                    }
+                }
+
+            default:
+                break;
+        }
+
     }
 
-    private static void outputFile(long dbid, DatabaseObjectService databaseObjectService, Integer dbVersion, File out) {
-        Event pathway = (Event) databaseObjectService.findById(dbid);
-        @SuppressWarnings("ConstantConditions") WriteSBML sbml = new WriteSBML((Pathway) (pathway), dbVersion);
+    /**
+     *  function to get the command line arguments and determine the requested output
+     *
+     * @param config JSAPResult result of first parse
+     */
+    private static void parseAdditionalArguments(JSAPResult config) {
+        outputdir = config.getString("outdir");
+
+        singleId = config.getLong("toplevelpath");
+        speciesId = config.getLong("species");
+        multipleIds = config.getLongArray("multiple");
+
+        if (singleId == 0) {
+            if (speciesId == 0) {
+                outputStatus = Status.ALL_PATWAYS;
+                if (multipleIds.length > 0){
+                    outputStatus = Status.MULTIPLE_PATHS;
+                }
+            }
+            else {
+                outputStatus = Status.ALL_PATHWAYS_SPECIES;
+            }
+        }
+    }
+
+    /**
+     * Output all Pathways for the given Species
+     *
+     * @param species ReactomeDB Species
+     * @param schemaService database service to use
+     */
+    private static void outputPathsForSpecies(Species species, SchemaService schemaService) {
+        for (Pathway path : schemaService.getByClass(Pathway.class, species)){
+            outputPath(path);
+        }
+    }
+
+    /**
+     * Create the output file and write the SBML file for this path
+     *
+     * @param path ReactomeDB Pathway to output
+     */
+    private static void outputPath(Pathway path) {
+        String filename = path.getDbId() + ".xml";
+        File out = new File(outputdir, filename);
+        WriteSBML sbml = new WriteSBML(path, dbVersion);
         sbml.setAnnotationFlag(true);
         sbml.createModel();
-        sbml.toStdOut();
+//        sbml.toStdOut();
         sbml.toFile(out.getPath());
     }
 }
