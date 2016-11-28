@@ -50,7 +50,7 @@ public class SBMLExporterLauncher {
                         new FlaggedOption("species", JSAP.LONG_PARSER, "0", JSAP.NOT_REQUIRED, 's', "species", "The id of a species"),
                 }
         );
-        FlaggedOption m =  new FlaggedOption("multiple", JSAP.LONG_PARSER, "0", JSAP.NOT_REQUIRED, 'm', "multiple", "A list of ids of Pathways");
+        FlaggedOption m =  new FlaggedOption("multiple", JSAP.LONG_PARSER, null, JSAP.NOT_REQUIRED, 'm', "multiple", "A list of ids of Pathways");
         m.setList(true);
         m.setListSeparator(',');
         jsap.registerParameter(m);
@@ -68,54 +68,56 @@ public class SBMLExporterLauncher {
 
         parseAdditionalArguments(config);
 
-        dbVersion = genericService.getDBVersion();
+        if (!singleArgumentSupplied()) {
+            System.err.println("Too many arguments detected. Expected either no pathway arguments or one of -t, -s, -m.");
+        }
+        else {
+            dbVersion = genericService.getDBVersion();
 
-        switch (outputStatus) {
-            case SINGLE_PATH:
-                Pathway pathway = null;
-                try {
-                    pathway = (Pathway) databaseObjectService.findByIdNoRelations(singleId);
-                }
-                catch (Exception e) {
-                    System.err.println(singleId + " is not the identifier of a valid Pathway object");
-                }
-                if (pathway != null) {
-                    outputPath(pathway);
-                }
-                break;
-            case ALL_PATWAYS:
-                for (Species s : speciesService.getSpecies()) {
-                    outputPathsForSpecies(s, schemaService);
-                }
-                break;
-            case ALL_PATHWAYS_SPECIES:
-                Species species = null;
-                try {
-                    species = (Species) databaseObjectService.findByIdNoRelations(speciesId);
-                }
-                catch (Exception e) {
-                    System.err.println(speciesId + " is not the identifier of a valid Species object");
-                }
-                if (species != null){
-                    outputPathsForSpecies(species, schemaService);
-                }
-                break;
-            case MULTIPLE_PATHS:
-                for (long id: multipleIds) {
-                    pathway = null;
+            switch (outputStatus) {
+                case SINGLE_PATH:
+                    Pathway pathway = null;
                     try {
-                        pathway = (Pathway) databaseObjectService.findByIdNoRelations(id);
-                    }
-                    catch (Exception e) {
-                        System.err.println(id + " is not the identifier of a valid Pathway object");
+                        pathway = (Pathway) databaseObjectService.findByIdNoRelations(singleId);
+                    } catch (Exception e) {
+                        System.err.println(singleId + " is not the identifier of a valid Pathway object");
                     }
                     if (pathway != null) {
                         outputPath(pathway);
                     }
-                }
+                    break;
+                case ALL_PATWAYS:
+                    for (Species s : speciesService.getSpecies()) {
+                        outputPathsForSpecies(s, schemaService);
+                    }
+                    break;
+                case ALL_PATHWAYS_SPECIES:
+                    Species species = null;
+                    try {
+                        species = (Species) databaseObjectService.findByIdNoRelations(speciesId);
+                    } catch (Exception e) {
+                        System.err.println(speciesId + " is not the identifier of a valid Species object");
+                    }
+                    if (species != null) {
+                        outputPathsForSpecies(species, schemaService);
+                    }
+                    break;
+                case MULTIPLE_PATHS:
+                    for (long id : multipleIds) {
+                        pathway = null;
+                        try {
+                            pathway = (Pathway) databaseObjectService.findByIdNoRelations(id);
+                        } catch (Exception e) {
+                            System.err.println(id + " is not the identifier of a valid Pathway object");
+                        }
+                        if (pathway != null) {
+                            outputPath(pathway);
+                        }
+                    }
 
-            default:
-                break;
+                default:
+                    break;
+            }
         }
 
     }
@@ -134,15 +136,38 @@ public class SBMLExporterLauncher {
 
         if (singleId == 0) {
             if (speciesId == 0) {
-                outputStatus = Status.ALL_PATWAYS;
                 if (multipleIds.length > 0){
                     outputStatus = Status.MULTIPLE_PATHS;
+                }
+                else {
+                    outputStatus = Status.ALL_PATWAYS;
                 }
             }
             else {
                 outputStatus = Status.ALL_PATHWAYS_SPECIES;
             }
         }
+    }
+
+    private static boolean singleArgumentSupplied(){
+        if (singleId != 0) {
+            // have -t shouldnt have anything else
+            if (speciesId != 0){
+                return false;
+            }
+            else if (multipleIds.length > 0) {
+                return false;
+            }
+        }
+        else {
+            if (speciesId != 0) {
+                // have -s shouldnt have anything else
+                if (multipleIds.length > 0) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
