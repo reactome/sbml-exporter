@@ -1,6 +1,6 @@
 # SBMLExporter
 
-Code to create an [SBML]("http://sbml.org") file from a pathway drawn from the [Reactome]("http://www.reactome.org/") Graph Database. 
+Code to create an [SBML](http://sbml.org "SBML") file from a pathway drawn from the [Reactome]("http://www.reactome.org/") Graph Database. 
 
 ## Usage
 
@@ -16,15 +16,26 @@ The following arguments are required
 - -p "password" 		The neo4j password
 - -o "outdir"			The directory where output files will be written
  
+Zero or one of the following arguments are also expected to identify which Pathway(s) are to be exported
 
-- -t "toplevelpath"	A single integer argument that is the databaseIdentifier for a pathway
+- -t "toplevelpath"	    A single integer argument that is the databaseIdentifier for a pathway
+- -s "species"          A single integer argument that is the databaseIdentifier for a Species
 
 
-### Output
+### Output depending on pathway argument
 
--t dbid
+- no specific pathway argument
+
+The output when no specific path way argument is specified will be a large number of SBML files, each representing a Pathway in the ReactomeDB. These will be names "nnnn.xml", where nnnn is the databseIdentifier for the pathway described by the file.
+
+- -t dbid
 
 The output for the argument -t will be a single SBML file named "dbid.xml" written into the directory specified with the -o option.
+
+- -s dbid
+
+The output for the argument -s will be several SBML files, each representing a Pathway for the given Species. These will be names "nnnn.xml", where nnnn is the databaseIdentifier for the pathway described by the file.
+
 
 
 ##SBML
@@ -42,4 +53,4 @@ These are areas that have been identified as either missing information or produ
 
 ###Future enhancements
 
-SBML Level 3 is developing as a modular style language that allows additional information to be added to teh core model by using an SBML Level 3 Package. The [Qualitative Models package]("http://sbml.org/Documents/Specifications/SBML_Level_3/Packages/qual") could be used to represent reactions that involve Gene expression. The [Multistate and Multicomponent Species package]("http://sbml.org/Documents/Specifications/SBML_Level_3/Packages/multi") could be used to more correctly represent Reactome Complexes and their reactions.
+SBML Level 3 is developing as a modular style language that allows additional information to be added to the core model by using an SBML Level 3 Package. The [Qualitative Models package]("http://sbml.org/Documents/Specifications/SBML_Level_3/Packages/qual") could be used to represent reactions that involve Gene expression. The [Multistate and Multicomponent Species package]("http://sbml.org/Documents/Specifications/SBML_Level_3/Packages/multi") could be used to more correctly represent Reactome Complexes and their reactions.
