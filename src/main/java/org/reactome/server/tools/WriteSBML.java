@@ -155,7 +155,7 @@ class WriteSBML {
         boolean createModel = false;
         Long pathNum;
         String pathName = "No parent pathway detected";
-        String modelId = "no_pathway";
+        String modelId = "no_parent_pathway";
         if (thisPathway != null) {
             pathNum = thisPathway.getDbId();
             pathName = thisPathway.getDisplayName();
@@ -192,6 +192,17 @@ class WriteSBML {
     public void setDBVersion(Integer version) {
         dbVersion = version;
     }
+
+    String getModelId() {
+        Model m = sbmlDocument.getModel();
+        if (m != null) {
+            return m.getId();
+        }
+        else {
+            return "";
+        }
+    }
+
     ///////////////////////////////////////////////////////////////////////////////////
 
     // functions to output resulting document
@@ -217,7 +228,7 @@ class WriteSBML {
      *
      * @param filename  String representing the filename to use.
      */
-    public void toFile(@SuppressWarnings("SameParameterValue") String filename)    {
+    void toFile(@SuppressWarnings("SameParameterValue") String filename)    {
         SBMLWriter sbmlWriter = new TidySBMLWriter();
         try {
             sbmlWriter.writeSBMLToFile(sbmlDocument, filename);
@@ -282,6 +293,7 @@ class WriteSBML {
     //////////////////////////////////////////////////////////////////////////////////
 
     // Private functions
+
 
     /**
      * Determines a unique parent pathway from the List<Event> argument

@@ -105,7 +105,7 @@ public class WriteSBMLListEventsNoParentTest {
         assertEquals(name, expected_name);
 
         String id = model.getId();
-        String expected_id = "no_pathway";
+        String expected_id = "no_parent_pathway";
 
         assertEquals(id, expected_id);
     }

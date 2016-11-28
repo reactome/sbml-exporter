@@ -24,6 +24,8 @@ public class SBMLExporterLauncherTest {
     private static File file_single_pathway = new File(test_dir, "192869.xml");
     private static File file_multi_pathway_1 = new File(test_dir, "5619071.xml");
     private static File file_multi_pathway_2 = new File(test_dir, "168275.xml");
+    private static File file_listevents = new File(test_dir, "pathway_73843.xml");
+    private static File file_listevents_noparent = new File(test_dir, "no_parent_pathway.xml");
 
 
     private static boolean clearTestDir() {
@@ -190,6 +192,48 @@ public class SBMLExporterLauncherTest {
     }
 
     @org.junit.Test
+    public void testListEvents() {
+        int init_length = getNumFiles();
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-l", "111215,73580"};
+        try {
+            SBMLExporterLauncher.main(args);
+        } catch (JSAPException e) {
+            assertTrue("exception caught", true);
+        }
+        assertTrue("dir has files", test_dir.listFiles() != null);
+        assertTrue("dir has only one file", test_dir.listFiles().length == (1+ init_length));
+        assertTrue("file exists", file_listevents.exists());
+    }
+
+    @org.junit.Test
+    public void testListEventsInvalid() {
+        int init_length = getNumFiles();
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-l", "111215,170905"};
+        try {
+            SBMLExporterLauncher.main(args);
+        } catch (JSAPException e) {
+            assertTrue("exception caught", true);
+        }
+        if (test_dir.listFiles() != null) {
+            assertTrue("no files in dir", test_dir.listFiles().length == init_length);
+        }
+    }
+
+    @org.junit.Test
+    public void testUnconnectedListEvents() {
+        int init_length = getNumFiles();
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-l", "111215,198347"};
+        try {
+            SBMLExporterLauncher.main(args);
+        } catch (JSAPException e) {
+            assertTrue("exception caught", true);
+        }
+        assertTrue("dir has files", test_dir.listFiles() != null);
+        assertTrue("dir has only one file", test_dir.listFiles().length == (1+ init_length));
+        assertTrue("file exists", file_listevents_noparent.exists());
+    }
+
+    @org.junit.Test
     public void testWrongNumArguments() {
         int init_length = getNumFiles();
         String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-m", "170905,101", "-s", "192869"};
@@ -236,6 +280,105 @@ public class SBMLExporterLauncherTest {
     public void testWrongNumArguments3() {
         int init_length = getNumFiles();
         String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-m", "170905,101", "-t", "170905","-s", "192869"};
+        try {
+            SBMLExporterLauncher.main(args);
+        }
+        catch (JSAPException e) {
+            assertTrue("exception caught", true);
+        }
+        if (test_dir.listFiles() != null) {
+            assertTrue("no files in dir", test_dir.listFiles().length == init_length);
+        }
+    }
+    public void testWrongNumArguments4() {
+        int init_length = getNumFiles();
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-l", "170905,101", "-s", "192869"};
+        try {
+            SBMLExporterLauncher.main(args);
+        }
+        catch (JSAPException e) {
+            assertTrue("exception caught", true);
+        }
+        if (test_dir.listFiles() != null) {
+            assertTrue("no files in dir", test_dir.listFiles().length == init_length);
+        }
+    }
+
+    @org.junit.Test
+    public void testWrongNumArguments5() {
+        int init_length = getNumFiles();
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-l", "170905,101", "-t", "192869"};
+        try {
+            SBMLExporterLauncher.main(args);
+        }
+        catch (JSAPException e) {
+            assertTrue("exception caught", true);
+        }
+        if (test_dir.listFiles() != null) {
+            assertTrue("no files in dir", test_dir.listFiles().length == init_length);
+        }
+    }
+    @org.junit.Test
+    public void testWrongNumArguments6() {
+        int init_length = getNumFiles();
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-m", "170905,170905", "-l", "192869,123456"};
+        try {
+            SBMLExporterLauncher.main(args);
+        }
+        catch (JSAPException e) {
+            assertTrue("exception caught", true);
+        }
+        if (test_dir.listFiles() != null) {
+            assertTrue("no files in dir", test_dir.listFiles().length == init_length);
+        }
+    }
+    @org.junit.Test
+    public void testWrongNumArguments7() {
+        int init_length = getNumFiles();
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-l", "170905,101", "-t", "170905","-s", "192869"};
+        try {
+            SBMLExporterLauncher.main(args);
+        }
+        catch (JSAPException e) {
+            assertTrue("exception caught", true);
+        }
+        if (test_dir.listFiles() != null) {
+            assertTrue("no files in dir", test_dir.listFiles().length == init_length);
+        }
+    }
+
+    @org.junit.Test
+    public void testWrongNumArguments8() {
+        int init_length = getNumFiles();
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-l", "170905,101", "-m", "170905,123456","-s", "192869"};
+        try {
+            SBMLExporterLauncher.main(args);
+        }
+        catch (JSAPException e) {
+            assertTrue("exception caught", true);
+        }
+        if (test_dir.listFiles() != null) {
+            assertTrue("no files in dir", test_dir.listFiles().length == init_length);
+        }
+    }
+    @org.junit.Test
+    public void testWrongNumArguments9() {
+        int init_length = getNumFiles();
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-l", "170905,101", "-t", "170905","-m", "192869,10928272"};
+        try {
+            SBMLExporterLauncher.main(args);
+        }
+        catch (JSAPException e) {
+            assertTrue("exception caught", true);
+        }
+        if (test_dir.listFiles() != null) {
+            assertTrue("no files in dir", test_dir.listFiles().length == init_length);
+        }
+    }
+    @org.junit.Test
+    public void testWrongNumArguments10() {
+        int init_length = getNumFiles();
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-l", "170905,101", "-t", "170905","-s", "192869", "-m", "101,202"};
         try {
             SBMLExporterLauncher.main(args);
         }

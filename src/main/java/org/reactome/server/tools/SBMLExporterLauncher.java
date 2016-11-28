@@ -28,6 +28,7 @@ public class SBMLExporterLauncher {
     private static long singleId = 0;
     private static long speciesId = 0;
     private static long[] multipleIds;
+    private static long[] multipleEvents;
 
     private enum Status {
         SINGLE_PATH, ALL_PATWAYS, ALL_PATHWAYS_SPECIES, MULTIPLE_PATHS, MULTIPLE_EVENTS
@@ -55,6 +56,11 @@ public class SBMLExporterLauncher {
         m.setListSeparator(',');
         jsap.registerParameter(m);
 
+        FlaggedOption loe =  new FlaggedOption("listevents", JSAP.LONG_PARSER, null, JSAP.NOT_REQUIRED, 'l', "listevents", "A list of ids of Events to be output as a single model");
+        loe.setList(true);
+        loe.setListSeparator(',');
+        jsap.registerParameter(loe);
+
         JSAPResult config = jsap.parse(args);
         if (jsap.messagePrinted()) System.exit(1);
 
@@ -66,10 +72,11 @@ public class SBMLExporterLauncher {
         SpeciesService speciesService = ReactomeGraphCore.getService(SpeciesService.class);
         SchemaService schemaService = ReactomeGraphCore.getService(SchemaService.class);
 
+        outputStatus = Status.SINGLE_PATH;
         parseAdditionalArguments(config);
 
         if (!singleArgumentSupplied()) {
-            System.err.println("Too many arguments detected. Expected either no pathway arguments or one of -t, -s, -m.");
+            System.err.println("Too many arguments detected. Expected either no pathway arguments or one of -t, -s, -m, -l.");
         }
         else {
             dbVersion = genericService.getDBVersion();
@@ -114,6 +121,23 @@ public class SBMLExporterLauncher {
                             outputPath(pathway);
                         }
                     }
+                case MULTIPLE_EVENTS:
+                    List<Event> eventList = new ArrayList<Event>();
+                    boolean valid = true;
+                    for (long id: multipleEvents) {
+                        Event event;
+                        try {
+                            event = (Event) databaseObjectService.findByIdNoRelations(id);
+                            eventList.add(event);
+                        } catch (Exception e) {
+                            valid = false;
+                            System.err.println(id + " is not the identifier of a valid Event object");
+                        }
+                    }
+                    if (valid && eventList.size() > 0){
+                        outputEvents(eventList);
+                    }
+
 
                 default:
                     break;
@@ -133,11 +157,15 @@ public class SBMLExporterLauncher {
         singleId = config.getLong("toplevelpath");
         speciesId = config.getLong("species");
         multipleIds = config.getLongArray("multiple");
+        multipleEvents = config.getLongArray("listevents");
 
         if (singleId == 0) {
             if (speciesId == 0) {
                 if (multipleIds.length > 0){
                     outputStatus = Status.MULTIPLE_PATHS;
+                }
+                else if (multipleEvents.length > 0){
+                    outputStatus = Status.MULTIPLE_EVENTS;
                 }
                 else {
                     outputStatus = Status.ALL_PATWAYS;
@@ -149,6 +177,11 @@ public class SBMLExporterLauncher {
         }
     }
 
+    /**
+     *  function to check that only one argument relating to teh pathway has been given
+     *
+     * @return true if only one argument, false if more than one
+     */
     private static boolean singleArgumentSupplied(){
         if (singleId != 0) {
             // have -t shouldnt have anything else
@@ -158,14 +191,25 @@ public class SBMLExporterLauncher {
             else if (multipleIds.length > 0) {
                 return false;
             }
-        }
-        else {
-            if (speciesId != 0) {
-                // have -s shouldnt have anything else
-                if (multipleIds.length > 0) {
-                    return false;
-                }
+            else if (multipleEvents.length > 0) {
+                return false;
             }
+        }
+        else if (speciesId != 0) {
+            // have -s shouldnt have anything else
+            if (multipleIds.length > 0) {
+                return false;
+            }
+            else if (multipleEvents.length > 0) {
+                return false;
+            }
+        }
+        else if (multipleIds.length > 0){
+            // have -m shouldnt hve anythoing else
+            if (multipleEvents.length > 0) {
+                return false;
+            }
+
         }
         return true;
     }
@@ -195,6 +239,17 @@ public class SBMLExporterLauncher {
         sbml.createModel();
 //        sbml.toStdOut();
         sbml.toFile(out.getPath());
+    }
+
+    private static void outputEvents(List<Event> loe){
+        WriteSBML sbml = new WriteSBML(loe, dbVersion);
+        sbml.setAnnotationFlag(true);
+        sbml.createModel();
+//        sbml.toStdOut();
+        String filename = sbml.getModelId() + ".xml";
+        File out = new File(outputdir, filename);
+        sbml.toFile(out.getPath());
+
     }
 }
 

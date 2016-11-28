@@ -16,14 +16,14 @@ The following arguments are required
 - -p "password" 		The neo4j password
 - -o "outdir"			The directory where output files will be written
  
-Zero or one of the following arguments are also expected to identify which Pathway(s) are to be exported
+Zero or one of the following "pathway" arguments are also expected to identify which Pathway(s) are to be exported
 
 - -t "toplevelpath"	    A single integer argument that is the databaseIdentifier for a Pathway
 - -s "species"          A single integer argument that is the databaseIdentifier for a Species
 - -m "multiple"         A comma-separated list of integers that are the databaseIdentifiers of several Pathways
+- -l "listevents"       A comma-separated list of integers that are the databaseIdentifiers of several Events
 
-
-### Output depending on pathway argument
+### Output depending on "pathway" argument
 
 - no specific pathway argument
 
@@ -39,8 +39,11 @@ The output for the argument -s will be many SBML files, each representing a Path
 
 - -m dbid1,dbid2,dbid3
 
-The output for the argument -m will be several SBML files, each representing the Pathway specified by the databseIdentifier. Each file will be named dbid1.xml etc. Note, should any of the values given not represent a Reactome Pathway this identifier will be ignored.
+The output for the argument -m will be several SBML files, each representing the Pathway specified by the databaseIdentifier. Each file will be named dbid1.xml etc. Note, should any of the values given not represent a Reactome Pathway this identifier will be ignored.
 
+- -l dbid1,dbid2,dbid3
+
+The output for the argument -l will be a single SBML files representing an SBML model containing each of the Reactome Events for which a databaseIdentifier was listed. If a common parent Pathway can be detected for the Events the file will be called "pathway_nnnn.xml" where nnnn is the databaseIdentifier of the parent pathway. If no such parent can be detected the file will be called "no_parent_pathway.xml". Note, if any of the databseIdentifiers listed does not correspond to a Reactome Event, then no file will be output.
 
 ##SBML
 
