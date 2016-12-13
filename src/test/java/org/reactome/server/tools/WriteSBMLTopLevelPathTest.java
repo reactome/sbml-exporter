@@ -89,4 +89,23 @@ public class WriteSBMLTopLevelPathTest {
         assertEquals("genome encoded entity sbo term", species.getSBOTerm(), 297);
     }
 
+    @org.junit.Test
+    public void testECAnnotation()
+    {
+        SBMLDocument doc = testWrite.getSBMLDocument();
+        if (!doc.isSetModel()) {
+            testWrite.createModel();
+            doc = testWrite.getSBMLDocument();
+        }
+        assertTrue( "Document creation failed", doc != null);
+
+        Model model = doc.getModel();
+        Reaction rn = model.getReaction("reaction_6804955");
+
+        assertEquals("num cvterms on reaction", rn.getNumCVTerms(), 2);
+
+        CVTerm cvTerm = rn.getCVTerm(0);
+        assertEquals("num resources on species cvterm", cvTerm.getNumResources(), 3);
+    }
+
 }
