@@ -30,7 +30,7 @@ public class WriteSBMLGeneRegulationTest {
     @BeforeClass
     public static void setup()  throws JSAPException {
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-        long dbid = 380994L;
+        String dbid = "R-HSA-380994";
         Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
 
         testWrite = new WriteSBML(pathway);

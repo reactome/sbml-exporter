@@ -23,7 +23,7 @@ public class WriteSBMLPathwayTest {
     @BeforeClass
     public static void setup()  throws JSAPException {
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-        long dbid = 5619507; // top level pathway
+        String dbid = "R-HSA-5619507"; // top level pathway
         Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
 
         testWrite = new WriteSBML(pathway);

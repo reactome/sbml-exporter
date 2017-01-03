@@ -28,7 +28,7 @@ public class WriteSBMLReactionTest {
     @BeforeClass
     public static void setup()  throws JSAPException {
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-        long dbid = 392023L; // reaction
+        String dbid = "R-HSA-392023"; // reaction
         Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
 
         testWrite = new WriteSBML(pathway);

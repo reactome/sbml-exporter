@@ -292,7 +292,7 @@ public class WriteSBMLSingleAnnotatedReactionTest
         @BeforeClass
         public static void setup()  throws JSAPException {
             DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-            long dbid = 168275L; // pathway with a single child reaction
+            String dbid = "R-HSA-168275"; // pathway with a single child reaction
             Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
             testWrite = new WriteSBML(pathway);
             testWrite.setAnnotationFlag(true);

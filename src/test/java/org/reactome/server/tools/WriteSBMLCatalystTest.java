@@ -26,7 +26,7 @@ public class WriteSBMLCatalystTest {
     @BeforeClass
     public static void setup()  throws JSAPException {
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-        long dbid = 2978092L; // pathway with a catalysis
+        String dbid = "R-HSA-2978092"; // pathway with a catalysis
         Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
 
         testWrite = new WriteSBML(pathway);

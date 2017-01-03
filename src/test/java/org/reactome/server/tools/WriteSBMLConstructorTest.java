@@ -27,7 +27,7 @@ public class WriteSBMLConstructorTest {
     @BeforeClass
     public static void setup()  throws JSAPException {
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-        long dbid = 73843L; // pathway with two events
+        String dbid = "R-HSA-73843"; // pathway with two events
         pathway = (Pathway) databaseObjectService.findById(dbid);
         listOfEvents = pathway.getHasEvent();
     }

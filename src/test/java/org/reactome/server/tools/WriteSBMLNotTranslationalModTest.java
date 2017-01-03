@@ -23,7 +23,7 @@ public class WriteSBMLNotTranslationalModTest
     @BeforeClass
     public static void setup() {
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-        long dbid = 5619084L; // pe that is not a translation modification
+        String dbid = "R-HSA-5619084"; // pe that is not a translation modification
         Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
 
         testWrite = new WriteSBML(pathway);

@@ -15,7 +15,7 @@ import org.reactome.server.tools.config.GraphQANeo4jConfig;
  */
 @RunWith(value=Suite.class)
 
-//@Suite.SuiteClasses(value={WriteSBMLCatalystTest.class})
+//@Suite.SuiteClasses(value={WriteSBMLPolymerEntityTest.class})
 
 @Suite.SuiteClasses(value={
                             WriteSBMLNoEventsTest.class, WriteSBMLNoEventsAnnotTest.class,
@@ -32,8 +32,8 @@ import org.reactome.server.tools.config.GraphQANeo4jConfig;
                             WriteSBMLConstructorTest.class, WriteSBMLListEventsTest.class,
                             WriteSBMLMissingPubTest.class, WriteSBMLNotTranslationalModTest.class,
                             WriteSBMLCatalystNoPETest.class, WriteSBMLListEventsNoParentTest.class,
-                            WriteSBMLBadNotesTest.class})
-// exclude from db v59 WriteSBMLPolymerEntityTest.class,
+                            WriteSBMLPolymerEntityTest.class, WriteSBMLBadNotesTest.class})
+
 
 public class Test {
 

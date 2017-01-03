@@ -23,7 +23,7 @@ public class WriteSBMLBlackBoxTest {
     @BeforeClass
     public static void setup()  throws JSAPException {
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-        long dbid = 69205L; // black box event
+        String dbid = "R-HSA-69205"; // black box event
         Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
 
         testWrite = new WriteSBML(pathway);

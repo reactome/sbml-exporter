@@ -33,7 +33,7 @@ public class WriteSBMLOtherEntityTest {
     @BeforeClass
     public static void setup()  throws JSAPException {
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-        long dbid = 1799339L; // pathway with a various entity types
+        String dbid = "R-HSA-1799339"; // pathway with a various entity types
         Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
 
         testWrite = new WriteSBML(pathway);

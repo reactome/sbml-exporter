@@ -35,7 +35,7 @@ public class WriteSBMLNoEventsAnnotTest
         public static void setup()  throws JSAPException {
             // as of v58 this id does not exist and there are no pathways with no events
             DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-            long dbid = 167168L;  // HIV transcription termination (pathway no events)
+            String dbid = "R-HSA-167168";  // HIV transcription termination (pathway no events)
             Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
 
             testWrite = new WriteSBML(pathway);

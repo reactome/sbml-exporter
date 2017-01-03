@@ -23,7 +23,7 @@ public class WriteSBMLFailedReaction {
     @BeforeClass
     public static void setup()  throws JSAPException {
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-        long dbid = 5619071L; // failed reaction
+        String dbid = "R-HSA-5619071"; // failed reaction
         Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
 
         testWrite = new WriteSBML(pathway);

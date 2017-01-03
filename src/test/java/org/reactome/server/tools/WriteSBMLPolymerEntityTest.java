@@ -27,8 +27,9 @@ public class WriteSBMLPolymerEntityTest {
     @BeforeClass
     public static void setup()  throws JSAPException {
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-        long dbid = 9719495L; // pathway with a various entity types
-        Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
+//        String dbid = "R-HSA-9719495"; // pathway with a various entity types
+        String dbid = "R-ATH-1630316";
+        Pathway pathway = (Pathway) databaseObjectService.findByIdNoRelations(dbid);
 
         testWrite = new WriteSBML(pathway);
         testWrite.setAnnotationFlag(true);
@@ -71,12 +72,12 @@ public class WriteSBMLPolymerEntityTest {
         assertTrue("Model failed", model != null);
 
         assertEquals("Num compartments failed", model.getNumCompartments(), 7);
-        assertEquals("Num species failed", model.getNumSpecies(), 45);
+        assertEquals("Num species failed", model.getNumSpecies(), 48);
 
 
         // Polymer
-        Species species = model.getSpecies("species_9703057");
-        assertTrue("species_9703057", species != null);
+        Species species = model.getSpecies("species_9756069");
+        assertTrue("species_9756069", species != null);
         assertEquals("num cvterms on species", species.getNumCVTerms(), 2);
 
         CVTerm cvTerm = species.getCVTerm(0);
@@ -108,7 +109,7 @@ public class WriteSBMLPolymerEntityTest {
         assertTrue("Model failed", model != null);
 
         // species from polymer
-        Species species = model.getSpecies("species_9703057");
+        Species species = model.getSpecies("species_9756069");
         assertTrue("sbo term set", species.isSetSBOTerm());
         assertEquals("polymer sbo term", species.getSBOTerm(), 240);
     }

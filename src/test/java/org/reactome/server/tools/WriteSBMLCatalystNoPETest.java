@@ -22,7 +22,7 @@ public class WriteSBMLCatalystNoPETest
     @BeforeClass
     public static void setup() {
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-        long dbid = 1280218L; // catalyst activity with no PE that caused crash
+        String dbid = "R-HSA-1280218"; // catalyst activity with no PE that caused crash
         Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
 
         testWrite = new WriteSBML(pathway);

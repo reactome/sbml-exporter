@@ -27,7 +27,7 @@ public class WriteSBMLMissingPubTest
     @BeforeClass
     public static void setup() {
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-        long dbid = 164843L; // missing publication that caused crash
+        String dbid = "R-HSA-164843"; // missing publication that caused crash
         Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
 
         testWrite = new WriteSBML(pathway);

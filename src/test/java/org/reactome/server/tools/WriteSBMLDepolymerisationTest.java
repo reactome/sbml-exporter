@@ -23,7 +23,7 @@ public class WriteSBMLDepolymerisationTest {
     @BeforeClass
     public static void setup()  throws JSAPException {
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-        long dbid = 162585L; // polymerisation event
+        String dbid = "R-HSA-162585"; // polymerisation event
         Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
 
         testWrite = new WriteSBML(pathway);

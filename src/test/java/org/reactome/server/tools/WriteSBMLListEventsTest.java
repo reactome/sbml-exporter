@@ -50,7 +50,7 @@ public class WriteSBMLListEventsTest {
     @BeforeClass
     public static void setup()  throws JSAPException {
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-        long dbid = 73843L;
+        String dbid = "R-HSA-73843";
         Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
         List<Event> listEvent = pathway.getHasEvent();
 

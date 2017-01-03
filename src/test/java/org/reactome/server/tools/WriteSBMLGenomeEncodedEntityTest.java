@@ -28,7 +28,7 @@ public class WriteSBMLGenomeEncodedEntityTest {
     @BeforeClass
     public static void setup()  throws JSAPException {
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-        long dbid = 5602410L; // pathway with a various entity types
+        String dbid = "R-HSA-5602410"; // pathway with a various entity types
         Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
 
         testWrite = new WriteSBML(pathway);
