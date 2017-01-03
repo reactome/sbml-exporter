@@ -98,7 +98,7 @@ public class WriteSBMLEntityTest {
         assertEquals("qualifier on species incorrect", cvTerm.getBiologicalQualifierType(), CVTerm.Qualifier.BQB_IS);
 
         cvTerm = species.getCVTerm(1);
-        assertEquals("num resources on species cvterm", cvTerm.getNumResources(), 18);
+        assertEquals("num resources on species cvterm", cvTerm.getNumResources(), 26);
         assertEquals("qualifier on species incorrect", cvTerm.getBiologicalQualifierType(), CVTerm.Qualifier.BQB_IS_HOMOLOG_TO);
 
         try {

@@ -49,11 +49,11 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "              </rdf:li>%n" +
                 "              <rdf:li rdf:parseType=\"Resource\">%n" +
                 "                <vCard:N rdf:parseType=\"Resource\">%n" +
-                "                  <vCard:Family>Matthews</vCard:Family>%n" +
-                "                  <vCard:Given>Lisa</vCard:Given>%n" +
+                "                  <vCard:Family>Shorser</vCard:Family>%n" +
+                "                  <vCard:Given>Solomon</vCard:Given>%n" +
                 "                </vCard:N>%n" +
                 "                <vCard:ORG rdf:parseType=\"Resource\">%n" +
-                "                  <vCard:Orgname>CSHL</vCard:Orgname>%n" +
+                "                  <vCard:Orgname>OICR</vCard:Orgname>%n" +
                 "                </vCard:ORG>%n" +
                 "              </rdf:li>%n" +
                 "            </rdf:Bag>%n" +
@@ -65,10 +65,7 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "            <dcterms:W3CDTF>2007-04-17T02:35:07Z</dcterms:W3CDTF>%n" +
                 "          </dcterms:modified>%n" +
                 "          <dcterms:modified rdf:parseType=\"Resource\">%n" +
-                "            <dcterms:W3CDTF>2014-08-30T01:08:10Z</dcterms:W3CDTF>%n" +
-                "          </dcterms:modified>%n" +
-                "          <dcterms:modified rdf:parseType=\"Resource\">%n" +
-                "            <dcterms:W3CDTF>2016-01-26T00:13:56Z</dcterms:W3CDTF>%n" +
+                "            <dcterms:W3CDTF>2016-11-08T03:02:33Z</dcterms:W3CDTF>%n" +
                 "          </dcterms:modified>%n" +
                 "          <bqbiol:is>%n" +
                 "            <rdf:Bag>%n" +

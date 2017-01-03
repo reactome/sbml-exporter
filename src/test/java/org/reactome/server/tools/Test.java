@@ -26,13 +26,14 @@ import org.reactome.server.tools.config.GraphQANeo4jConfig;
                             WriteSBMLTopLevelPathTest.class, WriteSBMLBlackBoxTest.class,
                             WriteSBMLEntityTest.class, WriteSBMLGenomeEncodedEntityTest.class,
                             WriteSBMLOtherEntityTest.class, WriteSBMLCandidateSetEntityTest.class,
-                            WriteSBMLPolymerEntityTest.class, WriteSBMLPolymerisationTest.class,
+                            WriteSBMLPolymerisationTest.class,
                             WriteSBMLDepolymerisationTest.class, WriteSBMLNegativeRegulatorTest.class,
                             WriteSBMLPositiveRegulatorTest.class, WriteSBMLGeneRegulationTest.class,
                             WriteSBMLConstructorTest.class, WriteSBMLListEventsTest.class,
                             WriteSBMLMissingPubTest.class, WriteSBMLNotTranslationalModTest.class,
                             WriteSBMLCatalystNoPETest.class, WriteSBMLListEventsNoParentTest.class,
                             WriteSBMLBadNotesTest.class})
+// exclude from db v59 WriteSBMLPolymerEntityTest.class,
 
 public class Test {
 

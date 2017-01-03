@@ -57,6 +57,6 @@ public class WriteSBMLCatalystNoPETest
         Reaction reaction = doc.getModel().getReaction("reaction_1236938");
         assertTrue("reaction failed", reaction != null);
 
-        assertEquals("reaction num modifiers", reaction.getNumModifiers(), 0);
+        assertEquals("reaction num modifiers", reaction.getNumModifiers(), 1);
     }
 }
