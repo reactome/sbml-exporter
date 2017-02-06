@@ -330,6 +330,9 @@ public class WriteSBMLSingleAnnotatedReactionTest
 
             Model model = testWrite.getSBMLDocument().getModel();
 
+            // this test fails with graph-core 1.0.2 as the notes written out for the Clathrin complex
+            // include the structure members 3 times each
+            // i.e P09496, P09496, P09496, Q00610,  Q00610,  Q00610
             assertEquals(model_out, testWrite.toString());
 
             assertTrue("wrong number of reactions", model.getNumReactions() == 1);
