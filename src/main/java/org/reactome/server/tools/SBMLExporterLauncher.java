@@ -2,14 +2,15 @@
 package org.reactome.server.tools;
 
 import com.martiansoftware.jsap.*;
-import com.sun.org.apache.xpath.internal.operations.Neg;
-import org.reactome.server.graph.domain.model.*;
+import org.reactome.server.graph.domain.model.Event;
+import org.reactome.server.graph.domain.model.Pathway;
+import org.reactome.server.graph.domain.model.Species;
 import org.reactome.server.graph.service.DatabaseObjectService;
 import org.reactome.server.graph.service.GeneralService;
 import org.reactome.server.graph.service.SchemaService;
 import org.reactome.server.graph.service.SpeciesService;
 import org.reactome.server.graph.utils.ReactomeGraphCore;
-import org.reactome.server.tools.config.GraphQANeo4jConfig;
+import org.reactome.server.tools.config.GraphNeo4jConfig;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -65,7 +66,7 @@ public class SBMLExporterLauncher {
         if (jsap.messagePrinted()) System.exit(1);
 
         //Initialising ReactomeCore Neo4j configuration
-        ReactomeGraphCore.initialise(config.getString("host"), config.getString("port"), config.getString("user"), config.getString("password"), GraphQANeo4jConfig.class);
+        ReactomeGraphCore.initialise(config.getString("host"), config.getString("port"), config.getString("user"), config.getString("password"), GraphNeo4jConfig.class);
 
         GeneralService genericService = ReactomeGraphCore.getService(GeneralService.class);
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);

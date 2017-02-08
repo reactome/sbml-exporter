@@ -6,7 +6,7 @@ import org.junit.BeforeClass;
 import org.reactome.server.graph.domain.model.*;
 import org.reactome.server.graph.service.DatabaseObjectService;
 import org.reactome.server.graph.utils.ReactomeGraphCore;
-import org.reactome.server.tools.config.GraphQANeo4jConfig;
+import org.reactome.server.tools.config.GraphNeo4jConfig;
 
 import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
@@ -32,7 +32,7 @@ public class TestComplexGetHasComponent {
         String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27"};
         JSAPResult config = jsap.parse(args);
         if (jsap.messagePrinted()) System.exit(1);
-        ReactomeGraphCore.initialise(config.getString("host"), config.getString("port"), config.getString("user"), config.getString("password"), GraphQANeo4jConfig.class);
+        ReactomeGraphCore.initialise(config.getString("host"), config.getString("port"), config.getString("user"), config.getString("password"), GraphNeo4jConfig.class);
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
         String dbid = "R-HSA-168275"; // pathway with a single child reaction
         pathway = (Pathway) databaseObjectService.findById(dbid);

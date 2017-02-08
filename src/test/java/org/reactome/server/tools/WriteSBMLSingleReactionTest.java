@@ -1,15 +1,14 @@
 package org.reactome.server.tools;
 
-import com.martiansoftware.jsap.*;
+import com.martiansoftware.jsap.JSAPException;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.reactome.server.graph.domain.model.Pathway;
 import org.reactome.server.graph.service.DatabaseObjectService;
 import org.reactome.server.graph.utils.ReactomeGraphCore;
-import org.reactome.server.tools.config.GraphQANeo4jConfig;
 import org.sbml.jsbml.Model;
-import org.sbml.jsbml.SBMLDocument;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBMLDocument;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;

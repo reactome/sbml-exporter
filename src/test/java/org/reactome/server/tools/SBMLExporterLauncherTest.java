@@ -1,18 +1,9 @@
 package org.reactome.server.tools;
 
-import com.martiansoftware.jsap.*;
-import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-import org.reactome.server.graph.domain.model.Pathway;
-import org.reactome.server.graph.service.DatabaseObjectService;
-import org.reactome.server.graph.utils.ReactomeGraphCore;
-import org.reactome.server.tools.config.GraphQANeo4jConfig;
+import com.martiansoftware.jsap.JSAPException;
 
 import java.io.File;
-import java.util.List;
 
-import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 
 /**

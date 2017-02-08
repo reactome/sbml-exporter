@@ -19,7 +19,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @EnableTransactionManagement
 @EnableNeo4jRepositories(basePackages = {"org.reactome.server.graph.repository"})
 @EnableSpringConfigured
-public class GraphQANeo4jConfig extends Neo4jConfig {
+public class GraphNeo4jConfig extends Neo4jConfig {
 
     private static final Logger logger = LoggerFactory.getLogger("importLogger");
 
