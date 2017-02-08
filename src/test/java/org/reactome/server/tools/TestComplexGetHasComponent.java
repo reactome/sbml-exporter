@@ -3,18 +3,12 @@ package org.reactome.server.tools;
 import com.martiansoftware.jsap.*;
 import org.junit.Assert;
 import org.junit.BeforeClass;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
 import org.reactome.server.graph.domain.model.*;
 import org.reactome.server.graph.service.DatabaseObjectService;
 import org.reactome.server.graph.utils.ReactomeGraphCore;
 import org.reactome.server.tools.config.GraphQANeo4jConfig;
 
-import java.io.File;
-import java.util.List;
-
 import static junit.framework.TestCase.assertEquals;
-import static junit.framework.TestCase.assertFalse;
 import static junit.framework.TestCase.assertTrue;
 
 /**
@@ -26,7 +20,7 @@ public class TestComplexGetHasComponent {
     private static ReactionLikeEvent event;
 
     @BeforeClass
-    public static void setup()  throws JSAPException {
+    public static void setup() throws JSAPException {
         SimpleJSAP jsap = new SimpleJSAP(SBMLExporterLauncher.class.getName(), "A tool for generating SBML files",
                 new Parameter[]{
                         new FlaggedOption("host", JSAP.STRING_PARSER, "localhost", JSAP.REQUIRED, 'h', "host", "The neo4j host"),
@@ -64,13 +58,36 @@ public class TestComplexGetHasComponent {
 //        assertEquals("number components from complex1", complex1.getHasComponent().size(), 2);
 //    }
 
+
+    @org.junit.Test
+    public void testCaching() {
+        DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
+
+        ReactionLikeEvent rle = (ReactionLikeEvent) databaseObjectService.findById("R-HSA-110243");
+
+        PhysicalEntity activeUnit1 = getCatalystActivityActiveUnit(rle);
+
+        Complex c = (Complex) databaseObjectService.findById("R-HSA-110185");
+        Assert.assertTrue("Complex should be found", c != null);
+
+        PhysicalEntity activeUnit2 = getCatalystActivityActiveUnit(rle);
+
+        Assert.assertTrue("Active units 1 and 2 should be the same", activeUnit1.equals(activeUnit2));
+    }
+
+    private PhysicalEntity getCatalystActivityActiveUnit(ReactionLikeEvent reactionLikeEvent){
+        Assert.assertTrue("wrong size", reactionLikeEvent.getCatalystActivity().size() == 1);
+        CatalystActivity catalystActivity = reactionLikeEvent.getCatalystActivity().get(0);
+        Assert.assertTrue("wrong size", catalystActivity.getActiveUnit().size() == 1);
+        return catalystActivity.getActiveUnit().iterator().next();
+    }
+
     @org.junit.Test
     public void testComplex1Both() {
         PhysicalEntity pe = event.getInput().get(0);
-        Complex complex = null;
 
         assertTrue("both:pe1 is complex", pe instanceof Complex);
-        complex = (Complex) (pe);
+        Complex complex = (Complex) (pe);
         int numComponents = complex.getHasComponent().size();
         assertEquals("numComponents from event", numComponents, 2);
         assertEquals("both:number components from pe1", complex.getHasComponent().size(), numComponents);
