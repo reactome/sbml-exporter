@@ -27,7 +27,6 @@ public class GraphQANeo4jConfig extends Neo4jConfig {
     private static final Logger logger = LoggerFactory.getLogger("importLogger");
 
     private SessionFactory sessionFactory;
-    private Session session;
 
     @Bean
     public Configuration getConfiguration() {
@@ -48,18 +47,6 @@ public class GraphQANeo4jConfig extends Neo4jConfig {
             sessionFactory = new SessionFactory(getConfiguration(), "org.reactome.server.graph.domain" );
         }
         return sessionFactory;
-    }
-
-    @Override
-    @Bean
-    @Scope(value = "prototype", proxyMode = ScopedProxyMode.TARGET_CLASS)
-    public Session getSession() throws Exception {
-        if (session == null){
-            logger.info("Opening neo4j Session");
-            session = super.getSession();
-        }
-
-        return session;
     }
 
 }
