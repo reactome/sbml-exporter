@@ -114,43 +114,74 @@ public class TestComplexGetHasComponent {
         assertEquals("both rev:number components from pe1", complex.getHasComponent().size(), numComponents);
     }
 
-//    @org.junit.Test
-//    public void testComplex2FromEvent() {
-//        PhysicalEntity pe = event.getOutput().get(0);
-//        Complex complex = null;
-//
-//        assertTrue("pe2 is complex", pe instanceof Complex);
-//        complex = (Complex) (pe);
-//        assertEquals("number components from pe2", complex.getHasComponent().size(), 4);
-//    }
-//
-//    @org.junit.Test
-//    public void testComplex2Direct() {
-//        DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-//        String dbid = "R-FLU-189171";
-//        Complex complex1 = (Complex) databaseObjectService.findById(dbid);
-//        assertEquals("number components from complex2", complex1.getHasComponent().size(), 4);
-//    }
-//
-//    @org.junit.Test
-//    public void testComplex3FromEvent() {
-//        PositiveRegulation reg = event.getPositivelyRegulatedBy().get(0);
-//        DatabaseObject pe = reg.getRegulator();
-//        assertTrue("reg is physical entity", pe instanceof PhysicalEntity);
-//        PhysicalEntity pe1 = (PhysicalEntity)(reg.getRegulator());
-//        Complex complex = null;
-//
-//        assertTrue("pe3 is complex", pe1 instanceof Complex);
-//        complex = (Complex) (pe1);
-//        assertEquals("number components from pe3", complex.getHasComponent().size(), 2);
-//    }
-//
-//    @org.junit.Test
-//    public void testComplex3Direct() {
-//        DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
-//        String dbid = "R-HSA-177482";
-//        Complex complex1 = (Complex) databaseObjectService.findById(dbid);
-//        assertEquals("number components from complex1", complex1.getHasComponent().size(), 2);
-//    }
-//
+    @org.junit.Test
+    public void testComplex2FromEvent() {
+        PhysicalEntity pe = event.getOutput().get(0);
+        Complex complex = null;
+
+        assertTrue("pe2 is complex", pe instanceof Complex);
+        complex = (Complex) (pe);
+        int numComponents = complex.getHasComponent().size();
+        assertEquals("numComponents direct", numComponents, 3167);
+        assertEquals("number components from pe2", complex.getHasComponent().size(), numComponents);
+        DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
+        String dbid = "R-FLU-189171";
+        Complex complex1 = (Complex) databaseObjectService.findById(dbid);
+        assertEquals("number components from complex2", complex1.getHasComponent().size(), numComponents);
+    }
+
+    @org.junit.Test
+    public void testComplex2Direct() {
+        DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
+        String dbid = "R-FLU-189171";
+        Complex complex1 = (Complex) databaseObjectService.findById(dbid);
+        int numComponents = complex1.getHasComponent().size();
+        assertEquals("numComponents direct", numComponents, 3167);
+        assertEquals("number components from complex2", complex1.getHasComponent().size(), numComponents);
+        PhysicalEntity pe = event.getOutput().get(0);
+        Complex complex = null;
+
+        assertTrue("pe2 is complex", pe instanceof Complex);
+        complex = (Complex) (pe);
+        assertEquals("number components from pe2", complex.getHasComponent().size(), numComponents);
+    }
+
+    @org.junit.Test
+    public void testComplex3FromEvent() {
+        PositiveRegulation reg = event.getPositivelyRegulatedBy().get(0);
+        DatabaseObject pe = reg.getRegulator();
+        assertTrue("reg is physical entity", pe instanceof PhysicalEntity);
+        PhysicalEntity pe1 = (PhysicalEntity)(reg.getRegulator());
+        Complex complex = null;
+
+        assertTrue("pe3 is complex", pe1 instanceof Complex);
+        complex = (Complex) (pe1);
+        int numComponents = complex.getHasComponent().size();
+        assertEquals("numComponents direct", numComponents, 6);
+        assertEquals("number components from pe3", complex.getHasComponent().size(), numComponents);
+        DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
+        String dbid = "R-HSA-177482";
+        Complex complex1 = (Complex) databaseObjectService.findById(dbid);
+        assertEquals("number components from complex1", complex1.getHasComponent().size(), numComponents);
+    }
+
+    @org.junit.Test
+    public void testComplex3Direct() {
+        DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
+        String dbid = "R-HSA-177482";
+        Complex complex1 = (Complex) databaseObjectService.findById(dbid);
+        int numComponents = complex1.getHasComponent().size();
+        assertEquals("numComponents direct", numComponents, 6);
+        assertEquals("number components from complex1", complex1.getHasComponent().size(), numComponents);
+        PositiveRegulation reg = event.getPositivelyRegulatedBy().get(0);
+        DatabaseObject pe = reg.getRegulator();
+        assertTrue("reg is physical entity", pe instanceof PhysicalEntity);
+        PhysicalEntity pe1 = (PhysicalEntity)(reg.getRegulator());
+        Complex complex = null;
+
+        assertTrue("pe3 is complex", pe1 instanceof Complex);
+        complex = (Complex) (pe1);
+        assertEquals("number components from pe3", complex.getHasComponent().size(), numComponents);
+    }
+
 }
