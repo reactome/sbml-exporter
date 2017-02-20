@@ -21,18 +21,6 @@ public class TestComplexGetHasComponent {
 
     @BeforeClass
     public static void setup() throws JSAPException {
-        SimpleJSAP jsap = new SimpleJSAP(SBMLExporterLauncher.class.getName(), "A tool for generating SBML files",
-                new Parameter[]{
-                        new FlaggedOption("host", JSAP.STRING_PARSER, "localhost", JSAP.REQUIRED, 'h', "host", "The neo4j host"),
-                        new FlaggedOption("port", JSAP.STRING_PARSER, "7474", JSAP.REQUIRED, 'b', "port", "The neo4j port"),
-                        new FlaggedOption("user", JSAP.STRING_PARSER, null, JSAP.REQUIRED, 'u', "user", "The neo4j user"),
-                        new FlaggedOption("password", JSAP.STRING_PARSER, null, JSAP.REQUIRED, 'p', "password", "The neo4j password")
-                }
-        );
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27"};
-        JSAPResult config = jsap.parse(args);
-        if (jsap.messagePrinted()) System.exit(1);
-        ReactomeGraphCore.initialise(config.getString("host"), config.getString("port"), config.getString("user"), config.getString("password"), GraphNeo4jConfig.class);
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
         String dbid = "R-HSA-168275"; // pathway with a single child reaction
         pathway = (Pathway) databaseObjectService.findById(dbid);
@@ -107,20 +95,18 @@ public class TestComplexGetHasComponent {
         assertEquals("both rev:number components from complex1", complex1.getHasComponent().size(), numComponents);
 
         PhysicalEntity pe = event.getInput().get(0);
-        Complex complex = null;
 
         assertTrue("both rev:pe1 is complex", pe instanceof Complex);
-        complex = (Complex) (pe);
+        Complex complex = (Complex) (pe);
         assertEquals("both rev:number components from pe1", complex.getHasComponent().size(), numComponents);
     }
 
     @org.junit.Test
     public void testComplex2FromEvent() {
         PhysicalEntity pe = event.getOutput().get(0);
-        Complex complex = null;
 
         assertTrue("pe2 is complex", pe instanceof Complex);
-        complex = (Complex) (pe);
+        Complex complex = (Complex) (pe);
         int numComponents = complex.getHasComponent().size();
         assertEquals("numComponents direct", numComponents, 3167);
         assertEquals("number components from pe2", complex.getHasComponent().size(), numComponents);
@@ -139,10 +125,9 @@ public class TestComplexGetHasComponent {
         assertEquals("numComponents direct", numComponents, 3167);
         assertEquals("number components from complex2", complex1.getHasComponent().size(), numComponents);
         PhysicalEntity pe = event.getOutput().get(0);
-        Complex complex = null;
 
         assertTrue("pe2 is complex", pe instanceof Complex);
-        complex = (Complex) (pe);
+        Complex complex = (Complex) (pe);
         assertEquals("number components from pe2", complex.getHasComponent().size(), numComponents);
     }
 
@@ -152,10 +137,9 @@ public class TestComplexGetHasComponent {
         DatabaseObject pe = reg.getRegulator();
         assertTrue("reg is physical entity", pe instanceof PhysicalEntity);
         PhysicalEntity pe1 = (PhysicalEntity)(reg.getRegulator());
-        Complex complex = null;
 
         assertTrue("pe3 is complex", pe1 instanceof Complex);
-        complex = (Complex) (pe1);
+        Complex complex = (Complex) (pe1);
         int numComponents = complex.getHasComponent().size();
         assertEquals("numComponents direct", numComponents, 6);
         assertEquals("number components from pe3", complex.getHasComponent().size(), numComponents);
@@ -177,10 +161,9 @@ public class TestComplexGetHasComponent {
         DatabaseObject pe = reg.getRegulator();
         assertTrue("reg is physical entity", pe instanceof PhysicalEntity);
         PhysicalEntity pe1 = (PhysicalEntity)(reg.getRegulator());
-        Complex complex = null;
 
         assertTrue("pe3 is complex", pe1 instanceof Complex);
-        complex = (Complex) (pe1);
+        Complex complex = (Complex) (pe1);
         assertEquals("number components from pe3", complex.getHasComponent().size(), numComponents);
     }
 

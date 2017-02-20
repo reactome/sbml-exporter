@@ -223,7 +223,7 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 " name=\"Clathrin [plasma membrane]\"%n" +
                 "      id=\"species_177482\">%n" +
                 "        <notes>%n" +
-                "          <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a Reactome Complex. Here is Reactomes nested structure for this complex: (P09496, Q00610)</p>%n" +
+                "          <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a Reactome Complex. Here is Reactomes nested structure for this complex: (3xP09496, 3xQ00610)</p>%n" +
                 "        </notes>%n" +
                 "        <annotation>%n" +
                 "          <rdf:RDF xmlns:rdf=\"http://www.w3.org/1999/02/22-rdf-syntax-ns#\" xmlns:bqbiol=\"http://biomodels.net/biology-qualifiers/\">%n" +

@@ -10,16 +10,42 @@ import java.util.List;
 /**
  * @author Sarah Keating <skeating@ebi.ac.uk>
  */
+
+class TypeCounter {
+    private final String mName;
+    private Integer mCount;
+
+    TypeCounter(String name) {
+        mName = name;
+        mCount = 0;
+    }
+
+    String getName() { return mName; }
+
+    Integer getCount() { return mCount; }
+
+    void incrementCount() {
+        mCount++;
+    }
+}
+
+
 class NotesBuilder {
     private SBase sbase = null;
     private String openNotes = "<notes><p xmlns=\"http://www.w3.org/1999/xhtml\">";
     private String closeNotes = "</p></notes>";
     private String contents = "";
+    private static ArrayList<TypeCounter> count = new ArrayList<TypeCounter>();
 
     NotesBuilder(SBase sbase) {
         this.sbase = sbase;
     }
 
+    private static void clearCounterArray() {
+        if (count.size() > 0) {
+            count.clear();
+        }
+    }
     /**
      * Puts the notes opening and closing tags
      * along with <p> </p> and the xhtml namespace
@@ -161,22 +187,26 @@ class NotesBuilder {
      */
     private String extractComplexStructure(Complex complex){
         String structure = null;
-        List<String> ids = new ArrayList<String>();
+//        List<String> ids = new ArrayList<String>();
+        clearCounterArray();
         if (complex.getHasComponent() != null){
             for (PhysicalEntity component: complex.getHasComponent() ){
-                if (!getListOfComponentIds(ids, component)) {
+                if (!getListOfComponentIds(component)) {
                     return null;
                 }
             }
         }
-        int num = ids.size();
-        int count = 0;
+        int num = count.size();
+        int numAdded = 0;
         if (num > 0) {
             structure = "(";
-            for (String id : ids){
-                structure += id;
-                count++;
-                if (count < num){
+            for (TypeCounter tc : count){
+                if (tc.getCount() > 1) {
+                    structure += tc.getCount() + "x";
+                }
+                structure += tc.getName();
+                numAdded++;
+                if (numAdded < num){
                     structure += ", ";
                 }
             }
@@ -188,24 +218,23 @@ class NotesBuilder {
     /**
      * get a list of molecules referred to by complex
      *
-     * @param ids List<String> to be populated
      * @param pe  PhysicalEntity to process
      *
      * @return true if all components have been referenced, false otherwise
      */
-    private boolean getListOfComponentIds(List<String> ids, PhysicalEntity pe){
+    private boolean getListOfComponentIds(PhysicalEntity pe){
         boolean complete = true;
         if (pe instanceof Complex){
             if (((Complex)pe).getHasComponent() != null) {
                 for (PhysicalEntity component : ((Complex) pe).getHasComponent()) {
-                    if(!getListOfComponentIds(ids, component)) {
+                    if(!getListOfComponentIds(component)) {
                         complete = false;
                     }
                 }
             }
         }
         else {
-            if (!getComponentId(ids, pe)) {
+            if (!addComponentId(pe)) {
                 complete = false;
             }
         }
@@ -213,37 +242,43 @@ class NotesBuilder {
     }
 
     /**
-     * Get the identifier of the referenced entity
+     * Add the identifier of the referenced entity to the list
      *
-     *
-     * @param ids List<String> to be populated
      * @param pe  PhysicalEntity to process
      *
      * @return true if all components have been referenced, false otherwise
      */
-    private boolean getComponentId(List<String> ids, PhysicalEntity pe) {
+    private boolean addComponentId(PhysicalEntity pe) {
         // TODO old code only used references to these two types why ?
-        boolean complete = true;
+        boolean complete = false;
+        String id = null;
         if (pe instanceof SimpleEntity){
             ReferenceMolecule ref = ((SimpleEntity)pe).getReferenceEntity();
-            if (ref == null) {
-                complete = false;
-            }
-            else {
-                ids.add(ref.getIdentifier());
+            if (ref != null) {
+                id = ref.getIdentifier();
             }
         }
         else if (pe instanceof EntityWithAccessionedSequence){
             ReferenceSequence ref = ((EntityWithAccessionedSequence)pe).getReferenceEntity();
-            if (ref == null) {
-                complete = false;
-            }
-            else {
-                ids.add(ref.getIdentifier());
+            if (ref != null) {
+                id = ref.getIdentifier();
             }
         }
-        else {
-            complete = false;
+        if (id != null) {
+            for (TypeCounter tc: count) {
+                if (tc.getName().equals(id)) {
+                    tc.incrementCount();
+                    complete = true;
+                    break;
+                }
+            }
+            if (!complete){
+                TypeCounter tc1 = new TypeCounter(id);
+                tc1.incrementCount();
+                count.add(tc1);
+                complete = true;
+            }
+
         }
         return complete;
     }

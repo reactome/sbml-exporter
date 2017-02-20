@@ -13,7 +13,7 @@ import org.reactome.server.tools.config.GraphNeo4jConfig;
  */
 @RunWith(value=Suite.class)
 
-//@Suite.SuiteClasses(value={WriteSBMLPolymerEntityTest.class})
+//@Suite.SuiteClasses(value={WriteSBMLSingleAnnotatedReactionTest.class})
 
 @Suite.SuiteClasses(value={
                             WriteSBMLNoEventsTest.class, WriteSBMLNoEventsAnnotTest.class,
@@ -30,7 +30,8 @@ import org.reactome.server.tools.config.GraphNeo4jConfig;
                             WriteSBMLConstructorTest.class, WriteSBMLListEventsTest.class,
                             WriteSBMLMissingPubTest.class, WriteSBMLNotTranslationalModTest.class,
                             WriteSBMLCatalystNoPETest.class, WriteSBMLListEventsNoParentTest.class,
-                            WriteSBMLPolymerEntityTest.class, WriteSBMLBadNotesTest.class})
+                            WriteSBMLPolymerEntityTest.class, WriteSBMLBadNotesTest.class,
+                            TestComplexGetHasComponent.class})
 
 
 public class Test {
