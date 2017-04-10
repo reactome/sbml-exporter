@@ -12,9 +12,9 @@ import static junit.framework.TestCase.assertTrue;
 public class SBMLExporterLauncherTest {
     private static File test_dir = new File("C:\\Development\\testReactome");
 
-    private static File file_single_pathway = new File(test_dir, "192869.xml");
-    private static File file_multi_pathway_1 = new File(test_dir, "5619071.xml");
-    private static File file_multi_pathway_2 = new File(test_dir, "168275.xml");
+    private static File file_single_pathway = new File(test_dir, "R-HSA-192869.xml");
+    private static File file_multi_pathway_1 = new File(test_dir, "R-HSA-5619071.xml");
+    private static File file_multi_pathway_2 = new File(test_dir, "R-HSA-168275.xml");
     private static File file_listevents = new File(test_dir, "pathway_73843.xml");
     private static File file_listevents_noparent = new File(test_dir, "no_parent_pathway.xml");
 
