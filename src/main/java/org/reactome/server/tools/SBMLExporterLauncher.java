@@ -233,13 +233,14 @@ public class SBMLExporterLauncher {
      * @param path ReactomeDB Pathway to output
      */
     private static void outputPath(Pathway path) {
-        String filename = path.getDbId() + ".xml";
+        String filename = path.getStId() + ".xml";
         File out = new File(outputdir, filename);
         WriteSBML sbml = new WriteSBML(path, dbVersion);
         sbml.setAnnotationFlag(true);
         sbml.createModel();
 //        sbml.toStdOut();
         sbml.toFile(out.getPath());
+        sbml = null;
     }
 
     private static void outputEvents(List<Event> loe){
