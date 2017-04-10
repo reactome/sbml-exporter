@@ -79,7 +79,7 @@ public class WriteSBMLReactionTest {
 
         // test things that mismatched with my first attempt
 
-        Species species = model.getSpecies(0);
+        Species species = model.getSpecies("species_390664");
         assertEquals("num cvterms on species", species.getNumCVTerms(), 2);
 
         CVTerm cvTerm = species.getCVTerm(0);

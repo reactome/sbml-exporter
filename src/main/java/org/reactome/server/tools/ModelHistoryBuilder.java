@@ -199,10 +199,11 @@ class ModelHistoryBuilder extends AnnotationBuilder {
         entry = ((editor.getFirstname() == null) ? "" : editor.getFirstname());
         creator.setGivenName(entry);
 
-        entry = ((editor.getEMailAddress() == null) ? "" : editor.getEMailAddress());
-        if (!entry.equals("")) {
-            creator.setEmail(entry);
-        }
+        // 1.0.5 removed getEmailAddress
+//        entry = ((editor.getEMailAddress() == null) ? "" : editor.getEMailAddress());
+//        if (!entry.equals("")) {
+//            creator.setEmail(entry);
+//        }
 
         if (editor.getAffiliation() != null) {
             for (Affiliation a : editor.getAffiliation()) {

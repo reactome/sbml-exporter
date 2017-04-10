@@ -30,6 +30,11 @@ public class WriteSBMLEntityTest {
             "Reactome Complex.%nHere is Reactomes nested structure for this complex: (P03433, P03431, P03428)</p>%n"
             + "</notes>");
 
+    private final String complex_notes1 = String.format("<notes>%n" +
+            "  <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a " +
+            "Reactome Complex.%nHere is Reactomes nested structure for this complex: (P03428, P03431, P03433)</p>%n"
+            + "</notes>");
+
     private final String defined_notes = String.format("<notes>%n" +
             "  <p xmlns=\"http://www.w3.org/1999/xhtml\">Derived from a Reactome DefinedSet.%n" +
             "This is a list of alternative entities, any of which can perform the given function.</p>%n"
@@ -141,7 +146,14 @@ public class WriteSBMLEntityTest {
 
         try {
             String output = species.getNotesString().replace("\n", System.getProperty("line.separator"));
-            assertEquals("species notes", complex_notes, output);
+            boolean match = false;
+            if (output.equals(complex_notes)) {
+                match = true;
+            }
+            else if (output.equals(complex_notes1)) {
+                match = true;
+            }
+            assertTrue("species notes", match);
         }
         catch(Exception e){
             System.out.println("getNotesString failed");
