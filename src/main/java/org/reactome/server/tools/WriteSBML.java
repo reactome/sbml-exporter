@@ -195,12 +195,7 @@ class WriteSBML {
 
     String getModelId() {
         Model m = sbmlDocument.getModel();
-        if (m != null) {
-            return m.getId();
-        }
-        else {
-            return "";
-        }
+        return m != null ? m.getId() : "";
     }
 
     ///////////////////////////////////////////////////////////////////////////////////
@@ -346,15 +341,14 @@ class WriteSBML {
             }
         }
 
-        if (listDBid.size() != 1) {
-            parentPathway = null;
-        }
-        else {
+        if (listDBid.size() == 1) {
             for (Event e : child_list) {
                 if (e.getDbId().equals(listDBid.get(0))) {
-                    parentPathway = (Pathway)(e);
+                    parentPathway = (Pathway) (e);
                 }
             }
+        } else {
+            parentPathway = null;
         }
     }
 

@@ -131,6 +131,7 @@ public class SBMLExporterLauncher {
                             updateProgressBar(done);
                         }
                     }
+                    break;
                 case MULTIPLE_EVENTS:
                     total = 1;
                     List<Event> eventList = new ArrayList<Event>();
@@ -149,9 +150,6 @@ public class SBMLExporterLauncher {
                         outputEvents(eventList);
                         updateProgressBar(1);
                     }
-
-
-                default:
                     break;
             }
         } else {

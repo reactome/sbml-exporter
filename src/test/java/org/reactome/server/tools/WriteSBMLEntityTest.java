@@ -147,10 +147,7 @@ public class WriteSBMLEntityTest {
         try {
             String output = species.getNotesString().replace("\n", System.getProperty("line.separator"));
             boolean match = false;
-            if (output.equals(complex_notes)) {
-                match = true;
-            }
-            else if (output.equals(complex_notes1)) {
+            if (output.equals(complex_notes) || output.equals(complex_notes1)) {
                 match = true;
             }
             assertTrue("species notes", match);
