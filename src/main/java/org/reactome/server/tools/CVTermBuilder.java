@@ -117,6 +117,16 @@ class CVTermBuilder extends AnnotationBuilder {
             }
         }
     }
+
+    private void createSimpleEntityAnnotations(SimpleEntity se, CVTerm.Qualifier qualifier){
+        if (se.getReferenceEntity() != null) {
+            addResource("chebi", qualifier, (se.getReferenceEntity().getIdentifier()));
+        }
+        String ref = getKeggReference(se.getCrossReference());
+        if (ref.length() > 0){
+            addResource("kegg", qualifier, ref);
+        }
+    }
     /**
      * Adds the resources relating to different types of PhysicalEntity. In the case of a Complex
      * it will iterate through all the components.
@@ -126,20 +136,24 @@ class CVTermBuilder extends AnnotationBuilder {
      */
     private void createPhysicalEntityAnnotations(PhysicalEntity pe, CVTerm.Qualifier qualifier, boolean recurse){
         if (pe instanceof SimpleEntity){
-            SimpleEntity se = (SimpleEntity)(pe);
-            if (se.getReferenceEntity() != null) {
-                addResource("chebi", qualifier, (se.getReferenceEntity().getIdentifier()));
+//            createSimpleEntityAnnotations(((SimpleEntity)(pe)), qualifier);
+            ReferenceEntity re = ((SimpleEntity)(pe)).getReferenceEntity();
+            if (re != null) {
+                addResource("chebi", qualifier, (re.getIdentifier()));
             }
-            String ref = getKeggReference(se.getCrossReference());
-            if (ref.length() > 0){
-                addResource("kegg", qualifier, ref);
+            re = null;
+            String kref = getKeggReference(((SimpleEntity)(pe)).getCrossReference());
+            if (kref.length() > 0){
+                addResource("kegg", qualifier, kref);
             }
+            kref = null;
         }
         else if (pe instanceof EntityWithAccessionedSequence){
             ReferenceEntity ref = ((EntityWithAccessionedSequence)(pe)).getReferenceEntity();
             if (ref != null) {
                 addResource(ref.getDatabaseName(), qualifier, ref.getIdentifier());
             }
+            ref = null;
             if (recurse) {
                 List<PhysicalEntity> inferences = pe.getInferredTo();
                 if (inferences != null) {
@@ -148,6 +162,7 @@ class CVTermBuilder extends AnnotationBuilder {
                         // could add nested annotation but decided not to at present
                     }
                 }
+                inferences = null;
                 inferences = pe.getInferredFrom();
                 if (inferences != null) {
                     for (PhysicalEntity inf : inferences) {
@@ -155,6 +170,7 @@ class CVTermBuilder extends AnnotationBuilder {
                         // could add nested annotation but decided not to at present
                     }
                 }
+                inferences = null;
                 List<AbstractModifiedResidue> mods = ((EntityWithAccessionedSequence) pe).getHasModifiedResidue();
                 if (mods != null) {
                     for (AbstractModifiedResidue inf : mods) {
@@ -164,28 +180,35 @@ class CVTermBuilder extends AnnotationBuilder {
                         }
                     }
                 }
+                mods = null;
             }
         }
         else if (pe instanceof Complex){
-            if (((Complex)(pe)).getHasComponent() != null) {
-                for (PhysicalEntity component : ((Complex) (pe)).getHasComponent()) {
+            List<PhysicalEntity> components = ((Complex)(pe)).getHasComponent();
+            if (components != null) {
+                for (PhysicalEntity component : components) {
                     createPhysicalEntityAnnotations(component, CVTerm.Qualifier.BQB_HAS_PART, false);
                 }
             }
+            components = null;
         }
         else if (pe instanceof EntitySet){
-            if (((EntitySet)(pe)).getHasMember() != null) {
-                for (PhysicalEntity member : ((EntitySet) (pe)).getHasMember()) {
+            List<PhysicalEntity> members = ((EntitySet)(pe)).getHasMember();
+            if (members != null) {
+                for (PhysicalEntity member : members) {
                     createPhysicalEntityAnnotations(member, CVTerm.Qualifier.BQB_HAS_PART, false);
                 }
             }
+            members = null;
         }
         else if (pe instanceof Polymer){
-            if (((Polymer) pe).getRepeatedUnit() != null) {
-                for (PhysicalEntity component : ((Polymer) (pe)).getRepeatedUnit()) {
+            List<PhysicalEntity> repeated = ((Polymer) pe).getRepeatedUnit();
+            if (repeated != null) {
+                for (PhysicalEntity component : repeated) {
                     createPhysicalEntityAnnotations(component, CVTerm.Qualifier.BQB_HAS_PART, false);
                 }
             }
+            repeated = null;
         }
         else {
             // a GenomeEncodedEntity adds no additional annotation

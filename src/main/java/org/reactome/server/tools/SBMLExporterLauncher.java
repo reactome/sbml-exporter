@@ -5,6 +5,7 @@ import com.martiansoftware.jsap.*;
 import org.reactome.server.graph.domain.model.Event;
 import org.reactome.server.graph.domain.model.Pathway;
 import org.reactome.server.graph.domain.model.Species;
+import org.reactome.server.graph.domain.result.SimpleDatabaseObject;
 import org.reactome.server.graph.service.DatabaseObjectService;
 import org.reactome.server.graph.service.GeneralService;
 import org.reactome.server.graph.service.SchemaService;
@@ -14,6 +15,8 @@ import org.reactome.server.tools.config.GraphNeo4jConfig;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 
@@ -38,6 +41,8 @@ public class SBMLExporterLauncher {
 
     private static int dbVersion = 0;
 
+    private static final int width = 70;
+    private static int total;
 
     public static void main(String[] args) throws JSAPException {
 
@@ -76,15 +81,13 @@ public class SBMLExporterLauncher {
         outputStatus = Status.SINGLE_PATH;
         parseAdditionalArguments(config);
 
-        if (!singleArgumentSupplied()) {
-            System.err.println("Too many arguments detected. Expected either no pathway arguments or one of -t, -s, -m, -l.");
-        }
-        else {
+        if (singleArgumentSupplied()) {
             dbVersion = genericService.getDBVersion();
 
             switch (outputStatus) {
                 case SINGLE_PATH:
                     Pathway pathway = null;
+                    total = 1;
                     try {
                         pathway = (Pathway) databaseObjectService.findByIdNoRelations(singleId);
                     } catch (Exception e) {
@@ -92,11 +95,12 @@ public class SBMLExporterLauncher {
                     }
                     if (pathway != null) {
                         outputPath(pathway);
+                        updateProgressBar(1);
                     }
                     break;
                 case ALL_PATWAYS:
                     for (Species s : speciesService.getSpecies()) {
-                        outputPathsForSpecies(s, schemaService);
+                        outputPathsForSpecies(s, schemaService, databaseObjectService);
                     }
                     break;
                 case ALL_PATHWAYS_SPECIES:
@@ -107,25 +111,31 @@ public class SBMLExporterLauncher {
                         System.err.println(speciesId + " is not the identifier of a valid Species object");
                     }
                     if (species != null) {
-                        outputPathsForSpecies(species, schemaService);
+                        outputPathsForSpecies(species, schemaService, databaseObjectService);
                     }
                     break;
                 case MULTIPLE_PATHS:
+                    total = multipleIds.length;
+                    Pathway pathway1 = null;
+                    int done = 0;
                     for (long id : multipleIds) {
-                        pathway = null;
+                        pathway1 = null;
                         try {
-                            pathway = (Pathway) databaseObjectService.findByIdNoRelations(id);
+                            pathway1 = (Pathway) databaseObjectService.findByIdNoRelations(id);
                         } catch (Exception e) {
                             System.err.println(id + " is not the identifier of a valid Pathway object");
                         }
-                        if (pathway != null) {
-                            outputPath(pathway);
+                        if (pathway1 != null) {
+                            outputPath(pathway1);
+                            done++;
+                            updateProgressBar(done);
                         }
                     }
                 case MULTIPLE_EVENTS:
+                    total = 1;
                     List<Event> eventList = new ArrayList<Event>();
                     boolean valid = true;
-                    for (long id: multipleEvents) {
+                    for (long id : multipleEvents) {
                         Event event;
                         try {
                             event = (Event) databaseObjectService.findByIdNoRelations(id);
@@ -135,14 +145,17 @@ public class SBMLExporterLauncher {
                             System.err.println(id + " is not the identifier of a valid Event object");
                         }
                     }
-                    if (valid && eventList.size() > 0){
+                    if (valid && eventList.size() > 0) {
                         outputEvents(eventList);
+                        updateProgressBar(1);
                     }
 
 
                 default:
                     break;
             }
+        } else {
+            System.err.println("Too many arguments detected. Expected either no pathway arguments or one of -t, -s, -m, -l.");
         }
 
     }
@@ -186,27 +199,18 @@ public class SBMLExporterLauncher {
     private static boolean singleArgumentSupplied(){
         if (singleId != 0) {
             // have -t shouldnt have anything else
-            if (speciesId != 0){
-                return false;
-            }
-            else if (multipleIds.length > 0) {
-                return false;
-            }
-            else if (multipleEvents.length > 0) {
+            if (speciesId != 0 || multipleIds.length > 0 || multipleEvents.length > 0){
                 return false;
             }
         }
         else if (speciesId != 0) {
             // have -s shouldnt have anything else
-            if (multipleIds.length > 0) {
-                return false;
-            }
-            else if (multipleEvents.length > 0) {
+            if (multipleIds.length > 0 || multipleEvents.length > 0) {
                 return false;
             }
         }
         else if (multipleIds.length > 0){
-            // have -m shouldnt hve anythoing else
+            // have -m shouldnt have anything else
             if (multipleEvents.length > 0) {
                 return false;
             }
@@ -221,9 +225,18 @@ public class SBMLExporterLauncher {
      * @param species ReactomeDB Species
      * @param schemaService database service to use
      */
-    private static void outputPathsForSpecies(Species species, SchemaService schemaService) {
-        for (Pathway path : schemaService.getByClass(Pathway.class, species)){
+    private static void outputPathsForSpecies(Species species, SchemaService schemaService, DatabaseObjectService databaseObjectService) {
+        total = schemaService.getByClass(Pathway.class, species).size();
+        int done = 0;
+        System.out.println("Outputting pathways for " + species.getDisplayName());
+            Collection<SimpleDatabaseObject> pathways = schemaService.getSimpleDatabaseObjectByClass(Pathway.class, species);
+        Iterator<SimpleDatabaseObject> iterator = pathways.iterator();
+        while (iterator.hasNext()) {
+            Pathway path = databaseObjectService.findByIdNoRelations(iterator.next().getStId());
             outputPath(path);
+            done++;
+            updateProgressBar(done);
+            path = null;
         }
     }
 
@@ -238,7 +251,6 @@ public class SBMLExporterLauncher {
         WriteSBML sbml = new WriteSBML(path, dbVersion);
         sbml.setAnnotationFlag(true);
         sbml.createModel();
-//        sbml.toStdOut();
         sbml.toFile(out.getPath());
         sbml = null;
     }
@@ -247,11 +259,29 @@ public class SBMLExporterLauncher {
         WriteSBML sbml = new WriteSBML(loe, dbVersion);
         sbml.setAnnotationFlag(true);
         sbml.createModel();
-//        sbml.toStdOut();
         String filename = sbml.getModelId() + ".xml";
         File out = new File(outputdir, filename);
         sbml.toFile(out.getPath());
-
+        sbml = null;
     }
+
+    /**
+     * Simple method that prints a progress bar to command line
+     *
+     * @param done Number of entries added to the graph
+     */
+    private static void updateProgressBar(int done) {
+        String format = "\r%3d%% %s %c";
+        char[] rotators = {'|', '/', '-', '\\'};
+        double percent = (double) done / total;
+        StringBuilder progress = new StringBuilder(width);
+        progress.append('|');
+        int i = 0;
+        for (; i < (int) (percent * width); i++) progress.append("=");
+        for (; i < width; i++) progress.append(" ");
+        progress.append('|');
+        System.out.printf(format, (int) (percent * 100), progress, rotators[((done - 1) % (rotators.length * 100)) / 100]);
+    }
+
 }
 

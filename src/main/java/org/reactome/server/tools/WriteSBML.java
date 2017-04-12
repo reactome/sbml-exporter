@@ -421,6 +421,7 @@ class WriteSBML {
                     Pathway path = ((Pathway)(event));
                     addAllReactions(path);
                 }
+                event = null;
             }
         }
 
@@ -472,18 +473,22 @@ class WriteSBML {
             if (event.getInput() != null) {
                 for (PhysicalEntity pe : event.getInput()) {
                     addParticipant("reactant", rn, pe, event.getDbId(), null);
+                    pe = null;
                 }
             }
             if (event.getOutput() != null) {
                 for (PhysicalEntity pe : event.getOutput()) {
                     addParticipant("product", rn, pe, event.getDbId(), null);
+                    pe = null;
                 }
             }
             if (event.getCatalystActivity() != null) {
                 for (CatalystActivity cat : event.getCatalystActivity()) {
-                    if (cat.getPhysicalEntity() != null) {
-                        addParticipant("catalyst", rn, cat.getPhysicalEntity(), event.getDbId(), null);
+                    PhysicalEntity pe = cat.getPhysicalEntity();
+                    if (pe != null) {
+                        addParticipant("catalyst", rn, pe, event.getDbId(), null);
                     }
+                    cat = null;
                 }
             }
             //1.0.5 removed getPositivelyRegulatedBy/getNegativelyRegulatedBy
@@ -502,6 +507,7 @@ class WriteSBML {
                         }
 
                     }
+                    reg = null;
                 }
             }
             if (addAnnotations) {
