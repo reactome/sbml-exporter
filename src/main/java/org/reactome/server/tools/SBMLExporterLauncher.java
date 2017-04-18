@@ -37,6 +37,7 @@ public class SBMLExporterLauncher {
     private enum Status {
         SINGLE_PATH, ALL_PATWAYS, ALL_PATHWAYS_SPECIES, MULTIPLE_PATHS, MULTIPLE_EVENTS
     }
+
     private static Status outputStatus = Status.SINGLE_PATH;
 
     private static int dbVersion = 0;
@@ -57,12 +58,12 @@ public class SBMLExporterLauncher {
                         new FlaggedOption("species", JSAP.LONG_PARSER, "0", JSAP.NOT_REQUIRED, 's', "species", "The id of a species"),
                 }
         );
-        FlaggedOption m =  new FlaggedOption("multiple", JSAP.LONG_PARSER, null, JSAP.NOT_REQUIRED, 'm', "multiple", "A list of ids of Pathways");
+        FlaggedOption m = new FlaggedOption("multiple", JSAP.LONG_PARSER, null, JSAP.NOT_REQUIRED, 'm', "multiple", "A list of ids of Pathways");
         m.setList(true);
         m.setListSeparator(',');
         jsap.registerParameter(m);
 
-        FlaggedOption loe =  new FlaggedOption("listevents", JSAP.LONG_PARSER, null, JSAP.NOT_REQUIRED, 'l', "listevents", "A list of ids of Events to be output as a single model");
+        FlaggedOption loe = new FlaggedOption("listevents", JSAP.LONG_PARSER, null, JSAP.NOT_REQUIRED, 'l', "listevents", "A list of ids of Events to be output as a single model");
         loe.setList(true);
         loe.setListSeparator(',');
         jsap.registerParameter(loe);
@@ -159,7 +160,7 @@ public class SBMLExporterLauncher {
     }
 
     /**
-     *  function to get the command line arguments and determine the requested output
+     * function to get the command line arguments and determine the requested output
      *
      * @param config JSAPResult result of first parse
      */
@@ -173,41 +174,36 @@ public class SBMLExporterLauncher {
 
         if (singleId == 0) {
             if (speciesId == 0) {
-                if (multipleIds.length > 0){
+                if (multipleIds.length > 0) {
                     outputStatus = Status.MULTIPLE_PATHS;
-                }
-                else if (multipleEvents.length > 0){
+                } else if (multipleEvents.length > 0) {
                     outputStatus = Status.MULTIPLE_EVENTS;
-                }
-                else {
+                } else {
                     outputStatus = Status.ALL_PATWAYS;
                 }
-            }
-            else {
+            } else {
                 outputStatus = Status.ALL_PATHWAYS_SPECIES;
             }
         }
     }
 
     /**
-     *  function to check that only one argument relating to teh pathway has been given
+     * function to check that only one argument relating to teh pathway has been given
      *
      * @return true if only one argument, false if more than one
      */
-    private static boolean singleArgumentSupplied(){
+    private static boolean singleArgumentSupplied() {
         if (singleId != 0) {
             // have -t shouldnt have anything else
-            if (speciesId != 0 || multipleIds.length > 0 || multipleEvents.length > 0){
+            if (speciesId != 0 || multipleIds.length > 0 || multipleEvents.length > 0) {
                 return false;
             }
-        }
-        else if (speciesId != 0) {
+        } else if (speciesId != 0) {
             // have -s shouldnt have anything else
             if (multipleIds.length > 0 || multipleEvents.length > 0) {
                 return false;
             }
-        }
-        else if (multipleIds.length > 0){
+        } else if (multipleIds.length > 0) {
             // have -m shouldnt have anything else
             if (multipleEvents.length > 0) {
                 return false;
@@ -220,14 +216,14 @@ public class SBMLExporterLauncher {
     /**
      * Output all Pathways for the given Species
      *
-     * @param species ReactomeDB Species
+     * @param species       ReactomeDB Species
      * @param schemaService database service to use
      */
     private static void outputPathsForSpecies(Species species, SchemaService schemaService, DatabaseObjectService databaseObjectService) {
         total = schemaService.getByClass(Pathway.class, species).size();
         int done = 0;
-        System.out.println("Outputting pathways for " + species.getDisplayName());
-            Collection<SimpleDatabaseObject> pathways = schemaService.getSimpleDatabaseObjectByClass(Pathway.class, species);
+        System.out.println("\nOutputting pathways for " + species.getDisplayName());
+        Collection<SimpleDatabaseObject> pathways = schemaService.getSimpleDatabaseObjectByClass(Pathway.class, species);
         Iterator<SimpleDatabaseObject> iterator = pathways.iterator();
         while (iterator.hasNext()) {
             Pathway path = databaseObjectService.findByIdNoRelations(iterator.next().getStId());
@@ -253,7 +249,12 @@ public class SBMLExporterLauncher {
         sbml = null;
     }
 
-    private static void outputEvents(List<Event> loe){
+    /**
+     * Create an output file that writes one SBML model from a list of events
+     *
+     * @param loe  List of ReactomeDB Events
+     */
+    private static void outputEvents(List<Event> loe) {
         WriteSBML sbml = new WriteSBML(loe, dbVersion);
         sbml.setAnnotationFlag(true);
         sbml.createModel();
