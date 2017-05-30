@@ -115,6 +115,10 @@ class AnnotationBuilder {
         if (shortVersion) {
             resource = "http://identifiers.org/" + lowerDB + "/" + accessionNo;
         }
+
+        if (lowerDB.equals("reactome")) {
+            resource = "http://identifiers.org/" + lowerDB + ":" + accessionNo;
+        }
         return resource;
     }
 

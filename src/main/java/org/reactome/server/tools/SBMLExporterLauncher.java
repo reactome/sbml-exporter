@@ -33,6 +33,7 @@ public class SBMLExporterLauncher {
     private static long speciesId = 0;
     private static long[] multipleIds;
     private static long[] multipleEvents;
+    private static String standardId = "";
 
     private enum Status {
         SINGLE_PATH, ALL_PATWAYS, ALL_PATHWAYS_SPECIES, MULTIPLE_PATHS, MULTIPLE_EVENTS
@@ -68,6 +69,11 @@ public class SBMLExporterLauncher {
         loe.setListSeparator(',');
         jsap.registerParameter(loe);
 
+        FlaggedOption stdId = new FlaggedOption("stId", JSAP.STRING_PARSER, null, JSAP.NOT_REQUIRED, 'i', "stId", "The standard id of a Pathway");
+        stdId.setList(true);
+        stdId.setListSeparator(',');
+        jsap.registerParameter(stdId);
+
         JSAPResult config = jsap.parse(args);
         if (jsap.messagePrinted()) System.exit(1);
 
@@ -89,10 +95,22 @@ public class SBMLExporterLauncher {
                 case SINGLE_PATH:
                     Pathway pathway = null;
                     total = 1;
-                    try {
-                        pathway = (Pathway) databaseObjectService.findByIdNoRelations(singleId);
-                    } catch (Exception e) {
-                        System.err.println(singleId + " is not the identifier of a valid Pathway object");
+                    if (singleId != 0) {
+                        try {
+                            pathway = (Pathway) databaseObjectService.findByIdNoRelations(singleId);
+                        } catch (Exception e) {
+                            System.err.println(singleId + " is not the identifier of a valid Pathway object");
+                        }
+                    }
+                    else if (standardId.length() > 0) {
+                        try {
+                            pathway = (Pathway) databaseObjectService.findByIdNoRelations(standardId);
+                        } catch (Exception e) {
+                            System.err.println(standardId + " is not the identifier of a valid Pathway object");
+                        }
+                    }
+                    else {
+                        System.err.println("Expected the identifier of a valid Pathway object");
                     }
                     if (pathway != null) {
                         outputPath(pathway);
@@ -166,13 +184,14 @@ public class SBMLExporterLauncher {
      */
     private static void parseAdditionalArguments(JSAPResult config) {
         outputdir = config.getString("outdir");
+        standardId = config.getString("stId");
 
         singleId = config.getLong("toplevelpath");
         speciesId = config.getLong("species");
         multipleIds = config.getLongArray("multiple");
         multipleEvents = config.getLongArray("listevents");
 
-        if (singleId == 0) {
+        if (singleId == 0 && standardId == null) {
             if (speciesId == 0) {
                 if (multipleIds.length > 0) {
                     outputStatus = Status.MULTIPLE_PATHS;
@@ -195,7 +214,13 @@ public class SBMLExporterLauncher {
     private static boolean singleArgumentSupplied() {
         if (singleId != 0) {
             // have -t shouldnt have anything else
-            if (speciesId != 0 || multipleIds.length > 0 || multipleEvents.length > 0) {
+            if (standardId != null ||speciesId != 0 || multipleIds.length > 0 || multipleEvents.length > 0) {
+                return false;
+            }
+        }
+        else if (standardId != null && standardId.length() > 0) {
+            // have -i shouldnt have anything else
+            if (singleId != 0 ||speciesId != 0 || multipleIds.length > 0 || multipleEvents.length > 0) {
                 return false;
             }
         } else if (speciesId != 0) {

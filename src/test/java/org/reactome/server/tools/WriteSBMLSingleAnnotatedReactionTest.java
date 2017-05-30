@@ -132,7 +132,7 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "            <rdf:Description rdf:about=\"#metaid_2\">%n" +
                 "              <bqbiol:is>%n" +
                 "                <rdf:Bag>%n" +
-                "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome/REACTOME:R-FLU-188954\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome:R-FLU-188954\" />%n" +
                 "                </rdf:Bag>%n" +
                 "              </bqbiol:is>%n" +
                 "              <bqbiol:hasPart>%n" +
@@ -172,7 +172,7 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "            <rdf:Description rdf:about=\"#metaid_4\">%n" +
                 "              <bqbiol:is>%n" +
                 "                <rdf:Bag>%n" +
-                "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome/REACTOME:R-ALL-189161\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome:R-ALL-189161\" />%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/chebi/CHEBI:26667\" />%n" +
                 "                </rdf:Bag>%n" +
                 "              </bqbiol:is>%n" +
@@ -191,7 +191,7 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "            <rdf:Description rdf:about=\"#metaid_6\">%n" +
                 "              <bqbiol:is>%n" +
                 "                <rdf:Bag>%n" +
-                "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome/REACTOME:R-FLU-189171\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome:R-FLU-189171\" />%n" +
                 "                </rdf:Bag>%n" +
                 "              </bqbiol:is>%n" +
                 "              <bqbiol:hasPart>%n" +
@@ -230,7 +230,7 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "            <rdf:Description rdf:about=\"#metaid_8\">%n" +
                 "              <bqbiol:is>%n" +
                 "                <rdf:Bag>%n" +
-                "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome/REACTOME:R-HSA-177482\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome:R-HSA-177482\" />%n" +
                 "                </rdf:Bag>%n" +
                 "              </bqbiol:is>%n" +
                 "              <bqbiol:hasPart>%n" +
@@ -255,7 +255,7 @@ public class WriteSBMLSingleAnnotatedReactionTest
                 "            <rdf:Description rdf:about=\"#metaid_1\">%n" +
                 "              <bqbiol:is>%n" +
                 "                <rdf:Bag>%n" +
-                "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome/REACTOME:R-HSA-168285\" />%n" +
+                "                  <rdf:li rdf:resource=\"http://identifiers.org/reactome:R-HSA-168285\" />%n" +
                 "                  <rdf:li rdf:resource=\"http://identifiers.org/go/GO:0019065\" />%n" +
                 "                </rdf:Bag>%n" +
                 "              </bqbiol:is>%n" +
@@ -424,7 +424,7 @@ public class WriteSBMLSingleAnnotatedReactionTest
 
         // check that the one we expect is there
         CVTerm term = new CVTerm(CVTerm.Qualifier.BQB_IS);
-        term.addResourceURI("http://identifiers.org/reactome/REACTOME:R-ALL-189161");
+        term.addResourceURI("http://identifiers.org/reactome:R-ALL-189161");
         term.addResourceURI("http://identifiers.org/chebi/CHEBI:26667");
 
         assertTrue("expected resource missing", isPresent(term, terms));
@@ -449,7 +449,7 @@ public class WriteSBMLSingleAnnotatedReactionTest
 
         // check that the one we expect is there
         CVTerm term = new CVTerm(CVTerm.Qualifier.BQB_IS);
-        term.addResourceURI("http://identifiers.org/reactome/REACTOME:R-FLU-189171");
+        term.addResourceURI("http://identifiers.org/reactome:R-FLU-189171");
 
         assertTrue("expected resource missing", isPresent(term, terms));
 
@@ -471,6 +471,29 @@ public class WriteSBMLSingleAnnotatedReactionTest
         term.addResourceURI("http://identifiers.org/uniprot/P03433");
         term.addResourceURI("http://identifiers.org/uniprot/P03431");
         term.addResourceURI("http://identifiers.org/uniprot/P03428");
+
+        assertTrue("expected resource missing", isPresent(term, terms));
+
+    }
+
+    @Test
+    public void testModelAnnotation()
+    {
+        SBMLDocument doc = testWrite.getSBMLDocument();
+        if (!doc.isSetModel()) {
+            testWrite.createModel();
+            doc = testWrite.getSBMLDocument();
+        }
+
+        Model model = doc.getModel();
+        assertTrue("Model failed", model != null);
+
+        List<CVTerm> terms = model.getCVTerms();
+
+        // check that the one we expect is there
+        CVTerm term = new CVTerm(CVTerm.Qualifier.BQB_IS);
+        term.addResourceURI("http://identifiers.org/reactome:R-HSA-168275");
+        term.addResourceURI("http://identifiers.org/go/GO:0019065");
 
         assertTrue("expected resource missing", isPresent(term, terms));
 

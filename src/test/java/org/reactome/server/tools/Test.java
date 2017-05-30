@@ -13,7 +13,7 @@ import org.reactome.server.tools.config.GraphNeo4jConfig;
  */
 @RunWith(value=Suite.class)
 
-//@Suite.SuiteClasses(value={TestComplexGetHasComponent.class})
+//@Suite.SuiteClasses(value={WriteSBMLTopLevelPathTest.class})
 
 @Suite.SuiteClasses(value={
                             WriteSBMLNoEventsTest.class, WriteSBMLNoEventsAnnotTest.class,

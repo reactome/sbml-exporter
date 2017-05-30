@@ -26,6 +26,7 @@ class CVTermBuilder extends AnnotationBuilder {
      */
     void createModelAnnotations(Pathway path) {
         addResource("reactome", CVTerm.Qualifier.BQB_IS, path.getStId());
+        addGOTerm(path);
         addPublications(path.getLiteratureReference());
         createCVTerms();
     }
@@ -104,6 +105,17 @@ class CVTermBuilder extends AnnotationBuilder {
             if (goterm != null){
                 addResource("go", CVTerm.Qualifier.BQB_IS, cat.getActivity().getAccession());
             }
+        }
+    }
+
+    /**
+     * Function to determine GO terms associated with the pathway
+     *
+     * @param path Pathway from ReactomeDB
+     */
+    private void addGOTerm(org.reactome.server.graph.domain.model.Pathway path){
+        if (path.getGoBiologicalProcess() != null) {
+            addResource("go", CVTerm.Qualifier.BQB_IS, path.getGoBiologicalProcess().getAccession());
         }
     }
 

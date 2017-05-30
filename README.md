@@ -20,6 +20,7 @@ The following arguments are required
 Zero or one of the following "pathway" arguments are also expected to identify which Pathway(s) are to be exported
 
 - -t "toplevelpath"	    A single integer argument that is the databaseIdentifier for a Pathway
+- -i "standardId"       The string representing the stable identifier for a Pathway
 - -s "species"          A single integer argument that is the databaseIdentifier for a Species
 - -m "multiple"         A comma-separated list of integers that are the databaseIdentifiers of several Pathways
 - -l "listevents"       A comma-separated list of integers that are the databaseIdentifiers of several Events
@@ -32,15 +33,19 @@ The output when no specific path way argument is specified will be a large numbe
 
 - -t dbid
 
-The output for the argument -t will be a single SBML file named "dbid.xml" written into the directory specified with the -o option.
+The output for the argument -t will be a single SBML file named "stid.xml" (where stid is the stable identifier for dbid) written into the directory specified with the -o option.
+
+- -i stid
+
+The output for the argument -t will be a single SBML file named "stid.xml" written into the directory specified with the -o option.
 
 - -s dbid
 
-The output for the argument -s will be many SBML files, each representing a Pathway for the given Species. These will be names "nnnn.xml", where nnnn is the databaseIdentifier for the pathway described by the file.
+The output for the argument -s will be many SBML files, each representing a Pathway for the given Species. These will be names "R-XYZ-nnnn.xml", where R-XYZ-nnnn is the stable Identifier for the pathway described by the file.
 
 - -m dbid1,dbid2,dbid3
 
-The output for the argument -m will be several SBML files, each representing the Pathway specified by the databaseIdentifier. Each file will be named dbid1.xml etc. Note, should any of the values given not represent a Reactome Pathway this identifier will be ignored.
+The output for the argument -m will be several SBML files, each representing the Pathway specified by the databaseIdentifier. Each file will be named stid1.xml etc. Note, should any of the values given not represent a Reactome Pathway this identifier will be ignored.
 
 - -l dbid1,dbid2,dbid3
 

@@ -4,6 +4,7 @@ import com.martiansoftware.jsap.JSAPException;
 import org.junit.BeforeClass;
 import org.reactome.server.graph.domain.model.Pathway;
 import org.reactome.server.graph.service.DatabaseObjectService;
+import org.reactome.server.graph.service.GeneralService;
 import org.reactome.server.graph.utils.ReactomeGraphCore;
 import org.sbml.jsbml.*;
 
@@ -15,6 +16,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class WriteSBMLBlackBoxTest {
     private static WriteSBML testWrite;
+    private static int dbVersion;
 
     private final String empty_doc = String.format("<?xml version='1.0' encoding='utf-8' standalone='no'?>%n" +
             "<sbml xmlns=\"http://www.sbml.org/sbml/level3/version1/core\" level=\"3\" version=\"1\"></sbml>%n");
@@ -25,6 +27,8 @@ public class WriteSBMLBlackBoxTest {
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
         String dbid = "R-HSA-69205"; // black box event
         Pathway pathway = (Pathway) databaseObjectService.findById(dbid);
+        GeneralService genericService = ReactomeGraphCore.getService(GeneralService.class);
+        dbVersion = genericService.getDBVersion();
 
         testWrite = new WriteSBML(pathway);
         testWrite.setAnnotationFlag(true);
@@ -62,23 +66,26 @@ public class WriteSBMLBlackBoxTest {
         Model model = doc.getModel();
         assertTrue("Model failed", model != null);
 
-        assertEquals("Num compartments failed", model.getNumCompartments(), 1);
-        assertEquals("Num species failed", model.getNumSpecies(), 2);
-        assertEquals("Num reactions failed", model.getNumReactions(), 1);
-
         Reaction reaction = model.getReaction(0);
+        // remove version specific tests
+        if (dbVersion == 59) {
+            assertEquals("Num compartments failed", model.getNumCompartments(), 1);
+            assertEquals("Num species failed", model.getNumSpecies(), 2);
+            assertEquals("Num reactions failed", model.getNumReactions(), 1);
 
-        assertEquals("Num reactants failed", reaction.getNumReactants(), 0);
-        assertEquals("Num products failed", reaction.getNumProducts(), 1);
-        assertEquals("Num modifiers failed", reaction.getNumModifiers(), 1);
+            assertEquals("Num reactants failed", reaction.getNumReactants(), 0);
+            assertEquals("Num products failed", reaction.getNumProducts(), 1);
+            assertEquals("Num modifiers failed", reaction.getNumModifiers(), 1);
 
-        // test things that mismatched with my first attempt
 
-        Species species = model.getSpecies("species_539110");
-        assertEquals("num cvterms on species", species.getNumCVTerms(), 2);
+            // test things that mismatched with my first attempt
 
-        CVTerm cvTerm = species.getCVTerm(1);
-        assertEquals("num resources on species cvterm", cvTerm.getNumResources(), 13);
+            Species species = model.getSpecies("species_539110");
+            assertTrue("num cvterms on species", species.getNumCVTerms() >= 2);
+
+            CVTerm cvTerm = species.getCVTerm(1);
+            assertTrue("num resources on species cvterm", cvTerm.getNumResources() >= 13);
+        }
 
         assertTrue("reaction notes", reaction.isSetNotes());
 
