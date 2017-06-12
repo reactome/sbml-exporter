@@ -37,7 +37,7 @@ The output for the argument -t will be a single SBML file named "stid.xml" (wher
 
 - -i stid
 
-The output for the argument -t will be a single SBML file named "stid.xml" written into the directory specified with the -o option.
+The output for the argument -i will be a single SBML file named "stid.xml" written into the directory specified with the -o option.
 
 - -s dbid
 
