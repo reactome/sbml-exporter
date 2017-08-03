@@ -67,6 +67,21 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
                 <version>3.0.2</version>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>org/reactome/server/tools/config/GraphNeo4jConfig.class</exclude>
+                                <exclude>**/logback.xml</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
