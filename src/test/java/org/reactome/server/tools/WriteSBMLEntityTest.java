@@ -91,7 +91,7 @@ public class WriteSBMLEntityTest {
         assertTrue("Model failed", model != null);
 
         assertEquals("Num compartments failed", model.getNumCompartments(), 10);
-        assertEquals("Num species failed", model.getNumSpecies(), 125);
+        assertEquals("Num species failed", model.getNumSpecies(), 124);
 
         // species from EntityWithAccesssionSequence
         Species species = model.getSpecies("species_165529");
@@ -103,7 +103,7 @@ public class WriteSBMLEntityTest {
         assertEquals("qualifier on species incorrect", cvTerm.getBiologicalQualifierType(), CVTerm.Qualifier.BQB_IS);
 
         cvTerm = species.getCVTerm(1);
-        assertEquals("num resources on species cvterm", cvTerm.getNumResources(), 26);
+        assertEquals("num resources on species cvterm", cvTerm.getNumResources(), 24);
         assertEquals("qualifier on species incorrect", cvTerm.getBiologicalQualifierType(), CVTerm.Qualifier.BQB_IS_HOMOLOG_TO);
 
         try {

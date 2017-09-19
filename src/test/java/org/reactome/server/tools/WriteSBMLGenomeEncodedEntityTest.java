@@ -80,6 +80,9 @@ public class WriteSBMLGenomeEncodedEntityTest {
         assertEquals("num resources on species cvterm", cvTerm.getNumResources(), 1);
         assertEquals("qualifier on species incorrect", cvTerm.getBiologicalQualifierType(), CVTerm.Qualifier.BQB_IS);
 
+        assertTrue("sbo term set", species.isSetSBOTerm());
+        assertEquals("genome encoded entity sbo term", species.getSBOTerm(), 297);
+
         try {
             String output = species.getNotesString().replace("\n", System.getProperty("line.separator"));
             assertEquals("species notes", notes, output);

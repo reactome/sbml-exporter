@@ -90,10 +90,12 @@ public class WriteSBMLTopLevelPathTest {
         Model model = doc.getModel();
         assertTrue("Model failed", model != null);
 
-        // species from genome encoded entity
-        Species species = model.getSpecies("species_141398");
-        assertTrue("sbo term set", species.isSetSBOTerm());
-        assertEquals("genome encoded entity sbo term", species.getSBOTerm(), 297);
+        if (dbVersion < 61) {
+            // species from genome encoded entity
+            Species species = model.getSpecies("species_141398");
+            assertTrue("sbo term set", species.isSetSBOTerm());
+            assertEquals("genome encoded entity sbo term", species.getSBOTerm(), 297);
+        }
     }
 
     @org.junit.Test

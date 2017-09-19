@@ -76,7 +76,7 @@ public class WriteSBMLPolymerEntityTest {
         assertTrue("Model failed", model != null);
 
         assertEquals("Num compartments failed", model.getNumCompartments(), 7);
-        assertEquals("Num species failed", model.getNumSpecies(), 48);
+        assertEquals("Num species failed", model.getNumSpecies(), 49);
 
 
         // Polymer

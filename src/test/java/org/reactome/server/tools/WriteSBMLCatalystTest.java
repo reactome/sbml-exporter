@@ -91,7 +91,7 @@ public class WriteSBMLCatalystTest {
         assertEquals("num cvterms on species 880004", species.getNumCVTerms(), 2);
 
         cvTerm = reaction.getCVTerm(0);
-        assertEquals("num resources on reaction cvterm", cvTerm.getNumResources(), 2);
+        assertEquals("num resources on reaction cvterm", cvTerm.getNumResources(), 3);
 
         ModifierSpeciesReference msr = reaction.getModifier(0);
         assertEquals("id of modifier", msr.getId(), "modifierspeciesreference_880053_catalyst_880004");
