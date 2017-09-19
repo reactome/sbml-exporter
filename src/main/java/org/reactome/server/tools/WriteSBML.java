@@ -361,7 +361,7 @@ class WriteSBML {
             AnnotationBuilder annot = new AnnotationBuilder(sbmlDocument);
             annot.addProvenanceAnnotation(dbVersion);
         }
-        CVTermBuilder cvterms = new CVTermBuilder(model);
+        CVTermBuilder cvterms = new CVTermBuilder(model, thisPathway.getStId());
         ModelHistoryBuilder history = new ModelHistoryBuilder(model);
         NotesBuilder notes = new NotesBuilder(model);
         if (thisPathway != null) {
@@ -504,7 +504,7 @@ class WriteSBML {
                 }
             }
             if (addAnnotations) {
-                CVTermBuilder cvterms = new CVTermBuilder(rn);
+                CVTermBuilder cvterms = new CVTermBuilder(rn, thisPathway.getStId());
                 cvterms.createReactionAnnotations(event);
                 NotesBuilder notes = new NotesBuilder(rn);
                 notes.addPathwayNotes(event);
@@ -609,7 +609,7 @@ class WriteSBML {
             sbo.setTerm(s, pe);
 
             if (addAnnotations){
-                CVTermBuilder cvterms = new CVTermBuilder(s);
+                CVTermBuilder cvterms = new CVTermBuilder(s, thisPathway.getStId());
                 cvterms.createSpeciesAnnotations(pe);
                 NotesBuilder notes = new NotesBuilder(s);
                 notes.createSpeciesNotes(pe);
@@ -640,7 +640,7 @@ class WriteSBML {
              sbo.setTerm(c, comp);
 
              if (addAnnotations){
-                 CVTermBuilder cvterms = new CVTermBuilder(c);
+                 CVTermBuilder cvterms = new CVTermBuilder(c, thisPathway.getStId());
                  cvterms.createCompartmentAnnotations(comp);
              }
 

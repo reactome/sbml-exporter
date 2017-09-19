@@ -13,9 +13,11 @@ import java.util.List;
 
 class CVTermBuilder extends AnnotationBuilder {
 
-    CVTermBuilder(SBase sbase) {
+    private String thisPath;
 
+    CVTermBuilder(SBase sbase, String pathref) {
         super(sbase);
+        thisPath = pathref;
     }
 
     /**
@@ -222,13 +224,20 @@ class CVTermBuilder extends AnnotationBuilder {
             }
             repeated = null;
         }
+        else if (pe instanceof ChemicalDrug){
+            ReferenceEntity ref = ((ChemicalDrug)(pe)).getReferenceEntity();
+            if (ref != null) {
+                addResource(ref.getDatabaseName(), qualifier, ref.getIdentifier());
+            }
+            ref = null;
+        }
         else {
             // a GenomeEncodedEntity adds no additional annotation
             if (!(pe instanceof GenomeEncodedEntity)){
                 // the only thing left should be an OtherEntity which
                 // also adds no further annotation
                 if (!(pe instanceof OtherEntity)) {
-                    System.err.println("Encountered unrecognised physical entity");
+                    System.err.println("Encountered unrecognised physical entity in " + thisPath);
                 }
             }
         }
