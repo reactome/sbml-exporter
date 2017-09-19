@@ -2,11 +2,10 @@ package org.reactome.server.tools;
 
 import org.reactome.server.graph.domain.model.*;
 import org.reactome.server.graph.domain.model.Event;
-import org.sbml.jsbml.*;
 import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.*;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
-
 
 import java.util.ArrayList;
 import java.util.List;
@@ -303,7 +302,7 @@ class WriteSBML {
         List<Long> firstDBid = new ArrayList<Long>();
 
         Event e1 = thisListEvents.get(0);
-        List<Event> child_list = e1.getEventOf();
+        List<Pathway> child_list = e1.getEventOf();
         if (child_list == null) {
             parentPathway = null;
             return;
@@ -321,7 +320,7 @@ class WriteSBML {
         while (x < thisListEvents.size()-1){
             x++;
             Event e_loop = thisListEvents.get(x);
-            List<Event> loe_loop = e_loop.getEventOf();
+            List<Pathway> loe_loop = e_loop.getEventOf();
             if (loe_loop == null) {
                 parentPathway = null;
                 return;
