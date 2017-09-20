@@ -152,6 +152,9 @@ class NotesBuilder {
         else if (pe instanceof Polymer){
             appendDerivedFromStatement("Polymer");
         }
+        else if (pe instanceof ChemicalDrug){
+            appendDerivedFromStatement("ChemicalDrug");
+        }
         else {
             System.err.println("NotesBuilder.createSpeciesNotes: WARNING - encountered a non existent PhysicalEntity type!");
        }
