@@ -361,7 +361,8 @@ class WriteSBML {
             AnnotationBuilder annot = new AnnotationBuilder(sbmlDocument);
             annot.addProvenanceAnnotation(dbVersion);
         }
-        CVTermBuilder cvterms = new CVTermBuilder(model, thisPathway.getStId());
+        String refId = (thisPathway != null) ? thisPathway.getStId() : "listOfEvents";
+        CVTermBuilder cvterms = new CVTermBuilder(model, refId);
         ModelHistoryBuilder history = new ModelHistoryBuilder(model);
         NotesBuilder notes = new NotesBuilder(model);
         if (thisPathway != null) {
@@ -504,7 +505,8 @@ class WriteSBML {
                 }
             }
             if (addAnnotations) {
-                CVTermBuilder cvterms = new CVTermBuilder(rn, thisPathway.getStId());
+                String refId = (thisPathway != null) ? thisPathway.getStId() : "listOfEvents";
+                CVTermBuilder cvterms = new CVTermBuilder(rn, refId);
                 cvterms.createReactionAnnotations(event);
                 NotesBuilder notes = new NotesBuilder(rn);
                 notes.addPathwayNotes(event);
@@ -609,7 +611,8 @@ class WriteSBML {
             sbo.setTerm(s, pe);
 
             if (addAnnotations){
-                CVTermBuilder cvterms = new CVTermBuilder(s, thisPathway.getStId());
+                String refId = (thisPathway != null) ? thisPathway.getStId() : "listOfEvents";
+                CVTermBuilder cvterms = new CVTermBuilder(s, refId);
                 cvterms.createSpeciesAnnotations(pe);
                 NotesBuilder notes = new NotesBuilder(s);
                 notes.createSpeciesNotes(pe);
@@ -640,7 +643,8 @@ class WriteSBML {
              sbo.setTerm(c, comp);
 
              if (addAnnotations){
-                 CVTermBuilder cvterms = new CVTermBuilder(c, thisPathway.getStId());
+                 String refId = (thisPathway != null) ? thisPathway.getStId() : "listOfEvents";
+                 CVTermBuilder cvterms = new CVTermBuilder(c, refId);
                  cvterms.createCompartmentAnnotations(comp);
              }
 
