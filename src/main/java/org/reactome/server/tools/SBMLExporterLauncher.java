@@ -80,7 +80,7 @@ public class SBMLExporterLauncher {
         //Initialising ReactomeCore Neo4j configuration
         ReactomeGraphCore.initialise(config.getString("host"), config.getString("port"), config.getString("user"), config.getString("password"), GraphNeo4jConfig.class);
 
-        GeneralService genericService = ReactomeGraphCore.getService(GeneralService.class);
+        GeneralService generalService = ReactomeGraphCore.getService(GeneralService.class);
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
         SpeciesService speciesService = ReactomeGraphCore.getService(SpeciesService.class);
         SchemaService schemaService = ReactomeGraphCore.getService(SchemaService.class);
@@ -89,7 +89,7 @@ public class SBMLExporterLauncher {
         parseAdditionalArguments(config);
 
         if (singleArgumentSupplied()) {
-            dbVersion = genericService.getDBVersion();
+            dbVersion = generalService.getDBVersion();
 
             switch (outputStatus) {
                 case SINGLE_PATH:
@@ -97,14 +97,14 @@ public class SBMLExporterLauncher {
                     total = 1;
                     if (singleId != 0) {
                         try {
-                            pathway = (Pathway) databaseObjectService.findByIdNoRelations(singleId);
+                            pathway = databaseObjectService.findByIdNoRelations(singleId);
                         } catch (Exception e) {
                             System.err.println(singleId + " is not the identifier of a valid Pathway object");
                         }
                     }
                     else if (standardId.length() > 0) {
                         try {
-                            pathway = (Pathway) databaseObjectService.findByIdNoRelations(standardId);
+                            pathway = databaseObjectService.findByIdNoRelations(standardId);
                         } catch (Exception e) {
                             System.err.println(standardId + " is not the identifier of a valid Pathway object");
                         }
@@ -120,17 +120,19 @@ public class SBMLExporterLauncher {
                 case ALL_PATWAYS:
                     for (Species s : speciesService.getSpecies()) {
                         outputPathsForSpecies(s, schemaService, databaseObjectService);
+                        generalService.clearCache();
                     }
                     break;
                 case ALL_PATHWAYS_SPECIES:
                     Species species = null;
                     try {
-                        species = (Species) databaseObjectService.findByIdNoRelations(speciesId);
+                        species = databaseObjectService.findByIdNoRelations(speciesId);
                     } catch (Exception e) {
                         System.err.println(speciesId + " is not the identifier of a valid Species object");
                     }
                     if (species != null) {
                         outputPathsForSpecies(species, schemaService, databaseObjectService);
+                        generalService.clearCache();
                     }
                     break;
                 case MULTIPLE_PATHS:
@@ -140,7 +142,7 @@ public class SBMLExporterLauncher {
                     for (long id : multipleIds) {
                         pathway1 = null;
                         try {
-                            pathway1 = (Pathway) databaseObjectService.findByIdNoRelations(id);
+                            pathway1 = databaseObjectService.findByIdNoRelations(id);
                         } catch (Exception e) {
                             System.err.println(id + " is not the identifier of a valid Pathway object");
                         }
@@ -158,7 +160,7 @@ public class SBMLExporterLauncher {
                     for (long id : multipleEvents) {
                         Event event;
                         try {
-                            event = (Event) databaseObjectService.findByIdNoRelations(id);
+                            event = databaseObjectService.findByIdNoRelations(id);
                             eventList.add(event);
                         } catch (Exception e) {
                             valid = false;
