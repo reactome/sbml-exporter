@@ -34,10 +34,9 @@ public class SBMLExporterLauncherTest {
 
     private static int getNumFiles() {
         int num = 0;
-        if (!clearTestDir()) {
-            if (test_dir.listFiles() != null) {
-                num = test_dir.listFiles().length;
-            }
+        clearTestDir();
+        if (test_dir.listFiles() != null) {
+            num = test_dir.listFiles().length;
         }
         return num;
     }
