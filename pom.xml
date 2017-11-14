@@ -156,6 +156,14 @@
             <url>http://www.ebi.ac.uk/~maven/m2repo</url>
             <releases><enabled>true</enabled></releases>
         </repository>
+
+        <!-- BioJava repo -->
+        <repository>
+            <id>biojava-legacy-repo</id>
+            <name>BioJava's Git based legacy maven repo</name>
+            <url>https://github.com/biojava/maven-repo/raw/master/</url>
+        </repository>
+
     </repositories>
 
     <!--Configures the distribution to nexus repository -->
