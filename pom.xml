@@ -4,7 +4,7 @@
 
     <groupId>org.reactome.server.tools</groupId>
     <artifactId>sbml-exporter</artifactId>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <packaging>jar</packaging>
 
     <name>sbml-exporter</name>
@@ -13,7 +13,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <graph.core>1.1.2</graph.core>
+        <graph.core>1.1.4</graph.core>
         <sbml.lib.version>1.1</sbml.lib.version>
         <jasp.version>2.1</jasp.version>
 
