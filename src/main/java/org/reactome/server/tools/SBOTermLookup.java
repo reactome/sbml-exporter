@@ -137,7 +137,8 @@ class SBOTermLookup {
             term = defaultSpecies;
         }
         else {
-            System.err.println("Encountered unknown PhysicalEntity");
+//            System.err.println("Encountered unknown PhysicalEntity");
+            term = -1;
         }
 
         return term;
