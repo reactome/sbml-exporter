@@ -118,7 +118,7 @@ class SBOTermLookup {
      */
     private int getSpeciesTerm(PhysicalEntity pe) {
         int term = -1;
-        if (pe instanceof SimpleEntity){
+        if (pe instanceof SimpleEntity || pe instanceof ChemicalDrug){
             // http://www.ebi.ac.uk/sbo/main/SBO:0000247 simple chemical
             term = 247;
         }
@@ -130,14 +130,14 @@ class SBOTermLookup {
             // http://www.ebi.ac.uk/sbo/main/SBO:0000253 non-covalent complex
             term = 253;
         }
-        else if (pe instanceof EntitySet || pe instanceof Drug){
+        else if (pe instanceof EntitySet){
             term = -1; // this means the sbo term is not set
         }
         else if (pe instanceof Polymer || pe instanceof OtherEntity){
             term = defaultSpecies;
         }
         else {
-            System.err.println("Encountered unknown PhysicalEntity");
+            System.err.println("Encountered unknown PhysicalEntity " + pe.getStId());
         }
 
         return term;
