@@ -231,6 +231,13 @@ class CVTermBuilder extends AnnotationBuilder {
             }
             ref = null;
         }
+        else if (pe instanceof ProteinDrug){
+            ReferenceEntity ref = ((ProteinDrug)(pe)).getReferenceEntity();
+            if (ref != null) {
+                addResource(ref.getDatabaseName(), qualifier, ref.getIdentifier());
+            }
+            ref = null;
+        }
         else {
             // a GenomeEncodedEntity adds no additional annotation
             if (!(pe instanceof GenomeEncodedEntity)){
