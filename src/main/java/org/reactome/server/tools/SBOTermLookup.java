@@ -130,15 +130,14 @@ class SBOTermLookup {
             // http://www.ebi.ac.uk/sbo/main/SBO:0000253 non-covalent complex
             term = 253;
         }
-        else if (pe instanceof EntitySet){
+        else if (pe instanceof EntitySet || pe instanceof Drug){
             term = -1; // this means the sbo term is not set
         }
         else if (pe instanceof Polymer || pe instanceof OtherEntity){
             term = defaultSpecies;
         }
         else {
-//            System.err.println("Encountered unknown PhysicalEntity");
-            term = -1;
+            System.err.println("Encountered unknown PhysicalEntity");
         }
 
         return term;
