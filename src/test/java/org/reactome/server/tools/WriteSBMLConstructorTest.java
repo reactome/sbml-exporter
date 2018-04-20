@@ -68,14 +68,14 @@ public class WriteSBMLConstructorTest {
         assertTrue("Model failed", model != null);
 
         assertEquals("Num compartments failed", model.getNumCompartments(), 1);
-        assertEquals("Num species failed", model.getNumSpecies(), 8);
+        assertEquals("Num species failed", model.getNumSpecies(), 10);
         assertEquals("Num reactions failed", model.getNumReactions(), 2);
 
         Reaction reaction = model.getReaction(0);
 
         assertEquals("Num reactants failed", reaction.getNumReactants(), 2);
         assertEquals("Num products failed", reaction.getNumProducts(), 2);
-        assertEquals("Num modifiers failed", reaction.getNumModifiers(), 1);
+        assertEquals("Num modifiers failed", reaction.getNumModifiers(), 3);
 
     }
 
@@ -118,14 +118,14 @@ public class WriteSBMLConstructorTest {
         assertTrue("Model failed", model != null);
 
         assertEquals("Num compartments failed", model.getNumCompartments(), 1);
-        assertEquals("Num species failed", model.getNumSpecies(), 8);
+        assertEquals("Num species failed", model.getNumSpecies(), 10);
         assertEquals("Num reactions failed", model.getNumReactions(), 2);
 
         Reaction reaction = model.getReaction(0);
 
         assertEquals("Num reactants failed", reaction.getNumReactants(), 2);
         assertEquals("Num products failed", reaction.getNumProducts(), 2);
-        assertEquals("Num modifiers failed", reaction.getNumModifiers(), 1);
+        assertEquals("Num modifiers failed", reaction.getNumModifiers(), 3);
 
     }
 
@@ -144,14 +144,14 @@ public class WriteSBMLConstructorTest {
         assertTrue("Model failed", model != null);
 
         assertEquals("Num compartments failed", model.getNumCompartments(), 1);
-        assertEquals("Num species failed", model.getNumSpecies(), 8);
+        assertEquals("Num species failed", model.getNumSpecies(), 10);
         assertEquals("Num reactions failed", model.getNumReactions(), 2);
 
         Reaction reaction = model.getReaction(0);
 
         assertEquals("Num reactants failed", reaction.getNumReactants(), 2);
         assertEquals("Num products failed", reaction.getNumProducts(), 2);
-        assertEquals("Num modifiers failed", reaction.getNumModifiers(), 1);
+        assertEquals("Num modifiers failed", reaction.getNumModifiers(), 3);
 
     }
 }
