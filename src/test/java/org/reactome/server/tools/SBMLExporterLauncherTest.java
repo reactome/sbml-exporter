@@ -44,7 +44,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testSinglePathway() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-t", "192869"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-t", "192869"};
         try {
             SBMLExporterLauncher.main(args);
         } catch (JSAPException e) {
@@ -58,7 +58,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testSinglePathway1() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-i", "R-HSA-192869"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-i", "R-HSA-192869"};
         try {
             SBMLExporterLauncher.main(args);
         } catch (JSAPException e) {
@@ -72,7 +72,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testSingleInvalidPathway() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-t", "170905"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-t", "170905"};
         try {
             SBMLExporterLauncher.main(args);
         } catch (JSAPException e) {
@@ -82,14 +82,15 @@ public class SBMLExporterLauncherTest {
             assertTrue(test_dir.listFiles().length == init_length);
         }
     }
-
+    
+    // commented out as there take a large amount of time
 //    @org.junit.Test
 //    public void testAllPathways() {
 //        clearTestDir();
 //        if (test_dir.listFiles() != null) {
 //            assertTrue(test_dir.listFiles().length == 0);
 //        }
-//        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome"};
+//        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome"};
 //        try {
 //            SBMLExporterLauncher.main(args);
 //        }
@@ -107,7 +108,7 @@ public class SBMLExporterLauncherTest {
 //        if (test_dir.listFiles() != null) {
 //            assertTrue(test_dir.listFiles().length == 0);
 //        }
-//        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-s", "170905"};
+//        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-s", "170905"};
 //        try {
 //            SBMLExporterLauncher.main(args);
 //        }
@@ -121,7 +122,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testAllSpeciesInvalidPathways() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-s", "192869"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-s", "192869"};
         try {
             SBMLExporterLauncher.main(args);
         }
@@ -136,7 +137,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testMultiplePathways() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-m", "5619071,168275"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-m", "5619071,168275"};
         try {
             SBMLExporterLauncher.main(args);
         }
@@ -152,7 +153,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testMultiplePathwaysInvalid() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-m", "5619071,170905"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-m", "5619071,170905"};
         try {
             SBMLExporterLauncher.main(args);
         }
@@ -167,7 +168,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testMultiplePathwaysInvalid2() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-m", "170905,168275"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-m", "170905,168275"};
         try {
             SBMLExporterLauncher.main(args);
         }
@@ -183,7 +184,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testMultiplePathwaysInvalid3() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-m", "170905,101"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-m", "170905,101"};
         try {
             SBMLExporterLauncher.main(args);
         }
@@ -198,7 +199,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testListEvents() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-l", "111215,73580"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-l", "111215,73580"};
         try {
             SBMLExporterLauncher.main(args);
         } catch (JSAPException e) {
@@ -212,7 +213,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testListEventsInvalid() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-l", "111215,170905"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-l", "111215,170905"};
         try {
             SBMLExporterLauncher.main(args);
         } catch (JSAPException e) {
@@ -226,7 +227,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testUnconnectedListEvents() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-l", "111215,198347"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-l", "111215,198347"};
         try {
             SBMLExporterLauncher.main(args);
         } catch (JSAPException e) {
@@ -240,7 +241,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testWrongNumArguments() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-m", "170905,101", "-s", "192869"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-m", "170905,101", "-s", "192869"};
         try {
             SBMLExporterLauncher.main(args);
         }
@@ -255,7 +256,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testWrongNumArguments1() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-m", "170905,101", "-t", "192869"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-m", "170905,101", "-t", "192869"};
         try {
             SBMLExporterLauncher.main(args);
         }
@@ -269,7 +270,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testWrongNumArguments2() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-t", "170905", "-s", "192869"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-t", "170905", "-s", "192869"};
         try {
             SBMLExporterLauncher.main(args);
         }
@@ -283,7 +284,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testWrongNumArguments3() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-m", "170905,101", "-t", "170905","-s", "192869"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-m", "170905,101", "-t", "170905","-s", "192869"};
         try {
             SBMLExporterLauncher.main(args);
         }
@@ -296,7 +297,7 @@ public class SBMLExporterLauncherTest {
     }
     public void testWrongNumArguments4() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-l", "170905,101", "-s", "192869"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-l", "170905,101", "-s", "192869"};
         try {
             SBMLExporterLauncher.main(args);
         }
@@ -311,7 +312,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testWrongNumArguments5() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-l", "170905,101", "-t", "192869"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-l", "170905,101", "-t", "192869"};
         try {
             SBMLExporterLauncher.main(args);
         }
@@ -325,7 +326,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testWrongNumArguments6() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-m", "170905,170905", "-l", "192869,123456"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-m", "170905,170905", "-l", "192869,123456"};
         try {
             SBMLExporterLauncher.main(args);
         }
@@ -339,7 +340,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testWrongNumArguments7() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-l", "170905,101", "-t", "170905","-s", "192869"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-l", "170905,101", "-t", "170905","-s", "192869"};
         try {
             SBMLExporterLauncher.main(args);
         }
@@ -354,7 +355,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testWrongNumArguments8() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-l", "170905,101", "-m", "170905,123456","-s", "192869"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-l", "170905,101", "-m", "170905,123456","-s", "192869"};
         try {
             SBMLExporterLauncher.main(args);
         }
@@ -368,7 +369,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testWrongNumArguments9() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-l", "170905,101", "-t", "170905","-m", "192869,10928272"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-l", "170905,101", "-t", "170905","-m", "192869,10928272"};
         try {
             SBMLExporterLauncher.main(args);
         }
@@ -382,7 +383,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testWrongNumArguments10() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-l", "170905,101", "-t", "170905","-s", "192869", "-m", "101,202"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-l", "170905,101", "-t", "170905","-s", "192869", "-m", "101,202"};
         try {
             SBMLExporterLauncher.main(args);
         }
@@ -396,7 +397,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testWrongNumArguments11() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-i", "R-HSA-192869", "-t", "192869"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-i", "R-HSA-192869", "-t", "192869"};
         try {
             SBMLExporterLauncher.main(args);
         }
@@ -410,7 +411,7 @@ public class SBMLExporterLauncherTest {
     @org.junit.Test
     public void testWrongNumArguments12() {
         int init_length = getNumFiles();
-        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "j16a3s27", "-o", "C:\\Development\\testReactome", "-l", "170905,101", "-i", "R-HSA-170905","-s", "192869", "-m", "101,202"};
+        String[] args = {"-h", "localhost", "-b", "7474", "-u", "neo4j", "-p", "INSERT PW HERE", "-o", "C:\\Development\\testReactome", "-l", "170905,101", "-i", "R-HSA-170905","-s", "192869", "-m", "101,202"};
         try {
             SBMLExporterLauncher.main(args);
         }
