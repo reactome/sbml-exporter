@@ -156,7 +156,8 @@ class NotesBuilder {
             appendDerivedFromStatement("ChemicalDrug");
         }
         else {
-            System.err.println("NotesBuilder.createSpeciesNotes: WARNING - encountered a non existent PhysicalEntity type!");
+            System.err.println("Function: NotesBuilder::createSpeciesNotes: " +
+                    "Encountered unknown PhysicalEntity " + pe.getStId());
        }
 
     }

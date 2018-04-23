@@ -137,7 +137,7 @@ class SBOTermLookup {
             term = defaultSpecies;
         }
         else {
-            System.err.println("Encountered unknown PhysicalEntity " + pe.getStId());
+            System.err.println("Function SBOTermLookup::getSpeciesTerm Encountered unknown PhysicalEntity " + pe.getStId());
         }
 
         return term;

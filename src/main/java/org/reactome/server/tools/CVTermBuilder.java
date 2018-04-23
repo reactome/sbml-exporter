@@ -244,7 +244,8 @@ class CVTermBuilder extends AnnotationBuilder {
                 // the only thing left should be an OtherEntity which
                 // also adds no further annotation
                 if (!(pe instanceof OtherEntity)) {
-                    System.err.println("Encountered unrecognised physical entity in " + thisPath);
+                    System.err.println("Function CVTermBuilder::createPhysicalEntityAnnotations " +
+                                    "Encountered unknown PhysicalEntity " + pe.getStId());
                 }
             }
         }
