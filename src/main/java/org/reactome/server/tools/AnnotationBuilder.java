@@ -110,6 +110,10 @@ class AnnotationBuilder {
         else if (lowerDB.equals("mod")){
             lowerDB = "psimod";
         }
+        else if (lowerDB.equals("biomodels database")) {
+            lowerDB = "biomodels.db";
+            shortVersion = true;
+        }
         String resource = "http://identifiers.org/" + lowerDB + "/" + upperDB +
                 ":" + accessionNo;
         if (shortVersion) {

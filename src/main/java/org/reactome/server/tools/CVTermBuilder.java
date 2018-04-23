@@ -31,6 +31,7 @@ class CVTermBuilder extends AnnotationBuilder {
         addGOTerm(path);
         addPublications(path.getLiteratureReference());
         addDiseaseReference(path.getDisease());
+        addCrossReferences(path.getCrossReference());
         createCVTerms();
     }
 
@@ -140,6 +141,15 @@ class CVTermBuilder extends AnnotationBuilder {
                 addResource(disease.getDatabaseName(), CVTerm.Qualifier.BQB_OCCURS_IN, disease.getIdentifier());
             }
         }
+    }
+
+    private void addCrossReferences(List<DatabaseIdentifier> xrefs){
+        if (xrefs != null) {
+            for (DatabaseIdentifier xref: xrefs){
+                addResource(xref.getDatabaseName(), CVTerm.Qualifier.BQM_HAS_INSTANCE, xref.getIdentifier());
+            }
+        }
+
     }
 
     private void createSimpleEntityAnnotations(SimpleEntity se, CVTerm.Qualifier qualifier){
