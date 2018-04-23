@@ -30,6 +30,7 @@ class CVTermBuilder extends AnnotationBuilder {
         addResource("reactome", CVTerm.Qualifier.BQB_IS, path.getStId());
         addGOTerm(path);
         addPublications(path.getLiteratureReference());
+        addDiseaseReference(path.getDisease());
         createCVTerms();
     }
 
@@ -51,6 +52,7 @@ class CVTermBuilder extends AnnotationBuilder {
         addGOTerm(event);
         addECNumber(event);
         addPublications(event.getLiteratureReference());
+        addDiseaseReference(event.getDisease());
         createCVTerms();
     }
 
@@ -128,6 +130,14 @@ class CVTermBuilder extends AnnotationBuilder {
                 if (ecnum != null) {
                     addResource("ec-code", CVTerm.Qualifier.BQB_IS, ecnum);
                 }
+            }
+        }
+    }
+
+    private void addDiseaseReference(List<Disease> diseases){
+        if (diseases != null) {
+            for (Disease disease: diseases){
+                addResource(disease.getDatabaseName(), CVTerm.Qualifier.BQB_OCCURS_IN, disease.getIdentifier());
             }
         }
     }
