@@ -140,6 +140,7 @@ class CVTermBuilder extends AnnotationBuilder {
         if (ref.length() > 0){
             addResource("kegg", qualifier, ref);
         }
+        ref = null;
     }
     /**
      * Adds the resources relating to different types of PhysicalEntity. In the case of a Complex
@@ -150,17 +151,7 @@ class CVTermBuilder extends AnnotationBuilder {
      */
     private void createPhysicalEntityAnnotations(PhysicalEntity pe, CVTerm.Qualifier qualifier, boolean recurse){
         if (pe instanceof SimpleEntity){
-//            createSimpleEntityAnnotations(((SimpleEntity)(pe)), qualifier);
-            ReferenceEntity re = ((SimpleEntity)(pe)).getReferenceEntity();
-            if (re != null) {
-                addResource("chebi", qualifier, (re.getIdentifier()));
-            }
-            re = null;
-            String kref = getKeggReference(((SimpleEntity)(pe)).getCrossReference());
-            if (kref.length() > 0){
-                addResource("kegg", qualifier, kref);
-            }
-            kref = null;
+            createSimpleEntityAnnotations(((SimpleEntity)(pe)), qualifier);
         }
         else if (pe instanceof EntityWithAccessionedSequence){
             ReferenceEntity ref = ((EntityWithAccessionedSequence)(pe)).getReferenceEntity();
@@ -238,16 +229,28 @@ class CVTermBuilder extends AnnotationBuilder {
             }
             ref = null;
         }
-        else {
-            // a GenomeEncodedEntity adds no additional annotation
-            if (!(pe instanceof GenomeEncodedEntity)){
-                // the only thing left should be an OtherEntity which
-                // also adds no further annotation
-                if (!(pe instanceof OtherEntity)) {
-                    System.err.println("Function CVTermBuilder::createPhysicalEntityAnnotations " +
-                                    "Encountered unknown PhysicalEntity " + pe.getStId());
-                }
+        else if (pe instanceof RNADrug){
+            ReferenceEntity ref = ((RNADrug)(pe)).getReferenceEntity();
+            if (ref != null) {
+                addResource(ref.getDatabaseName(), qualifier, ref.getIdentifier());
             }
+            ref = null;
+        }
+        else if (pe instanceof GenomeEncodedEntity) {
+            // no additional annotation
+            System.out.println("Found GEE in path " + thisPath);
+        }
+        else if (pe instanceof OtherEntity) {
+            // no additional annotation
+            System.out.println("Found OE in path " + thisPath);
+        }
+        else {
+            // FIX_Unknown_Physical_Entity
+            // here we have encountered a physical entity type that did not exist in the graph database
+            // when this code was written (April 2018)
+            System.err.println("Function CVTermBuilder::createPhysicalEntityAnnotations " +
+                            "Encountered unknown PhysicalEntity " + pe.getStId());
+
         }
     }
 

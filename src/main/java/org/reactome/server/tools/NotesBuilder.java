@@ -155,7 +155,16 @@ class NotesBuilder {
         else if (pe instanceof ChemicalDrug){
             appendDerivedFromStatement("ChemicalDrug");
         }
+        else if (pe instanceof ProteinDrug){
+            appendDerivedFromStatement("ProteinDrug");
+        }
+        else if (pe instanceof RNADrug){
+            appendDerivedFromStatement("RNADrug");
+        }
         else {
+            // FIX_Unknown_Physical_Entity
+            // here we have encountered a physical entity type that did not exist in the graph database
+            // when this code was written (April 2018)
             System.err.println("Function: NotesBuilder::createSpeciesNotes: " +
                     "Encountered unknown PhysicalEntity " + pe.getStId());
        }

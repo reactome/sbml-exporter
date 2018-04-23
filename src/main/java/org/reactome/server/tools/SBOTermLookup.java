@@ -118,7 +118,7 @@ class SBOTermLookup {
      */
     private int getSpeciesTerm(PhysicalEntity pe) {
         int term = -1;
-        if (pe instanceof SimpleEntity || pe instanceof ChemicalDrug){
+        if (pe instanceof SimpleEntity){
             // http://www.ebi.ac.uk/sbo/main/SBO:0000247 simple chemical
             term = 247;
         }
@@ -130,13 +130,20 @@ class SBOTermLookup {
             // http://www.ebi.ac.uk/sbo/main/SBO:0000253 non-covalent complex
             term = 253;
         }
+        else if (pe instanceof Polymer || pe instanceof OtherEntity){
+            term = defaultSpecies; // material entity
+        }
+        else if (pe instanceof Drug) {
+            // http://www.ebi.ac.uk/sbo/main/SBO:0000298 synthetic chemical compound
+            term = 298;
+        }
         else if (pe instanceof EntitySet){
             term = -1; // this means the sbo term is not set
         }
-        else if (pe instanceof Polymer || pe instanceof OtherEntity){
-            term = defaultSpecies;
-        }
         else {
+            // FIX_Unknown_Physical_Entity
+            // here we have encountered a physical entity type that did not exist in the graph database
+            // when this code was written (April 2018)
             System.err.println("Function SBOTermLookup::getSpeciesTerm Encountered unknown PhysicalEntity " + pe.getStId());
         }
 
