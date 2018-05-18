@@ -17,7 +17,13 @@ import static org.sbml.jsbml.JSBML.getJSBMLDottedVersion;
 class AnnotationBuilder {
     private SBase sbase = null;
     private Map<CVTerm.Qualifier,List<String>> resources = new LinkedHashMap<CVTerm.Qualifier,List<String>>();
+    private static HashMap<String, String> urls = new HashMap<String, String>();
 
+    /**
+     * Constructor for AnnotationBuilder
+     *
+     * @param sbase the SBML SBase object to add annotations to
+     */
     AnnotationBuilder(SBase sbase) {
         this.sbase = sbase;
     }
@@ -29,9 +35,13 @@ class AnnotationBuilder {
      *  @param qualifier   The MIRIAM qualifier for the reference
      *  @param accessionNo the  number used by the database
      */
-    void addResource(String dbname, CVTerm.Qualifier qualifier, String accessionNo){
+    boolean addResource(String dbname, CVTerm.Qualifier qualifier, String accessionNo){
         String resource = getSpecificTerm(dbname, accessionNo);
+        if (resource.isEmpty()) {
+            return false;
+        }
         addResources(qualifier, resource);
+        return true;
     }
 
     /**
@@ -93,39 +103,51 @@ class AnnotationBuilder {
      * @return             String representation of the appropriate URL
      */
     private String getSpecificTerm(String dbname, String accessionNo){
+        if (urls.isEmpty()) {
+            populateURLS();
+        }
         String lowerDB = dbname.toLowerCase();
-        String upperDB = dbname.toUpperCase();
-        Boolean shortVersion = false;
-        if (lowerDB.equals("uniprot") || lowerDB.equals("pubmed") || (lowerDB.equals("ec-code"))) {
-            shortVersion = true;
+        String entry = urls.get(lowerDB);
+        if (entry == null || entry.isEmpty()) {
+            System.out.println("AnnotationBuilder::getSpecificTerm Unrecognised data reference " + dbname +
+            " " + accessionNo);
+            return "";
         }
-        else if (lowerDB.equals("embl")){
-            shortVersion = true;
-            lowerDB = "ena.embl";
-        }
-        else if (lowerDB.equals("kegg")){
-            shortVersion = true;
-            lowerDB += ".compound";
-        }
-        else if (lowerDB.equals("mod")){
-            lowerDB = "psimod";
-        }
-        else if (lowerDB.equals("biomodels database")) {
-            lowerDB = "biomodels.db";
-            shortVersion = true;
-        }
-        String resource = "http://identifiers.org/" + lowerDB + "/" + upperDB +
-                ":" + accessionNo;
-        if (shortVersion) {
-            resource = "http://identifiers.org/" + lowerDB + "/" + accessionNo;
-        }
-
-        if (lowerDB.equals("reactome")) {
-            resource = "http://identifiers.org/" + lowerDB + ":" + accessionNo;
-        }
+        String resource = entry + accessionNo;
         return resource;
     }
 
+    /**
+     * Populates the HashMap of database names and their appropriate url
+     * It is called once by the getSpecificTerm
+     */
+    private void populateURLS() {
+        // ADD_new_databases_here
+        // See Unrecognised_database.md in SBMLExporter/dev directory for details
+
+        // TODO add drug reference IUPHAR
+        urls.put("biomodels database", "https://identifiers.org/biomodels.db/");
+        urls.put("chebi", "https://identifiers.org/chebi/CHEBI:");
+        urls.put("complexportal", "https://ebi.ac.uk/complexportal/complex/");
+        urls.put("compound", "https://identifiers.org/kegg.compound/");
+        urls.put("cosmic (mutations)", "https://cancer.sanger.ac.uk/cosmic/mutation/overview?id=");
+        urls.put("doid", "https://identifiers.org/doid/DOID:");
+        urls.put("ec", "https://identifiers.org/ec-code/");
+        urls.put("ec-code", "https://identifiers.org/ec-code/");
+        urls.put("ensembl", "https://identifiers.org/ensembl/");
+        urls.put("embl", "https://identifiers.org/ena.embl/");
+        urls.put("go", "https://identifiers.org/go/GO:");
+        urls.put("kegg glycan", "https://identifiers.org/kegg.glycan/");
+        urls.put("mirbase", "https://identifiers.org/mirbase/");
+        urls.put("mod", "https://identifiers.org/psimod/MOD:");
+        urls.put("ncbi nucleotide", "https://identifiers.org/insdc:");
+        urls.put("pubchem compound", "https://identifiers.org/pubchem.compound/");
+        urls.put("pubchem substance", "https://identifiers.org/pubchem.substance/");
+        urls.put("pubmed", "https://identifiers.org/pubmed/");
+        urls.put("reactome", "https://identifiers.org/reactome:");
+        urls.put("rhea", "https://identifiers.org/rhea/");
+        urls.put("uniprot", "https://identifiers.org/uniprot/");
+    }
     /**
      * Adds the resource to the qualifier entry in the map
      *

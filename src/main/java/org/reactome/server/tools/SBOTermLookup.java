@@ -141,7 +141,8 @@ class SBOTermLookup {
         else {
             // FIX_Unknown_Physical_Entity
             // here we have encountered a physical entity type that did not exist in the graph database
-            // when this code was written (April 2018)
+            // when this code was written
+            // See Unknown_PhysicalEntity.md in SBMLExporter/dev directory for details
             System.err.println("Function SBOTermLookup::getSpeciesTerm Encountered unknown PhysicalEntity " + pe.getStId());
         }
 
