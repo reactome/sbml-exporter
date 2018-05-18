@@ -85,12 +85,10 @@ class SBOTermLookup {
             term = 13;
         }
         else if (type.equals("pos_regulator")){
-            //// TODO: 09/11/2016 check this is appropriate 
-            // http://www.ebi.ac.uk/sbo/main/SBO:0000461 essential activator
-            term = 461;
+            // http://www.ebi.ac.uk/sbo/main/SBO:0000459 stimulator
+            term = 459;
         }
         else if (type.equals("neg_regulator")){
-            //// TODO: 09/11/2016 check this is appropriate
             // http://www.ebi.ac.uk/sbo/main/SBO:0000020 inhibitor
             term = 20;
         }
