@@ -4,7 +4,7 @@ When creating annotations the AnnotationBuilder class has a HashMap of database 
 
 ## Reporting
 
-When exporting a model the code will report that it has encountered a database it does not recognise. It does not halt the export; it merely leaves out the reference. The message displayed will read.
+When exporting a model the code will report that it has encountered a database it does not recognise. It does not halt the export; it prints a message to and leaves out the reference in the exported SBML file. The message displayed will read.
 
     AnnotationBuilder::getSpecificTerm Unrecognised data reference DatabaseName AccessionNumber
     Missing DB in Reactome_Pathway_Stable_Id
@@ -45,4 +45,6 @@ The recognised databases (lowercase names from ReactomeDB) are:
 - rhea
 - uniprot
 
+
+-----
 This file was last updated in May 2018.

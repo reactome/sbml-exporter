@@ -11,6 +11,10 @@ import java.util.List;
  * @author Sarah Keating <skeating@ebi.ac.uk>
  */
 
+/**
+ * Class to store the name of an entity and the number of occurences
+ * to facilitate writing contents of a Complex without repetition
+ */
 class TypeCounter {
     private final String mName;
     private Integer mCount;
@@ -86,9 +90,28 @@ class NotesBuilder {
     }
 
     /**
+     * Append the given string to the string contents of this instance.
+     *
+     * @param notes     String to append
+     *
+     * Here we dont remove any xhtml tags as we want a list
+     */
+    private void appendComplexNotes(String notes) {
+        if (contents.length() == 0) {
+            contents += notes;
+            contents += System.getProperty("line.separator");
+        }
+        else {
+            contents += System.getProperty("line.separator");
+            contents += notes;
+            contents += System.getProperty("line.separator");
+        }
+    }
+
+    /**
      * Add notes about the pathway
      *
-     * @param pathway    ReactomeDB Summation
+     * @param pathway    ReactomeDB Event
     */
     void addPathwayNotes(Event pathway){
         if (appendSummationNotes(pathway.getSummation())) {
@@ -97,6 +120,11 @@ class NotesBuilder {
 
     }
 
+    /**
+     * Adds note about a modl where the pathway has been created from a list of ReactomeDB Events
+     *
+     * @param listOfEvents List ReactomeDB Event
+     */
     void addPathwayNotes(List<Event> listOfEvents){
         appendNotes("This model was created from a list of events NOT a pathway. " +
                 "An appropriate parent pathway could not be detected. Events include:");
@@ -128,7 +156,7 @@ class NotesBuilder {
                         "in SBML Level " + sbase.getLevel() + " Version " + sbase.getVersion() + " core.");
             }
             else {
-                appendNotes("Here is Reactomes nested structure for this complex: " + structure);
+                appendComplexNotes("Here is Reactomes nested structure for this complex: " + structure);
             }
         }
         else if (pe instanceof CandidateSet){
@@ -164,7 +192,8 @@ class NotesBuilder {
         else {
             // FIX_Unknown_Physical_Entity
             // here we have encountered a physical entity type that did not exist in the graph database
-            // when this code was written (April 2018)
+            // when this code was written
+            // See Unknown_PhysicalEntity.md in SBMLExporter/dev directory for details
             System.err.println("Function: NotesBuilder::createSpeciesNotes: " +
                     "Encountered unknown PhysicalEntity " + pe.getStId());
        }
@@ -181,6 +210,13 @@ class NotesBuilder {
     }
 
 
+    /**
+     * Append the summations to a set of notes
+     *
+     * @param summations List ReactomeDB Summation
+     *
+     * @return True if notes appended, False otherwise
+     */
     private boolean appendSummationNotes(List<Summation> summations) {
         boolean appended = false;
         if (summations != null) {
@@ -191,6 +227,7 @@ class NotesBuilder {
         }
         return appended;
     }
+
     /**
      * create string describing the complex structure within Reactome
      *
@@ -200,7 +237,6 @@ class NotesBuilder {
      */
     private String extractComplexStructure(Complex complex){
         String structure = null;
-//        List<String> ids = new ArrayList<String>();
         clearCounterArray();
         if (complex.getHasComponent() != null){
             for (PhysicalEntity component: complex.getHasComponent() ){
@@ -210,20 +246,17 @@ class NotesBuilder {
             }
         }
         int num = count.size();
-        int numAdded = 0;
         if (num > 0) {
-            structure = "(";
+            structure = System.getProperty("line.separator") + "<ul>" + System.getProperty("line.separator");
             for (TypeCounter tc : count){
+                structure += "<li> ";
                 if (tc.getCount() > 1) {
-                    structure += tc.getCount() + "x";
+                    structure += tc.getCount() + " x ";
                 }
                 structure += tc.getName();
-                numAdded++;
-                if (numAdded < num){
-                    structure += ", ";
-                }
+                structure += "</li>" + System.getProperty("line.separator");
             }
-            structure += ")";
+            structure += "</ul>" + System.getProperty("line.separator");
         }
         return structure;
     }
@@ -262,20 +295,24 @@ class NotesBuilder {
      * @return true if all components have been referenced, false otherwise
      */
     private boolean addComponentId(PhysicalEntity pe) {
-        // TODO old code only used references to these two types why ?
         boolean complete = false;
         String id = null;
         if (pe instanceof SimpleEntity){
             ReferenceMolecule ref = ((SimpleEntity)pe).getReferenceEntity();
             if (ref != null) {
-                id = ref.getIdentifier();
+                id = removeTags(ref.getDisplayName());
             }
         }
         else if (pe instanceof EntityWithAccessionedSequence){
             ReferenceSequence ref = ((EntityWithAccessionedSequence)pe).getReferenceEntity();
             if (ref != null) {
-                id = ref.getIdentifier();
+                id = removeTags(ref.getDisplayName());
             }
+        }
+        else {
+            String type = pe.getClass().getName();
+            id = type.replace("org.reactome.server.graph.domain.model.", "Reactome ") + " " +
+                    removeTags(pe.getDisplayName());
         }
         if (id != null) {
             for (TypeCounter tc: count) {
@@ -314,10 +351,9 @@ class NotesBuilder {
      */
     private String removeTags(String notes) {
         // if we have an xhtml tags in the text it messes up parsing
-        // copied from old reactome code
+        // copied from old reactome code with some additions
+        notes = notes.replaceAll("<->", " to ");
         notes = notes.replaceAll("\\p{Cntrl}+", " ");
-        // // TODO: 22/10/2016 why does this cause a problem 
-//        notes = notes.replaceAll("\\cm+", "B");
         notes = notes.replaceAll("</*[a-zA-Z][^>]*>", " ");
         notes = notes.replaceAll("<>", " interconverts to ");
         notes = notes.replaceAll("<", " ");

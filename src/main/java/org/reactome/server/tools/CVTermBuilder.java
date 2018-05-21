@@ -311,9 +311,11 @@ class CVTermBuilder extends AnnotationBuilder {
         }
         else if (pe instanceof GenomeEncodedEntity) {
             // no additional annotation
+            addResource("reactome", qualifier, pe.getStId());
          }
         else if (pe instanceof OtherEntity) {
             // no additional annotation
+            addResource("reactome", qualifier, pe.getStId());
         }
         else {
             // FIX_Unknown_Physical_Entity

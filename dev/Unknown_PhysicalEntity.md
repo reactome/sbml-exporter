@@ -43,4 +43,5 @@ PhysicalEntity classes dealt with as of April 2018 are:
 - Polymer
 - SimpleEntity
  
+-----
 This file was last updated in May 2018. 

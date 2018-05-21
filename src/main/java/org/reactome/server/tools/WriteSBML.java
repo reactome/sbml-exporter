@@ -21,8 +21,17 @@ class WriteSBML {
      */
     private final short sbmlLevel = 3;
     private final short sbmlVersion = 1;
+
+    /**
+     * metaid must be unique accross an entire model
+     * so keep a global static variable that increases each time
+     * a metaid is set
+     */
     private static long metaid_count = 0;
 
+    /**
+     * the pathway or list of events being used to create the model
+     */
     private final Pathway thisPathway;
     private final List<Event> thisListEvents;
     private Pathway parentPathway;
@@ -40,8 +49,6 @@ class WriteSBML {
 
     private boolean addAnnotations = true;
     private boolean inTestMode = false;
-
-    private boolean useEventOf = true;
 
     /**
      * Construct an instance of the SBMLWriter
@@ -192,6 +199,11 @@ class WriteSBML {
         dbVersion = version;
     }
 
+    /**
+     * Returns the sbml id of the sbml model within the document being written
+     *
+     * @return
+     */
     String getModelId() {
         Model m = sbmlDocument.getModel();
         return m != null ? m.getId() : "";
@@ -315,7 +327,7 @@ class WriteSBML {
             }
         }
 
-        // // TODO: 09/11/2016 must be a better way to do this
+        // TODO: Must be a better way to do this
         int x = 0;
         while (x < thisListEvents.size()-1){
             x++;

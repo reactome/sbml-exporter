@@ -125,7 +125,6 @@ class AnnotationBuilder {
         // ADD_new_databases_here
         // See Unrecognised_database.md in SBMLExporter/dev directory for details
 
-        // TODO add drug reference IUPHAR
         urls.put("biomodels database", "https://identifiers.org/biomodels.db/");
         urls.put("chebi", "https://identifiers.org/chebi/CHEBI:");
         urls.put("complexportal", "https://ebi.ac.uk/complexportal/complex/");
@@ -148,6 +147,7 @@ class AnnotationBuilder {
         urls.put("rhea", "https://identifiers.org/rhea/");
         urls.put("uniprot", "https://identifiers.org/uniprot/");
     }
+
     /**
      * Adds the resource to the qualifier entry in the map
      *
