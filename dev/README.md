@@ -1,7 +1,7 @@
 
 # SBMLExporter Handover #
 
-The SBML Export runs as detailed in teh main README. 
+The SBML Export runs as detailed in the main README. 
 
 Here I include three further documents.
 
