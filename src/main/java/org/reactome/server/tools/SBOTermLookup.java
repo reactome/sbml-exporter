@@ -10,12 +10,16 @@ import org.sbml.jsbml.SpeciesReference;
  */
 class SBOTermLookup {
 
+    /**
+     * default SBO Terms to use
+     */
     private final int defaultCompartment = 290;
     // http://www.ebi.ac.uk/sbo/main/SBO:0000290 physical compartment
 
     private final int defaultSpecies = 240;
     // http://www.ebi.ac.uk/sbo/main/SBO:0000240 material entity
 
+    ///////////////////////////////////////////////////////////////////////////
     /**
      * Constructor
      */
@@ -45,7 +49,7 @@ class SBOTermLookup {
     }
 
     /**
-     * Sets teh sbo term based on the type provided
+     * Sets the sbo term based on the type provided
      * This is used for SBML SpeciesReference objects
      *
      * @param type  String indicating what type of species reference
@@ -61,6 +65,9 @@ class SBOTermLookup {
         }
 
     }
+
+    //////////////////////////////////////////////////////////////////////
+    // Private functions
 
     /**
      * Gets the speciesReference sbo based on type

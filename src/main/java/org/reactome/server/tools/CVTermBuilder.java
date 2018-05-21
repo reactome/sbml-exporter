@@ -13,8 +13,13 @@ import java.util.List;
 
 class CVTermBuilder extends AnnotationBuilder {
 
+    /**
+     * String representing teh stableId of the path being annotated
+     * Used for reporting missing information
+     */
     private String thisPath;
 
+    ////////////////////////////////////////////////////////////////////////
     /**
      * Constructor for CVTerm
      *
@@ -56,6 +61,7 @@ class CVTermBuilder extends AnnotationBuilder {
         }
         createCVTerms();
     }
+
     /**
      * Adds the resources for a SBML reaction. This uses BQB_IS to link to the Reactome entry;
      * BQB_IS to link to any GO biological processes
@@ -95,6 +101,9 @@ class CVTermBuilder extends AnnotationBuilder {
         addResource("go", CVTerm.Qualifier.BQB_IS, comp.getAccession());
         createCVTerms();
     }
+
+    ///////////////////////////////////////////////////////////////
+    // Private functions
 
     /**
      * Adds the publications resources

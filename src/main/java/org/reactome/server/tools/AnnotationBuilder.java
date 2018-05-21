@@ -15,10 +15,20 @@ import static org.sbml.jsbml.JSBML.getJSBMLDottedVersion;
  * @author Sarah Keating <skeating@ebi.ac.uk>
  */
 class AnnotationBuilder {
+    /**
+     * SBML Sbase objcet being annotated
+     */
     private SBase sbase = null;
+    /**
+     * Map of qualifiers for teh CVTerms and teh resource URL for each qualifier
+     */
     private Map<CVTerm.Qualifier,List<String>> resources = new LinkedHashMap<CVTerm.Qualifier,List<String>>();
+    /**
+     * HashMap of known databases and the url to be used when referencing them
+     */
     private static HashMap<String, String> urls = new HashMap<String, String>();
 
+    /////////////////////////////////////////////////////////////////////////
     /**
      * Constructor for AnnotationBuilder
      *
@@ -29,7 +39,7 @@ class AnnotationBuilder {
     }
 
     /**
-     *  creates the appropriate url from arguments and adds it to the map of qualifiers
+     *  Creates the appropriate url from arguments and adds it to the map of qualifiers
      *
      *  @param dbname      String name of the database being used
      *  @param qualifier   The MIRIAM qualifier for the reference
@@ -45,7 +55,7 @@ class AnnotationBuilder {
     }
 
     /**
-     * creates the CVTerms from the map of qualifiers and adds them to the SBase object
+     * Creates the CVTerms from the map of qualifiers and adds them to the SBase object
      */
     void createCVTerms(){
         for (CVTerm.Qualifier qualifier : resources.keySet()){
@@ -93,6 +103,9 @@ class AnnotationBuilder {
     void addModelHistory(History history ){
         sbase.setHistory(history);
     }
+
+    /////////////////////////////////////////////////////////////////////
+    // Private functions
 
     /**
      * Creates the appropriate URL String for the database. This will use

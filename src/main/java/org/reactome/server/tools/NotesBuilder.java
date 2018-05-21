@@ -16,7 +16,13 @@ import java.util.List;
  * to facilitate writing contents of a Complex without repetition
  */
 class TypeCounter {
+    /**
+     * reference name for the entity
+     */
     private final String mName;
+    /**
+     * number of occurences with a complex structure
+     */
     private Integer mCount;
 
     TypeCounter(String name) {
@@ -35,21 +41,35 @@ class TypeCounter {
 
 
 class NotesBuilder {
+    /**
+     * SBML SBase object to which notes are being added
+     */
     private SBase sbase = null;
+    /**
+     * Open and closing tags for notes elements
+     */
     private String openNotes = "<notes><p xmlns=\"http://www.w3.org/1999/xhtml\">";
     private String closeNotes = "</p></notes>";
+    /**
+     * Contents of the notes for this object that may be added by various functions
+     */
     private String contents = "";
+    /**
+     * List of instances of teh TypeCounter class for recodring complex structures
+     */
     private static ArrayList<TypeCounter> count = new ArrayList<TypeCounter>();
 
+    ///////////////////////////////////////////////////////////////////////
+
+    /**
+     * Constructor for NotesBuilder
+     *
+     * @param sbase SBML Sbase object to which notes are being added
+     */
     NotesBuilder(SBase sbase) {
         this.sbase = sbase;
     }
 
-    private static void clearCounterArray() {
-        if (count.size() > 0) {
-            count.clear();
-        }
-    }
     /**
      * Puts the notes opening and closing tags
      * along with <p> </p> and the xhtml namespace
@@ -74,41 +94,6 @@ class NotesBuilder {
     }
 
     /**
-     * Append the given string to the string contents of this instance.
-     *
-     * @param notes     String to append
-     */
-    private void appendNotes(String notes) {
-        notes = removeTags(notes);
-        if (contents.length() == 0) {
-            contents += notes;
-        }
-        else {
-            contents += System.getProperty("line.separator");
-            contents += notes;
-        }
-    }
-
-    /**
-     * Append the given string to the string contents of this instance.
-     *
-     * @param notes     String to append
-     *
-     * Here we dont remove any xhtml tags as we want a list
-     */
-    private void appendComplexNotes(String notes) {
-        if (contents.length() == 0) {
-            contents += notes;
-            contents += System.getProperty("line.separator");
-        }
-        else {
-            contents += System.getProperty("line.separator");
-            contents += notes;
-            contents += System.getProperty("line.separator");
-        }
-    }
-
-    /**
      * Add notes about the pathway
      *
      * @param pathway    ReactomeDB Event
@@ -124,6 +109,9 @@ class NotesBuilder {
      * Adds note about a modl where the pathway has been created from a list of ReactomeDB Events
      *
      * @param listOfEvents List ReactomeDB Event
+     *
+     * This functionality is specialised to allow a future option of letting a user choose
+     * elements of a pathway from the browser to construct their own model
      */
     void addPathwayNotes(List<Event> listOfEvents){
         appendNotes("This model was created from a list of events NOT a pathway. " +
@@ -209,6 +197,8 @@ class NotesBuilder {
         appendNotes(reg.getExplanation());
     }
 
+    ///////////////////////////////////////////////////////////////
+    // Private functions
 
     /**
      * Append the summations to a set of notes
@@ -339,6 +329,7 @@ class NotesBuilder {
      * @param type  String representing the type
      */
     private void appendDerivedFromStatement(String type) {
+
         appendNotes("Derived from a Reactome " + type + ".");
     }
 
@@ -361,5 +352,50 @@ class NotesBuilder {
         notes = notes.replaceAll("&+", "  ");
         return notes;
     }
+
+    /**
+     * Clear the array of TypeCounter objects as we are looking at a new Complex structure
+     */
+    private static void clearCounterArray() {
+        if (count.size() > 0) {
+            count.clear();
+        }
+    }
+
+    /**
+     * Append the given string to the string contents of this instance.
+     *
+     * @param notes     String to append
+     */
+    private void appendNotes(String notes) {
+        notes = removeTags(notes);
+        if (contents.length() == 0) {
+            contents += notes;
+        }
+        else {
+            contents += System.getProperty("line.separator");
+            contents += notes;
+        }
+    }
+
+    /**
+     * Append the given string to the string contents of this instance.
+     *
+     * @param notes     String to append
+     *
+     * Here we dont remove any xhtml tags as we want a list
+     */
+    private void appendComplexNotes(String notes) {
+        if (contents.length() == 0) {
+            contents += notes;
+            contents += System.getProperty("line.separator");
+        }
+        else {
+            contents += System.getProperty("line.separator");
+            contents += notes;
+            contents += System.getProperty("line.separator");
+        }
+    }
+
 
 }

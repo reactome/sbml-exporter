@@ -15,9 +15,22 @@ import org.sbml.jsbml.SBase;
  */
 
 class ModelHistoryBuilder extends AnnotationBuilder {
+
+    /**
+     * the SBML History object being created
+     */
     private History thisHistory = null;
+    /**
+     * map of author names and ReactomeDB Person objects
+     */
     private Map<String, Person> authors = new HashMap<String, Person>();
+    /**
+     * record earliest date the entry was modified to add as the 'created date' in SBML
+     */
     private Date earliestCreatedDate = null;
+    /**
+     * List of dates the ReactomeDB entry was modified
+     */
     private List<java.util.Date> modified = new ArrayList<java.util.Date>();
 
 
@@ -26,6 +39,8 @@ class ModelHistoryBuilder extends AnnotationBuilder {
         thisHistory = new History();
 
     }
+
+    /////////////////////////////////////////////////////////////////////////////
 
     /**
      * Creates an SBML History object from the pathway. It recurses through
@@ -49,6 +64,14 @@ class ModelHistoryBuilder extends AnnotationBuilder {
         addModelHistory(thisHistory);
     }
 
+    /**
+     * Creates an SBML History object from the list of Events.
+     *
+     * @param listOfEvents List ReactomeDB Event objects
+     *
+     * This functionality is specialised to allow a future option of letting a user choose
+     * elements of a pathway from the browser to construct their own model
+     */
     void createHistory(List<Event> listOfEvents){
         for (Event e : listOfEvents) {
             createHistoryFromEvent(e);
@@ -62,6 +85,9 @@ class ModelHistoryBuilder extends AnnotationBuilder {
         addModelHistory(thisHistory);
     }
 
+    ///////////////////////////////////////////////////////////////
+    // Private functions
+
     /**
      * Gathers information from a particular Event regarding contributors
      * and dates.
@@ -72,7 +98,7 @@ class ModelHistoryBuilder extends AnnotationBuilder {
         addCreatedInformation(path.getCreated());
         addInformation(path.getModified());
 
-        // Steve suggests adding authored and revised but not reviewed/edited
+        // Steve Jupe suggests adding authored and revised but not reviewed/edited
         if (path.getAuthored() != null) {
             for (InstanceEdit edit : path.getAuthored()) {
                 addInformation(edit);

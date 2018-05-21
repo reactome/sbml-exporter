@@ -43,6 +43,9 @@ public class SBMLExporterLauncher {
 
     private static int dbVersion = 0;
 
+    /**
+     * Arguments for progress bar
+     */
     private static final int width = 70;
     private static int total;
 
@@ -179,6 +182,9 @@ public class SBMLExporterLauncher {
 
     }
 
+    ///////////////////////////////////////////////////////////////////////////////////
+    // Private functions
+
     /**
      * function to get the command line arguments and determine the requested output
      *
@@ -280,6 +286,9 @@ public class SBMLExporterLauncher {
      * Create an output file that writes one SBML model from a list of events
      *
      * @param loe  List of ReactomeDB Events
+     *
+     * This functionality is specialised to allow a future option of letting a user choose
+     * elements of a pathway from the browser to construct their own model
      */
     private static void outputEvents(List<Event> loe) {
         WriteSBML sbml = new WriteSBML(loe, dbVersion);

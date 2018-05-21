@@ -35,9 +35,13 @@ class WriteSBML {
     private final Pathway thisPathway;
     private final List<Event> thisListEvents;
     private Pathway parentPathway;
-
+    /**
+     * SBMLDocument for JSBML
+     */
     private final SBMLDocument sbmlDocument;
-
+    /**
+     * Lists to keep track of things logged to avoid duplication
+     */
     private final List <String> loggedSpecies;
     private final List <String> loggedCompartments;
     private final List <String> loggedReactions;
@@ -114,6 +118,9 @@ class WriteSBML {
      * List of Events.
      *
      * @param loe list<Event> from ReactomeDB
+     *
+     * This functionality is specialised to allow a future option of letting a user choose
+     * elements of a pathway from the browser to construct their own model
      */
     public WriteSBML(List<Event> loe){
         thisPathway = null;
@@ -135,6 +142,9 @@ class WriteSBML {
      *
      * @param loe list<Event> from ReactomeDB
      * @param version Integer - version number of the database
+     *
+     * This functionality is specialised to allow a future option of letting a user choose
+     * elements of a pathway from the browser to construct their own model
      */
     public WriteSBML(List<Event> loe, Integer version){
         thisPathway = null;
@@ -196,13 +206,14 @@ class WriteSBML {
      * @param version  Integer the ReactomeDB version number being used.
      */
     public void setDBVersion(Integer version) {
+
         dbVersion = version;
     }
 
     /**
      * Returns the sbml id of the sbml model within the document being written
      *
-     * @return
+     * @return id of the model or an empty string if none exists
      */
     String getModelId() {
         Model m = sbmlDocument.getModel();
@@ -438,6 +449,9 @@ class WriteSBML {
      * through child Events that represent Pathways.
      *
      * @param eventList  List<Event></Event> from ReactomeDB
+     *
+     * This functionality is specialised to allow a future option of letting a user choose
+     * elements of a pathway from the browser to construct their own model
      */
     private void addAllReactions(List<Event> eventList){
         for (Event event : eventList) {
