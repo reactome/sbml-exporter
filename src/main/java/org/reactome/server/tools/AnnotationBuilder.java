@@ -1,5 +1,6 @@
 package org.reactome.server.tools;
 
+import org.apache.log4j.Logger;
 import org.sbml.jsbml.CVTerm;
 import org.sbml.jsbml.History;
 import org.sbml.jsbml.SBase;
@@ -15,6 +16,7 @@ import static org.sbml.jsbml.JSBML.getJSBMLDottedVersion;
  * @author Sarah Keating <skeating@ebi.ac.uk>
  */
 class AnnotationBuilder {
+    static Logger log = Logger.getLogger(AnnotationBuilder.class);
     /**
      * SBML Sbase objcet being annotated
      */
@@ -122,8 +124,10 @@ class AnnotationBuilder {
         String lowerDB = dbname.toLowerCase();
         String entry = urls.get(lowerDB);
         if (entry == null || entry.isEmpty()) {
-            System.out.println("AnnotationBuilder::getSpecificTerm Unrecognised data reference " + dbname +
-            " " + accessionNo);
+            log.warn("getSpecificTerm Unrecognised data reference " + dbname +
+                    " " + accessionNo);
+//            System.out.println("AnnotationBuilder::getSpecificTerm Unrecognised data reference " + dbname +
+//            " " + accessionNo);
             return "";
         }
         String resource = entry + accessionNo;

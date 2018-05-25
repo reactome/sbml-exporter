@@ -1,6 +1,8 @@
 
 package org.reactome.server.tools;
 
+import org.apache.log4j.Logger;
+
 import com.martiansoftware.jsap.*;
 import org.reactome.server.graph.domain.model.Event;
 import org.reactome.server.graph.domain.model.Pathway;
@@ -26,6 +28,7 @@ import java.util.List;
  */
 public class SBMLExporterLauncher {
 
+    static Logger log = Logger.getLogger(SBMLExporterLauncher.class);
     private static String outputdir = ".";
 
     // arguments to determine what to output
@@ -116,13 +119,17 @@ public class SBMLExporterLauncher {
                         System.err.println("Expected the identifier of a valid Pathway object");
                     }
                     if (pathway != null) {
+                        log.info("Outputting sbml files for " + pathway.getDisplayName());
                         outputPath(pathway);
+                        log.info(pathway.getDisplayName() + " complete");
                         updateProgressBar(1);
                     }
                     break;
                 case ALL_PATWAYS:
                     for (Species s : speciesService.getSpecies()) {
+                        log.info("Outputting sbml files for " + s.getDisplayName());
                         outputPathsForSpecies(s, schemaService, databaseObjectService);
+                        log.info(s.getDisplayName() + " complete");
                         generalService.clearCache();
                     }
                     break;

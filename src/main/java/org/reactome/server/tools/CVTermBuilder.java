@@ -178,9 +178,10 @@ class CVTermBuilder extends AnnotationBuilder {
     private void addDiseaseReference(List<Disease> diseases){
         if (diseases != null) {
             for (Disease disease: diseases){
-                if (!addResource(disease.getDatabaseName(), CVTerm.Qualifier.BQB_OCCURS_IN, disease.getIdentifier())){
-                    System.out.println("Missing DB in " + thisPath);
-                }
+                addResource(disease.getDatabaseName(), CVTerm.Qualifier.BQB_OCCURS_IN, disease.getIdentifier());
+//                if (!addResource(disease.getDatabaseName(), CVTerm.Qualifier.BQB_OCCURS_IN, disease.getIdentifier())){
+//                    System.out.println("Missing DB in " + thisPath);
+//                }
             }
         }
     }
@@ -203,9 +204,10 @@ class CVTermBuilder extends AnnotationBuilder {
         }
         if (xrefs != null) {
             for (DatabaseIdentifier xref: xrefs){
-                if (!addResource(xref.getDatabaseName(), qualifier, xref.getIdentifier())) {
-                    System.out.println("Missing DB in " + thisPath);
-                }
+                addResource(xref.getDatabaseName(), qualifier, xref.getIdentifier());
+//                if (!addResource(xref.getDatabaseName(), qualifier, xref.getIdentifier())) {
+//                    System.out.println("Missing DB in " + thisPath);
+//                }
             }
         }
 
@@ -228,9 +230,10 @@ class CVTermBuilder extends AnnotationBuilder {
         else if (pe instanceof EntityWithAccessionedSequence){
             ReferenceEntity ref = ((EntityWithAccessionedSequence)(pe)).getReferenceEntity();
             if (ref != null) {
-                if (!addResource(ref.getDatabaseName(), qualifier, ref.getIdentifier())) {
-                    System.out.println("Missing DB in " + thisPath);
-                }
+                addResource(ref.getDatabaseName(), qualifier, ref.getIdentifier());
+//                if (!addResource(ref.getDatabaseName(), qualifier, ref.getIdentifier())) {
+//                    System.out.println("Missing DB in " + thisPath);
+//                }
             }
             ref = null;
             if (recurse) {
@@ -255,9 +258,10 @@ class CVTermBuilder extends AnnotationBuilder {
                     for (AbstractModifiedResidue inf : mods) {
                         if ((inf instanceof TranslationalModification) && ((TranslationalModification)(inf)).getPsiMod() != null){
                             PsiMod psi = ((TranslationalModification)(inf)).getPsiMod();
-                            if (!addResource(psi.getDatabaseName(), CVTerm.Qualifier.BQB_HAS_VERSION, psi.getIdentifier())) {
-                                System.out.println("Missing DB in " + thisPath);
-                            }
+                            addResource(psi.getDatabaseName(), CVTerm.Qualifier.BQB_HAS_VERSION, psi.getIdentifier());
+//                            if (!addResource(psi.getDatabaseName(), CVTerm.Qualifier.BQB_HAS_VERSION, psi.getIdentifier())) {
+//                                System.out.println("Missing DB in " + thisPath);
+//                            }
                         }
                     }
                 }
@@ -294,27 +298,30 @@ class CVTermBuilder extends AnnotationBuilder {
         else if (pe instanceof ChemicalDrug){
             ReferenceEntity ref = ((ChemicalDrug)(pe)).getReferenceEntity();
             if (ref != null) {
-                if (!addResource(ref.getDatabaseName(), qualifier, ref.getIdentifier())) {
-                    System.out.println("Missing DB in " + thisPath);
-                }
+                addResource(ref.getDatabaseName(), qualifier, ref.getIdentifier());
+//                if (!addResource(ref.getDatabaseName(), qualifier, ref.getIdentifier())) {
+//                    System.out.println("Missing DB in " + thisPath);
+//                }
             }
             ref = null;
         }
         else if (pe instanceof ProteinDrug){
             ReferenceEntity ref = ((ProteinDrug)(pe)).getReferenceEntity();
             if (ref != null) {
-                if (!addResource(ref.getDatabaseName(), qualifier, ref.getIdentifier())) {
-                    System.out.println("Missing DB in " + thisPath);
-                }
+                addResource(ref.getDatabaseName(), qualifier, ref.getIdentifier());
+//                if (!addResource(ref.getDatabaseName(), qualifier, ref.getIdentifier())) {
+//                    System.out.println("Missing DB in " + thisPath);
+//                }
             }
             ref = null;
         }
         else if (pe instanceof RNADrug){
             ReferenceEntity ref = ((RNADrug)(pe)).getReferenceEntity();
             if (ref != null) {
-                if (!addResource(ref.getDatabaseName(), qualifier, ref.getIdentifier())) {
-                    System.out.println("Missing DB in " + thisPath);
-                }
+                addResource(ref.getDatabaseName(), qualifier, ref.getIdentifier());
+//                if (!addResource(ref.getDatabaseName(), qualifier, ref.getIdentifier())) {
+//                    System.out.println("Missing DB in " + thisPath);
+//                }
             }
             ref = null;
         }
@@ -331,8 +338,10 @@ class CVTermBuilder extends AnnotationBuilder {
             // here we have encountered a physical entity type that did not exist in the graph database
             // when this code was written
             // See Unknown_PhysicalEntity.md in SBMLExporter/dev directory for details
-            System.err.println("Function CVTermBuilder::createPhysicalEntityAnnotations " +
-                            "Encountered unknown PhysicalEntity " + pe.getStId());
+            log.warn("createPhysicalEntityAnnotations " +
+                    "Encountered unknown PhysicalEntity " + pe.getClassName() + ":" + pe.getStId());
+//            System.err.println("Function CVTermBuilder::createPhysicalEntityAnnotations " +
+//                            "Encountered unknown PhysicalEntity " + pe.getStId());
 
         }
     }

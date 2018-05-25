@@ -1,5 +1,6 @@
 package org.reactome.server.tools;
 
+import org.apache.log4j.Logger;
 import org.reactome.server.graph.domain.model.*;
 import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.SBase;
@@ -9,6 +10,7 @@ import org.sbml.jsbml.SpeciesReference;
  * @author Sarah Keating <skeating@ebi.ac.uk>
  */
 class SBOTermLookup {
+    static Logger log = Logger.getLogger(SBOTermLookup.class);
 
     /**
      * default SBO Terms to use
@@ -150,7 +152,9 @@ class SBOTermLookup {
             // here we have encountered a physical entity type that did not exist in the graph database
             // when this code was written
             // See Unknown_PhysicalEntity.md in SBMLExporter/dev directory for details
-            System.err.println("Function SBOTermLookup::getSpeciesTerm Encountered unknown PhysicalEntity " + pe.getStId());
+            log.warn("getSpeciesTerm " +
+                    "Encountered unknown PhysicalEntity " + pe.getClassName() + ":" + pe.getStId());
+//            System.err.println("Function SBOTermLookup::getSpeciesTerm Encountered unknown PhysicalEntity " + pe.getStId());
         }
 
         return term;

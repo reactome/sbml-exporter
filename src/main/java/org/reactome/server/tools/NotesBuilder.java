@@ -1,5 +1,6 @@
 package org.reactome.server.tools;
 
+import org.apache.log4j.Logger;
 import org.reactome.server.graph.domain.model.*;
 import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.xml.XMLNode;
@@ -41,6 +42,8 @@ class TypeCounter {
 
 
 class NotesBuilder {
+    static Logger log = Logger.getLogger(NotesBuilder.class);
+
     /**
      * SBML SBase object to which notes are being added
      */
@@ -83,8 +86,10 @@ class NotesBuilder {
             node = XMLNode.convertStringToXMLNode(notes);
         }
         catch(Exception e) {
-            System.out.println(e.getMessage());
-            System.out.println(notes);
+            String msg = e.getMessage() + notes;
+            log.error("Exception in addNotes " + msg);
+//            System.out.println(e.getMessage());
+//            System.out.println(notes);
             node = null;
         }
 
@@ -182,8 +187,10 @@ class NotesBuilder {
             // here we have encountered a physical entity type that did not exist in the graph database
             // when this code was written
             // See Unknown_PhysicalEntity.md in SBMLExporter/dev directory for details
-            System.err.println("Function: NotesBuilder::createSpeciesNotes: " +
-                    "Encountered unknown PhysicalEntity " + pe.getStId());
+            log.warn("createSpeciesNotes: " +
+                     "Encountered unknown PhysicalEntity " + pe.getClassName() + ":" + pe.getStId());
+//            System.err.println("Function: NotesBuilder::createSpeciesNotes: " +
+//                    "Encountered unknown PhysicalEntity " + pe.getStId());
        }
 
     }

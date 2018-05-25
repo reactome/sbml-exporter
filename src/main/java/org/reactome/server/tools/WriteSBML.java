@@ -1,5 +1,6 @@
 package org.reactome.server.tools;
 
+import org.apache.log4j.Logger;
 import org.reactome.server.graph.domain.model.*;
 import org.reactome.server.graph.domain.model.Event;
 import org.sbml.jsbml.Compartment;
@@ -15,6 +16,7 @@ import java.util.List;
  */
 class WriteSBML {
 
+    static Logger log = Logger.getLogger(WriteSBML.class);
     /**
      * sbml information variables
      * these can be changed if we decide to target a different sbml level and version
@@ -252,7 +254,7 @@ class WriteSBML {
         }
         catch (Exception e)
         {
-            System.out.println("failed to write " + filename);
+            log.error("Failed to write " + filename);
         }
     }
 
