@@ -3,7 +3,11 @@
 
 The SBML Export runs as detailed in the main README. 
 
-Here I include three further documents.
+Here I include four further documents.
+
+##Logfile
+
+Details of log file produced by export.
 
 ##Remaining TODO items
 

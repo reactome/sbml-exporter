@@ -5,7 +5,7 @@
   </Properties>
   <Appenders>
     <Console name="Console" target="SYSTEM_OUT">
-      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+      <PatternLayout pattern="[%t] %-5level %logger{36} - %msg%n"/>
     </Console>
     <File name="file" fileName="${filename}" append="false">
       <PatternLayout>
@@ -13,12 +13,24 @@
       </PatternLayout>
     </File>
   </Appenders>
+  <!-- This will log errors to the console and all info/warnings/errors to file -->
   <Loggers>
-    <Logger name="org.reactome.server.tools" level="info" additivity="false">
-      <AppenderRef ref="file"/>
-    </Logger>
     <Root level="info">
-      <AppenderRef ref="file"/>
+      <AppenderRef ref="file" level="info"/>
+      <AppenderRef ref="Console" level="error"/>
     </Root>
   </Loggers>
+  <!-- This will log all info/warnings/errors to file and nothing to console -->
+<!--  <Loggers>
+    <Root level="info">
+      <AppenderRef ref="file" level="info"/>
+    </Root>
+    </Loggers> -->
+  <!-- This will log all info/warnings/errors to  console -->
+  <!--  <Loggers>
+    <Root level="info">
+    <AppenderRef ref="Console" level="info"/>
+    </Root>
+    </Loggers> -->
+  
 </Configuration>
