@@ -484,6 +484,7 @@ class WriteSBML {
      */
     private void addReaction(org.reactome.server.graph.domain.model.ReactionLikeEvent event){
         Model model = sbmlDocument.getModel();
+        Integer noStoich = 0;
 
         String id = "reaction_" + event.getDbId();
         if (!loggedReactions.contains(id)) {
@@ -492,23 +493,47 @@ class WriteSBML {
             rn.setFast(false);
             rn.setReversible(false);
             rn.setName(event.getDisplayName());
+            // changed to allow addition of stoichiometry
             if (event.getInput() != null) {
                 for (PhysicalEntity pe : event.getInput()) {
-                    addParticipant("reactant", rn, pe, event.getDbId(), null);
+                    addParticipant("reactant", rn, pe, event.getDbId(), null, noStoich);
                     pe = null;
                 }
             }
             if (event.getOutput() != null) {
                 for (PhysicalEntity pe : event.getOutput()) {
-                    addParticipant("product", rn, pe, event.getDbId(), null);
+                    addParticipant("product", rn, pe, event.getDbId(), null, noStoich);
                     pe = null;
                 }
             }
+            // TODO: fetchInput returns a list of StoichiometryObject but as yet StoichiometryObject is not in code
+/*
+            if (event.fetchInput() != null) {
+                for (int i = 0; i < event.fetchInput().size(); i++)
+                {
+                    Integer stoich = event.fetchInput().get(i).getStoichiometry();
+                    for (PhysicalEntity pe : event.getInput()) {
+                        addParticipant("reactant", rn, pe, event.getDbId(), null, stoich);
+                        pe = null;
+                    }
+                }
+            }
+            if (event.fetchOutput() != null) {
+                for (int i = 0; i < event.fetchOutput().size(); i++)
+                {
+                    Integer stoich = event.fetchInput().get(i).getStoichiometry();
+                    for (PhysicalEntity pe : event.getOutput()) {
+                        addParticipant("product", rn, pe, event.getDbId(), null, stoich);
+                        pe = null;
+                    }
+                }
+            }
+*/
             if (event.getCatalystActivity() != null) {
                 for (CatalystActivity cat : event.getCatalystActivity()) {
                     PhysicalEntity pe = cat.getPhysicalEntity();
                     if (pe != null) {
-                        addParticipant("catalyst", rn, pe, event.getDbId(), null);
+                        addParticipant("catalyst", rn, pe, event.getDbId(), null, noStoich);
                     }
                     cat = null;
                 }
@@ -519,13 +544,13 @@ class WriteSBML {
                     if (reg instanceof PositiveRegulation) {
                         DatabaseObject pe = reg.getRegulator();
                         if (pe instanceof PhysicalEntity) {
-                            addParticipant("pos_regulator", rn, (PhysicalEntity) (pe), event.getDbId(), reg);
+                            addParticipant("pos_regulator", rn, (PhysicalEntity) (pe), event.getDbId(), reg, noStoich);
                         }
                     }
                     else if (reg instanceof NegativeRegulation) {
                         DatabaseObject pe = reg.getRegulator();
                         if (pe instanceof PhysicalEntity) {
-                            addParticipant("neg_regulator", rn, (PhysicalEntity) (pe), event.getDbId(), reg);
+                            addParticipant("neg_regulator", rn, (PhysicalEntity) (pe), event.getDbId(), reg, noStoich);
                         }
 
                     }
@@ -554,7 +579,7 @@ class WriteSBML {
      * @param event_no  Long number respresenting the ReactomeDB id of the Reactome Event being processed.
      *                  (This is used in the speciesreference id.)
      */
-    private void addParticipant(String type, Reaction rn, PhysicalEntity pe, Long event_no, Regulation reg) {
+    private void addParticipant(String type, Reaction rn, PhysicalEntity pe, Long event_no, Regulation reg, Integer stoichiometry) {
 
         String speciesId = "species_" + pe.getDbId();
         addSpecies(pe, speciesId);
@@ -564,6 +589,9 @@ class WriteSBML {
                 SpeciesReference sr = rn.createReactant(sr_id, speciesId);
                 sr.setConstant(true);
                 sbo.setTerm(type, sr);
+                if (stoichiometry != 0) {
+                    sr.setStoichiometry(stoichiometry);
+                }
                 loggedSpeciesReferences.add(sr_id);
             }
         }
@@ -573,6 +601,9 @@ class WriteSBML {
                 SpeciesReference sr = rn.createProduct(sr_id, speciesId);
                 sr.setConstant(true);
                 sbo.setTerm(type, sr);
+                if (stoichiometry != 0) {
+                    sr.setStoichiometry(stoichiometry);
+                }
                 loggedSpeciesReferences.add(sr_id);
             }
         }
