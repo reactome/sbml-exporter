@@ -623,8 +623,15 @@ class WriteSBML {
     private void addSpecies(PhysicalEntity pe, String id){
         Model model = sbmlDocument.getModel();
 
+        org.reactome.server.graph.domain.model.Compartment comp;
         // TODO: what if there is more than one compartment listed
-        org.reactome.server.graph.domain.model.Compartment comp = pe.getCompartment().get(0);
+        if (pe.getCompartment() != null && pe.getCompartment().size() > 0) {
+            comp = pe.getCompartment().get(0);
+        }
+        else {
+            log.warn("Encountered a Physical Entity with no compartment: " + pe.getStId());
+            return;
+        }
         String comp_id = "compartment_" + comp.getDbId();
 
         if (!loggedSpecies.contains(id)) {
