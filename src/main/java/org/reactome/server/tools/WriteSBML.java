@@ -494,6 +494,7 @@ class WriteSBML {
             rn.setReversible(false);
             rn.setName(event.getDisplayName());
             // changed to allow addition of stoichiometry
+/*
             if (event.getInput() != null) {
                 for (PhysicalEntity pe : event.getInput()) {
                     addParticipant("reactant", rn, pe, event.getDbId(), null, noStoich);
@@ -506,8 +507,8 @@ class WriteSBML {
                     pe = null;
                 }
             }
+*/
             // TODO: fetchInput returns a list of StoichiometryObject but as yet StoichiometryObject is not in code
-/*
             if (event.fetchInput() != null) {
                 for (int i = 0; i < event.fetchInput().size(); i++)
                 {
@@ -528,7 +529,6 @@ class WriteSBML {
                     }
                 }
             }
-*/
             if (event.getCatalystActivity() != null) {
                 for (CatalystActivity cat : event.getCatalystActivity()) {
                     PhysicalEntity pe = cat.getPhysicalEntity();
