@@ -513,6 +513,10 @@ class WriteSBML {
                 }
                 for (PhysicalEntity pe : event.getInput()) {
                     noStoich = stoichiometryMap.get(pe.getStId());
+                    // just in case
+                    if (noStoich == null) {
+                        noStoich = 0;
+                    }
                     addParticipant("reactant", rn, pe, event.getDbId(), null, noStoich);
                     pe = null;
                 }
@@ -534,6 +538,10 @@ class WriteSBML {
                 }
                 for (PhysicalEntity pe : event.getOutput()) {
                     noStoich = stoichiometryMap.get(pe.getStId());
+                    // just in case
+                    if (noStoich == null) {
+                        noStoich = 0;
+                    }
                     addParticipant("product", rn, pe, event.getDbId(), null, noStoich);
                     pe = null;
                 }
