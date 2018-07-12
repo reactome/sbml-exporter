@@ -9,6 +9,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -484,6 +485,7 @@ class WriteSBML {
      */
     private void addReaction(org.reactome.server.graph.domain.model.ReactionLikeEvent event){
         Model model = sbmlDocument.getModel();
+        Integer noStoich = 0;
 
         String id = "reaction_" + event.getDbId();
         if (!loggedReactions.contains(id)) {
@@ -492,23 +494,59 @@ class WriteSBML {
             rn.setFast(false);
             rn.setReversible(false);
             rn.setName(event.getDisplayName());
+            HashMap<String, Integer> stoichiometryMap = new HashMap<String, Integer>();
+
             if (event.getInput() != null) {
+                stoichiometryMap.clear();
+                // loop through inputs and create a map of stoichiometry values
                 for (PhysicalEntity pe : event.getInput()) {
-                    addParticipant("reactant", rn, pe, event.getDbId(), null);
+                    String peid = pe.getStId();
+                    Integer newStoich = 1;
+                    if (stoichiometryMap.containsKey(peid)) {
+                        Integer currentStoich = stoichiometryMap.get(peid);
+                        newStoich = currentStoich + 1;
+                        stoichiometryMap.replace(peid, currentStoich, newStoich);
+                    }
+                    else {
+                        stoichiometryMap.put(peid, newStoich);
+                    }
+                }
+                for (PhysicalEntity pe : event.getInput()) {
+                    noStoich = stoichiometryMap.get(pe.getStId());
+                    addParticipant("reactant", rn, pe, event.getDbId(), null, noStoich);
                     pe = null;
                 }
             }
             if (event.getOutput() != null) {
+                stoichiometryMap.clear();
+                // loop through outputs and create a map of stoichiometry values
                 for (PhysicalEntity pe : event.getOutput()) {
-                    addParticipant("product", rn, pe, event.getDbId(), null);
+                    String peid = pe.getStId();
+                    Integer newStoich = 1;
+                    if (stoichiometryMap.containsKey(peid)) {
+                        Integer currentStoich = stoichiometryMap.get(peid);
+                        newStoich = currentStoich + 1;
+                        stoichiometryMap.replace(peid, currentStoich, newStoich);
+                    }
+                    else {
+                        stoichiometryMap.put(peid, newStoich);
+                    }
+                }
+                for (PhysicalEntity pe : event.getOutput()) {
+                    noStoich = stoichiometryMap.get(pe.getStId());
+                    addParticipant("product", rn, pe, event.getDbId(), null, noStoich);
                     pe = null;
                 }
+                stoichiometryMap.clear();
             }
+
+            // sbml does not put stoichiometry on any modifiers - catalysts/regulators
+            noStoich = 0;
             if (event.getCatalystActivity() != null) {
                 for (CatalystActivity cat : event.getCatalystActivity()) {
                     PhysicalEntity pe = cat.getPhysicalEntity();
                     if (pe != null) {
-                        addParticipant("catalyst", rn, pe, event.getDbId(), null);
+                        addParticipant("catalyst", rn, pe, event.getDbId(), null, noStoich);
                     }
                     cat = null;
                 }
@@ -519,13 +557,13 @@ class WriteSBML {
                     if (reg instanceof PositiveRegulation) {
                         DatabaseObject pe = reg.getRegulator();
                         if (pe instanceof PhysicalEntity) {
-                            addParticipant("pos_regulator", rn, (PhysicalEntity) (pe), event.getDbId(), reg);
+                            addParticipant("pos_regulator", rn, (PhysicalEntity) (pe), event.getDbId(), reg, noStoich);
                         }
                     }
                     else if (reg instanceof NegativeRegulation) {
                         DatabaseObject pe = reg.getRegulator();
                         if (pe instanceof PhysicalEntity) {
-                            addParticipant("neg_regulator", rn, (PhysicalEntity) (pe), event.getDbId(), reg);
+                            addParticipant("neg_regulator", rn, (PhysicalEntity) (pe), event.getDbId(), reg, noStoich);
                         }
 
                     }
@@ -554,7 +592,7 @@ class WriteSBML {
      * @param event_no  Long number respresenting the ReactomeDB id of the Reactome Event being processed.
      *                  (This is used in the speciesreference id.)
      */
-    private void addParticipant(String type, Reaction rn, PhysicalEntity pe, Long event_no, Regulation reg) {
+    private void addParticipant(String type, Reaction rn, PhysicalEntity pe, Long event_no, Regulation reg, Integer stoichiometry) {
 
         String speciesId = "species_" + pe.getDbId();
         addSpecies(pe, speciesId);
@@ -564,6 +602,9 @@ class WriteSBML {
                 SpeciesReference sr = rn.createReactant(sr_id, speciesId);
                 sr.setConstant(true);
                 sbo.setTerm(type, sr);
+                if (stoichiometry != 0) {
+                    sr.setStoichiometry(stoichiometry);
+                }
                 loggedSpeciesReferences.add(sr_id);
             }
         }
@@ -573,6 +614,9 @@ class WriteSBML {
                 SpeciesReference sr = rn.createProduct(sr_id, speciesId);
                 sr.setConstant(true);
                 sbo.setTerm(type, sr);
+                if (stoichiometry != 0) {
+                    sr.setStoichiometry(stoichiometry);
+                }
                 loggedSpeciesReferences.add(sr_id);
             }
         }
