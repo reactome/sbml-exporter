@@ -9,6 +9,7 @@ import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 /**
@@ -493,42 +494,54 @@ class WriteSBML {
             rn.setFast(false);
             rn.setReversible(false);
             rn.setName(event.getDisplayName());
-            // changed to allow addition of stoichiometry
-/*
+            HashMap<String, Integer> stoichiometryMap = new HashMap<String, Integer>();
+
             if (event.getInput() != null) {
+                stoichiometryMap.clear();
+                // loop through inputs and create a map of stoichiometry values
                 for (PhysicalEntity pe : event.getInput()) {
+                    String peid = pe.getStId();
+                    Integer newStoich = 1;
+                    if (stoichiometryMap.containsKey(peid)) {
+                        Integer currentStoich = stoichiometryMap.get(peid);
+                        newStoich = currentStoich + 1;
+                        stoichiometryMap.replace(peid, currentStoich, newStoich);
+                    }
+                    else {
+                        stoichiometryMap.put(peid, newStoich);
+                    }
+                }
+                for (PhysicalEntity pe : event.getInput()) {
+                    noStoich = stoichiometryMap.get(pe.getStId());
                     addParticipant("reactant", rn, pe, event.getDbId(), null, noStoich);
                     pe = null;
                 }
             }
             if (event.getOutput() != null) {
+                stoichiometryMap.clear();
+                // loop through outputs and create a map of stoichiometry values
                 for (PhysicalEntity pe : event.getOutput()) {
+                    String peid = pe.getStId();
+                    Integer newStoich = 1;
+                    if (stoichiometryMap.containsKey(peid)) {
+                        Integer currentStoich = stoichiometryMap.get(peid);
+                        newStoich = currentStoich + 1;
+                        stoichiometryMap.replace(peid, currentStoich, newStoich);
+                    }
+                    else {
+                        stoichiometryMap.put(peid, newStoich);
+                    }
+                }
+                for (PhysicalEntity pe : event.getOutput()) {
+                    noStoich = stoichiometryMap.get(pe.getStId());
                     addParticipant("product", rn, pe, event.getDbId(), null, noStoich);
                     pe = null;
                 }
+                stoichiometryMap.clear();
             }
-*/
-            // TODO: fetchInput returns a list of StoichiometryObject but as yet StoichiometryObject is not in code
-            if (event.fetchInput() != null) {
-                for (int i = 0; i < event.fetchInput().size(); i++)
-                {
-                    Integer stoich = event.fetchInput().get(i).getStoichiometry();
-                    for (PhysicalEntity pe : event.getInput()) {
-                        addParticipant("reactant", rn, pe, event.getDbId(), null, stoich);
-                        pe = null;
-                    }
-                }
-            }
-            if (event.fetchOutput() != null) {
-                for (int i = 0; i < event.fetchOutput().size(); i++)
-                {
-                    Integer stoich = event.fetchInput().get(i).getStoichiometry();
-                    for (PhysicalEntity pe : event.getOutput()) {
-                        addParticipant("product", rn, pe, event.getDbId(), null, stoich);
-                        pe = null;
-                    }
-                }
-            }
+
+            // sbml does not put stoichiometry on any modifiers - catalysts/regulators
+            noStoich = 0;
             if (event.getCatalystActivity() != null) {
                 for (CatalystActivity cat : event.getCatalystActivity()) {
                     PhysicalEntity pe = cat.getPhysicalEntity();
