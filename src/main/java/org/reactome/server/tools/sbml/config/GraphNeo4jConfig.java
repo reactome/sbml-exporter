@@ -1,4 +1,4 @@
-package org.reactome.server.tools.config;
+package org.reactome.server.tools.sbml.config;
 
 import org.neo4j.ogm.config.Configuration;
 import org.neo4j.ogm.session.SessionFactory;

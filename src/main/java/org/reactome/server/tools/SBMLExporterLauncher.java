@@ -1,9 +1,8 @@
 
 package org.reactome.server.tools;
 
-import org.apache.log4j.Logger;
-
 import com.martiansoftware.jsap.*;
+import org.apache.log4j.Logger;
 import org.reactome.server.graph.domain.model.Event;
 import org.reactome.server.graph.domain.model.Pathway;
 import org.reactome.server.graph.domain.model.Species;
@@ -13,7 +12,7 @@ import org.reactome.server.graph.service.GeneralService;
 import org.reactome.server.graph.service.SchemaService;
 import org.reactome.server.graph.service.SpeciesService;
 import org.reactome.server.graph.utils.ReactomeGraphCore;
-import org.reactome.server.tools.config.GraphNeo4jConfig;
+import org.reactome.server.tools.sbml.config.GraphNeo4jConfig;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -95,7 +94,7 @@ public class SBMLExporterLauncher {
         parseAdditionalArguments(config);
 
         if (singleArgumentSupplied()) {
-            dbVersion = generalService.getDBVersion();
+            dbVersion = generalService.getDBInfo().getVersion();
 
             switch (outputStatus) {
                 case SINGLE_PATH:
