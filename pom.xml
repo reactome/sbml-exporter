@@ -24,6 +24,18 @@
 
     <developers>
         <developer>
+            <id>fabregat</id>
+            <name>Antonio Fabregat</name>
+            <email>fabregat@ebi.ac.uk</email>
+            <organization>http://www.ebi.ac.uk/</organization>
+        </developer>
+        <developer>
+            <id>ksidiro</id>
+            <name>Kostas Sidiropoulos</name>
+            <email>ksidiro@ebi.ac.uk</email>
+            <organization>http://www.ebi.ac.uk/</organization>
+        </developer>
+        <developer>
             <id>skeating</id>
             <name>Sarah Keating</name>
             <email>skeating@ebi.ac.uk</email>

@@ -80,9 +80,7 @@ class Helper {
         Helper.addCVTerm(s, CVTerm.Qualifier.BQB_IS_HOMOLOG_TO, infFroms);
     }
 
-    static void addAnnotations(Reaction reaction, ReactionBase rxn) {
-        addAnnotations(reaction, rxn.getReactionLikeEvent());
-
+    static void addCVTerms(Reaction reaction, ReactionBase rxn) {
         Helper.addCVTerm(reaction, CVTerm.Qualifier.BQB_IS, REACTOME_URI + rxn.getStId());
         Helper.addCVTerm(reaction, CVTerm.Qualifier.BQB_IS, rxn.getGoTerms());
         Helper.addCVTerm(reaction, CVTerm.Qualifier.BQB_IS, rxn.getEcNumbers());
