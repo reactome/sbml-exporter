@@ -212,7 +212,7 @@ class Helper {
         Creator creator = new Creator();
         creator.setFamilyName(person.getSurname() == null ? "" : person.getSurname());
         creator.setGivenName(person.getFirstname() == null ? "" : person.getFirstname());
-        person.getAffiliation().forEach(a -> creator.setOrganisation(a.getName().get(0)));
+        person.getAffiliation().forEach(a -> creator.setOrganisation(a.getName().get(a.getName().size()-1)));
         history.addCreator(creator);
     }
 
