@@ -13,6 +13,8 @@ public class ProgressBar implements Runnable {
 
     private static final int width = 70;
 
+    private Thread t;
+
     private Long start;
 
     private String species;
@@ -29,8 +31,8 @@ public class ProgressBar implements Runnable {
     /**
      * Simple method that prints a progress bar to command line
      *
-     * @param current   Name of the processed element
-     * @param done      Number of entries added to the graph
+     * @param current name of the processed element
+     * @param done    number of entries added to the graph
      */
     public void update(String current, int done) {
         this.current = current;
@@ -38,7 +40,7 @@ public class ProgressBar implements Runnable {
 
         current = (total == done) ? "done" : "current:" + current;
 
-        String format = "\r%30s%s  %3d%% %s %c [%s]";
+        String format = "\r%-30s%s  %3d%% %s %c [%s]";
 
         double percent = (double) done / total;
         StringBuilder progress = new StringBuilder(width);
@@ -52,32 +54,33 @@ public class ProgressBar implements Runnable {
         String time = getTimeFormatted(System.currentTimeMillis() - start);
 
         System.out.printf(format, species, time, (int) (percent * 100), progress, status, current);
+        if (done == total){
+            System.out.println();
+            t.interrupt();
+        }
     }
 
     public void done() {
         done = total;
-        Thread.currentThread().interrupt();
-    }
-
-    public void interrupt(){
-        Thread.currentThread().interrupt();
+        t.interrupt();
+        update(current, done);
     }
 
     @Override
     public void run() {
         try {
-            while (Thread.currentThread().isAlive()) {
+            while (t.isAlive()) {
                 update(current, done);
                 Thread.sleep(500);
             }
         } catch (InterruptedException e) {
-            update(current, done);
-            System.out.println();
+            //Nothing here
         }
     }
 
-    public Thread start(){
-        Thread t = new Thread(this);
+    @SuppressWarnings("UnusedReturnValue")
+    public Thread start() {
+        t = new Thread(this);
         t.start();
         return t;
     }
