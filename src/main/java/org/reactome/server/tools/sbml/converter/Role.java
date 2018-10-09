@@ -1,4 +1,4 @@
-package org.reactome.server.tools.sbml.factory;
+package org.reactome.server.tools.sbml.converter;
 
 import org.reactome.server.graph.domain.model.PhysicalEntity;
 
