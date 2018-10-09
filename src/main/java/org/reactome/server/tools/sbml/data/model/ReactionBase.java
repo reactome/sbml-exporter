@@ -1,9 +1,13 @@
-package org.reactome.server.tools.sbml.fetcher.model;
+package org.reactome.server.tools.sbml.data.model;
 
 import org.reactome.server.graph.domain.model.Compartment;
+import org.reactome.server.graph.domain.model.PhysicalEntity;
 import org.reactome.server.graph.domain.model.ReactionLikeEvent;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Holds the data for a given reaction
@@ -85,5 +89,15 @@ public class ReactionBase {
 
     public List<Participant> getNegativeRegulators() {
         return negativeRegulators;
+    }
+
+    public Set<PhysicalEntity> getParticipants(){
+        Set<PhysicalEntity> rtn = new HashSet<>();
+        rtn.addAll(inputs.stream().map(Participant::getPhysicalEntity).collect(Collectors.toList()) );
+        rtn.addAll(outputs.stream().map(Participant::getPhysicalEntity).collect(Collectors.toList()) );
+        rtn.addAll(catalysts.stream().map(Participant::getPhysicalEntity).collect(Collectors.toList()) );
+        rtn.addAll(negativeRegulators.stream().map(Participant::getPhysicalEntity).collect(Collectors.toList()) );
+        rtn.addAll(positiveRegulators.stream().map(Participant::getPhysicalEntity).collect(Collectors.toList()) );
+        return rtn;
     }
 }

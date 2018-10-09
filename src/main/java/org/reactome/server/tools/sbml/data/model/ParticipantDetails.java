@@ -1,26 +1,15 @@
-package org.reactome.server.tools.sbml.fetcher.model;
+package org.reactome.server.tools.sbml.data.model;
 
 import org.reactome.server.graph.domain.model.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Holds the denormalised data for a given participant (aka PhysicalEntity)
- *
- * @author Antonio Fabregat (fabregat@ebi.ac.uk)
- */
-@SuppressWarnings("unused")
-public class Participant {
+public class ParticipantDetails {
 
-    private Integer n;  //stoichiometry
     private PhysicalEntity pe;
     private List<String> urls;
-    private List<String> ids;
-
-    public Integer getStoichiometry() {
-        return n;
-    }
+    private List<IdentifierBase> ids;
 
     public PhysicalEntity getPhysicalEntity() {
         return pe;
@@ -30,12 +19,16 @@ public class Participant {
         urls.add(url);
     }
 
+
+
     public List<String> getUrls() {
         return urls;
     }
 
     private String getAccessions(){
-        return ids.stream().collect(Collectors.joining(", ", "(", ")"));
+//        Map<String, List<String>> map = ids.stream().collect(Collectors.groupingBy(s -> s));
+//        List<String> ids = map.keySet().stream().map(id -> map.get(id).size() + "x" + id).collect(Collectors.toList());
+        return ids.stream().map(IdentifierBase::toString).collect(Collectors.joining(", ", "(", ")"));
     }
 
     public String getExplanation() {
