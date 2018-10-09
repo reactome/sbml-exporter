@@ -1,13 +1,15 @@
-package org.reactome.server.tools.sbml.factory;
+package org.reactome.server.tools.sbml.converter;
 
-import org.reactome.server.graph.domain.model.NegativeRegulation;
-import org.reactome.server.graph.domain.model.Pathway;
-import org.reactome.server.graph.domain.model.PhysicalEntity;
-import org.reactome.server.graph.domain.model.PositiveRegulation;
-import org.reactome.server.tools.sbml.fetcher.DataFactory;
-import org.reactome.server.tools.sbml.fetcher.model.Participant;
-import org.reactome.server.tools.sbml.fetcher.model.ReactionBase;
+import org.reactome.server.graph.domain.model.*;
+import org.reactome.server.tools.sbml.data.DataFactory;
+import org.reactome.server.tools.sbml.data.model.Participant;
+import org.reactome.server.tools.sbml.data.model.ParticipantDetails;
+import org.reactome.server.tools.sbml.data.model.ReactionBase;
+import org.reactome.server.tools.sbml.util.Utils;
 import org.sbml.jsbml.*;
+import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.Species;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -36,7 +38,7 @@ public class SbmlConverter {
     private static final String COMPARTMENT_PREFIX = "compartment_";
 
     private Pathway pathway;
-    private SBMLDocument sbmlDocument;
+    private SBMLDocument sbmlDocument = null;
 
     private long metaid_count = 0L;
     private Set<String> existingObjects = new HashSet<>();
@@ -57,17 +59,27 @@ public class SbmlConverter {
         Helper.addProvenanceAnnotation(sbmlDocument);
         Helper.addAnnotations(model, pathway);
 
-        //System.out.print("Getting rxns for " + pathway.getStId());
-        Collection<ReactionBase> rxns = DataFactory.getReactionList(pathway.getStId());
-        //System.out.println("\rGot rxns for " + pathway.getStId());
+        Collection<ParticipantDetails> participants = DataFactory.getParticipantDetails(pathway.getStId());
+        participants.forEach(p -> addParticipant(model, p));
 
-        for (ReactionBase rxn : rxns) {
+        for (ReactionBase rxn : DataFactory.getReactionList(pathway.getStId())) {
             String id = REACTION_PREFIX + rxn.getDbId();
             Reaction rn = model.createReaction(id);
             rn.setMetaId(META_ID_PREFIX + metaid_count++);
             rn.setFast(false);
             rn.setReversible(false);
             rn.setName(rxn.getDisplayName());
+
+            org.reactome.server.graph.domain.model.Compartment compartment;
+            // TODO: what if there is more than one compartment listed
+            ReactionLikeEvent re = rxn.getReactionLikeEvent();
+            if (re.getCompartment() != null && re.getCompartment().size() > 0) {
+                compartment = re.getCompartment().get(0);
+                addCompartment(rn, compartment);
+            } else {
+                //TODO: Log this situation!
+                //log.warn("Encountered a Physical Entity with no compartment: " + pe.getStId());
+            }
 
             addInputs(rxn.getDbId(), rn, rxn.getInputs());
             addOutputs(rxn.getDbId(), rn, rxn.getOutpus());
@@ -80,6 +92,11 @@ public class SbmlConverter {
         }
 
         return sbmlDocument;
+    }
+
+    public void writeToFile(String output){
+        if(sbmlDocument == null) throw new RuntimeException("Please call the convert method before writing to file");
+        Utils.writeSBML(output, pathway.getStId(), sbmlDocument);
     }
 
     private void addInputs(Long reactionDbId, Reaction rn, List<Participant> participants) {
@@ -95,8 +112,6 @@ public class SbmlConverter {
                 sr.setConstant(true);
                 Helper.addSBOTerm(sr, Role.INPUT.term);
                 sr.setStoichiometry(participant.getStoichiometry());
-
-                addParticipant(sbmlDocument.getModel(), participant);
 
                 existingObjects.add(sr_id);
             }
@@ -114,8 +129,6 @@ public class SbmlConverter {
                 sr.setConstant(true);
                 Helper.addSBOTerm(sr, Role.OUTPUT.term);
                 sr.setStoichiometry(participant.getStoichiometry());
-
-                addParticipant(sbmlDocument.getModel(), participant);
 
                 existingObjects.add(sr_id);
             }
@@ -140,17 +153,14 @@ public class SbmlConverter {
                     case NEGATIVE_REGULATOR:
                         explanation = (new NegativeRegulation()).getExplanation();
                 }
-
-                Helper.addNotes(rn, explanation);
-
-                addParticipant(sbmlDocument.getModel(), participant);
+                if (explanation != null) Helper.addNotes(sr, explanation);
 
                 existingObjects.add(sr_id);
             }
         }
     }
 
-    private void addParticipant(Model model, Participant participant) {
+    private void addParticipant(Model model, ParticipantDetails participant) {
         String speciesId = SPECIES_PREFIX + participant.getPhysicalEntity().getDbId();
 
         if (!existingObjects.contains(speciesId)) {
@@ -179,7 +189,7 @@ public class SbmlConverter {
         }
     }
 
-    private void addCompartment(Species s, org.reactome.server.graph.domain.model.Compartment compartment) {
+    private void addCompartment(CompartmentalizedSBase s, org.reactome.server.graph.domain.model.Compartment compartment) {
         String comp_id = COMPARTMENT_PREFIX + compartment.getDbId();
         if (!existingObjects.contains(comp_id)) {
             Compartment c = sbmlDocument.getModel().createCompartment(comp_id);
