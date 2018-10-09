@@ -20,6 +20,13 @@ import java.util.stream.Collectors;
 
 import static org.sbml.jsbml.JSBML.getJSBMLDottedVersion;
 
+/**
+ * Contains methods that are commonly used in the {@link SbmlConverter}
+ *
+ * @author Antonio Fabregat (fabregat@ebi.ac.uk)
+ * @author Kostas Sidiropoulos (ksidiro@ebi.ac.uk)
+ * @author Sarah Keating (skeating@ebi.ac.uk)
+ */
 class Helper {
 
     private static final String REACTOME_URI = "https://reactome.org/content/detail/";
@@ -92,12 +99,16 @@ class Helper {
     static void addAnnotations(SBase sBase, Event event) {
         History history = new History();
         InstanceEdit created = event.getCreated();
-        created.getAuthor().forEach(c -> Helper.addCreator(history, c));
-        history.setCreatedDate(Helper.formatDate(created.getDateTime()));
+        if (created != null) {
+            created.getAuthor().forEach(c -> Helper.addCreator(history, c));
+            history.setCreatedDate(Helper.formatDate(created.getDateTime()));
+        }
 
         InstanceEdit modified = event.getModified();
-        modified.getAuthor().forEach(m -> Helper.addCreator(history, m));
-        history.addModifiedDate(Helper.formatDate(modified.getDateTime()));
+        if (modified != null) {
+            modified.getAuthor().forEach(m -> Helper.addCreator(history, m));
+            history.addModifiedDate(Helper.formatDate(modified.getDateTime()));
+        }
 
         for (InstanceEdit authored : event.getAuthored()) {
             authored.getAuthor().forEach(a -> Helper.addCreator(history, a));

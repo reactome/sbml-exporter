@@ -2,6 +2,13 @@ package org.reactome.server.tools.sbml.factory;
 
 import org.reactome.server.graph.domain.model.PhysicalEntity;
 
+/**
+ * Defines the identifier format and SBO terms for the different elements in the main SBML sections
+ *
+ * @author Antonio Fabregat (fabregat@ebi.ac.uk)
+ * @author Kostas Sidiropoulos (ksidiro@ebi.ac.uk)
+ * @author Sarah Keating (skeating@ebi.ac.uk)
+ */
 enum Role {
     // http://www.ebi.ac.uk/sbo/main/SBO:0000010 reactant
     INPUT("_input_", "speciesreference_", 10),

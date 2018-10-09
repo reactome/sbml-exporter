@@ -9,19 +9,26 @@ import org.reactome.server.tools.sbml.fetcher.model.Participant;
 import org.reactome.server.tools.sbml.fetcher.model.ReactionBase;
 import org.sbml.jsbml.*;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * For a given event this converter uses the {@link DataFactory} to retrieve its target data and proceeds with the
+ * conversion to a {@link SBMLDocument} taking advantage of the methods in the {@link Helper} class.
+ *
+ * @author Antonio Fabregat (fabregat@ebi.ac.uk)
+ * @author Kostas Sidiropoulos (ksidiro@ebi.ac.uk)
+ * @author Sarah Keating (skeating@ebi.ac.uk)
+ */
 public class SbmlConverter {
 
-    /**
-     * sbml information variables
-     * these can be changed if we decide to target a different sbml level and version
-     */
+    // SBMLinformation variables. To be changed when targeting a different sbml level and version
     private static final short SBML_LEVEL = 3;
     private static final short SBML_VERSION = 1;
 
+    // Prefixes used in the identifiers of the different SBML sections
     private static final String META_ID_PREFIX = "metaid_";
     private static final String PATHWAY_PREFIX = "pathway_";
     private static final String REACTION_PREFIX = "reaction_";
@@ -50,7 +57,11 @@ public class SbmlConverter {
         Helper.addProvenanceAnnotation(sbmlDocument);
         Helper.addAnnotations(model, pathway);
 
-        for (ReactionBase rxn : DataFactory.getReactionList(pathway.getStId())) {
+        //System.out.print("Getting rxns for " + pathway.getStId());
+        Collection<ReactionBase> rxns = DataFactory.getReactionList(pathway.getStId());
+        //System.out.println("\rGot rxns for " + pathway.getStId());
+
+        for (ReactionBase rxn : rxns) {
             String id = REACTION_PREFIX + rxn.getDbId();
             Reaction rn = model.createReaction(id);
             rn.setMetaId(META_ID_PREFIX + metaid_count++);
