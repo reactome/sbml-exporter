@@ -5,6 +5,12 @@ import org.reactome.server.graph.domain.model.ReactionLikeEvent;
 
 import java.util.List;
 
+/**
+ * Holds the data for a given reaction
+ *
+ * @author Antonio Fabregat (fabregat@ebi.ac.uk)
+ */
+//@SuppressWarnings("unused")
 public class ReactionBase {
 
     private ReactionLikeEvent rle;
@@ -31,10 +37,6 @@ public class ReactionBase {
 
     public String getDisplayName() {
         return rle.getDisplayName();
-    }
-
-    public String getSchemaClass() {
-        return rle.getSchemaClass();
     }
 
     public ReactionLikeEvent getReactionLikeEvent() {

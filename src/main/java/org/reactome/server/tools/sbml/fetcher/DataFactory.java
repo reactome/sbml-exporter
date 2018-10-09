@@ -8,142 +8,60 @@ import org.reactome.server.tools.sbml.fetcher.model.ReactionBase;
 import java.util.Collection;
 import java.util.Collections;
 
+/**
+ * Retrieves the data in an efficient way in order to speed up the conversion process
+ *
+ * @author Antonio Fabregat (fabregat@ebi.ac.uk)
+ */
 public abstract class DataFactory {
-
-    private static final String QUERY1 = "" +
-            "OPTIONAL MATCH (rle1:ReactionLikeEvent{stId:{stId}}) " +
-            "OPTIONAL MATCH (:Pathway{stId:{stId}})-[:hasEvent*]->(rle2:ReactionLikeEvent) " +
-            "WITH DISTINCT COLLECT(DISTINCT rle1) + COLLECT(DISTINCT rle2) AS rles " +
-            "UNWIND rles AS rle " +
-            "OPTIONAL MATCH (rle)-[:goBiologicalProcess]->(gobp:GO_BiologicalProcess) " +
-            "OPTIONAL MATCH (rle)-[:summation|literatureReference*]->(lit:LiteratureReference) " +
-            "OPTIONAL MATCH (rle)-[:crossReference]->(xref:DatabaseIdentifier)" +
-            "OPTIONAL MATCH (rle)-[:disease]->(d:Disease) " +
-            "OPTIONAL MATCH (rle)-[i:input]->(pei:PhysicalEntity)-[:hasComponent|hasMember|repeatedUnit|referenceEntity*]->(rei:ReferenceEntity) " +
-            "OPTIONAL MATCH (rle)-[o:output]->(peo:PhysicalEntity)-[:hasComponent|hasMember|repeatedUnit|referenceEntity*]->(reo:ReferenceEntity) " +
-            "OPTIONAL MATCH (rle)-[:regulatedBy]->(:PositiveRegulation)-[:regulator]->(pepr:PhysicalEntity)-[:hasComponent|hasMember|repeatedUnit|referenceEntity*]->(repr:ReferenceEntity) " +
-            "OPTIONAL MATCH (rle)-[:regulatedBy]->(:NegativeRegulation)-[:regulator]->(penr:PhysicalEntity)-[:hasComponent|hasMember|repeatedUnit|referenceEntity*]->(renr:ReferenceEntity) " +
-            "OPTIONAL MATCH (rle)-[:catalystActivity]->(cat:CatalystActivity)-[:physicalEntity]->(pec:PhysicalEntity)-[:hasComponent|hasMember|repeatedUnit|referenceEntity*]->(rec:ReferenceEntity) " +
-            "OPTIONAL MATCH (cat)-[:activity]->(gomf:GO_MolecularFunction) " +
-            "OPTIONAL MATCH (pei)-[:compartment]->(cpei:Compartment) " +
-            "OPTIONAL MATCH (peo)-[:compartment]->(cpeo:Compartment) " +
-            "OPTIONAL MATCH (pec)-[:compartment]->(cpec:Compartment) " +
-            "OPTIONAL MATCH (pepr)-[:compartment]->(cpepr:Compartment) " +
-            "OPTIONAL MATCH (penr)-[:compartment]->(cpenr:Compartment) " +
-            "WITH DISTINCT rle, " +
-            "              CASE gobp WHEN NULL THEN (CASE gomf WHEN NULL THEN [] ELSE COLLECT(DISTINCT gomf.url) END) ELSE [gobp.url] END AS goTerms, " +
-            "              COLLECT(\"https://identifiers.org/ec-code/\" + gomf.ecNumber) AS ecNumbers, " +
-            "              COLLECT(lit.url) AS literatureRefs, " +
-            "              COLLECT(xref.url) AS xrefs, " +
-            "              COLLECT(d.url) AS diseases, " +
-            "              i, pei, COLLECT(DISTINCT rei.databaseName + \":\" + rei.identifier) AS reis, COLLECT(DISTINCT cpei.dbId) AS cpeis, " +
-            "              o, peo, COLLECT(DISTINCT reo.databaseName + \":\" + reo.identifier) AS reos, COLLECT(DISTINCT cpeo.dbId) AS cpeos, " +
-            "              pec, COLLECT(DISTINCT rec.databaseName + \":\" + rec.identifier) AS recs, COLLECT(DISTINCT cpec.dbId) AS cpecs, " +
-            "              pepr, COLLECT(DISTINCT repr.databaseName + \":\" + repr.identifier) AS reprs, COLLECT(DISTINCT cpepr.dbId) AS cpeprs, " +
-            "              penr, COLLECT(DISTINCT renr.databaseName + \":\" + renr.identifier) AS renrs, COLLECT(DISTINCT cpenr.dbId) AS cpenrs " +
-            "RETURN rle.dbId AS dbId," +
-            "       rle.stId AS stId," +
-            "       rle.displayName AS displayName," +
-            "       rle.schemaClass AS schemaClass, " +
-            "       goTerms, ecNumbers, literatureRefs, xrefs, diseases, " +
-            "       COLLECT(DISTINCT CASE pei WHEN NULL THEN NULL ELSE " +
-            "               { " +
-            "                 n:    i.stoichiometry, " +
-            "                 dbId: pei.dbId, " +
-            "                 stId: pei.stId, " +
-            "                 sc:   pei.schemaClass, " +
-            "                 accs: reis " +
-            "               } END) AS inputs, " +
-            "       COLLECT(DISTINCT CASE peo WHEN NULL THEN NULL ELSE " +
-            "               { " +
-            "                 n:    o.stoichiometry, " +
-            "                 dbId: peo.dbId, " +
-            "                 stId: peo.stId, " +
-            "                 sc:   peo.schemaClass, " +
-            "                 accs: reos " +
-            "               } END) AS outputs, " +
-            "       COLLECT(DISTINCT CASE pec WHEN NULL THEN NULL ELSE " +
-            "               { " +
-            "                 n:    0, " +
-            "                 dbId: pec.dbId, " +
-            "                 stId: pec.stId, " +
-            "                 sc:   pec.schemaClass, " +
-            "                 accs: recs " +
-            "               } END) AS catalysts, " +
-            "       COLLECT(DISTINCT CASE pepr WHEN NULL THEN NULL ELSE " +
-            "               { " +
-            "                 n:    0, " +
-            "                 dbId: pepr.dbId, " +
-            "                 stId: pepr.stId, " +
-            "                 sc:   pepr.schemaClass, " +
-            "                 accs: reprs " +
-            "               } END) AS positiveRegulators," +
-            "       COLLECT(DISTINCT CASE penr WHEN NULL THEN NULL ELSE " +
-            "               { " +
-            "                 n:    0, " +
-            "                 dbId: penr.dbId, " +
-            "                 stId: penr.stId, " +
-            "                 sc:   penr.schemaClass, " +
-            "                 accs: renrs " +
-            "               } END) AS negativeRegulators";
 
     private static final String QUERY = "" +
             "OPTIONAL MATCH (rle1:ReactionLikeEvent{stId:{stId}}) " +
-            "OPTIONAL MATCH (:Pathway{stId:{stId}})-[:hasEvent*]->(rle2:ReactionLikeEvent) " +
-            "WITH DISTINCT COLLECT(DISTINCT rle1) + COLLECT(DISTINCT rle2) AS rles " +
-            "UNWIND rles AS rle " +
-            "OPTIONAL MATCH (rle)-[:goBiologicalProcess]->(gobp:GO_BiologicalProcess) " +
+            "OPTIONAL MATCH (:Pathway{stId:{stId}})-[:hasEvent*]->(rle2:ReactionLikeEvent)  " +
+            "WITH DISTINCT COLLECT(DISTINCT rle1) + COLLECT(DISTINCT rle2) AS rles  " +
+            "UNWIND rles AS rle  " +
+            "OPTIONAL MATCH (rle)-[:goBiologicalProcess]->(gobp:GO_BiologicalProcess)  " +
+            "OPTIONAL MATCH (rle)-[:catalystActivity]->(cat:CatalystActivity) " +
+            "OPTIONAL MATCH (cat)-[:activity]->(gomf:GO_MolecularFunction)  " +
+            "WITH DISTINCT rle, COLLECT(DISTINCT \"https://identifiers.org/ec-code/\" + gomf.ecNumber) AS ecNumbers, COLLECT(DISTINCT gomf.url) AS gomfs, COLLECT(DISTINCT gobp.url) AS gobps " +
+            "WITH DISTINCT rle, ecNumbers, CASE SIZE(gomfs) WHEN 0 THEN gobps ELSE gomfs END as goTerms " +
             "OPTIONAL MATCH (rle)-[:summation|literatureReference*]->(lit:LiteratureReference) " +
-            "OPTIONAL MATCH (rle)-[:crossReference]->(xref:DatabaseIdentifier)" +
-            "OPTIONAL MATCH (rle)-[:disease]->(d:Disease) " +
+            "WITH DISTINCT rle, goTerms, ecNumbers, COLLECT(DISTINCT lit.url) AS literatureRefs " +
+            "OPTIONAL MATCH (rle)-[:crossReference]->(xref:DatabaseIdentifier) " +
+            "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, COLLECT(DISTINCT xref.url) AS xrefs " +
+            "OPTIONAL MATCH (rle)-[:disease]->(d:Disease)  " +
+            "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, COLLECT(DISTINCT d.url) AS diseases " +
+             //Inputs
             "OPTIONAL MATCH (rle)-[i:input]->(pei:PhysicalEntity)-[:hasComponent|hasMember|repeatedUnit|referenceEntity*]->(rei:ReferenceEntity) " +
+            "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, i, pei, " +
+            "              COLLECT(DISTINCT CASE rei.variantIdentifier WHEN NULL THEN rei.identifier ELSE rei.variantIdentifier END) AS ids, COLLECT(DISTINCT rei.url) AS urls " +
+            "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, " +
+            "              COLLECT(DISTINCT CASE pei WHEN NULL THEN NULL ELSE {n: i.stoichiometry,  pe: pei, ids: ids, urls: urls} END) AS inputs " +
+             //Outputs
             "OPTIONAL MATCH (rle)-[o:output]->(peo:PhysicalEntity)-[:hasComponent|hasMember|repeatedUnit|referenceEntity*]->(reo:ReferenceEntity) " +
-            "OPTIONAL MATCH (rle)-[:regulatedBy]->(:PositiveRegulation)-[:regulator]->(pepr:PhysicalEntity)-[:hasComponent|hasMember|repeatedUnit|referenceEntity*]->(repr:ReferenceEntity) " +
-            "OPTIONAL MATCH (rle)-[:regulatedBy]->(:NegativeRegulation)-[:regulator]->(penr:PhysicalEntity)-[:hasComponent|hasMember|repeatedUnit|referenceEntity*]->(renr:ReferenceEntity) " +
+            "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, inputs, o, peo, " +
+            "              COLLECT(DISTINCT CASE reo.variantIdentifier WHEN NULL THEN reo.identifier ELSE reo.variantIdentifier END) AS ids, COLLECT(DISTINCT reo.url) AS urls " +
+            "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, inputs, " +
+            "              COLLECT(DISTINCT CASE peo WHEN NULL THEN NULL ELSE {n: o.stoichiometry,  pe: peo, ids: ids, urls: urls} END) AS outputs " +
+             //Catalyst activities
             "OPTIONAL MATCH (rle)-[:catalystActivity]->(cat:CatalystActivity)-[:physicalEntity]->(pec:PhysicalEntity)-[:hasComponent|hasMember|repeatedUnit|referenceEntity*]->(rec:ReferenceEntity) " +
-            "OPTIONAL MATCH (cat)-[:activity]->(gomf:GO_MolecularFunction) " +
-            "WITH DISTINCT rle, " +
-            "              CASE gobp WHEN NULL THEN (CASE gomf WHEN NULL THEN [] ELSE COLLECT(DISTINCT gomf.url) END) ELSE [gobp.url] END AS goTerms, " +
-            "              COLLECT(DISTINCT \"https://identifiers.org/ec-code/\" + gomf.ecNumber) AS ecNumbers, " +
-            "              COLLECT(lit.url) AS literatureRefs, " +
-            "              COLLECT(xref.url) AS xrefs, " +
-            "              COLLECT(d.url) AS diseases, " +
-            "              i, pei, COLLECT(DISTINCT rei.url) AS ueis, COLLECT(DISTINCT CASE rei.variantIdentifier WHEN NULL THEN rei.identifier ELSE rei.variantIdentifier END) AS reis, " +
-            "              o, peo, COLLECT(DISTINCT reo.url) AS ueos, COLLECT(DISTINCT CASE reo.variantIdentifier WHEN NULL THEN reo.identifier ELSE reo.variantIdentifier END) AS reos, " +
-            "              pec, COLLECT(DISTINCT rec.url) AS uecs, COLLECT(DISTINCT CASE rec.variantIdentifier WHEN NULL THEN rec.identifier ELSE rec.variantIdentifier END) AS recs, " +
-            "              pepr, COLLECT(DISTINCT repr.url) AS ueprs, COLLECT(DISTINCT CASE repr.variantIdentifier WHEN NULL THEN repr.identifier ELSE repr.variantIdentifier END) AS reprs, " +
-            "              penr, COLLECT(DISTINCT renr.url) AS uenrs, COLLECT(DISTINCT CASE renr.variantIdentifier WHEN NULL THEN renr.identifier ELSE renr.variantIdentifier END) AS renrs " +
-            "RETURN rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, " +
-            "       COLLECT(DISTINCT CASE pei WHEN NULL THEN NULL ELSE " +
-            "               { n:    i.stoichiometry, " +
-            "                 pe:   pei, " +
-            "                 urls: ueis, " +
-            "                 accs: reis " +
-            "               } END) AS inputs, " +
-            "       COLLECT(DISTINCT CASE peo WHEN NULL THEN NULL ELSE " +
-            "               { n:    o.stoichiometry, " +
-            "                 pe:   peo, " +
-            "                 urls: ueos, " +
-            "                 accs: reos " +
-            "               } END) AS outputs, " +
-            "       COLLECT(DISTINCT CASE pec WHEN NULL THEN NULL ELSE " +
-            "               { n:    0, " +
-            "                 pe:   pec, " +
-            "                 urls: uecs, " +
-            "                 accs: recs " +
-            "               } END) AS catalysts, " +
-            "       COLLECT(DISTINCT CASE pepr WHEN NULL THEN NULL ELSE " +
-            "               { n:    0, " +
-            "                 pe:   pepr, " +
-            "                 urls: ueprs, " +
-            "                 accs: reprs " +
-            "               } END) AS positiveRegulators," +
-            "       COLLECT(DISTINCT CASE penr WHEN NULL THEN NULL ELSE " +
-            "               { n:    0, " +
-            "                 pe:   penr, " +
-            "                 urls: uenrs, " +
-            "                 accs: renrs " +
-            "               } END) AS negativeRegulators";
+            "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, inputs, outputs, pec, " +
+            "              COLLECT(DISTINCT CASE rec.variantIdentifier WHEN NULL THEN rec.identifier ELSE rec.variantIdentifier END) AS ids, COLLECT(DISTINCT rec.url) AS urls " +
+            "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, inputs, outputs, " +
+            "              COLLECT(DISTINCT CASE pec WHEN NULL THEN NULL ELSE {n: 0,  pe: pec, ids: ids, urls: urls} END) AS catalysts " +
+             //Positive regulators
+            "OPTIONAL MATCH (rle)-[:regulatedBy]->(:PositiveRegulation)-[:regulator]->(pepr:PhysicalEntity)-[:hasComponent|hasMember|repeatedUnit|referenceEntity*]->(repr:ReferenceEntity)  " +
+            "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, inputs, outputs, catalysts, pepr, " +
+            "              COLLECT(DISTINCT CASE repr.variantIdentifier WHEN NULL THEN repr.identifier ELSE repr.variantIdentifier END) AS ids, COLLECT(DISTINCT repr.url) AS urls " +
+            "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, inputs, outputs, catalysts, " +
+            "              COLLECT(DISTINCT CASE pepr WHEN NULL THEN NULL ELSE {n: 0,  pe: pepr, ids: ids, urls: urls} END) AS positiveRegulators " +
+             //Negative regulators
+            "OPTIONAL MATCH (rle)-[:regulatedBy]->(:NegativeRegulation)-[:regulator]->(penr:PhysicalEntity)-[:hasComponent|hasMember|repeatedUnit|referenceEntity*]->(renr:ReferenceEntity)  " +
+            "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, inputs, outputs, catalysts, positiveRegulators, penr, " +
+            "              COLLECT(DISTINCT CASE renr.variantIdentifier WHEN NULL THEN renr.identifier ELSE renr.variantIdentifier END) AS ids, COLLECT(DISTINCT renr.url) AS urls " +
+            "" +
+            "RETURN DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, inputs, outputs, catalysts, positiveRegulators, " +
+            "              COLLECT(DISTINCT CASE penr WHEN NULL THEN NULL ELSE {n: 0,  pe: penr, ids: ids, urls: urls} END) AS negativeRegulators";
 
 
     public static Collection<ReactionBase> getReactionList(String eventStId) {
@@ -152,7 +70,8 @@ public abstract class DataFactory {
             return ads.getCustomQueryResults(ReactionBase.class, QUERY, Collections.singletonMap("stId", eventStId));
         } catch (CustomQueryException e) {
             e.printStackTrace();
-            return Collections.emptyList();
+            System.exit(1);
         }
+        return null;
     }
 }
