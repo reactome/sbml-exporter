@@ -2,12 +2,24 @@ package org.reactome.server.tools.sbml;
 
 import com.martiansoftware.jsap.*;
 import org.reactome.server.graph.domain.model.Pathway;
-import org.reactome.server.graph.service.DatabaseObjectService;
+import org.reactome.server.graph.domain.model.Species;
 import org.reactome.server.graph.service.GeneralService;
+import org.reactome.server.graph.service.SchemaService;
+import org.reactome.server.graph.service.SpeciesService;
 import org.reactome.server.graph.utils.ReactomeGraphCore;
 import org.reactome.server.tools.sbml.config.GraphNeo4jConfig;
 import org.reactome.server.tools.sbml.factory.SbmlConverter;
+import org.reactome.server.tools.sbml.util.ProgressBar;
 
+import java.util.Collection;
+import java.util.concurrent.TimeUnit;
+
+/**
+ * Converts {@link org.reactome.server.graph.domain.model.Event} class instances to SBML file(s).
+ * Please run the "--help" option for more information.
+ *
+ * @author Antonio Fabregat (fabregat@ebi.ac.uk)
+ */
 public class Main {
 
     public static void main(String[] args) throws JSAPException {
@@ -27,23 +39,29 @@ public class Main {
         //Initialising ReactomeCore Neo4j configuration
         ReactomeGraphCore.initialise(config.getString("host"), config.getString("port"), config.getString("user"), config.getString("password"), GraphNeo4jConfig.class);
 
-        GeneralService gs = ReactomeGraphCore.getService(GeneralService.class);
-        DatabaseObjectService dbs = ReactomeGraphCore.getService(DatabaseObjectService.class);
-        System.out.println(gs.getDBInfo().getName() + ": " + gs.getDBInfo().getVersion());
+        GeneralService generalService = ReactomeGraphCore.getService(GeneralService.class);
+        SpeciesService speciesService = ReactomeGraphCore.getService(SpeciesService.class);
+        SchemaService schemaService = ReactomeGraphCore.getService(SchemaService.class);
+        long start = System.currentTimeMillis();
+        for (Species species : speciesService.getSpecies()) {
+            Collection<Pathway> pathways = schemaService.getByClass(Pathway.class, species);
+            int total = pathways.size();
+            int i = 0;
+            ProgressBar progressBar = new ProgressBar(species.getDisplayName(), total);
+            for (Pathway pathway : pathways) {
+                progressBar.update(pathway.getStId(), i++);
+                SbmlConverter c = new SbmlConverter(pathway);
+                c.convert();
+                if (i % 10 == 0) generalService.clearCache();
+            }
+            progressBar.done();
+        }
+        System.out.println("Finished in " + getTimeFormatted(System.currentTimeMillis() - start));
+    }
 
-        //Warm-up
-        Pathway p = dbs.findById("R-HSA-5205647");
-        SbmlConverter c = new SbmlConverter(p);
-        c.convert();
-
-        Pathway pathway = dbs.findById("R-HSA-5653890");
-        Long start = System.currentTimeMillis();
-        SbmlConverter converter = new SbmlConverter(pathway);
-        converter.convert();
-        Long time = System.currentTimeMillis() - start;
-
-        System.out.println(time);
-
-        System.out.println(converter.toString());
+    private static String getTimeFormatted(Long millis) {
+        return String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis),
+                TimeUnit.MILLISECONDS.toMinutes(millis) % TimeUnit.HOURS.toMinutes(1),
+                TimeUnit.MILLISECONDS.toSeconds(millis) % TimeUnit.MINUTES.toSeconds(1));
     }
 }
