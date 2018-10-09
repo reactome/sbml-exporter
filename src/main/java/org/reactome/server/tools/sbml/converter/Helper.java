@@ -1,12 +1,11 @@
-package org.reactome.server.tools.sbml.factory;
+package org.reactome.server.tools.sbml.converter;
 
-import jodd.util.StringUtil;
 import org.reactome.server.graph.domain.model.*;
 import org.reactome.server.graph.domain.model.Event;
 import org.reactome.server.graph.service.GeneralService;
 import org.reactome.server.graph.utils.ReactomeGraphCore;
-import org.reactome.server.tools.sbml.fetcher.model.Participant;
-import org.reactome.server.tools.sbml.fetcher.model.ReactionBase;
+import org.reactome.server.tools.sbml.data.model.ParticipantDetails;
+import org.reactome.server.tools.sbml.data.model.ReactionBase;
 import org.sbml.jsbml.*;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
@@ -37,14 +36,15 @@ class Helper {
     private static String openNotes = "<notes><p xmlns=\"http://www.w3.org/1999/xhtml\">";
     private static String closeNotes = "</p></notes>";
 
-    static void addAnnotations(Species s, Participant participant) {
+    static void addAnnotations(Species s, ParticipantDetails participant) {
         PhysicalEntity pe = participant.getPhysicalEntity();
 
         Helper.addNotes(s, participant.getExplanation());
 
-        List<String> summations = pe.getSummation().stream()
+        List<String> summations = pe.getSummation()
+                .stream()
+                .filter(su -> su.getText() != null)
                 .map(Summation::getText)
-                .peek(Helper::removeTags)
                 .collect(Collectors.toList());
         Helper.addNotes(s, summations);
 
@@ -67,7 +67,7 @@ class Helper {
 
                 List<String> psis = ewas.getHasModifiedResidue()
                         .stream()
-                        .filter(r -> r instanceof TranslationalModification && ((TranslationalModification) r).getPsiMod()!=null)
+                        .filter(r -> r instanceof TranslationalModification && ((TranslationalModification) r).getPsiMod() != null)
                         .map(r -> ((TranslationalModification) r).getPsiMod().getUrl())
                         .collect(Collectors.toList());
                 Helper.addCVTerm(s, CVTerm.Qualifier.BQB_HAS_VERSION, psis);
@@ -123,9 +123,10 @@ class Helper {
         Annotation annotation = new Annotation();
         annotation.setHistory(history);
 
-        List<String> summations = event.getSummation().stream()
+        List<String> summations = event.getSummation()
+                .stream()
+                .filter(s -> s.getText() != null)
                 .map(Summation::getText)
-                .peek(Helper::removeTags)
                 .collect(Collectors.toList());
         Helper.addNotes(sBase, summations);
 
@@ -139,6 +140,7 @@ class Helper {
                 .stream()
                 .filter(s -> s instanceof LiteratureReference)
                 .map(p -> ((LiteratureReference) p).getUrl())
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         Helper.addCVTerm(annotation, CVTerm.Qualifier.BQB_IS_DESCRIBED_BY, litRefs);
 
@@ -150,15 +152,15 @@ class Helper {
     }
 
     static void addCVTerm(SBase sBase, CVTerm.Qualifier qualifier, String... uris) {
-        if(uris.length>0) {
+        if (uris.length > 0) {
             CVTerm term = new CVTerm(qualifier);
             Arrays.stream(uris).forEach(term::addResourceURI);
             sBase.addCVTerm(term);
         }
     }
 
-    static void addCVTerm(Annotation annotation, CVTerm.Qualifier qualifier, List<String> uris){
-        if(!uris.isEmpty()) {
+    static void addCVTerm(Annotation annotation, CVTerm.Qualifier qualifier, List<String> uris) {
+        if (!uris.isEmpty()) {
             CVTerm term = new CVTerm(qualifier);
             uris.forEach(term::addResourceURI);
             annotation.addCVTerm(term);
@@ -166,18 +168,21 @@ class Helper {
     }
 
     static void addNotes(SBase sBase, List<String> content) {
-        if (content != null) addNotes(sBase, content.toArray(new String[content.size()]));
+        if (content != null) addNotes(sBase, content.toArray(new String[0]));
     }
 
     static void addNotes(SBase sBase, String... content) {
         if (content != null && content.length > 0) {
-            String notes = openNotes + StringUtil.join(content, System.lineSeparator()) + closeNotes;
-            XMLNode node;
+            String notes = Arrays.stream(content)
+                    .filter(Objects::nonNull)
+                    .map(Helper::removeTags)
+                    .collect(Collectors.joining(System.lineSeparator(), openNotes, closeNotes));
             try {
-                node = XMLNode.convertStringToXMLNode(notes);
+                XMLNode node = XMLNode.convertStringToXMLNode(notes);
                 sBase.appendNotes(node);
             } catch (Exception e) {
-                //TODO: log this situation
+                System.out.println(notes);
+                e.printStackTrace(); //TODO: log this situation
             }
         }
     }
@@ -196,20 +201,18 @@ class Helper {
                         "</p>" +
                         "</annotation>",
                 version, dateFormat.format(date), getJSBMLDottedVersion());
-        XMLNode node;
+
         try {
-            node = XMLNode.convertStringToXMLNode(jsbml);
+            XMLNode node = XMLNode.convertStringToXMLNode(jsbml);
             sBase.appendNotes(node);
         } catch (Exception e) {
-            //TODO: log this situation
+            e.printStackTrace(); //TODO: log this situation
         }
     }
 
     static void addSBOTerm(SBase sBase, Integer term) {
         if (term >= 0 && term <= 9999999) {
             sBase.setSBOTerm(term);
-        } else {
-            //TODO: log
         }
     }
 
@@ -223,7 +226,7 @@ class Helper {
         Creator creator = new Creator();
         creator.setFamilyName(person.getSurname() == null ? "" : person.getSurname());
         creator.setGivenName(person.getFirstname() == null ? "" : person.getFirstname());
-        person.getAffiliation().forEach(a -> creator.setOrganisation(a.getName().get(a.getName().size()-1)));
+        person.getAffiliation().forEach(a -> creator.setOrganisation(a.getName().get(a.getName().size() - 1)));
         history.addCreator(creator);
     }
 
@@ -238,11 +241,12 @@ class Helper {
         // if we have an xhtml tags in the text it messes up parsing copied from old reactome code with some additions
         return notes.replaceAll("<->", " to ")
                 .replaceAll("\\p{Cntrl}+", " ")
-                .replaceAll("</*[a-zA-Z][^>]*>", " ")
+                .replaceAll("&+", " and ")
                 .replaceAll("<>", " interconverts to ")
-                .replaceAll("<", " ")
                 .replaceAll("\n+", "  ")
-                .replaceAll("&+", "  ");
+                //.replaceAll("</*[a-zA-Z][^>]*>", " ")
+                .replaceAll("\\<.*?\\>", "")
+                .replaceAll("<", " ");
     }
 
     /**
@@ -254,12 +258,10 @@ class Helper {
      */
     static Date formatDate(String datetime) {
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH);
-        Date date;
         try {
-            date = format.parse(datetime);
+            return format.parse(datetime);
         } catch (ParseException e) {
-            date = null;
+            return null;
         }
-        return date;
     }
 }
