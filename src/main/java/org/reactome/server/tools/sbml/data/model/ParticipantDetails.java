@@ -1,6 +1,7 @@
 package org.reactome.server.tools.sbml.data.model;
 
 import org.reactome.server.graph.domain.model.*;
+import org.reactome.server.tools.sbml.converter.SbmlConverter;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,25 +21,38 @@ public class ParticipantDetails {
     }
 
 
-
     public List<String> getUrls() {
         return urls;
     }
 
-    private String getAccessions(){
-//        Map<String, List<String>> map = ids.stream().collect(Collectors.groupingBy(s -> s));
-//        List<String> ids = map.keySet().stream().map(id -> map.get(id).size() + "x" + id).collect(Collectors.toList());
-        return ids.stream().map(IdentifierBase::toString).collect(Collectors.joining(", ", "(", ")"));
+    private String getAccessions() {
+        return ids.stream()
+                .map(IdentifierBase::toString)
+                .collect(Collectors.joining(", ", "(", ")"));
     }
 
+    private static final String PREFIX = "Derived from a Reactome ";
+
     public String getExplanation() {
-        if (pe instanceof SimpleEntity) return "This is a small compound";
-        if (pe instanceof EntityWithAccessionedSequence) return "This is a protein";
-        if (pe instanceof CandidateSet) return "A list of entities, one or more of which might perform the given function";
-        if (pe instanceof DefinedSet)  return "This is a list of alternative entities, any of which can perform the given function";
-        if (pe instanceof OpenSet) return "A set of examples characterizing a very large but not explicitly enumerated set, e.g. mRNAs";
-        if (pe instanceof Drug) return "A drug";
-        if (pe instanceof Complex) return "Here is Reactomes nested structure for this complex: " + getAccessions();
-        return pe.getExplanation();
+        String prefix = PREFIX + pe.getSchemaClass() + ". ";
+
+        if (pe instanceof SimpleEntity)
+            return prefix + "This is a small compound";
+        if (pe instanceof EntityWithAccessionedSequence)
+            return prefix + "This is a protein";
+        if (pe instanceof CandidateSet)
+            return prefix + "A list of entities, one or more of which might perform the given function";
+        if (pe instanceof DefinedSet)
+            return prefix + "This is a list of alternative entities, any of which can perform the given function";
+        if (pe instanceof OpenSet)
+            return prefix + "A set of examples characterizing a very large but not explicitly enumerated set, e.g. mRNAs";
+        if (pe instanceof Drug)
+            return prefix + "A drug";
+        if (pe instanceof Complex)
+            return prefix + "Here is Reactomes nested structure for this complex: " + getAccessions() + ". " +
+                    "Reactome uses a nested structure for complexes, which cannot be fully represented " +
+                    "in SBML Level " + SbmlConverter.SBML_LEVEL + " Version " + SbmlConverter.SBML_VERSION + " core";
+
+        return prefix + pe.getExplanation();
     }
 }
