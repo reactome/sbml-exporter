@@ -2,6 +2,7 @@ package org.reactome.server.tools.sbml;
 
 import com.martiansoftware.jsap.*;
 import org.apache.commons.lang3.ArrayUtils;
+import org.reactome.server.graph.domain.model.Event;
 import org.reactome.server.graph.domain.model.Pathway;
 import org.reactome.server.graph.domain.model.Species;
 import org.reactome.server.graph.service.DatabaseObjectService;
@@ -77,12 +78,12 @@ public class Main {
     }
 
     private static void convertPathways(String[] identifiers, String output) {
-        System.out.println("Converting " + identifiers.length + " pathways");
+        System.out.println(String.format("Converting %d event%s", identifiers.length, identifiers.length > 1 ? "s" : ""));
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
         for (String identifier : identifiers) {
             try {
-                Pathway p = databaseObjectService.findById(identifier);
-                System.out.println("\t" + p.getDisplayName());
+                Event p = databaseObjectService.findById(identifier);
+                System.out.println(String.format("\t>%s: %s", p.getStId(), p.getDisplayName()));
                 SbmlConverter c = new SbmlConverter(p);
                 c.convert();
                 c.writeToFile(output);
@@ -92,7 +93,6 @@ public class Main {
                 e.printStackTrace();
             }
         }
-
     }
 
     private static void convertSpecies(Species species, String output) {
