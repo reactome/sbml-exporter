@@ -14,18 +14,19 @@ public class ProgressBar implements Runnable {
     private static final int width = 70;
 
     private Thread t;
-
     private Long start;
+    private Boolean verbose;
 
     private String species;
     private String current = "";
     private Integer done = 0;
     private Integer total;
 
-    public ProgressBar(String species, Integer total) {
+    public ProgressBar(String species, Integer total, Boolean verbose) {
         this.start = System.currentTimeMillis();
         this.species = species;
         this.total = total;
+        this.verbose = verbose;
     }
 
     /**
@@ -35,6 +36,7 @@ public class ProgressBar implements Runnable {
      * @param done    number of entries added to the graph
      */
     public void update(String current, int done) {
+        if (!verbose) return;
         this.current = current;
         this.done = done;
 
