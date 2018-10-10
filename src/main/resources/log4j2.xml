@@ -19,12 +19,12 @@
     <Loggers>
         <Root level="info">
             <AppenderRef ref="file" level="error"/>
-            <!-- Uncomment the following to see the error logs in the console -->
             <!--<AppenderRef ref="Console" level="error"/>-->
         </Root>
 
         <Logger name="sbml-exporter" level="info">
             <AppenderRef ref="file" level="info"/>
+            <AppenderRef ref="Console" level="error"/>
         </Logger>
 
         <Logger name="org.neo4j" level="error">
