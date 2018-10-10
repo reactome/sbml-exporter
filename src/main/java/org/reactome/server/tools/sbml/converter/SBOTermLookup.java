@@ -46,7 +46,7 @@ abstract class SBOTermLookup {
         // FIX_Unknown_Physical_Entity
         // here we have encountered a physical entity type that did not exist in the graph database
         // when this code was written
-        // See Unknown_PhysicalEntity.md in SBMLExporter/dev directory for details
+        // See Unknown_PhysicalEntity.md in the main dev directory for details
         logger.error("SBOTermLookup::get >> Encountered unknown entity class '" + object.getSchemaClass() + "'");
         return term;
     }

@@ -7,7 +7,7 @@ The code adds notes/annotations and SBOTerms to instances of Physical Entities e
 
 When exporting a model the code will report that it has encountered a PhysicalEntity type it does not recognise.  It does not halt the export; it prints a message to and leaves out the reference/note/SBOTerm in the exported SBML file.The message displayed will read along the lines of
 
-    Function SBOTermLookup::getSpeciesTerm Encountered unknown PhysicalEntity R-HSA-199306
+    Function SBOTermLookup::get Encountered unknown PhysicalEntity R-HSA-199306
 
 ## Adding a new Physical Entity
 
@@ -16,12 +16,6 @@ If other Physical Entities are introduced these will need to be dealt with in co
             // FIX_Unknown_Physical_Entity
             // here we have encountered a physical entity type that did not exist in the graph database
             // when this code was written (April 2018)
-
-This occurs in the following functions:
-
-- CVTermBuilder::createPhysicalEntityAnnotations
-- NotesBuilder::createSpeciesNotes
-- SBOTermLookup::getSpeciesTerm
 
 The fix will depend on function but should involve adding a clause to deal with the new PhysicalEntity class in a similar fashion to the entities already in place.
 

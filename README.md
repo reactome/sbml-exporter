@@ -1,8 +1,8 @@
 [<img src=https://user-images.githubusercontent.com/6883670/31999264-976dfb86-b98a-11e7-9432-0316345a72ea.png height=75 />](https://reactome.org)
 
-## SBMLExporter
+## SBML Exporter
 
-Code to create an [SBML](http://sbml.org "SBML") file from a pathway drawn from the [Reactome](http://www.reactome.org/ "Reactome") Graph Database. 
+Code to create an [SBML](http://sbml.org "SBML") file from a pathway drawn from the [Reactome](https://reactome.org/ "Reactome") Graph Database. 
 
 ## Usage
 
@@ -17,44 +17,9 @@ The following arguments are required
  -b "port"      The neo4j port
  -u "user"      The neoj4 username
  -p "password"  The neo4j password
- -o "outdir"    The directory where output files will be written
+ -o "output"    The directory where output files will be written
+ -t "target"    Target events to convert. Use either (1) comma separated event identifiers, (2) a given species (e.g. 'Homo sapiens') or  (3)'all' to export every pathway"
 ```
-
-Zero or one of the following "pathway" arguments are also expected to identify which Pathway(s) are to be exported
-
-```console
- -t "toplevelpath"    A single integer argument that is the databaseIdentifier for a Pathway
- -i "standardId"      The string representing the stable identifier for a Pathway
- -s "species"         A single integer argument that is the databaseIdentifier for a Species
- -m "multiple"        A comma-separated list of integers that are the databaseIdentifiers of several Pathways
- -l "listevents"      A comma-separated list of integers that are the databaseIdentifiers of several Events
-```
-
-### Output depending on "pathway" argument
-
-- no specific pathway argument
-
-The output when no specific path way argument is specified will be a large number of SBML files (thousands), each representing a Pathway in the ReactomeDB. These will be names "nnnn.xml", where nnnn is the databseIdentifier for the pathway described by the file.
-
-- ```-t dbid```
-
-The output for the argument -t will be a single SBML file named "stid.xml" (where stid is the stable identifier for dbid) written into the directory specified with the -o option.
-
-- ```-i stid```
-
-The output for the argument -i will be a single SBML file named "stid.xml" written into the directory specified with the -o option.
-
-- ```-s dbid```
-
-The output for the argument -s will be many SBML files, each representing a Pathway for the given Species. These will be names "R-XYZ-nnnn.xml", where R-XYZ-nnnn is the stable Identifier for the pathway described by the file.
-
-- ```-m dbid1,dbid2,dbid3```
-
-The output for the argument -m will be several SBML files, each representing the Pathway specified by the databaseIdentifier. Each file will be named stid1.xml etc. Note, should any of the values given not represent a Reactome Pathway this identifier will be ignored.
-
-- ```-l dbid1,dbid2,dbid3```
-
-The output for the argument -l will be a single SBML files representing an SBML model containing each of the Reactome Events for which a databaseIdentifier was listed. If a common parent Pathway can be detected for the Events the file will be called "pathway_nnnn.xml" where nnnn is the databaseIdentifier of the parent pathway. If no such parent can be detected the file will be called "no_parent_pathway.xml". Note, if any of the databseIdentifiers listed does not correspond to a Reactome Event, then no file will be output.
 
 ## SBML
 
