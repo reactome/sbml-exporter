@@ -33,8 +33,8 @@ class Helper {
     /**
      * Open and closing tags for notes elements
      */
-    private static String openNotes = "<notes><p xmlns=\"http://www.w3.org/1999/xhtml\">";
-    private static String closeNotes = "</p></notes>";
+    private static String OPEN_NOTES = "<notes><p xmlns=\"http://www.w3.org/1999/xhtml\">";
+    private static String CLOSE_NOTES = "</p></notes>";
 
     static void addAnnotations(Species s, ParticipantDetails participant) {
         PhysicalEntity pe = participant.getPhysicalEntity();
@@ -97,6 +97,9 @@ class Helper {
     }
 
     static void addAnnotations(SBase sBase, Event event) {
+        //When converting an orphan reaction, this event is null and no annotations have to be added
+        if(event == null) return;
+
         History history = new History();
         InstanceEdit created = event.getCreated();
         if (created != null) {
@@ -176,7 +179,7 @@ class Helper {
             String notes = Arrays.stream(content)
                     .filter(Objects::nonNull)
                     .map(Helper::removeTags)
-                    .collect(Collectors.joining(System.lineSeparator(), openNotes, closeNotes));
+                    .collect(Collectors.joining(System.lineSeparator(), OPEN_NOTES, CLOSE_NOTES));
             try {
                 XMLNode node = XMLNode.convertStringToXMLNode(notes);
                 sBase.appendNotes(node);

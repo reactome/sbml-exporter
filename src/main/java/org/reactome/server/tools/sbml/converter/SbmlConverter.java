@@ -1,5 +1,6 @@
 package org.reactome.server.tools.sbml.converter;
 
+import org.reactome.server.graph.domain.model.Event;
 import org.reactome.server.graph.domain.model.*;
 import org.reactome.server.tools.sbml.data.DataFactory;
 import org.reactome.server.tools.sbml.data.model.Participant;
@@ -27,8 +28,8 @@ import java.util.Set;
 public class SbmlConverter {
 
     // SBMLinformation variables. To be changed when targeting a different sbml level and version
-    private static final short SBML_LEVEL = 3;
-    private static final short SBML_VERSION = 1;
+    public static final short SBML_LEVEL = 3;
+    public static final short SBML_VERSION = 1;
 
     // Prefixes used in the identifiers of the different SBML sections
     private static final String META_ID_PREFIX = "metaid_";
@@ -38,13 +39,21 @@ public class SbmlConverter {
     private static final String COMPARTMENT_PREFIX = "compartment_";
 
     private Pathway pathway;
+    private String targetStId;
+
     private SBMLDocument sbmlDocument = null;
 
     private long metaid_count = 0L;
     private Set<String> existingObjects = new HashSet<>();
 
-    public SbmlConverter(Pathway pathway) {
-        this.pathway = pathway;
+    public SbmlConverter(Event event) {
+        this.targetStId = event.getStId();
+        if (event instanceof Pathway) {
+            this.pathway = (Pathway) event;
+        } else {
+            List<Pathway> parents = event.getEventOf();
+            this.pathway = parents.isEmpty() ? null : parents.get(0); //Only one can be chosen... so let's take the first one
+        }
     }
 
     public SBMLDocument convert() {
@@ -52,17 +61,25 @@ public class SbmlConverter {
 
         sbmlDocument = new SBMLDocument(SBML_LEVEL, SBML_VERSION);
 
-        String modelId = PATHWAY_PREFIX + pathway.getDbId();
+        String modelId, pathwayName;
+        if (pathway != null) {
+            modelId = PATHWAY_PREFIX + pathway.getDbId();
+            pathwayName = pathway.getDisplayName();
+        } else {
+            modelId = "No parent pathway detected";
+            pathwayName = "no_parent_pathway";
+        }
+
         Model model = sbmlDocument.createModel(modelId);
-        model.setName(pathway.getDisplayName());
+        model.setName(pathwayName);
         model.setMetaId(META_ID_PREFIX + metaid_count++);
         Helper.addProvenanceAnnotation(sbmlDocument);
         Helper.addAnnotations(model, pathway);
 
-        Collection<ParticipantDetails> participants = DataFactory.getParticipantDetails(pathway.getStId());
+        Collection<ParticipantDetails> participants = DataFactory.getParticipantDetails(targetStId);
         participants.forEach(p -> addParticipant(model, p));
 
-        for (ReactionBase rxn : DataFactory.getReactionList(pathway.getStId())) {
+        for (ReactionBase rxn : DataFactory.getReactionList(targetStId)) {
             String id = REACTION_PREFIX + rxn.getDbId();
             Reaction rn = model.createReaction(id);
             rn.setMetaId(META_ID_PREFIX + metaid_count++);
@@ -70,16 +87,7 @@ public class SbmlConverter {
             rn.setReversible(false);
             rn.setName(rxn.getDisplayName());
 
-            org.reactome.server.graph.domain.model.Compartment compartment;
-            // TODO: what if there is more than one compartment listed
-            ReactionLikeEvent re = rxn.getReactionLikeEvent();
-            if (re.getCompartment() != null && re.getCompartment().size() > 0) {
-                compartment = re.getCompartment().get(0);
-                addCompartment(rn, compartment);
-            } else {
-                //TODO: Log this situation!
-                //log.warn("Encountered a Physical Entity with no compartment: " + pe.getStId());
-            }
+            addCompartment(rn, rxn.getReactionLikeEvent().getCompartment());
 
             addInputs(rxn.getDbId(), rn, rxn.getInputs());
             addOutputs(rxn.getDbId(), rn, rxn.getOutpus());
@@ -96,7 +104,7 @@ public class SbmlConverter {
 
     public void writeToFile(String output){
         if(sbmlDocument == null) throw new RuntimeException("Please call the convert method before writing to file");
-        Utils.writeSBML(output, pathway.getStId(), sbmlDocument);
+        Utils.writeSBML(output, targetStId, sbmlDocument);
     }
 
     private void addInputs(Long reactionDbId, Reaction rn, List<Participant> participants) {
@@ -175,17 +183,20 @@ public class SbmlConverter {
             Helper.addSBOTerm(s, SBOTermLookup.get(pe));
             Helper.addAnnotations(s, participant);
 
-            org.reactome.server.graph.domain.model.Compartment compartment;
-            // TODO: what if there is more than one compartment listed
-            if (pe.getCompartment() != null && pe.getCompartment().size() > 0) {
-                compartment = pe.getCompartment().get(0);
-                addCompartment(s, compartment);
-            } else {
-                //TODO: Log this situation!
-                //log.warn("Encountered a Physical Entity with no compartment: " + pe.getStId());
-            }
+            addCompartment(s, pe.getCompartment());
 
             existingObjects.add(speciesId);
+        }
+    }
+
+    private void addCompartment(CompartmentalizedSBase s, List<org.reactome.server.graph.domain.model.Compartment> compartments) {
+        //TODO: what if there is more than one compartment listed
+        if (compartments.size() > 0) {
+            org.reactome.server.graph.domain.model.Compartment compartment = compartments.get(0);
+            addCompartment(s, compartment);
+        } else {
+            //TODO: Log this situation!
+            //log.warn("Encountered a Physical Entity with no compartment: " + pe.getStId());
         }
     }
 
@@ -198,21 +209,11 @@ public class SbmlConverter {
             c.setConstant(true);
             Helper.addSBOTerm(c, SBOTermLookup.get(compartment));
 
-            /* TODO: MISSING
-            if (addAnnotations){
-                 String refId = (thisPathway != null) ? thisPathway.getStId() : "listOfEvents";
-                 CVTermBuilder cvterms = new CVTermBuilder(c, refId);
-                 cvterms.createCompartmentAnnotations(comp);
-             }
-             */
             Helper.addCVTerm(c, CVTerm.Qualifier.BQB_IS, compartment.getUrl());
-
             existingObjects.add(comp_id);
         }
         s.setCompartment(comp_id);
     }
-
-
 
     /**
      * Write the SBMLDocument to a String.
