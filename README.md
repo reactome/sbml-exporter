@@ -46,8 +46,8 @@ Note: You must have [Reactome Graph Database](http://www.reactome.org/dev/graph-
 1. Cloning and packaging the project
 
 ```console
-git clone https://github.com/reactome/SBMLExporter.git
-cd SBMLExporter
+git clone https://github.com/reactome/sbml-exporter.git
+cd sbml-exporter
 mvn clean package
 ```
 
@@ -55,16 +55,16 @@ mvn clean package
 
 ```console
 mkdir outputdir
-java -jar target/sbml-exporter-jar-with-dependencies.jar -h localhost -b 7474 -u user -p not4share -output outputdir
+java -jar target/sbml-exporter-jar-with-dependencies.jar -h localhost -b 7474 -u user -p not4share -o outputdir
 ```
 
 3. Compress Homo Sapiens file for the Download Page 
 
 ```console
 cd outputdir
-tar -cvf homo_sapiens.3.1.sbml.tgz R-HSA*
+tar -cvf homo_sapiens.3.1.sbml.tgz R-HSA-*
+tar -czvf all_species.3.1.sbml.tgz *
 ```
 
 4. Distribute the files
-  - Copy homo_sapiens.3.1.sbml.tgz to download/current
-  - Copy ALL xml files to exporter folder.
+  - Copy homo_sapiens.3.1.sbml.tgz and all_species.3.1.sbml.tgz to download/current
