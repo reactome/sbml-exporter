@@ -2,13 +2,11 @@ package org.reactome.server.tools.sbml;
 
 import com.martiansoftware.jsap.*;
 import org.apache.commons.lang3.ArrayUtils;
+import org.reactome.server.graph.domain.model.DBInfo;
 import org.reactome.server.graph.domain.model.Event;
 import org.reactome.server.graph.domain.model.Pathway;
 import org.reactome.server.graph.domain.model.Species;
-import org.reactome.server.graph.service.DatabaseObjectService;
-import org.reactome.server.graph.service.GeneralService;
-import org.reactome.server.graph.service.SchemaService;
-import org.reactome.server.graph.service.SpeciesService;
+import org.reactome.server.graph.service.*;
 import org.reactome.server.graph.service.util.DatabaseObjectUtils;
 import org.reactome.server.graph.utils.ReactomeGraphCore;
 import org.reactome.server.tools.sbml.config.GraphNeo4jConfig;
@@ -62,21 +60,23 @@ public class Main {
         //Check if target pathways are specified
         String[] target = config.getStringArray("target");
 
+        DBInfo dbInfo = ReactomeGraphCore.getService(GeneralService.class).getDBInfo();
+
         long start = System.currentTimeMillis();
         if (target.length > 1) {
-            convertPathways(ArrayUtils.toArray(target), output);
+            convertPathways(ArrayUtils.toArray(target), dbInfo.getVersion(), output);
         } else {
             String aux = target[0];
             if (DatabaseObjectUtils.isStId(aux) || DatabaseObjectUtils.isDbId(aux)) {
-                convertPathways(target, output);
+                convertPathways(target, dbInfo.getVersion(), output);
             } else {
                 SpeciesService speciesService = ReactomeGraphCore.getService(SpeciesService.class);
                 if (aux.toLowerCase().equals("all")) {
-                    convertSpeciesList(speciesService.getSpecies(), output);
+                    convertSpeciesList(speciesService.getSpecies(), dbInfo.getVersion(), output);
                 } else {
                     Species species = speciesService.getSpecies(aux);
                     if (species != null) {
-                        convertSpecies(species, output);
+                        convertSpecies(species, dbInfo.getVersion(), output);
                     } else {
                         error(aux + " cannot be converted. Reason: This identifier does not belong to a Pathway or a Species");
                     }
@@ -86,14 +86,14 @@ public class Main {
         info(String.format("Finished in %s", Utils.getTimeFormatted(System.currentTimeMillis() - start)));
     }
 
-    private static void convertPathways(String[] identifiers, String output) {
+    private static void convertPathways(String[] identifiers, Integer version, String output) {
         info(String.format("Converting %d event%s", identifiers.length, identifiers.length > 1 ? "s" : ""));
-        DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
+        DatabaseObjectService dbs = ReactomeGraphCore.getService(DatabaseObjectService.class);
         for (String identifier : identifiers) {
             try {
-                Event p = databaseObjectService.findById(identifier);
+                Event p = dbs.findById(identifier);
                 info(String.format("\t>%s: %s", p.getStId(), p.getDisplayName()));
-                SbmlConverter c = new SbmlConverter(p);
+                SbmlConverter c = new SbmlConverter(p, version, ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class));
                 c.convert();
                 c.writeToFile(output);
             } catch (ClassCastException e) {
@@ -102,15 +102,14 @@ public class Main {
         }
     }
 
-    private static void convertSpecies(Species species, String output) {
+    private static void convertSpecies(Species species, Integer version, String output) {
         List<Species> speciesList = new ArrayList<>();
         speciesList.add(species);
-        convertSpeciesList(speciesList, output);
+        convertSpeciesList(speciesList, version, output);
     }
 
-    private static void convertSpeciesList(List<Species> speciesList, String output) {
+    private static void convertSpeciesList(List<Species> speciesList, Integer version, String output) {
         info(String.format("Converting %d species", speciesList.size()));
-        GeneralService generalService = ReactomeGraphCore.getService(GeneralService.class);
         SchemaService schemaService = ReactomeGraphCore.getService(SchemaService.class);
         for (Species species : speciesList) {
             Collection<Pathway> pathways = schemaService.getByClass(Pathway.class, species);
@@ -121,10 +120,10 @@ public class Main {
             try {
                 for (Pathway pathway : pathways) {
                     progressBar.update(pathway.getStId(), i++);
-                    SbmlConverter c = new SbmlConverter(pathway);
+                    SbmlConverter c = new SbmlConverter(pathway, version, ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class));
                     c.convert();
                     c.writeToFile(output);
-                    if (i % 10 == 0) generalService.clearCache();
+//                    if (i % 10 == 0) ReactomeGraphCore.getService(GeneralService.class).clearCache();
                 }
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);

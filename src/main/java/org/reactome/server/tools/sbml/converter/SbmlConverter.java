@@ -2,6 +2,7 @@ package org.reactome.server.tools.sbml.converter;
 
 import org.reactome.server.graph.domain.model.Event;
 import org.reactome.server.graph.domain.model.*;
+import org.reactome.server.graph.service.AdvancedDatabaseObjectService;
 import org.reactome.server.tools.sbml.data.DataFactory;
 import org.reactome.server.tools.sbml.data.model.Participant;
 import org.reactome.server.tools.sbml.data.model.ParticipantDetails;
@@ -42,6 +43,7 @@ public class SbmlConverter {
     private static final String SPECIES_PREFIX = "species_";
     private static final String COMPARTMENT_PREFIX = "compartment_";
 
+    private AdvancedDatabaseObjectService ads;
     private Pathway pathway;
     private String targetStId;
 
@@ -49,9 +51,12 @@ public class SbmlConverter {
 
     private long metaid_count = 0L;
     private Set<String> existingObjects = new HashSet<>();
+    private final Integer reactomeVersion;
 
-    public SbmlConverter(Event event) {
+    public SbmlConverter(Event event, Integer version, AdvancedDatabaseObjectService ads) {
         this.targetStId = event.getStId();
+        this.reactomeVersion = version;
+        this.ads = ads;
         if (event instanceof Pathway) {
             this.pathway = (Pathway) event;
         } else {
@@ -78,13 +83,13 @@ public class SbmlConverter {
         Model model = sbmlDocument.createModel(modelId);
         model.setName(pathwayName);
         model.setMetaId(META_ID_PREFIX + metaid_count++);
-        Helper.addProvenanceAnnotation(sbmlDocument);
+        Helper.addProvenanceAnnotation(sbmlDocument, reactomeVersion);
         Helper.addAnnotations(model, pathway);
 
-        Collection<ParticipantDetails> participants = DataFactory.getParticipantDetails(targetStId);
+        Collection<ParticipantDetails> participants = DataFactory.getParticipantDetails(targetStId, ads);
         participants.forEach(p -> addParticipant(model, p));
 
-        for (ReactionBase rxn : DataFactory.getReactionList(targetStId)) {
+        for (ReactionBase rxn : DataFactory.getReactionList(targetStId, ads)) {
             String id = REACTION_PREFIX + rxn.getDbId();
             Reaction rn = model.createReaction(id);
             rn.setMetaId(META_ID_PREFIX + metaid_count++);

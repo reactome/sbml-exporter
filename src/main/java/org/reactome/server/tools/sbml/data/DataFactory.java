@@ -2,7 +2,6 @@ package org.reactome.server.tools.sbml.data;
 
 import org.reactome.server.graph.exception.CustomQueryException;
 import org.reactome.server.graph.service.AdvancedDatabaseObjectService;
-import org.reactome.server.graph.utils.ReactomeGraphCore;
 import org.reactome.server.tools.sbml.data.model.ParticipantDetails;
 import org.reactome.server.tools.sbml.data.model.ReactionBase;
 import org.slf4j.Logger;
@@ -61,8 +60,7 @@ public abstract class DataFactory {
             "       COLLECT(DISTINCT {n: n, id: CASE re.variantIdentifier WHEN NULL THEN re.identifier ELSE re.variantIdentifier END}) AS ids, " +
             "       COLLECT(DISTINCT re.url) AS urls";
 
-    public static Collection<ReactionBase> getReactionList(String eventStId) {
-        AdvancedDatabaseObjectService ads = ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class);
+    public static Collection<ReactionBase> getReactionList(String eventStId, AdvancedDatabaseObjectService ads) {
         try {
             return ads.getCustomQueryResults(ReactionBase.class, REACTIONS_QUERY, Collections.singletonMap("stId", eventStId));
         } catch (CustomQueryException e) {
@@ -72,8 +70,7 @@ public abstract class DataFactory {
         }
     }
 
-    public static Collection<ParticipantDetails> getParticipantDetails(String eventStId){
-        AdvancedDatabaseObjectService ads = ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class);
+    public static Collection<ParticipantDetails> getParticipantDetails(String eventStId, AdvancedDatabaseObjectService ads){
         try {
             return ads.getCustomQueryResults(ParticipantDetails.class, PARTICIPANTS_QUERY, Collections.singletonMap("stId", eventStId));
         } catch (CustomQueryException e) {

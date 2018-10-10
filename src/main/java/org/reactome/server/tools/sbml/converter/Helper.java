@@ -2,8 +2,6 @@ package org.reactome.server.tools.sbml.converter;
 
 import org.reactome.server.graph.domain.model.*;
 import org.reactome.server.graph.domain.model.Event;
-import org.reactome.server.graph.service.GeneralService;
-import org.reactome.server.graph.utils.ReactomeGraphCore;
 import org.reactome.server.tools.sbml.data.model.ParticipantDetails;
 import org.reactome.server.tools.sbml.data.model.ReactionBase;
 import org.sbml.jsbml.*;
@@ -192,10 +190,9 @@ class Helper {
     /**
      * Adds information about the reactomeDB version and jsbml version
      */
-    static void addProvenanceAnnotation(SBase sBase) {
+    static void addProvenanceAnnotation(SBase sBase, Integer version) {
         Date date = new Date();
         DateFormat dateFormat = new SimpleDateFormat();
-        Integer version = ReactomeGraphCore.getService(GeneralService.class).getDBInfo().getVersion();
         String jsbml = String.format("" +
                         "<annotation>" +
                         "<p xmlns=\"http://www.w3.org/1999/xhtml\">" +
