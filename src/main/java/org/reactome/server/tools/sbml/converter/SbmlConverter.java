@@ -11,6 +11,8 @@ import org.sbml.jsbml.*;
 import org.sbml.jsbml.Compartment;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -26,6 +28,8 @@ import java.util.Set;
  * @author Sarah Keating (skeating@ebi.ac.uk)
  */
 public class SbmlConverter {
+
+    private static Logger logger = LoggerFactory.getLogger("sbml-exporter");
 
     // SBMLinformation variables. To be changed when targeting a different sbml level and version
     public static final short SBML_LEVEL = 3;
@@ -56,6 +60,7 @@ public class SbmlConverter {
         }
     }
 
+    @SuppressWarnings("UnusedReturnValue")
     public SBMLDocument convert() {
         if (sbmlDocument != null) return sbmlDocument;
 
@@ -83,11 +88,12 @@ public class SbmlConverter {
             String id = REACTION_PREFIX + rxn.getDbId();
             Reaction rn = model.createReaction(id);
             rn.setMetaId(META_ID_PREFIX + metaid_count++);
+            //noinspection deprecation
             rn.setFast(false);
             rn.setReversible(false);
             rn.setName(rxn.getDisplayName());
 
-            addCompartment(rn, rxn.getReactionLikeEvent().getCompartment());
+            addCompartment(rn, rxn.getCompartments());
 
             addInputs(rxn.getDbId(), rn, rxn.getInputs());
             addOutputs(rxn.getDbId(), rn, rxn.getOutpus());
@@ -102,21 +108,18 @@ public class SbmlConverter {
         return sbmlDocument;
     }
 
-    public void writeToFile(String output){
-        if(sbmlDocument == null) throw new RuntimeException("Please call the convert method before writing to file");
+    public void writeToFile(String output) {
+        if (sbmlDocument == null) throw new RuntimeException("Please call the convert method before writing to file");
         Utils.writeSBML(output, targetStId, sbmlDocument);
     }
 
     private void addInputs(Long reactionDbId, Reaction rn, List<Participant> participants) {
         for (Participant participant : participants) {
             String sr_id = Role.INPUT.getIdentifier(reactionDbId, participant.getPhysicalEntity());
-
-
             if (!existingObjects.contains(sr_id)) {
                 String speciesId = SPECIES_PREFIX + participant.getPhysicalEntity().getDbId();
 
                 SpeciesReference sr = rn.createReactant(sr_id, speciesId);
-
                 sr.setConstant(true);
                 Helper.addSBOTerm(sr, Role.INPUT.term);
                 sr.setStoichiometry(participant.getStoichiometry());
@@ -171,32 +174,27 @@ public class SbmlConverter {
     private void addParticipant(Model model, ParticipantDetails participant) {
         String speciesId = SPECIES_PREFIX + participant.getPhysicalEntity().getDbId();
 
-        if (!existingObjects.contains(speciesId)) {
-            PhysicalEntity pe = participant.getPhysicalEntity();
-            Species s = model.createSpecies(speciesId);
-            s.setMetaId(META_ID_PREFIX + metaid_count++);
-            s.setName(pe.getDisplayName());
-            // set other required fields for SBML L3
-            s.setBoundaryCondition(false);
-            s.setHasOnlySubstanceUnits(false);
-            s.setConstant(false);
-            Helper.addSBOTerm(s, SBOTermLookup.get(pe));
-            Helper.addAnnotations(s, participant);
+        PhysicalEntity pe = participant.getPhysicalEntity();
+        Species s = model.createSpecies(speciesId);
+        s.setMetaId(META_ID_PREFIX + metaid_count++);
+        s.setName(pe.getDisplayName());
+        // set other required fields for SBML L3
+        s.setBoundaryCondition(false);
+        s.setHasOnlySubstanceUnits(false);
+        s.setConstant(false);
+        Helper.addSBOTerm(s, SBOTermLookup.get(pe));
+        Helper.addAnnotations(s, participant);
 
-            addCompartment(s, pe.getCompartment());
-
-            existingObjects.add(speciesId);
-        }
+        addCompartment(s, pe.getCompartment());
     }
 
     private void addCompartment(CompartmentalizedSBase s, List<org.reactome.server.graph.domain.model.Compartment> compartments) {
-        //TODO: what if there is more than one compartment listed
         if (compartments.size() > 0) {
             org.reactome.server.graph.domain.model.Compartment compartment = compartments.get(0);
             addCompartment(s, compartment);
+//            if (compartments.size() > 1) logger.warn(String.format("More than one compartment found for '%s'. ONLY the first one has been added", s.getId()));
         } else {
-            //TODO: Log this situation!
-            //log.warn("Encountered a Physical Entity with no compartment: " + pe.getStId());
+            logger.warn(String.format("No compartment found for '%s'", s.getId()));
         }
     }
 

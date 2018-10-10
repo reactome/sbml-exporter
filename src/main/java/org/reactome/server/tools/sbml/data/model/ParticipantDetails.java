@@ -6,6 +6,7 @@ import org.reactome.server.tools.sbml.converter.SbmlConverter;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@SuppressWarnings({"unused", "MismatchedQueryAndUpdateOfCollection"})
 public class ParticipantDetails {
 
     private PhysicalEntity pe;

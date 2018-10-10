@@ -1,6 +1,8 @@
 package org.reactome.server.tools.sbml.converter;
 
 import org.reactome.server.graph.domain.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Keeps the conversion from Reactome DatabaseObjects to SBO terms
@@ -10,6 +12,8 @@ import org.reactome.server.graph.domain.model.*;
  * @author Sarah Keating (skeating@ebi.ac.uk)
  */
 abstract class SBOTermLookup {
+
+    private static Logger logger = LoggerFactory.getLogger("sbml-exporter");
 
     // http://www.ebi.ac.uk/sbo/main/SBO:0000240 material entity
     private final static int DEFAULT_SPECIES = 240;
@@ -43,7 +47,7 @@ abstract class SBOTermLookup {
         // here we have encountered a physical entity type that did not exist in the graph database
         // when this code was written
         // See Unknown_PhysicalEntity.md in SBMLExporter/dev directory for details
-        System.err.println("SBOTermLookup::get >> Encountered unknown entity class '" + object.getSchemaClass() + "'");
+        logger.error("SBOTermLookup::get >> Encountered unknown entity class '" + object.getSchemaClass() + "'");
         return term;
     }
 }

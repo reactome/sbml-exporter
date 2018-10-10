@@ -10,6 +10,8 @@ import org.sbml.jsbml.*;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.xml.XMLNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -28,13 +30,9 @@ import static org.sbml.jsbml.JSBML.getJSBMLDottedVersion;
  */
 class Helper {
 
-    private static final String REACTOME_URI = "https://reactome.org/content/detail/";
+    private static Logger logger = LoggerFactory.getLogger("sbml-exporter");
 
-    /**
-     * Open and closing tags for notes elements
-     */
-    private static String OPEN_NOTES = "<notes><p xmlns=\"http://www.w3.org/1999/xhtml\">";
-    private static String CLOSE_NOTES = "</p></notes>";
+    private static final String REACTOME_URI = "https://reactome.org/content/detail/";
 
     static void addAnnotations(Species s, ParticipantDetails participant) {
         PhysicalEntity pe = participant.getPhysicalEntity();
@@ -150,8 +148,8 @@ class Helper {
         sBase.setAnnotation(annotation);
     }
 
-    static void addCVTerm(SBase sBase, CVTerm.Qualifier qualifier, List<String> uris) {
-        addCVTerm(sBase, qualifier, uris.toArray(new String[uris.size()]));
+    private static void addCVTerm(SBase sBase, CVTerm.Qualifier qualifier, List<String> uris) {
+        addCVTerm(sBase, qualifier, uris.toArray(new String[0]));
     }
 
     static void addCVTerm(SBase sBase, CVTerm.Qualifier qualifier, String... uris) {
@@ -162,7 +160,7 @@ class Helper {
         }
     }
 
-    static void addCVTerm(Annotation annotation, CVTerm.Qualifier qualifier, List<String> uris) {
+    private static void addCVTerm(Annotation annotation, CVTerm.Qualifier qualifier, List<String> uris) {
         if (!uris.isEmpty()) {
             CVTerm term = new CVTerm(qualifier);
             uris.forEach(term::addResourceURI);
@@ -170,7 +168,7 @@ class Helper {
         }
     }
 
-    static void addNotes(SBase sBase, List<String> content) {
+    private static void addNotes(SBase sBase, List<String> content) {
         if (content != null) addNotes(sBase, content.toArray(new String[0]));
     }
 
@@ -179,13 +177,14 @@ class Helper {
             String notes = Arrays.stream(content)
                     .filter(Objects::nonNull)
                     .map(Helper::removeTags)
-                    .collect(Collectors.joining(System.lineSeparator(), OPEN_NOTES, CLOSE_NOTES));
+                    .collect(Collectors.joining(System.lineSeparator(),
+                            "<notes><p xmlns=\"http://www.w3.org/1999/xhtml\">",
+                            "</p></notes>"));
             try {
                 XMLNode node = XMLNode.convertStringToXMLNode(notes);
                 sBase.appendNotes(node);
             } catch (Exception e) {
-                System.out.println(notes);
-                e.printStackTrace(); //TODO: log this situation
+                logger.error(String.format("An error occurred while generating notes for '%s'", sBase.getId()), e);
             }
         }
     }
@@ -209,7 +208,7 @@ class Helper {
             XMLNode node = XMLNode.convertStringToXMLNode(jsbml);
             sBase.appendNotes(node);
         } catch (Exception e) {
-            e.printStackTrace(); //TODO: log this situation
+            logger.error(String.format("An error occurred while generating the provenance annotation for '%s'", sBase.getId()), e);
         }
     }
 
@@ -219,13 +218,7 @@ class Helper {
         }
     }
 
-    /**
-     * Creates an SBML Creator object from the information from ReactomeDB.
-     *
-     * @param person Person from ReactomeDB
-     * @return Creator object for JSBML
-     */
-    static void addCreator(History history, Person person) {
+    private static void addCreator(History history, Person person) {
         Creator creator = new Creator();
         creator.setFamilyName(person.getSurname() == null ? "" : person.getSurname());
         creator.setGivenName(person.getFirstname() == null ? "" : person.getFirstname());
@@ -233,14 +226,13 @@ class Helper {
         history.addCreator(creator);
     }
 
-
     /**
      * Remove any html tags from the text.
      *
      * @param notes String to be adjusted.
      * @return String with any <></> removed.
      */
-    static String removeTags(String notes) {
+    private static String removeTags(String notes) {
         // if we have an xhtml tags in the text it messes up parsing copied from old reactome code with some additions
         return notes.replaceAll("<->", " to ")
                 .replaceAll("\\p{Cntrl}+", " ")
@@ -248,7 +240,7 @@ class Helper {
                 .replaceAll("<>", " interconverts to ")
                 .replaceAll("\n+", "  ")
                 //.replaceAll("</*[a-zA-Z][^>]*>", " ")
-                .replaceAll("\\<.*?\\>", "")
+                .replaceAll("<.*?>", "")
                 .replaceAll("<", " ");
     }
 
@@ -259,7 +251,7 @@ class Helper {
      * @return Date object created from the String or null if this
      * cannot be parsed.
      */
-    static Date formatDate(String datetime) {
+    private static Date formatDate(String datetime) {
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH);
         try {
             return format.parse(datetime);

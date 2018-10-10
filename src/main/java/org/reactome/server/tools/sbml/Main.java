@@ -15,6 +15,8 @@ import org.reactome.server.tools.sbml.config.GraphNeo4jConfig;
 import org.reactome.server.tools.sbml.converter.SbmlConverter;
 import org.reactome.server.tools.sbml.util.ProgressBar;
 import org.reactome.server.tools.sbml.util.Utils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,6 +30,10 @@ import java.util.List;
  */
 public class Main {
 
+    private static Logger logger = LoggerFactory.getLogger("sbml-exporter");
+
+    private static Boolean verbose = false;
+
     public static void main(String[] args) throws JSAPException {
 
         SimpleJSAP jsap = new SimpleJSAP(Main.class.getName(), "A tool for generating SBML files",
@@ -37,12 +43,15 @@ public class Main {
                         new FlaggedOption("user", JSAP.STRING_PARSER, "neo4j", JSAP.REQUIRED, 'u', "user", "The neo4j user"),
                         new FlaggedOption("password", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'p', "password", "The neo4j password"),
                         new FlaggedOption("output", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'o', "output", "The output directory"),
-                        new QualifiedSwitch("target", JSAP.STRING_PARSER, "ALL", JSAP.NOT_REQUIRED, 't', "target", "Target pathways to convert. Use either comma separated IDs, pathways for a given species (e.g. 'Homo sapiens') or 'all' for every pathway").setList(true).setListSeparator(',')
+                        new QualifiedSwitch("target", JSAP.STRING_PARSER, "ALL", JSAP.NOT_REQUIRED, 't', "target", "Target pathways to convert. Use either comma separated IDs, pathways for a given species (e.g. 'Homo sapiens') or 'all' for every pathway").setList(true).setListSeparator(','),
+                        new QualifiedSwitch("verbose", JSAP.BOOLEAN_PARSER, null, JSAP.NOT_REQUIRED, 'v', "verbose", "Requests verbose output.")
                 }
         );
 
         JSAPResult config = jsap.parse(args);
         if (jsap.messagePrinted()) System.exit(1);
+
+        verbose = config.getBoolean("verbose");
 
         String output = config.getString("output");
         Utils.outputCheck(output);
@@ -69,28 +78,26 @@ public class Main {
                     if (species != null) {
                         convertSpecies(species, output);
                     } else {
-                        System.err.println(aux + " cannot be converted. Reason: This identifier does not belong to a Pathway or a Species");
+                        error(aux + " cannot be converted. Reason: This identifier does not belong to a Pathway or a Species");
                     }
                 }
             }
         }
-        System.out.println("Finished in " + Utils.getTimeFormatted(System.currentTimeMillis() - start));
+        info(String.format("Finished in %s", Utils.getTimeFormatted(System.currentTimeMillis() - start)));
     }
 
     private static void convertPathways(String[] identifiers, String output) {
-        System.out.println(String.format("Converting %d event%s", identifiers.length, identifiers.length > 1 ? "s" : ""));
+        info(String.format("Converting %d event%s", identifiers.length, identifiers.length > 1 ? "s" : ""));
         DatabaseObjectService databaseObjectService = ReactomeGraphCore.getService(DatabaseObjectService.class);
         for (String identifier : identifiers) {
             try {
                 Event p = databaseObjectService.findById(identifier);
-                System.out.println(String.format("\t>%s: %s", p.getStId(), p.getDisplayName()));
+                info(String.format("\t>%s: %s", p.getStId(), p.getDisplayName()));
                 SbmlConverter c = new SbmlConverter(p);
                 c.convert();
                 c.writeToFile(output);
             } catch (ClassCastException e) {
-                System.err.println(identifier + " cannot be converted. Reason: This identifier does not belong to a Pathway");
-            } catch (Exception e) {
-                e.printStackTrace();
+                error(identifier + " cannot be converted. Reason: This identifier does not belong to a Pathway");
             }
         }
     }
@@ -102,14 +109,14 @@ public class Main {
     }
 
     private static void convertSpeciesList(List<Species> speciesList, String output) {
-        System.out.println("Converting " + speciesList.size() + " species");
+        info(String.format("Converting %d species", speciesList.size()));
         GeneralService generalService = ReactomeGraphCore.getService(GeneralService.class);
         SchemaService schemaService = ReactomeGraphCore.getService(SchemaService.class);
         for (Species species : speciesList) {
             Collection<Pathway> pathways = schemaService.getByClass(Pathway.class, species);
             int total = pathways.size();
             int i = 0;
-            ProgressBar progressBar = new ProgressBar(species.getDisplayName(), total);
+            ProgressBar progressBar = new ProgressBar(species.getDisplayName(), total, verbose);
             progressBar.start();
             try {
                 for (Pathway pathway : pathways) {
@@ -120,10 +127,20 @@ public class Main {
                     if (i % 10 == 0) generalService.clearCache();
                 }
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error(e.getMessage(), e);
             } finally {
                 progressBar.done();
             }
         }
+    }
+
+    private static void info(String msg){
+        logger.info(msg);
+        if (verbose) System.out.println(msg);
+    }
+
+    private static void error(String msg){
+        logger.error(msg);
+        if (verbose) System.err.println(msg);
     }
 }

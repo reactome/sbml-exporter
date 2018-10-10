@@ -5,6 +5,8 @@ import org.reactome.server.graph.service.AdvancedDatabaseObjectService;
 import org.reactome.server.graph.utils.ReactomeGraphCore;
 import org.reactome.server.tools.sbml.data.model.ParticipantDetails;
 import org.reactome.server.tools.sbml.data.model.ReactionBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -15,6 +17,8 @@ import java.util.Collections;
  * @author Antonio Fabregat (fabregat@ebi.ac.uk)
  */
 public abstract class DataFactory {
+
+    private static Logger logger = LoggerFactory.getLogger("sbml-exporter");
 
     private static final String REACTIONS_QUERY = "" +
             "OPTIONAL MATCH (rle1:ReactionLikeEvent{stId:{stId}}) " +
@@ -62,10 +66,10 @@ public abstract class DataFactory {
         try {
             return ads.getCustomQueryResults(ReactionBase.class, REACTIONS_QUERY, Collections.singletonMap("stId", eventStId));
         } catch (CustomQueryException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             System.exit(1);
+            return null;
         }
-        return null;
     }
 
     public static Collection<ParticipantDetails> getParticipantDetails(String eventStId){
@@ -73,9 +77,9 @@ public abstract class DataFactory {
         try {
             return ads.getCustomQueryResults(ParticipantDetails.class, PARTICIPANTS_QUERY, Collections.singletonMap("stId", eventStId));
         } catch (CustomQueryException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage(), e);
             System.exit(1);
+            return null;
         }
-        return null;
     }
 }

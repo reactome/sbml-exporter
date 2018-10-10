@@ -1,36 +1,38 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration>
-  <Properties>
-    <Property name="filename">SBMLExporter.log</Property>
-  </Properties>
-  <Appenders>
-    <Console name="Console" target="SYSTEM_OUT">
-      <PatternLayout pattern="[%t] %-5level %logger{36} - %msg%n"/>
-    </Console>
-    <File name="file" fileName="${filename}" append="false">
-      <PatternLayout>
-        <pattern>%p %C{1.} %m%n</pattern>
-      </PatternLayout>
-    </File>
-  </Appenders>
-  <!-- This will log errors to the console and all info/warnings/errors to file -->
-  <Loggers>
-    <Root level="info">
-      <AppenderRef ref="file" level="info"/>
-      <AppenderRef ref="Console" level="error"/>
-    </Root>
-  </Loggers>
-  <!-- This will log all info/warnings/errors to file and nothing to console -->
-<!--  <Loggers>
-    <Root level="info">
-      <AppenderRef ref="file" level="info"/>
-    </Root>
-    </Loggers> -->
-  <!-- This will log all info/warnings/errors to  console -->
-  <!--  <Loggers>
-    <Root level="info">
-    <AppenderRef ref="Console" level="info"/>
-    </Root>
-    </Loggers> -->
-  
+    <Properties>
+        <Property name="filename">logs/sbml-exporter.log</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="[%t] %-5level %logger{36} - %msg%n"/>
+        </Console>
+        <File name="file" fileName="${filename}" append="false">
+            <PatternLayout>
+                <pattern>%p %C{1.} %m%n</pattern>
+            </PatternLayout>
+        </File>
+    </Appenders>
+
+    <!-- This will log errors to the console and all info/warnings/errors to file -->
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="file" level="error"/>
+            <!-- Uncomment the following to see the error logs in the console -->
+            <!--<AppenderRef ref="Console" level="error"/>-->
+        </Root>
+
+        <Logger name="sbml-exporter" level="info">
+            <AppenderRef ref="file" level="info"/>
+        </Logger>
+
+        <Logger name="org.neo4j" level="error">
+            <AppenderRef ref="file" level="error"/>
+        </Logger>
+
+        <Logger name="org.neospringframework4j" level="error">
+            <AppenderRef ref="file" level="error"/>
+        </Logger>
+    </Loggers>
 </Configuration>

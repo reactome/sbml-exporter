@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
  *
  * @author Antonio Fabregat (fabregat@ebi.ac.uk)
  */
-//@SuppressWarnings("unused")
+@SuppressWarnings("unused")
 public class ReactionBase {
 
     private ReactionLikeEvent rle;
