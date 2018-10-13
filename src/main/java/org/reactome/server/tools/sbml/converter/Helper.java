@@ -8,7 +8,6 @@ import org.sbml.jsbml.*;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.xml.XMLNode;
-import org.sbml.jsbml.xml.stax.SBMLReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +31,6 @@ class Helper {
     private static Logger logger = LoggerFactory.getLogger("sbml-exporter");
 
     private static final String REACTOME_URI = "https://reactome.org/content/detail/";
-
-    private final static SBMLReader notesReader = new SBMLReader();
 
     static void addAnnotations(Species s, ParticipantDetails participant) {
         PhysicalEntity pe = participant.getPhysicalEntity();
@@ -186,7 +183,7 @@ class Helper {
         if (content != null) addNotes(sBase, content.toArray(new String[0]));
     }
 
-    static void addNotes(SBase sBase, String... content) {
+    static synchronized void addNotes(SBase sBase, String... content) {
         if (content != null && content.length > 0) {
             StringJoiner joiner = new StringJoiner(System.lineSeparator(), "<notes><p xmlns=\"http://www.w3.org/1999/xhtml\">", "</p></notes>");
             for (String s : content) {
@@ -198,7 +195,7 @@ class Helper {
             String notes = joiner.toString();
 
             try {
-                XMLNode node = notesReader.readNotes(notes);
+                XMLNode node = XMLNode.convertStringToXMLNode(notes);
                 sBase.appendNotes(node);
             } catch (XMLStreamException e) {
                 logger.error(String.format("An error occurred while generating notes for '%s'", sBase.getId()), e);
