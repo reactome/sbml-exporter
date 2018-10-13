@@ -87,7 +87,7 @@ public class SbmlConverter {
         Helper.addAnnotations(model, pathway);
 
         Collection<ParticipantDetails> participants = DataFactory.getParticipantDetails(targetStId, ads);
-        participants.forEach(p -> addParticipant(model, p));
+        for (ParticipantDetails p : participants) addParticipant(model, p);
 
         for (ReactionBase rxn : DataFactory.getReactionList(targetStId, ads)) {
             String id = REACTION_PREFIX + rxn.getDbId();
