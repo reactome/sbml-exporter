@@ -4,7 +4,7 @@ import org.reactome.server.graph.domain.model.*;
 import org.reactome.server.tools.sbml.converter.SbmlConverter;
 
 import java.util.List;
-import java.util.stream.Collectors;
+import java.util.StringJoiner;
 
 @SuppressWarnings({"unused", "MismatchedQueryAndUpdateOfCollection"})
 public class ParticipantDetails {
@@ -27,9 +27,9 @@ public class ParticipantDetails {
     }
 
     private String getAccessions() {
-        return ids.stream()
-                .map(IdentifierBase::toString)
-                .collect(Collectors.joining(", ", "(", ")"));
+        StringJoiner joiner = new StringJoiner(", ", "(", ")");
+        for (IdentifierBase id : ids) joiner.add(id.toString());
+        return joiner.toString();
     }
 
     private static final String PREFIX = "Derived from a Reactome ";
