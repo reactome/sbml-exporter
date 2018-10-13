@@ -7,6 +7,7 @@ import org.reactome.server.tools.sbml.data.model.ReactionBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 
@@ -65,8 +66,7 @@ public abstract class DataFactory {
             return ads.getCustomQueryResults(ReactionBase.class, REACTIONS_QUERY, Collections.singletonMap("stId", eventStId));
         } catch (CustomQueryException e) {
             logger.error(e.getMessage(), e);
-            System.exit(1);
-            return null;
+            return new ArrayList<>();
         }
     }
 
@@ -75,8 +75,7 @@ public abstract class DataFactory {
             return ads.getCustomQueryResults(ParticipantDetails.class, PARTICIPANTS_QUERY, Collections.singletonMap("stId", eventStId));
         } catch (CustomQueryException e) {
             logger.error(e.getMessage(), e);
-            System.exit(1);
-            return null;
+            return new ArrayList<>();
         }
     }
 }
