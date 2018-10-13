@@ -8,14 +8,15 @@ import org.sbml.jsbml.*;
 import org.sbml.jsbml.Reaction;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.xml.XMLNode;
+import org.sbml.jsbml.xml.stax.SBMLReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.stream.XMLStreamException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static org.sbml.jsbml.JSBML.getJSBMLDottedVersion;
 
@@ -32,23 +33,29 @@ class Helper {
 
     private static final String REACTOME_URI = "https://reactome.org/content/detail/";
 
+    private final static SBMLReader notesReader = new SBMLReader();
+
     static void addAnnotations(Species s, ParticipantDetails participant) {
         PhysicalEntity pe = participant.getPhysicalEntity();
 
         Helper.addNotes(s, participant.getExplanation());
 
-        List<String> summations = pe.getSummation()
-                .stream()
-                .map(Summation::getText)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        List<String> summations = new ArrayList<>();
+        for (Summation summation : pe.getSummation()) {
+            String text = summation.getText();
+            if (text != null) {
+                summations.add(text);
+            }
+        }
         Helper.addNotes(s, summations);
 
-        List<String> litrefs = participant.getPhysicalEntity().getLiteratureReference()
-                .stream()
-                .filter(LiteratureReference.class::isInstance)
-                .map(l -> ((LiteratureReference) l).getUrl())
-                .collect(Collectors.toList());
+        List<String> litrefs = new ArrayList<>();
+        for (Publication l : participant.getPhysicalEntity().getLiteratureReference()) {
+            if (l instanceof LiteratureReference) {
+                String url = ((LiteratureReference) l).getUrl();
+                litrefs.add(url);
+            }
+        }
         Helper.addCVTerm(s, CVTerm.Qualifier.BQB_IS_DESCRIBED_BY, litrefs);
 
         if (pe instanceof Complex || pe instanceof EntitySet || pe instanceof Polymer) {
@@ -61,25 +68,29 @@ class Helper {
             if (pe instanceof EntityWithAccessionedSequence) {
                 EntityWithAccessionedSequence ewas = (EntityWithAccessionedSequence) pe;
 
-                List<String> psis = ewas.getHasModifiedResidue()
-                        .stream()
-                        .filter(r -> r instanceof TranslationalModification && ((TranslationalModification) r).getPsiMod() != null)
-                        .map(r -> ((TranslationalModification) r).getPsiMod().getUrl())
-                        .collect(Collectors.toList());
+                List<String> psis = new ArrayList<>();
+                for (AbstractModifiedResidue r : ewas.getHasModifiedResidue()) {
+                    if (r instanceof TranslationalModification && ((TranslationalModification) r).getPsiMod() != null) {
+                        String url = ((TranslationalModification) r).getPsiMod().getUrl();
+                        psis.add(url);
+                    }
+                }
                 Helper.addCVTerm(s, CVTerm.Qualifier.BQB_HAS_VERSION, psis);
             }
         }
 
-        List<String> infTos = pe.getInferredTo()
-                .stream()
-                .map(p -> REACTOME_URI + p.getStId())
-                .collect(Collectors.toList());
+        List<String> infTos = new ArrayList<>();
+        for (PhysicalEntity p : pe.getInferredTo()) {
+            String s1 = REACTOME_URI + p.getStId();
+            infTos.add(s1);
+        }
         Helper.addCVTerm(s, CVTerm.Qualifier.BQB_IS_HOMOLOG_TO, infTos);
 
-        List<String> infFroms = pe.getInferredFrom()
-                .stream()
-                .map(p -> REACTOME_URI + p.getStId())
-                .collect(Collectors.toList());
+        List<String> infFroms = new ArrayList<>();
+        for (PhysicalEntity p : pe.getInferredFrom()) {
+            String s1 = REACTOME_URI + p.getStId();
+            infFroms.add(s1);
+        }
         Helper.addCVTerm(s, CVTerm.Qualifier.BQB_IS_HOMOLOG_TO, infFroms);
     }
 
@@ -99,34 +110,36 @@ class Helper {
         History history = new History();
         InstanceEdit created = event.getCreated();
         if (created != null) {
-            created.getAuthor().forEach(c -> Helper.addCreator(history, c));
+            for (Person c : created.getAuthor()) Helper.addCreator(history, c);
             history.setCreatedDate(Helper.formatDate(created.getDateTime()));
         }
 
         InstanceEdit modified = event.getModified();
         if (modified != null) {
-            modified.getAuthor().forEach(m -> Helper.addCreator(history, m));
+            for (Person m : modified.getAuthor()) Helper.addCreator(history, m);
             history.addModifiedDate(Helper.formatDate(modified.getDateTime()));
         }
 
         for (InstanceEdit authored : event.getAuthored()) {
-            authored.getAuthor().forEach(a -> Helper.addCreator(history, a));
+            for (Person a : authored.getAuthor()) Helper.addCreator(history, a);
             history.addModifiedDate(Helper.formatDate(authored.getDateTime()));
         }
 
         for (InstanceEdit revised : event.getRevised()) {
-            revised.getAuthor().forEach(r -> Helper.addCreator(history, r));
+            for (Person r : revised.getAuthor()) Helper.addCreator(history, r);
             history.addModifiedDate(Helper.formatDate(revised.getDateTime()));
         }
 
         Annotation annotation = new Annotation();
         annotation.setHistory(history);
 
-        List<String> summations = event.getSummation()
-                .stream()
-                .map(Summation::getText)
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        List<String> summations = new ArrayList<>();
+        for (Summation summation : event.getSummation()) {
+            String text = summation.getText();
+            if (text != null) {
+                summations.add(text);
+            }
+        }
         Helper.addNotes(sBase, summations);
 
         List<String> uris = new ArrayList<>();
@@ -135,12 +148,15 @@ class Helper {
         if (go != null) uris.add(go.getUrl());
         Helper.addCVTerm(annotation, CVTerm.Qualifier.BQB_IS, uris);
 
-        List<String> litRefs = event.getLiteratureReference()
-                .stream()
-                .filter(LiteratureReference.class::isInstance)
-                .map(p -> ((LiteratureReference) p).getUrl())
-                .filter(Objects::nonNull)
-                .collect(Collectors.toList());
+        List<String> litRefs = new ArrayList<>();
+        for (Publication p : event.getLiteratureReference()) {
+            if (p instanceof LiteratureReference) {
+                String url = ((LiteratureReference) p).getUrl();
+                if (url != null) {
+                    litRefs.add(url);
+                }
+            }
+        }
         Helper.addCVTerm(annotation, CVTerm.Qualifier.BQB_IS_DESCRIBED_BY, litRefs);
 
         sBase.setAnnotation(annotation);
@@ -153,7 +169,7 @@ class Helper {
     static void addCVTerm(SBase sBase, CVTerm.Qualifier qualifier, String... uris) {
         if (uris.length > 0) {
             CVTerm term = new CVTerm(qualifier);
-            Arrays.stream(uris).forEach(term::addResourceURI);
+            for (String s : uris) term.addResourceURI(s);
             sBase.addCVTerm(term);
         }
     }
@@ -161,7 +177,7 @@ class Helper {
     private static void addCVTerm(Annotation annotation, CVTerm.Qualifier qualifier, List<String> uris) {
         if (!uris.isEmpty()) {
             CVTerm term = new CVTerm(qualifier);
-            uris.forEach(term::addResourceURI);
+            for (String s : uris) term.addResourceURI(s);
             annotation.addCVTerm(term);
         }
     }
@@ -172,16 +188,19 @@ class Helper {
 
     static void addNotes(SBase sBase, String... content) {
         if (content != null && content.length > 0) {
-            String notes = Arrays.stream(content)
-                    .filter(Objects::nonNull)
-                    .map(Helper::removeTags)
-                    .collect(Collectors.joining(System.lineSeparator(),
-                            "<notes><p xmlns=\"http://www.w3.org/1999/xhtml\">",
-                            "</p></notes>"));
+            StringJoiner joiner = new StringJoiner(System.lineSeparator(), "<notes><p xmlns=\"http://www.w3.org/1999/xhtml\">", "</p></notes>");
+            for (String s : content) {
+                if (s != null) {
+                    String removeTags = removeTags(s);
+                    joiner.add(removeTags);
+                }
+            }
+            String notes = joiner.toString();
+
             try {
-                XMLNode node = XMLNode.convertStringToXMLNode(notes);
+                XMLNode node = notesReader.readNotes(notes);
                 sBase.appendNotes(node);
-            } catch (Exception e) {
+            } catch (XMLStreamException e) {
                 logger.error(String.format("An error occurred while generating notes for '%s'", sBase.getId()), e);
             }
         }
@@ -219,7 +238,7 @@ class Helper {
         Creator creator = new Creator();
         creator.setFamilyName(person.getSurname() == null ? "" : person.getSurname());
         creator.setGivenName(person.getFirstname() == null ? "" : person.getFirstname());
-        person.getAffiliation().forEach(a -> creator.setOrganisation(a.getName().get(a.getName().size() - 1)));
+        for (Affiliation a : person.getAffiliation()) creator.setOrganisation(a.getName().get(a.getName().size() - 1));
         history.addCreator(creator);
     }
 
