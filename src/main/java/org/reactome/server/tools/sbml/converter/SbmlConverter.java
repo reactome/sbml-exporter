@@ -76,8 +76,8 @@ public class SbmlConverter {
             modelId = PATHWAY_PREFIX + pathway.getDbId();
             pathwayName = pathway.getDisplayName();
         } else {
-            modelId = "No parent pathway detected";
-            pathwayName = "no_parent_pathway";
+            modelId = "no_parent_pathway";
+            pathwayName = "No parent pathway detected";
         }
 
         Model model = sbmlDocument.createModel(modelId);
