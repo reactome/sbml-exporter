@@ -37,7 +37,7 @@ public class ProgressBar extends TimerTask {
      * @param current name of the processed element
      * @param done    number of entries added to the graph
      */
-    public void update(String current, int done) {
+    public synchronized void update(String current, int done) {
         if (!verbose) return;
         this.current = current;
         this.done = done;
@@ -58,20 +58,29 @@ public class ProgressBar extends TimerTask {
         String time = getTimeFormatted(System.currentTimeMillis() - start);
 
         System.out.printf(format, species, time, (int) (percent * 100), progress, status, current);
-        if (done == total){
+        if (done == total) {
             System.out.println();
-            timer.cancel();
+            if (timer != null){
+                timer.cancel();
+                timer = null;
+            }
         }
     }
 
-    public void interrupt() {
-        timer.cancel();
+    public synchronized void interrupt() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+        }
     }
 
-    public void done() {
-        done = total;
-        timer.cancel();
-        update(current, done);
+    public synchronized void done() {
+        if (timer != null) {
+            timer.cancel();
+            timer = null;
+            done = total;
+            update(current, done);
+        }
     }
 
     @Override
