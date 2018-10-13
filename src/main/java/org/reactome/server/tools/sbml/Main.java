@@ -123,12 +123,12 @@ public class Main {
                     SbmlConverter c = new SbmlConverter(pathway, version, ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class));
                     c.convert();
                     c.writeToFile(output);
-//                    if (i % 10 == 0) ReactomeGraphCore.getService(GeneralService.class).clearCache();
+                    if (i % 10 == 0) ReactomeGraphCore.getService(GeneralService.class).clearCache();
                 }
+                progressBar.done();
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
-            } finally {
-                progressBar.done();
+                progressBar.interrupt();
             }
         }
     }

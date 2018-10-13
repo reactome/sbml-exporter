@@ -1,6 +1,8 @@
 package org.reactome.server.tools.sbml.util;
 
 
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -9,11 +11,11 @@ import java.util.concurrent.TimeUnit;
  *
  * @author Antonio Fabregat (fabregat@ebi.ac.uk)
  */
-public class ProgressBar implements Runnable {
+public class ProgressBar extends TimerTask {
 
     private static final int width = 70;
 
-    private Thread t;
+    private Timer timer;
     private Long start;
     private Boolean verbose;
 
@@ -58,33 +60,28 @@ public class ProgressBar implements Runnable {
         System.out.printf(format, species, time, (int) (percent * 100), progress, status, current);
         if (done == total){
             System.out.println();
-            t.interrupt();
+            timer.cancel();
         }
+    }
+
+    public void interrupt() {
+        timer.cancel();
     }
 
     public void done() {
         done = total;
-        t.interrupt();
+        timer.cancel();
         update(current, done);
     }
 
     @Override
     public void run() {
-        try {
-            while (t.isAlive()) {
-                update(current, done);
-                Thread.sleep(500);
-            }
-        } catch (InterruptedException e) {
-            //Nothing here
-        }
+        update(current, done);
     }
 
-    @SuppressWarnings("UnusedReturnValue")
-    public Thread start() {
-        t = new Thread(this);
-        t.start();
-        return t;
+    public void start() {
+        timer = new Timer(true);
+        timer.schedule(this, 250, 500);
     }
 
     private static String getTimeFormatted(Long millis) {
