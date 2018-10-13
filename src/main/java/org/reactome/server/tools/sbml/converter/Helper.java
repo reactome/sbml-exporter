@@ -39,14 +39,14 @@ class Helper {
 
         List<String> summations = pe.getSummation()
                 .stream()
-                .filter(su -> su.getText() != null)
                 .map(Summation::getText)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         Helper.addNotes(s, summations);
 
         List<String> litrefs = participant.getPhysicalEntity().getLiteratureReference()
                 .stream()
-                .filter(l -> l instanceof LiteratureReference)
+                .filter(LiteratureReference.class::isInstance)
                 .map(l -> ((LiteratureReference) l).getUrl())
                 .collect(Collectors.toList());
         Helper.addCVTerm(s, CVTerm.Qualifier.BQB_IS_DESCRIBED_BY, litrefs);
@@ -124,8 +124,8 @@ class Helper {
 
         List<String> summations = event.getSummation()
                 .stream()
-                .filter(s -> s.getText() != null)
                 .map(Summation::getText)
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
         Helper.addNotes(sBase, summations);
 
@@ -137,7 +137,7 @@ class Helper {
 
         List<String> litRefs = event.getLiteratureReference()
                 .stream()
-                .filter(s -> s instanceof LiteratureReference)
+                .filter(LiteratureReference.class::isInstance)
                 .map(p -> ((LiteratureReference) p).getUrl())
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
