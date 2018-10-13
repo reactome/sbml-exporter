@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Converts {@link org.reactome.server.graph.domain.model.Event} class instances to SBML file(s).
@@ -114,17 +115,17 @@ public class Main {
         for (Species species : speciesList) {
             Collection<Pathway> pathways = schemaService.getByClass(Pathway.class, species);
             int total = pathways.size();
-            int i = 0;
+            AtomicInteger i = new AtomicInteger(0);
             ProgressBar progressBar = new ProgressBar(species.getDisplayName(), total, verbose);
             progressBar.start();
             try {
-                for (Pathway pathway : pathways) {
-                    progressBar.update(pathway.getStId(), i++);
+                pathways.stream().parallel().forEach(pathway -> {
+                    progressBar.update(pathway.getStId(), i.get());
                     SbmlConverter c = new SbmlConverter(pathway, version, ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class));
                     c.convert();
                     c.writeToFile(output);
-                    if (i % 10 == 0) ReactomeGraphCore.getService(GeneralService.class).clearCache();
-                }
+                    if (i.incrementAndGet() % 10 == 0) ReactomeGraphCore.getService(GeneralService.class).clearCache();
+                });
                 progressBar.done();
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
