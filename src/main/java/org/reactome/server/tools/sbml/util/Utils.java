@@ -26,7 +26,7 @@ public class Utils {
 
     public static void writeSBML(String outputDirectory, String fileName, SBMLDocument sbmlDocument){
         try {
-            File sbmlFile = new File(outputDirectory + File.separator + fileName + ".xml");
+            File sbmlFile = new File(outputDirectory + File.separator + fileName + ".sbml");
             writer.write(sbmlDocument, sbmlFile);
         } catch (Exception e) {
             logger.error(String.format("Error writing SBML file for '%s'", sbmlDocument.getModel().getId()), e);
