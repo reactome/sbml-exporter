@@ -45,8 +45,6 @@ public class ParticipantDetails {
             return prefix + "A list of entities, one or more of which might perform the given function";
         if (pe instanceof DefinedSet)
             return prefix + "This is a list of alternative entities, any of which can perform the given function";
-        if (pe instanceof OpenSet)
-            return prefix + "A set of examples characterizing a very large but not explicitly enumerated set, e.g. mRNAs";
         if (pe instanceof Drug)
             return prefix + "A drug";
         if (pe instanceof Complex)
