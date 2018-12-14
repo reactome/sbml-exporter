@@ -55,10 +55,16 @@ public abstract class DataFactory {
             "MATCH (rle)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator*]->(pe:PhysicalEntity) " +
             "WITH COLLECT(DISTINCT pe) AS pes " +
             "UNWIND pes AS pe " +
-            "MATCH path=(pe)-[:hasComponent|hasMember|repeatedUnit|referenceEntity*]->(re:ReferenceEntity) " +
+            //GEE do not have RE but they must be in the species (without identifier)
+            "OPTIONAL MATCH path=(pe)-[:hasComponent|hasMember|repeatedUnit|referenceEntity*]->(re:ReferenceEntity) " +
             "WITH pe, re, REDUCE(s = 1, x IN RELATIONSHIPS(path) | s * x.stoichiometry) AS n " +
             "RETURN pe, " +
-            "       COLLECT(DISTINCT {n: n, id: CASE re.variantIdentifier WHEN NULL THEN re.identifier ELSE re.variantIdentifier END}) AS ids, " +
+            "       COLLECT(DISTINCT {" +
+            "               n:  CASE n WHEN NULL THEN 1 ELSE n END, " +  //n is null when no RE present for a PE
+            "               id: CASE re WHEN NULL THEN '' " +            //empty identifier when no RE present for a PE
+            "                           ELSE CASE re.variantIdentifier WHEN NULL THEN re.identifier ELSE re.variantIdentifier END " +
+            "                   END " +
+            "       }) AS ids, " +
             "       COLLECT(DISTINCT re.url) AS urls";
 
     public static Collection<ReactionBase> getReactionList(String eventStId, AdvancedDatabaseObjectService ads) {
