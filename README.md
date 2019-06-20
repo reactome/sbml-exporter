@@ -62,8 +62,8 @@ java -jar target/sbml-exporter-jar-with-dependencies.jar -h localhost -b 7474 -u
 
 ```console
 cd outputdir
-tar -cvf homo_sapiens.3.1.sbml.tgz R-HSA-*
-tar -czvf all_species.3.1.sbml.tgz *
+tar -czvf all_species.3.1.sbml.tgz .
+tar -czvf homo_sapiens.3.1.sbml.tgz R-HSA-*
 ```
 
 4. Distribute the files
