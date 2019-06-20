@@ -13,7 +13,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <graph.core>1.1.19</graph.core>
+        <graph.core>1.1.20</graph.core>
         <sbml.lib.version>1.3.1</sbml.lib.version>
         <jasp.version>2.1</jasp.version>
 
