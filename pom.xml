@@ -1,206 +1,222 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.reactome.server.tools</groupId>
-    <artifactId>sbml-exporter</artifactId>
-    <version>2.0.0</version>
-    <packaging>jar</packaging>
+	<groupId>org.reactome.server.tools</groupId>
+	<artifactId>sbml-exporter</artifactId>
+	<version>2.0.0</version>
+	<packaging>jar</packaging>
 
-    <name>sbml-exporter</name>
-    <url>http://maven.apache.org</url>
+	<name>sbml-exporter</name>
+	<url>http://maven.apache.org</url>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <graph.core>1.1.20</graph.core>
-        <sbml.lib.version>1.3.1</sbml.lib.version>
-        <jasp.version>2.1</jasp.version>
+		<graph.core>1.1.20</graph.core>
+		<sbml.lib.version>1.5</sbml.lib.version>
+		<jasp.version>2.1</jasp.version>
 
-        <maven.compiler.version>3.5.1</maven.compiler.version>
-        <jdk.version>1.8</jdk.version>
-        <junit.version>4.12</junit.version>
-    </properties>
+		<maven.compiler.version>3.5.1</maven.compiler.version>
+		<jdk.version>1.8</jdk.version>
+		<junit.version>4.12</junit.version>
+	</properties>
 
-    <developers>
-        <developer>
-            <id>fabregat</id>
-            <name>Antonio Fabregat</name>
-            <email>fabregat@ebi.ac.uk</email>
-            <organization>http://www.ebi.ac.uk/</organization>
-        </developer>
-        <developer>
-            <id>ksidiro</id>
-            <name>Kostas Sidiropoulos</name>
-            <email>ksidiro@ebi.ac.uk</email>
-            <organization>http://www.ebi.ac.uk/</organization>
-        </developer>
-        <developer>
-            <id>skeating</id>
-            <name>Sarah Keating</name>
-            <email>skeating@ebi.ac.uk</email>
-            <organization>http://www.ebi.ac.uk/</organization>
-        </developer>
-    </developers>
+	<developers>
+		<developer>
+			<id>fabregat</id>
+			<name>Antonio Fabregat</name>
+			<email>fabregat@ebi.ac.uk</email>
+			<organization>http://www.ebi.ac.uk/</organization>
+		</developer>
+		<developer>
+			<id>ksidiro</id>
+			<name>Kostas Sidiropoulos</name>
+			<email>ksidiro@ebi.ac.uk</email>
+			<organization>http://www.ebi.ac.uk/</organization>
+		</developer>
+		<developer>
+			<id>skeating</id>
+			<name>Sarah Keating</name>
+			<email>skeating@ebi.ac.uk</email>
+			<organization>http://www.ebi.ac.uk/</organization>
+		</developer>
+	</developers>
 
-    <dependencies>
-        <!-- Reactome Graph-Core -->
-        <dependency>
-            <groupId>org.reactome.server.graph</groupId>
-            <artifactId>graph-core</artifactId>
-            <version>${graph.core}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+	<dependencies>
+		<!-- Mysql Connector -->
+		<dependency>
+			<groupId>mysql</groupId>
+			<artifactId>mysql-connector-java</artifactId>
+			<version>5.1.28</version>
+		</dependency>
 
-        <!-- SBML lib -->
-        <dependency>
-            <groupId>org.sbml.jsbml</groupId>
-            <artifactId>jsbml</artifactId>
-            <version>${sbml.lib.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>org.reactome.base</groupId>
+			<artifactId>reactome-base</artifactId>
+			<version>RELEASE</version>
+		</dependency>
 
-        <!--JSAP console reader-->
-        <dependency>
-            <groupId>com.martiansoftware</groupId>
-            <artifactId>jsap</artifactId>
-            <version>${jasp.version}</version>
-        </dependency>
+		<!-- Reactome Graph-Core -->
+		<dependency>
+			<groupId>org.reactome.server.graph</groupId>
+			<artifactId>graph-core</artifactId>
+			<version>${graph.core}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>ch.qos.logback</groupId>
+					<artifactId>logback-classic</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
 
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
+		<!-- SBML lib -->
+		<dependency>
+			<groupId>org.sbml.jsbml</groupId>
+			<artifactId>jsbml</artifactId>
+			<version>${sbml.lib.version}</version>
+		</dependency>
 
-    </dependencies>
+		<!--JSAP console reader -->
+		<dependency>
+			<groupId>com.martiansoftware</groupId>
+			<artifactId>jsap</artifactId>
+			<version>${jasp.version}</version>
+		</dependency>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.2</version>
-                <executions>
-                    <execution>
-                        <id>default-jar</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <excludes>
-                                <exclude>org/reactome/server/tools/sbml/Main.class</exclude>
-                                <exclude>org/reactome/server/tools/sbml/config/GraphNeo4jConfig.class</exclude>
-                                <exclude>**/log4j2.xml</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
+		</dependency>
 
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>${maven.compiler.version}</version>
-                <configuration>
-                    <source>${jdk.version}</source>
-                    <target>${jdk.version}</target>
-                </configuration>
-            </plugin>
+	</dependencies>
 
-            <!-- Generate jar with dependencies -->
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.6</version>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>org.reactome.server.tools.sbml.Main</mainClass>
-                        </manifest>
-                    </archive>
-                    <finalName>sbml-exporter</finalName>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.0.2</version>
+				<executions>
+					<execution>
+						<id>default-jar</id>
+						<phase>install</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								<exclude>org/reactome/server/tools/sbml/Main.class</exclude>
+								<exclude>org/reactome/server/tools/sbml/config/GraphNeo4jConfig.class</exclude>
+								<exclude>**/log4j2.xml</exclude>
+							</excludes>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 
-    <repositories>
-        <!-- EBI repo -->
-        <repository>
-            <id>nexus-ebi-repo</id>
-            <name>The EBI internal repository</name>
-            <url>http://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-repo/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.version}</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+				</configuration>
+			</plugin>
 
-        <!-- EBI SNAPSHOT repo -->
-        <repository>
-            <id>nexus-ebi-snapshot-repo</id>
-            <name>The EBI internal snapshot repository</name>
-            <url>http://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-snapshots/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
+			<!-- Generate jar with dependencies -->
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.6</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>org.reactome.server.tools.sbml.Main</mainClass>
+						</manifest>
+					</archive>
+					<finalName>sbml-exporter</finalName>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 
-        <!-- SBML repo -->
-        <repository>
-            <id>ebi-repo</id>
-            <name>The EBI repository</name>
-            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
-            <releases><enabled>true</enabled></releases>
-        </repository>
+	<repositories>
+		<!-- EBI repo -->
+		<repository>
+			<id>nexus-ebi-repo</id>
+			<name>The EBI internal repository</name>
+			<url>http://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-repo/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
 
-        <!-- BioJava repo -->
-        <repository>
-            <id>biojava-legacy-repo</id>
-            <name>BioJava's Git based legacy maven repo</name>
-            <url>https://github.com/biojava/maven-repo/raw/master/</url>
-        </repository>
+		<!-- EBI SNAPSHOT repo -->
+		<repository>
+			<id>nexus-ebi-snapshot-repo</id>
+			<name>The EBI internal snapshot repository</name>
+			<url>http://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-snapshots/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
 
-    </repositories>
+		<!-- SBML repo -->
+		<repository>
+			<id>ebi-repo</id>
+			<name>The EBI repository</name>
+			<url>http://www.ebi.ac.uk/~maven/m2repo</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
 
-    <!--Configures the distribution to nexus repository -->
-    <distributionManagement>
-        <!-- EBI repo -->
-        <repository>
-            <id>pst-release</id>
-            <name>EBI Nexus Repository</name>
-            <url>http://www.ebi.ac.uk/Tools/maven/repos/content/repositories/pst-release</url>
-        </repository>
-        <!-- EBI SNAPSHOT repo -->
-        <snapshotRepository>
-            <uniqueVersion>false</uniqueVersion>
-            <id>pst-snapshots</id>
-            <name>EBI Nexus Snapshots Repository</name>
-            <url>http://www.ebi.ac.uk/Tools/maven/repos/content/repositories/pst-snapshots</url>
-        </snapshotRepository>
-    </distributionManagement>
+		<!-- BioJava repo -->
+		<repository>
+			<id>biojava-legacy-repo</id>
+			<name>BioJava's Git based legacy maven repo</name>
+			<url>https://github.com/biojava/maven-repo/raw/master/</url>
+		</repository>
+
+	</repositories>
+
+	<!--Configures the distribution to nexus repository -->
+	<distributionManagement>
+		<!-- EBI repo -->
+		<repository>
+			<id>pst-release</id>
+			<name>EBI Nexus Repository</name>
+			<url>http://www.ebi.ac.uk/Tools/maven/repos/content/repositories/pst-release</url>
+		</repository>
+		<!-- EBI SNAPSHOT repo -->
+		<snapshotRepository>
+			<uniqueVersion>false</uniqueVersion>
+			<id>pst-snapshots</id>
+			<name>EBI Nexus Snapshots Repository</name>
+			<url>http://www.ebi.ac.uk/Tools/maven/repos/content/repositories/pst-snapshots</url>
+		</snapshotRepository>
+	</distributionManagement>
 
 </project>

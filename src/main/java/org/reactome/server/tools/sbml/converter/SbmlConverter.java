@@ -1,24 +1,34 @@
 package org.reactome.server.tools.sbml.converter;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.reactome.server.graph.domain.model.Event;
-import org.reactome.server.graph.domain.model.*;
+import org.reactome.server.graph.domain.model.NegativeRegulation;
+import org.reactome.server.graph.domain.model.Pathway;
+import org.reactome.server.graph.domain.model.PhysicalEntity;
+import org.reactome.server.graph.domain.model.PositiveRegulation;
 import org.reactome.server.graph.service.AdvancedDatabaseObjectService;
 import org.reactome.server.tools.sbml.data.DataFactory;
 import org.reactome.server.tools.sbml.data.model.Participant;
 import org.reactome.server.tools.sbml.data.model.ParticipantDetails;
 import org.reactome.server.tools.sbml.data.model.ReactionBase;
 import org.reactome.server.tools.sbml.util.Utils;
-import org.sbml.jsbml.*;
+import org.sbml.jsbml.CVTerm;
 import org.sbml.jsbml.Compartment;
+import org.sbml.jsbml.CompartmentalizedSBase;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.ModifierSpeciesReference;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.Species;
+import org.sbml.jsbml.SpeciesReference;
+import org.sbml.jsbml.TidySBMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 /**
  * For a given event this converter uses the {@link DataFactory} to retrieve its target data and proceeds with the
@@ -44,8 +54,8 @@ public class SbmlConverter {
     private static final String COMPARTMENT_PREFIX = "compartment_";
 
     private AdvancedDatabaseObjectService ads;
-    private Pathway pathway;
-    private String targetStId;
+    protected Pathway pathway;
+    protected String targetStId;
 
     private SBMLDocument sbmlDocument = null;
 
@@ -53,6 +63,11 @@ public class SbmlConverter {
     private Set<String> existingObjects = new HashSet<>();
     private final Integer reactomeVersion;
 
+    protected SbmlConverter(String targetId, Integer version) {
+        this.targetStId = targetId;
+        this.reactomeVersion = version;
+    }
+    
     public SbmlConverter(Event event, Integer version, AdvancedDatabaseObjectService ads) {
         this.targetStId = event.getStId();
         this.reactomeVersion = version;
@@ -86,10 +101,10 @@ public class SbmlConverter {
         Helper.addProvenanceAnnotation(sbmlDocument, reactomeVersion);
         Helper.addAnnotations(model, pathway);
 
-        Collection<ParticipantDetails> participants = DataFactory.getParticipantDetails(targetStId, ads);
+        Collection<ParticipantDetails> participants = getParticipantDetails();
         for (ParticipantDetails p : participants) addParticipant(model, p);
 
-        for (ReactionBase rxn : DataFactory.getReactionList(targetStId, ads)) {
+        for (ReactionBase rxn : getReactionList()) {
             String id = REACTION_PREFIX + rxn.getDbId();
             Reaction rn = model.createReaction(id);
             rn.setMetaId(META_ID_PREFIX + metaid_count++);
@@ -111,6 +126,24 @@ public class SbmlConverter {
         }
 
         return sbmlDocument;
+    }
+    
+    /**
+     * Refactored method for subclassing.
+     * @param targetStId
+     * @return
+     */
+    protected Collection<ParticipantDetails> getParticipantDetails() {
+        return DataFactory.getParticipantDetails(targetStId, ads);
+    }
+    
+    /**
+     * Refactored method for subclassing.
+     * @param targetStId
+     * @return
+     */
+    protected Collection<ReactionBase> getReactionList() {
+        return DataFactory.getReactionList(targetStId, ads);
     }
 
     public void writeToFile(String output) {
