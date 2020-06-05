@@ -11,15 +11,19 @@ import org.gk.model.GKInstance;
 import org.gk.model.InstanceUtilities;
 import org.gk.model.ReactomeJavaConstants;
 import org.gk.persistence.MySQLAdaptor;
+import org.reactome.server.graph.aop.LazyFetchAspect;
 import org.reactome.server.graph.domain.model.DatabaseObject;
 import org.reactome.server.graph.domain.model.Pathway;
 import org.reactome.server.graph.domain.model.PhysicalEntity;
+import org.reactome.server.graph.domain.model.ReactionLikeEvent;
 import org.reactome.server.tools.sbml.converter.SbmlConverter;
 import org.reactome.server.tools.sbml.data.model.ParticipantDetails;
 import org.reactome.server.tools.sbml.data.model.ReactionBase;
 import org.sbml.jsbml.SBMLDocument;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
  * A customized SBMLConverter to handle objects directly loaded from a RelationDatabase.
@@ -44,7 +48,14 @@ public class SbmlConverterForRel extends SbmlConverter {
      */
     public SbmlConverterForRel(String targetId, Integer version) {
         super(targetId, version);
+        setUpSpring();
         instanceConverter = new InstanceToModelConverter();
+    }
+    
+    private void setUpSpring() {
+        ApplicationContext context = new AnnotationConfigApplicationContext(DumbGraphNeo4jConfig.class);
+        // Disable it. This has to be called.
+        context.getBean(LazyFetchAspect.class).setEnableAOP(false);
     }
 
     public void setDBA(MySQLAdaptor dba) {
@@ -54,8 +65,10 @@ public class SbmlConverterForRel extends SbmlConverter {
             GKInstance instance = fetchEvent(targetStId);
             // This may be a reaction
             DatabaseObject databaseObject = instanceConverter.convert(instance);
-            if (databaseObject instanceof Pathway)
+            if (databaseObject instanceof Pathway) {
                 pathway = (Pathway) databaseObject;
+                instanceConverter.fillInPathwayDetails(instance, pathway);
+            }
             topEvent = instance;
         }
         catch(Exception e) {
@@ -97,7 +110,10 @@ public class SbmlConverterForRel extends SbmlConverter {
             throw new IllegalStateException("No MySQLAdaptor specified.");
         if (targetStId == null)
             throw new IllegalStateException("No target id specified.");
-        return super.convert();
+        logger.info("Starting converting " + targetStId + "...");
+        SBMLDocument doc =  super.convert();
+        logger.info("Finished converting " + targetStId + ".");
+        return doc;
     }
 
     @Override
@@ -112,12 +128,12 @@ public class SbmlConverterForRel extends SbmlConverter {
                 // Need the attributes for PhysicalEntity
                 DatabaseObject databaseObj = instanceConverter.convert(pe);
                 if (!(databaseObj instanceof PhysicalEntity)) {
-                    throw new IllegalStateException(pe + " cannot be converted into a PhysicalEntity.");
+                    throw new IllegalStateException(databaseObj + " cannot be converted into a PhysicalEntity.");
                 }
                 ParticipantDetails details = new ParticipantDetails();
                 PhysicalEntity peObj = (PhysicalEntity) databaseObj;
                 details.setPhysicalEntity(peObj);
-                instanceConverter.fillInDetails(pe, details);
+                instanceConverter.fillInPEDetails(pe, details);
                 rtn.add(details);
             }
         }
@@ -138,6 +154,22 @@ public class SbmlConverterForRel extends SbmlConverter {
     @Override
     protected Collection<ReactionBase> getReactionList() {
         List<ReactionBase> rtn = new ArrayList<>();
+        try {
+            Set<GKInstance> reactions = getReactions();
+            for (GKInstance reaction : reactions) {
+                DatabaseObject dob = instanceConverter.convert(reaction);
+                if (!(dob instanceof ReactionLikeEvent))
+                    throw new IllegalStateException(dob + " cannot be converted into a ReactionlikeEvent.");
+                ReactionLikeEvent rle = (ReactionLikeEvent) dob;
+                ReactionBase reactionBase = new ReactionBase();
+                reactionBase.setRle(rle);
+                instanceConverter.fillInReactionDetails(reaction, reactionBase);
+                rtn.add(reactionBase);
+            }
+        }
+        catch(Exception e) {
+            logger.error(e.getMessage(), e);
+        }
         return rtn;
     }
 
@@ -145,9 +177,13 @@ public class SbmlConverterForRel extends SbmlConverter {
         MySQLAdaptor dba = new MySQLAdaptor("localhost",
                                             "gk_central_050620",
                                             "root",
-                "macmysql01");
+                                            "macmysql01");
         String targetStId = "R-MMU-211119";
-        targetStId = "3927939"; // Reactions with entities having inferFrom
+//        targetStId = "3927939"; // Reactions with entities having inferFrom
+//        targetStId = "5268354"; // Has ecnumber
+//        targetStId = "5423632"; // Disease reaction
+//        targetStId = "5269406"; // CrossReferences
+        targetStId = "R-HSA-400253"; // A full pathway
         SbmlConverterForRel converter = new SbmlConverterForRel(targetStId);
         converter.setDBA(dba);
         SBMLDocument doc = converter.convert();

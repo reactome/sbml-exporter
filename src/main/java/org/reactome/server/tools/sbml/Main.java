@@ -60,6 +60,7 @@ public class Main {
 
         //Check if target pathways are specified
         String[] target = config.getStringArray("target");
+        target = new String[] {"R-MMU-211119"};
 
         DBInfo dbInfo = ReactomeGraphCore.getService(GeneralService.class).getDBInfo();
 
