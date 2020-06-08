@@ -63,6 +63,10 @@ public class InstanceToModelConverter {
         reactionHandler = new ReactionHandler(this);
     }
     
+    void reset() {
+        instToObj.clear();
+    }
+    
     public DatabaseObject convert(GKInstance instance) throws Exception {
         DatabaseObject rtn = instToObj.get(instance);
         if (rtn != null)

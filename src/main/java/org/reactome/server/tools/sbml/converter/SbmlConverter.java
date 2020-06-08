@@ -47,11 +47,11 @@ public class SbmlConverter {
     public static final short SBML_VERSION = 1;
 
     // Prefixes used in the identifiers of the different SBML sections
-    private static final String META_ID_PREFIX = "metaid_";
-    private static final String PATHWAY_PREFIX = "pathway_";
-    private static final String REACTION_PREFIX = "reaction_";
-    private static final String SPECIES_PREFIX = "species_";
-    private static final String COMPARTMENT_PREFIX = "compartment_";
+    public static final String META_ID_PREFIX = "metaid_";
+    public static final String PATHWAY_PREFIX = "pathway_";
+    public static final String REACTION_PREFIX = "reaction_";
+    public static final String SPECIES_PREFIX = "species_";
+    public static final String COMPARTMENT_PREFIX = "compartment_";
 
     private AdvancedDatabaseObjectService ads;
     protected Pathway pathway;

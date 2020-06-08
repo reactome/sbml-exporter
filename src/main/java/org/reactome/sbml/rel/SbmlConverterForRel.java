@@ -1,7 +1,10 @@
 package org.reactome.sbml.rel;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -11,6 +14,9 @@ import org.gk.model.GKInstance;
 import org.gk.model.InstanceUtilities;
 import org.gk.model.ReactomeJavaConstants;
 import org.gk.persistence.MySQLAdaptor;
+import org.gk.render.Renderable;
+import org.gk.render.RenderablePathway;
+import org.gk.render.RenderableReaction;
 import org.reactome.server.graph.aop.LazyFetchAspect;
 import org.reactome.server.graph.domain.model.DatabaseObject;
 import org.reactome.server.graph.domain.model.Pathway;
@@ -20,6 +26,9 @@ import org.reactome.server.tools.sbml.converter.SbmlConverter;
 import org.reactome.server.tools.sbml.data.model.ParticipantDetails;
 import org.reactome.server.tools.sbml.data.model.ReactionBase;
 import org.sbml.jsbml.SBMLDocument;
+import org.sbml.jsbml.SBMLReader;
+import org.sbml.jsbml.SBMLWriter;
+import org.sbml.jsbml.TidySBMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
@@ -35,10 +44,23 @@ public class SbmlConverterForRel extends SbmlConverter {
     private static final Logger logger = LoggerFactory.getLogger(SbmlConverterForRel.class);
     private MySQLAdaptor dba;
     private InstanceToModelConverter instanceConverter;
+    private LayoutConverter layoutConverter;
     private GKInstance topEvent;
+    // A flag indicating only Reactions drawn in a pathway diagram should be converted
+    private boolean useDiagram;
+    // Cache the diagram is useDiagram is true and the diagram is in the database for repearting query
+    private RenderablePathway pathwayDiagram;
 
     public SbmlConverterForRel(String targetId) {
         this(targetId, 0); // Default version is 0, meaning it is not defined.
+    }
+
+    public boolean isUseDiagram() {
+        return useDiagram;
+    }
+
+    public void setUseDiagram(boolean useDiagram) {
+        this.useDiagram = useDiagram;
     }
 
     /**
@@ -50,6 +72,7 @@ public class SbmlConverterForRel extends SbmlConverter {
         super(targetId, version);
         setUpSpring();
         instanceConverter = new InstanceToModelConverter();
+        layoutConverter = new LayoutConverter();
     }
     
     private void setUpSpring() {
@@ -60,6 +83,7 @@ public class SbmlConverterForRel extends SbmlConverter {
 
     public void setDBA(MySQLAdaptor dba) {
         this.dba = dba;
+        layoutConverter.setDBA(this.dba);
         // Need to have a fake pathway for the superclass
         try {
             GKInstance instance = fetchEvent(targetStId);
@@ -110,9 +134,13 @@ public class SbmlConverterForRel extends SbmlConverter {
             throw new IllegalStateException("No MySQLAdaptor specified.");
         if (targetStId == null)
             throw new IllegalStateException("No target id specified.");
+        instanceConverter.reset();
         logger.info("Starting converting " + targetStId + "...");
         SBMLDocument doc =  super.convert();
         logger.info("Finished converting " + targetStId + ".");
+        layoutConverter.addLayout(doc.getModel(), 
+                                  topEvent,
+                                  pathwayDiagram);
         return doc;
     }
 
@@ -144,11 +172,38 @@ public class SbmlConverterForRel extends SbmlConverter {
     }
     
     private Set<GKInstance> getReactions() throws Exception {
+        if (useDiagram)
+            return getReactionsInDiagram();
         Set<GKInstance> contained = InstanceUtilities.getContainedEvents(topEvent);
         contained.add(topEvent); // In case event itself is a RLE
         return contained.stream()
                 .filter(e -> e.getSchemClass().isa(ReactomeJavaConstants.ReactionlikeEvent))
                 .collect(Collectors.toSet());
+    }
+    
+    private Set<GKInstance> getReactionsInDiagram() throws Exception {
+        pathwayDiagram = layoutConverter.getDiagram(topEvent);
+        if (pathwayDiagram == null) {
+            logger.error("No pathway diagram found for " + topEvent);
+            return Collections.EMPTY_SET;
+        }
+        List<Renderable> comps = pathwayDiagram.getComponents();
+        Set<GKInstance> rtn = new HashSet<>();
+//        List<Long> testIds = Arrays.asList(9678128L);
+        for (Renderable comp : comps) {
+            if ((comp instanceof RenderableReaction) && (comp.getReactomeId() != null)) {
+                // For test
+//                if (!testIds.contains(comp.getReactomeId()))
+//                    continue;
+                GKInstance rxt = dba.fetchInstance(comp.getReactomeId());
+                if (rxt == null) {
+                    logger.error("Reaction drawn with DB_ID = " + comp.getReactomeId() + " is not in the database.");
+                    continue;
+                }
+                rtn.add(rxt);
+            }
+        }
+        return rtn;
     }
 
     @Override
@@ -175,7 +230,7 @@ public class SbmlConverterForRel extends SbmlConverter {
 
     public static void main(String[] args) throws Exception {
         MySQLAdaptor dba = new MySQLAdaptor("localhost",
-                                            "gk_central_050620",
+                                            "gk_central_060820",
                                             "root",
                                             "macmysql01");
         String targetStId = "R-MMU-211119";
@@ -183,11 +238,25 @@ public class SbmlConverterForRel extends SbmlConverter {
 //        targetStId = "5268354"; // Has ecnumber
 //        targetStId = "5423632"; // Disease reaction
 //        targetStId = "5269406"; // CrossReferences
-        targetStId = "R-HSA-400253"; // A full pathway
+        
+        targetStId = "R-HSA-400253"; // A full pathway: circadia clock
+        targetStId = "R-HSA-9678108"; // SARS-CoV-1 Infection
+        boolean useDiagram = true;
+        
         SbmlConverterForRel converter = new SbmlConverterForRel(targetStId);
+        converter.setUseDiagram(useDiagram);
         converter.setDBA(dba);
         SBMLDocument doc = converter.convert();
-        converter.writeToFile("output");
+        
+        String fileName = "output/" + targetStId + ".xml";
+        File file = new File(fileName);
+        SBMLWriter writer = new TidySBMLWriter();
+        writer.write(doc, file);
+        
+        // Read back as a test to make sure the grammer is correct
+        SBMLReader reader = new SBMLReader();
+        doc = reader.readSBML(file);
+        System.out.println("Read back: " + doc.getLevelAndVersion());
     }
 
 }
