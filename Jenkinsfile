@@ -55,7 +55,7 @@ pipeline{
 					def humanSBMLArchive = "homo_sapiens.3.1.sbml.tgz"
 					sh "cd ${folder}; tar -zcvf ${speciesSBMLArchive} R-*"
 					sh "cd ${folder}; tar -zcvf ${humanSBMLArchive} R-HSA-*"
-					sh "mv *.sbml.tgz ."
+					sh "mv ${folder}/*.sbml.tgz ."
 					sh "cp *.sbml.tgz ${env.ABS_DOWNLOAD_PATH}/${currentRelease}/"
 					sh "mkdir logs"
 					sh "mv jsbml.log logs"
