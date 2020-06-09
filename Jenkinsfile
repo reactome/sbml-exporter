@@ -62,7 +62,7 @@ pipeline{
 					sh "gzip logs/*"
 					sh "aws s3 --no-progress --recursive cp logs/ $s3Path/logs/"
 					sh "aws s3 --no-progress cp ${speciesSBMLArchive} $s3Path/"
-					sh "aws s3 --no-progress cp ${humanSBMLArchive} $s3PAth/"
+					sh "aws s3 --no-progress cp ${humanSBMLArchive} $s3Path/"
 					sh "rm -r logs/ ${folder} *.sbml.tgz"
 				}
 			}
