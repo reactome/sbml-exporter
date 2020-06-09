@@ -25,6 +25,7 @@ pipeline{
 				}
 			}
 		}
+		/*
 		// This stage builds the jar file using maven.
 		stage('Setup: Build jar file'){
 			steps{
@@ -44,22 +45,27 @@ pipeline{
 				}
 			}
 		}
-		/*
+		*/
 		// Archive everything on S3, and move the 'diagram' folder to the download/vXX folder.
 		stage('Post: Archive Outputs'){
 			steps{
 				script{
-					def s3Path = "${env.S3_RELEASE_DIRECTORY_URL}/${currentRelease}/data_export"
-					def archive = "export-v${currentRelease}.tgz"
-					sh "tar -zcvf ${archive} ${folder}"
-					sh "mv ${folder}/* ${env.ABS_DOWNLOAD_PATH}/${currentRelease}/" 
+					def s3Path = "${env.S3_RELEASE_DIRECTORY_URL}/${currentRelease}/sbml_exporter"
+					def speciesSBMLArchive = "all_species.3.1.sbml.tgz"
+					def humanSBMLArchive = "homo_sapiens.3.1.sbml.tgz"
+					sh "cd ${folder}; tar -zcvf ${speciesSBMLArchive} ."
+					sh "cd ${folder}; tar -zcvf ${humanSBMLArchive} R-HSA-*"
+					sh "mv *.sbml.tgz ."
+					sh "cp *.sbml.tgz ${env.ABS_DOWNLOAD_PATH}/${currentRelease}/"
+					sh "mkdir logs"
+					sh "mv jsbml.log logs"
 					sh "gzip logs/*"
 					sh "aws s3 --no-progress --recursive cp logs/ $s3Path/logs/"
-					sh "aws s3 --no-progress cp ${archive} $s3Path/"
-					sh "rm -r logs/ ${folder} ${archive}"
+					sh "aws s3 --no-progress cp ${speciesSBMLArchive} $s3Path/"
+					sh "aws s3 --no-progress cp ${humanSBMLArchive} $s3PAth/"
+					sh "rm -r logs/ ${folder} *.sbml.tgz"
 				}
 			}
 		}
-		*/
 	}
 }
