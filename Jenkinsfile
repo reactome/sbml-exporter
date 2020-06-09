@@ -25,7 +25,6 @@ pipeline{
 				}
 			}
 		}
-		/*
 		// This stage builds the jar file using maven.
 		stage('Setup: Build jar file'){
 			steps{
@@ -34,7 +33,7 @@ pipeline{
 				}
 			}
 		}
-		// Execute the jar file, producing data-export files.
+		// Execute the jar file, producing sbml files.
 		stage('Main: Run SBML-Exporter'){
 			steps{
 				script{
@@ -45,7 +44,6 @@ pipeline{
 				}
 			}
 		}
-		*/
 		// Archive everything on S3, and move the 'diagram' folder to the download/vXX folder.
 		stage('Post: Archive Outputs'){
 			steps{
@@ -53,10 +51,10 @@ pipeline{
 					def s3Path = "${env.S3_RELEASE_DIRECTORY_URL}/${currentRelease}/sbml_exporter"
 					def speciesSBMLArchive = "all_species.3.1.sbml.tgz"
 					def humanSBMLArchive = "homo_sapiens.3.1.sbml.tgz"
-					/*sh "cd ${folder}; tar -zcvf ${speciesSBMLArchive} R-*"
+					sh "cd ${folder}; tar -zcvf ${speciesSBMLArchive} R-*"
 					sh "cd ${folder}; tar -zcvf ${humanSBMLArchive} R-HSA-*"
 					sh "mv ${folder}/*.sbml.tgz ."
-					sh "cp *.sbml.tgz ${env.ABS_DOWNLOAD_PATH}/${currentRelease}/"*/
+					sh "cp *.sbml.tgz ${env.ABS_DOWNLOAD_PATH}/${currentRelease}/"
 					sh "mkdir -p logs"
 					sh "mv jsbml.log logs"
 					sh "gzip logs/*"
