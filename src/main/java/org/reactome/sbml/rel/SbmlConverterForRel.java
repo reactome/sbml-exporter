@@ -17,11 +17,13 @@ import org.gk.persistence.MySQLAdaptor;
 import org.gk.render.Renderable;
 import org.gk.render.RenderablePathway;
 import org.gk.render.RenderableReaction;
+import org.gk.util.FileUtilities;
 import org.reactome.server.graph.aop.LazyFetchAspect;
 import org.reactome.server.graph.domain.model.DatabaseObject;
 import org.reactome.server.graph.domain.model.Pathway;
 import org.reactome.server.graph.domain.model.PhysicalEntity;
 import org.reactome.server.graph.domain.model.ReactionLikeEvent;
+import org.reactome.server.tools.sbml.converter.Helper;
 import org.reactome.server.tools.sbml.converter.SbmlConverter;
 import org.reactome.server.tools.sbml.data.model.ParticipantDetails;
 import org.reactome.server.tools.sbml.data.model.ReactionBase;
@@ -73,6 +75,7 @@ public class SbmlConverterForRel extends SbmlConverter {
         setUpSpring();
         instanceConverter = new InstanceToModelConverter();
         layoutConverter = new LayoutConverter();
+        Helper.setUseIdentifierURL(true);
     }
     
     private void setUpSpring() {
@@ -257,6 +260,22 @@ public class SbmlConverterForRel extends SbmlConverter {
         SBMLReader reader = new SBMLReader();
         doc = reader.readSBML(file);
         System.out.println("Read back: " + doc.getLevelAndVersion());
+        
+        // Try to pull out all rdf:resource lines
+        FileUtilities fu = new FileUtilities();
+        fu.setInput(fileName);
+        String line = null;
+        Set<String> lines = new HashSet<>();
+        while ((line = fu.readLine()) != null) {
+            line = line.trim();
+            if (line.contains("rdf:resource")) {
+                int index1 = line.indexOf("\"");
+                int index2 = line.lastIndexOf("\"");
+                lines.add(line.substring(index1 + 1, index2));
+            }
+        }
+        fu.close();
+        lines.stream().sorted().forEach(System.out::println);
     }
 
 }

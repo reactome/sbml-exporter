@@ -478,6 +478,9 @@ public class LayoutConverter {
                 GKInstance inst = dba.fetchInstance(r.getReactomeId());
                 if (InstanceUtilities.hasDrug(inst))
                     return "SBO:0000298";
+                // This term is for functional compartment. Following Marek's advice
+                // from Minerva to use this term for the time being.
+                else return "SBO:0000289";
             }
             catch(Exception e) {
                 logger.error(e.getMessage(), e);
