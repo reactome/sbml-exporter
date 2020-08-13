@@ -1,5 +1,7 @@
 package org.reactome.sbml.rel;
 
+import static org.gk.render.DefaultRenderConstants.EDGE_TYPE_WIDGET_WIDTH;
+
 import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -9,6 +11,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.swing.text.Position;
+
 import org.gk.graphEditor.PathwayEditor;
 import org.gk.model.GKInstance;
 import org.gk.model.InstanceUtilities;
@@ -17,6 +21,7 @@ import org.gk.model.ReactomeJavaConstants;
 import org.gk.pathwaylayout.PathwayDiagramGeneratorViaAT;
 import org.gk.persistence.DiagramGKBReader;
 import org.gk.persistence.MySQLAdaptor;
+import org.gk.render.DefaultRenderConstants;
 import org.gk.render.Node;
 import org.gk.render.Renderable;
 import org.gk.render.RenderableChemical;
@@ -190,6 +195,8 @@ public class LayoutConverter {
         String layoutId = LAYOUT_ID_PREFIX + rxt.getID();
         ReactionGlyph rg = layout.createReactionGlyph(layoutId);
         rg.setReaction(rxtId);
+        // Position as a bounding box
+        createBoundingBox(rxt, rg);
         // Backbone
         Curve curve = rg.createCurve();
         convertToCurve(backbonePoints, curve);
@@ -238,6 +245,18 @@ public class LayoutConverter {
                        SpeciesReferenceRole.INHIBITOR,
                        rg,
                        layoutId);
+    }
+    
+    private void createBoundingBox(RenderableReaction rxt, ReactionGlyph rg) {
+        BoundingBox box = rg.createBoundingBox();
+        java.awt.Point point = rxt.getPosition();
+        Point boxPos = new Point(point.getX() - EDGE_TYPE_WIDGET_WIDTH / 2.0d,
+                                 point.getY() - EDGE_TYPE_WIDGET_WIDTH / 2.0d);
+        box.setPosition(boxPos);
+        Dimensions dim = new Dimensions();
+        dim.setWidth(EDGE_TYPE_WIDGET_WIDTH);
+        dim.setHeight(EDGE_TYPE_WIDGET_WIDTH);
+        box.setDimensions(dim);
     }
 
     private void handleBranches(List<Node> nodes,
@@ -332,7 +351,7 @@ public class LayoutConverter {
                 TextGlyph textGlyph = handleText(layoutId, layout, node, speciesId);
                 // It seems that the text cannot be honored at Minerva. Reset the _displayName
                 Species species = layout.getModel().getSpecies(speciesId);
-                species.setName(textGlyph.getText());
+//                species.setName(textGlyph.getText());
                 // Need to reset SBO term for minerva
                 String sboTerm = getSBOTerm(comp);
                 species.setSBOTerm(sboTerm);
