@@ -232,9 +232,9 @@ public class SbmlConverterForRel extends SbmlConverter {
 
     public static void main(String[] args) throws Exception {
         MySQLAdaptor dba = new MySQLAdaptor("localhost",
-                                            "gk_central_060820",
-                                            "root",
-                                            "macmysql01");
+                                            "gk_current_ver76",
+                                            "",
+                                            "");
         String targetStId = "R-MMU-211119";
 //        targetStId = "3927939"; // Reactions with entities having inferFrom
 //        targetStId = "5268354"; // Has ecnumber
@@ -243,6 +243,7 @@ public class SbmlConverterForRel extends SbmlConverter {
         
         targetStId = "R-HSA-400253"; // A full pathway: circadia clock
         targetStId = "R-HSA-9678108"; // SARS-CoV-1 Infection
+        targetStId = "R-HSA-9694516"; // SARS-CoV-2
         boolean useDiagram = true;
         
         SbmlConverterForRel converter = new SbmlConverterForRel(targetStId);
