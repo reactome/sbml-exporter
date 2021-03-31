@@ -251,6 +251,7 @@ public class Helper {
             br.close();
             isr.close();
             is.close();
+            logger.info("Loaded url2identiier.txt: " + rtn.size());
         }
         catch(IOException e) {
             logger.error(e.getMessage(), e);

@@ -11,8 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.swing.text.Position;
-
 import org.gk.graphEditor.PathwayEditor;
 import org.gk.model.GKInstance;
 import org.gk.model.InstanceUtilities;
@@ -21,7 +19,6 @@ import org.gk.model.ReactomeJavaConstants;
 import org.gk.pathwaylayout.PathwayDiagramGeneratorViaAT;
 import org.gk.persistence.DiagramGKBReader;
 import org.gk.persistence.MySQLAdaptor;
-import org.gk.render.DefaultRenderConstants;
 import org.gk.render.Node;
 import org.gk.render.Renderable;
 import org.gk.render.RenderableChemical;
@@ -347,7 +344,7 @@ public class LayoutConverter {
                 String layoutId = LAYOUT_ID_PREFIX + node.getID();
                 SpeciesGlyph sg = layout.createSpeciesGlyph(layoutId);
                 sg.setSpecies(speciesId);
-                sg.setBoundingBox(createBox(node.getBounds()));
+                sg.setBoundingBox(createBox(getNodeRect(node)));
                 TextGlyph textGlyph = handleText(layoutId, layout, node, speciesId);
                 // It seems that the text cannot be honored at Minerva. Reset the _displayName
                 Species species = layout.getModel().getSpecies(speciesId);
@@ -357,6 +354,19 @@ public class LayoutConverter {
                 species.setSBOTerm(sboTerm);
             }
         }
+    }
+    
+    private Rectangle getNodeRect(Node node) {
+        Rectangle rtn = node.getBounds();
+        // Special case for RNA since the arrow points inside the bounding box
+        if (node instanceof RenderableRNA) {
+            return new Rectangle(rtn.x,
+                                 rtn.y + RenderableRNA.LOOP_WIDTH / 2,
+                                 rtn.width,
+                                 rtn.height - RenderableRNA.LOOP_WIDTH);
+                                 
+        }
+        return rtn;
     }
     
     private TextGlyph handleText(String layoutId,
