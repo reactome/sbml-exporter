@@ -47,21 +47,11 @@ public class SbmlConverterForRel extends SbmlConverter {
     private InstanceToModelConverter instanceConverter;
     private LayoutConverter layoutConverter;
     private GKInstance topEvent;
-    // A flag indicating only Reactions drawn in a pathway diagram should be converted
-    private boolean useDiagram;
     // Cache the diagram is useDiagram is true and the diagram is in the database for repearting query
     private RenderablePathway pathwayDiagram;
 
     public SbmlConverterForRel(String targetId) {
         this(targetId, 0); // Default version is 0, meaning it is not defined.
-    }
-
-    public boolean isUseDiagram() {
-        return useDiagram;
-    }
-
-    public void setUseDiagram(boolean useDiagram) {
-        this.useDiagram = useDiagram;
     }
 
     /**
@@ -96,6 +86,7 @@ public class SbmlConverterForRel extends SbmlConverter {
                 instanceConverter.fillInPathwayDetails(instance, pathway);
             }
             topEvent = instance;
+            pathwayDiagram = null; // Just in case
         }
         catch(Exception e) {
             logger.error(e.getMessage(), e);
@@ -140,9 +131,11 @@ public class SbmlConverterForRel extends SbmlConverter {
         logger.info("Starting converting " + targetStId + "...");
         SBMLDocument doc =  super.convert();
         logger.info("Finished converting " + targetStId + ".");
-        layoutConverter.addLayout(doc.getModel(), 
-                                  topEvent,
-                                  pathwayDiagram);
+        if (pathwayDiagram != null) { // This should do for using pathway diagram only
+            layoutConverter.addLayout(doc.getModel(), 
+                                      topEvent,
+                                      pathwayDiagram);
+        }
         return doc;
     }
 
@@ -174,8 +167,12 @@ public class SbmlConverterForRel extends SbmlConverter {
     }
     
     private Set<GKInstance> getReactions() throws Exception {
-        if (useDiagram)
-            return getReactionsInDiagram();
+        RenderablePathway diagram = layoutConverter.getDiagram(topEvent);
+        if (diagram != null && layoutConverter.hasReactions(diagram)) {
+            this.pathwayDiagram = diagram;
+            // We will convert all contained reactions regardless if they are laid out in the diagram.
+//            return getReactionsInDiagram(diagram);
+        }
         Set<GKInstance> contained = InstanceUtilities.getContainedEvents(topEvent);
         contained.add(topEvent); // In case event itself is a RLE
         return contained.stream()
@@ -183,12 +180,7 @@ public class SbmlConverterForRel extends SbmlConverter {
                 .collect(Collectors.toSet());
     }
     
-    private Set<GKInstance> getReactionsInDiagram() throws Exception {
-        pathwayDiagram = layoutConverter.getDiagram(topEvent);
-        if (pathwayDiagram == null) {
-            logger.error("No pathway diagram found for " + topEvent);
-            return Collections.EMPTY_SET;
-        }
+    private Set<GKInstance> getReactionsInDiagram(RenderablePathway pathwayDiagram) throws Exception {
         List<Renderable> comps = pathwayDiagram.getComponents();
         Set<GKInstance> rtn = new HashSet<>();
 //        List<Long> testIds = Arrays.asList(9678128L);
@@ -242,12 +234,13 @@ public class SbmlConverterForRel extends SbmlConverter {
 //        targetStId = "5269406"; // CrossReferences
         
         targetStId = "R-HSA-400253"; // A full pathway: circadia clock
-        targetStId = "R-HSA-9678108"; // SARS-CoV-1 Infection
+//        targetStId = "R-HSA-9678108"; // SARS-CoV-1 Infection
         targetStId = "R-HSA-9694516"; // SARS-CoV-2
-        boolean useDiagram = true;
+//        targetStId = "R-HSA-187037"; // Signaling by NTRK1 (TRKA): busy pathway with process nodes
+//        targetStId = "R-HSA-69620"; // Cell Cycle Checkpoints
+//        targetStId = "R-HSA-73884"; // A big pathway: no SBGN diagram
         
         SbmlConverterForRel converter = new SbmlConverterForRel(targetStId);
-        converter.setUseDiagram(useDiagram);
         converter.setDBA(dba);
         SBMLDocument doc = converter.convert();
         
@@ -262,20 +255,20 @@ public class SbmlConverterForRel extends SbmlConverter {
         System.out.println("Read back: " + doc.getLevelAndVersion());
         
         // Try to pull out all rdf:resource lines
-        FileUtilities fu = new FileUtilities();
-        fu.setInput(fileName);
-        String line = null;
-        Set<String> lines = new HashSet<>();
-        while ((line = fu.readLine()) != null) {
-            line = line.trim();
-            if (line.contains("rdf:resource")) {
-                int index1 = line.indexOf("\"");
-                int index2 = line.lastIndexOf("\"");
-                lines.add(line.substring(index1 + 1, index2));
-            }
-        }
-        fu.close();
-        lines.stream().sorted().forEach(System.out::println);
+//        FileUtilities fu = new FileUtilities();
+//        fu.setInput(fileName);
+//        String line = null;
+//        Set<String> lines = new HashSet<>();
+//        while ((line = fu.readLine()) != null) {
+//            line = line.trim();
+//            if (line.contains("rdf:resource")) {
+//                int index1 = line.indexOf("\"");
+//                int index2 = line.lastIndexOf("\"");
+//                lines.add(line.substring(index1 + 1, index2));
+//            }
+//        }
+//        fu.close();
+//        lines.stream().sorted().forEach(System.out::println);
     }
 
 }

@@ -468,6 +468,23 @@ public class LayoutConverter {
     }
     
     /**
+     * Check if there is anything that can be converted into SBML layout.
+     * @param diagram
+     * @return
+     */
+    public boolean hasReactions(RenderablePathway diagram) {
+        List<Renderable> comps = diagram.getComponents();
+        if (comps == null || comps.size() == 0)
+            return false;
+        for (Renderable r : comps) {
+            if ((r instanceof RenderableReaction) &&
+                (r.getReactomeId() != null))
+                return true;
+        }
+        return false;
+    }
+    
+    /**
      * The following term is based on minera class lcsb/mapviewer/converter/model/sbml/species/SBOTermSpeciesType.java
      *   ANTISENSE_RNA(AntisenseRna.class, new String[] { "SBO:0000334" }),
      *   COMPLEX(Complex.class, new String[] { "SBO:0000297" }),

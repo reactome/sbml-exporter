@@ -196,11 +196,11 @@ public class Helper {
     }
 
     private static void addCVTerm(SBase sBase, CVTerm.Qualifier qualifier, List<String> uris) {
-        addCVTerm(sBase, qualifier, uris.toArray(new String[0]));
+        addCVTerm(sBase, qualifier, uris == null ? null : uris.toArray(new String[0]));
     }
 
     static void addCVTerm(SBase sBase, CVTerm.Qualifier qualifier, String... uris) {
-        if (uris.length > 0) {
+        if (uris != null && uris.length > 0) {
             CVTerm term = new CVTerm(qualifier);
             for (String s : uris) term.addResourceURI(convertUrl(s));
             sBase.addCVTerm(term);
