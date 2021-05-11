@@ -30,6 +30,50 @@ public class ReactionBase {
     private List<Participant> positiveRegulators;
     private List<Participant> negativeRegulators;
 
+    public void setRle(ReactionLikeEvent rle) {
+        this.rle = rle;
+    }
+
+    public void setGoTerms(List<String> goTerms) {
+        this.goTerms = goTerms;
+    }
+
+    public void setEcNumbers(List<String> ecNumbers) {
+        this.ecNumbers = ecNumbers;
+    }
+
+    public void setLiteratureRefs(List<String> literatureRefs) {
+        this.literatureRefs = literatureRefs;
+    }
+
+    public void setXrefs(List<String> xrefs) {
+        this.xrefs = xrefs;
+    }
+
+    public void setDiseases(List<String> diseases) {
+        this.diseases = diseases;
+    }
+
+    public void setInputs(List<Participant> inputs) {
+        this.inputs = inputs;
+    }
+
+    public void setOutputs(List<Participant> outputs) {
+        this.outputs = outputs;
+    }
+
+    public void setCatalysts(List<Participant> catalysts) {
+        this.catalysts = catalysts;
+    }
+
+    public void setPositiveRegulators(List<Participant> positiveRegulators) {
+        this.positiveRegulators = positiveRegulators;
+    }
+
+    public void setNegativeRegulators(List<Participant> negativeRegulators) {
+        this.negativeRegulators = negativeRegulators;
+    }
+
     public Long getDbId() {
         return rle.getDbId();
     }

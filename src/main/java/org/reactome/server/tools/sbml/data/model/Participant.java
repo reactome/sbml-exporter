@@ -7,7 +7,6 @@ import org.reactome.server.graph.domain.model.PhysicalEntity;
  *
  * @author Antonio Fabregat (fabregat@ebi.ac.uk)
  */
-@SuppressWarnings("unused")
 public class Participant {
 
     private Integer n;  //stoichiometry
@@ -19,6 +18,14 @@ public class Participant {
 
     public PhysicalEntity getPhysicalEntity() {
         return pe;
+    }
+    
+    public void setStoichiometry(Integer n) {
+        this.n = n;
+    }
+
+    public void setPhysicalEntity(PhysicalEntity pe) {
+        this.pe = pe;
     }
 
 

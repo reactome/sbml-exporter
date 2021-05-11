@@ -1,10 +1,17 @@
 package org.reactome.server.tools.sbml.data.model;
 
-import org.reactome.server.graph.domain.model.*;
-import org.reactome.server.tools.sbml.converter.SbmlConverter;
-
+import java.util.ArrayList;
 import java.util.List;
 import java.util.StringJoiner;
+
+import org.reactome.server.graph.domain.model.CandidateSet;
+import org.reactome.server.graph.domain.model.Complex;
+import org.reactome.server.graph.domain.model.DefinedSet;
+import org.reactome.server.graph.domain.model.Drug;
+import org.reactome.server.graph.domain.model.EntityWithAccessionedSequence;
+import org.reactome.server.graph.domain.model.PhysicalEntity;
+import org.reactome.server.graph.domain.model.SimpleEntity;
+import org.reactome.server.tools.sbml.converter.SbmlConverter;
 
 @SuppressWarnings({"unused", "MismatchedQueryAndUpdateOfCollection"})
 public class ParticipantDetails {
@@ -16,11 +23,22 @@ public class ParticipantDetails {
     public PhysicalEntity getPhysicalEntity() {
         return pe;
     }
+    
+    public void setPhysicalEntity(PhysicalEntity pe) {
+        this.pe = pe;
+    }
 
     public void addUrl(String url) {
+        if (urls == null)
+            urls = new ArrayList<>();
         urls.add(url);
     }
 
+    public void addIdentifierBase(IdentifierBase base) {
+        if (ids == null)
+            ids = new ArrayList<>();
+        ids.add(base);
+    }
 
     public List<String> getUrls() {
         return urls;
