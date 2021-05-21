@@ -98,7 +98,7 @@ public class SbmlConverterForRel extends SbmlConverter {
         if (targetStId.startsWith("R-")) // This is a stable id
             instance = fetchEventForStableId(dba, targetStId);
         else
-            instance = dba.fetchInstance(new Long(targetStId));
+            instance = dba.fetchInstance(Long.valueOf(targetStId));
         if (instance == null)
             throw new IllegalArgumentException("Cannot find an Event with id " + targetStId + " in the provided database.");
         return instance;
