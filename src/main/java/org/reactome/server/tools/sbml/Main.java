@@ -9,7 +9,7 @@ import org.reactome.server.graph.domain.model.Species;
 import org.reactome.server.graph.service.*;
 import org.reactome.server.graph.service.util.DatabaseObjectUtils;
 import org.reactome.server.graph.utils.ReactomeGraphCore;
-import org.reactome.server.tools.sbml.config.GraphNeo4jConfig;
+//import org.reactome.server.tools.sbml.config.GraphNeo4jConfig;
 import org.reactome.server.tools.sbml.converter.SbmlConverter;
 import org.reactome.server.tools.sbml.util.ProgressBar;
 import org.reactome.server.tools.sbml.util.Utils;
@@ -56,7 +56,7 @@ public class Main {
         Utils.outputCheck(output);
 
         //Initialising ReactomeCore Neo4j configuration
-        ReactomeGraphCore.initialise(config.getString("host"), config.getString("port"), config.getString("user"), config.getString("password"), GraphNeo4jConfig.class);
+        ReactomeGraphCore.initialise(config.getString("host"), config.getString("port"), config.getString("user"), config.getString("password"));
 
         //Check if target pathways are specified
         String[] target = config.getStringArray("target");

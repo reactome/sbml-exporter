@@ -14,7 +14,7 @@
         <jdk.version>11</jdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <graph.core>1.1.25-SNAPSHOT</graph.core>
+        <graph.core>2.0.0-SNAPSHOT</graph.core>
         <sbml.lib.version>1.5</sbml.lib.version>
         <jasp.version>2.1</jasp.version>
         <junit.version>5.8.0-M1</junit.version>
@@ -120,6 +120,12 @@
             <groupId>com.martiansoftware</groupId>
             <artifactId>jsap</artifactId>
             <version>${jasp.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.4</version>
         </dependency>
 
         <dependency>

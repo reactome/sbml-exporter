@@ -68,9 +68,9 @@ public class SbmlConverterForRel extends SbmlConverter {
     }
     
     private void setUpSpring() {
-        ApplicationContext context = new AnnotationConfigApplicationContext(DumbGraphNeo4jConfig.class);
-        // Disable it. This has to be called.
-        context.getBean(LazyFetchAspect.class).setEnableAOP(false);
+//        ApplicationContext context = new AnnotationConfigApplicationContext(DumbGraphNeo4jConfig.class);
+//        // Disable it. This has to be called.
+//        context.getBean(LazyFetchAspect.class).setEnableAOP(false);
     }
 
     public void setDBA(MySQLAdaptor dba) {
