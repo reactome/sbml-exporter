@@ -35,8 +35,8 @@ pipeline{
 			steps{
 				script{
 					sh "mkdir -p ${env.OUTPUT_FOLDER}"
-					withCredentials([usernamePassword(credentialsId: 'neo4jUsernamePassword', passwordVariable: 'pass', usernameVariable: 'user')]){
-						sh "java -Xmx${env.JAVA_MEM_MAX}m -jar target/sbml-exporter-jar-with-dependencies.jar --user $user --password $pass --output ./${env.OUTPUT_FOLDER} --verbose"
+					withCredentials([usernamePassword(credentialsId: 'mySQLUsernamePassword', passwordVariable: 'pass', usernameVariable: 'user')]){
+						sh "java -Xmx${env.JAVA_MEM_MAX}m -jar target/sbml-exporter-jar-with-dependencies.jar --mysql_db ${env.RELEASE_CURRENT_DB} --mysql_user $user --mysql_password $pass --output ./${env.OUTPUT_FOLDER} --verbose"
 					}
 				}
 			}
