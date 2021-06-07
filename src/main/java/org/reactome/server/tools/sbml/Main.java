@@ -12,6 +12,7 @@ import org.reactome.server.graph.domain.model.DBInfo;
 import org.reactome.server.graph.domain.model.Event;
 import org.reactome.server.graph.domain.model.Pathway;
 import org.reactome.server.graph.domain.model.Species;
+import org.reactome.server.graph.service.AdvancedDatabaseObjectService;
 import org.reactome.server.graph.service.DatabaseObjectService;
 import org.reactome.server.graph.service.GeneralService;
 import org.reactome.server.graph.service.SchemaService;
@@ -116,7 +117,9 @@ public class Main {
             try {
                 Event p = dbs.findById(identifier);
                 info(String.format("\t>%s: %s", p.getStId(), p.getDisplayName()));
-                SbmlConverterForRel c = new SbmlConverterForRel(p.getStId(), version);
+                SbmlConverterForRel c = new SbmlConverterForRel(p.getStId(), 
+                                                                version, 
+                                                                ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class));
                 c.setDBA(mysqlDba);
                 c.convert();
                 c.writeToFile(output);
@@ -144,7 +147,9 @@ public class Main {
             try {
                 pathways.stream().parallel().forEach(pathway -> {
                     progressBar.update(pathway.getStId(), i.get());
-                    SbmlConverterForRel c = new SbmlConverterForRel(pathway.getStId(), version);
+                    SbmlConverterForRel c = new SbmlConverterForRel(pathway.getStId(), 
+                                                                    version,
+                                                                    ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class));
                     c.setDBA(mysqlDba);
                     c.convert();
                     c.writeToFile(output);
