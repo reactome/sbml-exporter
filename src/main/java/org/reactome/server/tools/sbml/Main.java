@@ -8,6 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.commons.lang3.ArrayUtils;
 import org.gk.persistence.MySQLAdaptor;
 import org.reactome.sbml.rel.SbmlConverterForRel;
+import org.reactome.server.graph.config.GraphCoreNeo4jConfig;
 import org.reactome.server.graph.domain.model.DBInfo;
 import org.reactome.server.graph.domain.model.Event;
 import org.reactome.server.graph.domain.model.Pathway;
@@ -78,7 +79,7 @@ public class Main {
                                     config.getString("mysql_user"),
                                     config.getString("mysql_password"),
                                     Integer.parseInt(config.getString("mysql_port"))); // Cannot auto-parse? This is weird.
-        ReactomeGraphCore.initialise(config.getString("host"), config.getString("port"), config.getString("user"), config.getString("password"), GraphNeo4jConfig.class);
+        ReactomeGraphCore.initialise(config.getString("host"), config.getString("port"), config.getString("user"), config.getString("password"), GraphCoreNeo4jConfig.class);
 
         //Check if target pathways are specified
         String[] target = config.getStringArray("target");
