@@ -3,7 +3,6 @@ package org.reactome.sbml.rel;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -16,12 +15,12 @@ import org.gk.persistence.MySQLAdaptor;
 import org.gk.render.Renderable;
 import org.gk.render.RenderablePathway;
 import org.gk.render.RenderableReaction;
-import org.gk.util.FileUtilities;
 import org.reactome.server.graph.aop.LazyFetchAspect;
 import org.reactome.server.graph.domain.model.DatabaseObject;
 import org.reactome.server.graph.domain.model.Pathway;
 import org.reactome.server.graph.domain.model.PhysicalEntity;
 import org.reactome.server.graph.domain.model.ReactionLikeEvent;
+import org.reactome.server.graph.service.AdvancedDatabaseObjectService;
 import org.reactome.server.tools.sbml.converter.Helper;
 import org.reactome.server.tools.sbml.converter.SbmlConverter;
 import org.reactome.server.tools.sbml.data.model.ParticipantDetails;
@@ -62,6 +61,13 @@ public class SbmlConverterForRel extends SbmlConverter {
     public SbmlConverterForRel(String targetId, Integer version) {
         super(targetId, version);
         setUpSpring();
+        instanceConverter = new InstanceToModelConverter();
+        layoutConverter = new LayoutConverter();
+        Helper.setUseIdentifierURL(true);
+    }
+    
+    public SbmlConverterForRel(String targetId, Integer version, AdvancedDatabaseObjectService ads) {
+        super(targetId, version);
         instanceConverter = new InstanceToModelConverter();
         layoutConverter = new LayoutConverter();
         Helper.setUseIdentifierURL(true);
