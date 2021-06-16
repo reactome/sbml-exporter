@@ -1,13 +1,5 @@
 package org.reactome.sbml.rel;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.gk.model.GKInstance;
 import org.gk.model.InstanceUtilities;
 import org.gk.model.ReactomeJavaConstants;
@@ -15,7 +7,6 @@ import org.gk.persistence.MySQLAdaptor;
 import org.gk.render.Renderable;
 import org.gk.render.RenderablePathway;
 import org.gk.render.RenderableReaction;
-import org.reactome.server.graph.aop.LazyFetchAspect;
 import org.reactome.server.graph.domain.model.DatabaseObject;
 import org.reactome.server.graph.domain.model.Pathway;
 import org.reactome.server.graph.domain.model.PhysicalEntity;
@@ -31,8 +22,10 @@ import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.TidySBMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+
+import java.io.File;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * A customized SBMLConverter to handle objects directly loaded from a RelationDatabase.
@@ -74,9 +67,10 @@ public class SbmlConverterForRel extends SbmlConverter {
     }
     
     private void setUpSpring() {
-        ApplicationContext context = new AnnotationConfigApplicationContext(DumbGraphNeo4jConfig.class);
-        // Disable it. This has to be called.
-        context.getBean(LazyFetchAspect.class).setEnableAOP(false);
+        // gwu commented //
+//        ApplicationContext context = new AnnotationConfigApplicationContext(DumbGraphNeo4jConfig.class);
+//        // Disable it. This has to be called.
+//        context.getBean(LazyFetchAspect.class).setEnableAOP(false);
     }
 
     public void setDBA(MySQLAdaptor dba) {
