@@ -2,14 +2,21 @@ package org.reactome.server.tools.sbml.data;
 
 import org.reactome.server.graph.exception.CustomQueryException;
 import org.reactome.server.graph.service.AdvancedDatabaseObjectService;
+import org.reactome.server.graph.service.DatabaseObjectService;
+import org.reactome.server.graph.utils.ReactomeGraphCore;
+import org.reactome.server.tools.sbml.data.model.Participant;
 import org.reactome.server.tools.sbml.data.model.ParticipantDetails;
 import org.reactome.server.tools.sbml.data.model.ReactionBase;
+import org.reactome.server.tools.sbml.data.result.ParticipantDetailsResult;
+import org.reactome.server.tools.sbml.data.result.ParticipantResult;
+import org.reactome.server.tools.sbml.data.result.ReactionBaseResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Retrieves the data in an efficient way in order to speed up the conversion process
@@ -21,8 +28,8 @@ public abstract class DataFactory {
     private static Logger logger = LoggerFactory.getLogger("sbml-exporter");
 
     private static final String REACTIONS_QUERY = "" +
-            "OPTIONAL MATCH (rle1:ReactionLikeEvent{stId:{stId}}) " +
-            "OPTIONAL MATCH (:Pathway{stId:{stId}})-[:hasEvent*]->(rle2:ReactionLikeEvent) " +
+            "OPTIONAL MATCH (rle1:ReactionLikeEvent{stId:$stId}) " +
+            "OPTIONAL MATCH (:Pathway{stId:$stId})-[:hasEvent*]->(rle2:ReactionLikeEvent) " +
             "WITH DISTINCT COLLECT(DISTINCT rle1) + COLLECT(DISTINCT rle2) AS rles " +
             "UNWIND rles AS rle " +
             "OPTIONAL MATCH (rle)-[:goBiologicalProcess]->(gobp:GO_BiologicalProcess)  " +
@@ -45,11 +52,11 @@ public abstract class DataFactory {
             "OPTIONAL MATCH (rle)-[:regulatedBy]->(:PositiveRegulation)-[:regulator]->(pepr:PhysicalEntity) " +
             "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, inputs, outputs, catalysts, COLLECT(DISTINCT CASE pepr WHEN NULL THEN NULL ELSE {n: 0,  pe: pepr} END) AS positiveRegulators " +
             "OPTIONAL MATCH (rle)-[:regulatedBy]->(:NegativeRegulation)-[:regulator]->(penr:PhysicalEntity) " +
-            "RETURN DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, inputs, outputs, catalysts, positiveRegulators, COLLECT(DISTINCT CASE penr WHEN NULL THEN NULL ELSE {n: 0,  pe: penr} END) AS negativeRegulators";
+            "RETURN DISTINCT rle.stId AS rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, inputs, outputs, catalysts, positiveRegulators, COLLECT(DISTINCT CASE penr WHEN NULL THEN NULL ELSE {n: 0,  pe: penr} END) AS negativeRegulators";
 
     private static final String PARTICIPANTS_QUERY = "" +
-            "OPTIONAL MATCH (rle1:ReactionLikeEvent{stId:{stId}}) " +
-            "OPTIONAL MATCH (:Pathway{stId:{stId}})-[:hasEvent*]->(rle2:ReactionLikeEvent) " +
+            "OPTIONAL MATCH (rle1:ReactionLikeEvent{stId:$stId}) " +
+            "OPTIONAL MATCH (:Pathway{stId:$stId})-[:hasEvent*]->(rle2:ReactionLikeEvent) " +
             "WITH DISTINCT COLLECT(DISTINCT rle1) + COLLECT(DISTINCT rle2) AS rles " +
             "UNWIND rles AS rle " +
             "MATCH (rle)-[:input|output|catalystActivity|physicalEntity|regulatedBy|regulator*]->(pe:PhysicalEntity) " +
@@ -58,7 +65,7 @@ public abstract class DataFactory {
             //GEE do not have RE but they must be in the species (without identifier)
             "OPTIONAL MATCH path=(pe)-[:hasComponent|hasMember|repeatedUnit|referenceEntity*]->(re:ReferenceEntity) " +
             "WITH pe, re, REDUCE(s = 1, x IN RELATIONSHIPS(path) | s * x.stoichiometry) AS n " +
-            "RETURN pe, " +
+            "RETURN pe.stId AS pe, " +
             "       COLLECT(DISTINCT {" +
             "               n:  CASE n WHEN NULL THEN 1 ELSE n END, " +  //n is null when no RE present for a PE
             "               id: CASE re WHEN NULL THEN '' " +            //empty identifier when no RE present for a PE
@@ -68,20 +75,59 @@ public abstract class DataFactory {
             "       COLLECT(DISTINCT re.url) AS urls";
 
     public static Collection<ReactionBase> getReactionList(String eventStId, AdvancedDatabaseObjectService ads) {
+
+        DatabaseObjectService ds = ReactomeGraphCore.getService(DatabaseObjectService.class);
+
         try {
-            return ads.getCustomQueryResults(ReactionBase.class, REACTIONS_QUERY, Collections.singletonMap("stId", eventStId));
+            Collection<ReactionBaseResult> reactionBaseResults = ads.getCustomQueryResults(ReactionBaseResult.class, REACTIONS_QUERY, Collections.singletonMap("stId", eventStId));
+            Collection<ReactionBase> reactionBases = new ArrayList<>();
+            for (ReactionBaseResult reactionBaseResult : reactionBaseResults) {
+                ReactionBase reactionBase = new ReactionBase();
+                reactionBase.setRle(ds.findByIdNoRelations(reactionBaseResult.getRle()));
+                reactionBase.setGoTerms(reactionBaseResult.getGoTerms());
+                reactionBase.setEcNumbers(reactionBaseResult.getEcNumbers());
+                reactionBase.setLiteratureRefs(reactionBaseResult.getLiteratureRefs());
+                reactionBase.setXrefs(reactionBaseResult.getXrefs());
+                reactionBase.setDiseases(reactionBaseResult.getDiseases());
+                reactionBase.setInputs(getParticipantResults(ds, reactionBaseResult.getInputs()));
+                reactionBase.setOutputs(getParticipantResults(ds, reactionBaseResult.getOutputs()));
+                reactionBase.setCatalysts(getParticipantResults(ds, reactionBaseResult.getPositiveRegulators()));
+                reactionBase.setNegativeRegulators(getParticipantResults(ds, reactionBaseResult.getPositiveRegulators()));
+                reactionBases.add(reactionBase);
+            }
+            return reactionBases;
         } catch (CustomQueryException e) {
             logger.error(e.getMessage(), e);
             return new ArrayList<>();
         }
     }
 
-    public static Collection<ParticipantDetails> getParticipantDetails(String eventStId, AdvancedDatabaseObjectService ads){
+    public static Collection<ParticipantDetails> getParticipantDetails(String eventStId, AdvancedDatabaseObjectService ads) {
+        DatabaseObjectService ds = ReactomeGraphCore.getService(DatabaseObjectService.class);
         try {
-            return ads.getCustomQueryResults(ParticipantDetails.class, PARTICIPANTS_QUERY, Collections.singletonMap("stId", eventStId));
+            Collection<ParticipantDetailsResult> participantDetailsResults = ads.getCustomQueryResults(ParticipantDetailsResult.class, PARTICIPANTS_QUERY, Collections.singletonMap("stId", eventStId));
+            Collection<ParticipantDetails> participantDetails = new ArrayList<>();
+            for (ParticipantDetailsResult participantDetailsResult : participantDetailsResults) {
+                ParticipantDetails participantDetail = new ParticipantDetails();
+                participantDetail.setIds(participantDetailsResult.getIds());
+                participantDetail.setUrls(participantDetailsResult.getUrls());
+                participantDetail.setPhysicalEntity(ds.findByIdNoRelations(participantDetailsResult.getPeStId()));
+            }
+            return participantDetails;
         } catch (CustomQueryException e) {
             logger.error(e.getMessage(), e);
             return new ArrayList<>();
         }
+    }
+
+    public static List<Participant> getParticipantResults(DatabaseObjectService ds, List<ParticipantResult> participantsQueryResults) {
+        List<Participant> participants = new ArrayList<>();
+        for (ParticipantResult participant : participantsQueryResults) {
+            Participant peParticipant = new Participant();
+            peParticipant.setStoichiometry(peParticipant.getStoichiometry());
+            peParticipant.setPhysicalEntity(ds.findByIdNoRelations(participant.getPhysicalEntity()));
+            participants.add(peParticipant);
+        }
+        return participants;
     }
 }

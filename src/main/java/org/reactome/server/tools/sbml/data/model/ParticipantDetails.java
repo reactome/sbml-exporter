@@ -28,6 +28,14 @@ public class ParticipantDetails {
         this.pe = pe;
     }
 
+    public void setUrls(List<String> urls) {
+        this.urls = urls;
+    }
+
+    public void setIds(List<IdentifierBase> ids) {
+        this.ids = ids;
+    }
+
     public void addUrl(String url) {
         if (urls == null)
             urls = new ArrayList<>();
