@@ -3,7 +3,6 @@ package org.reactome.server.tools.sbml.data;
 import org.reactome.server.graph.exception.CustomQueryException;
 import org.reactome.server.graph.service.AdvancedDatabaseObjectService;
 import org.reactome.server.graph.service.DatabaseObjectService;
-import org.reactome.server.graph.utils.ReactomeGraphCore;
 import org.reactome.server.tools.sbml.data.model.Participant;
 import org.reactome.server.tools.sbml.data.model.ParticipantDetails;
 import org.reactome.server.tools.sbml.data.model.ReactionBase;
@@ -26,6 +25,8 @@ import java.util.List;
 public abstract class DataFactory {
 
     private static Logger logger = LoggerFactory.getLogger("sbml-exporter");
+
+    private static DatabaseObjectService ds;
 
     private static final String REACTIONS_QUERY = "" +
             "OPTIONAL MATCH (rle1:ReactionLikeEvent{stId:$stId}) " +
@@ -74,9 +75,19 @@ public abstract class DataFactory {
             "       }) AS ids, " +
             "       COLLECT(DISTINCT re.url) AS urls";
 
+//    @Autowired
+//    public static void setDs(DatabaseObjectService ds) {
+//        DataFactory.ds = ds;
+//    }
+
+    //work with DataFactoryHelper
+    public DataFactory(DatabaseObjectService ds) {
+        DataFactory.ds = ds;
+    }
+
     public static Collection<ReactionBase> getReactionList(String eventStId, AdvancedDatabaseObjectService ads) {
 
-        DatabaseObjectService ds = ReactomeGraphCore.getService(DatabaseObjectService.class);
+        //DatabaseObjectService ds = ReactomeGraphCore.getService(DatabaseObjectService.class);
 
         try {
             Collection<ReactionBaseResult> reactionBaseResults = ads.getCustomQueryResults(ReactionBaseResult.class, REACTIONS_QUERY, Collections.singletonMap("stId", eventStId));
@@ -103,7 +114,7 @@ public abstract class DataFactory {
     }
 
     public static Collection<ParticipantDetails> getParticipantDetails(String eventStId, AdvancedDatabaseObjectService ads) {
-        DatabaseObjectService ds = ReactomeGraphCore.getService(DatabaseObjectService.class);
+      //  DatabaseObjectService ds = ReactomeGraphCore.getService(DatabaseObjectService.class);
         try {
             Collection<ParticipantDetailsResult> participantDetailsResults = ads.getCustomQueryResults(ParticipantDetailsResult.class, PARTICIPANTS_QUERY, Collections.singletonMap("stId", eventStId));
             Collection<ParticipantDetails> participantDetails = new ArrayList<>();
