@@ -1,6 +1,5 @@
 package org.reactome.server.tools.sbml.data;
 
-import org.reactome.server.graph.domain.model.PhysicalEntity;
 import org.reactome.server.graph.exception.CustomQueryException;
 import org.reactome.server.graph.service.AdvancedDatabaseObjectService;
 import org.reactome.server.graph.service.DatabaseObjectService;
@@ -109,7 +108,6 @@ public abstract class DataFactory {
     }
 
     public static Collection<ParticipantDetails> getParticipantDetails(String eventStId, AdvancedDatabaseObjectService ads) {
-      //  DatabaseObjectService ds = ReactomeGraphCore.getService(DatabaseObjectService.class);
         try {
             Collection<ParticipantDetailsResult> participantDetailsResults = ads.getCustomQueryResults(ParticipantDetailsResult.class, PARTICIPANTS_QUERY, Collections.singletonMap("stId", eventStId));
             Collection<ParticipantDetails> participantDetails = new ArrayList<>();
