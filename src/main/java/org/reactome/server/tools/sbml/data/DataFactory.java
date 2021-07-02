@@ -123,9 +123,6 @@ public abstract class DataFactory {
                     participantDetail.addUrl(url);
                 }
 
-                String peStId = participantDetailsResult.getPeStId();
-                PhysicalEntity pe = ds.findByIdNoRelations(participantDetailsResult.getPeStId());
-                System.out.println(peStId + "" + pe.getDisplayName());
                 participantDetail.setPhysicalEntity(ds.findByIdNoRelations(participantDetailsResult.getPeStId()));
                 participantDetails.add(participantDetail);
             }
