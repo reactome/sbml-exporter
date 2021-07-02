@@ -11,7 +11,6 @@ import org.reactome.server.graph.domain.model.Species;
 import org.reactome.server.graph.service.*;
 import org.reactome.server.graph.service.util.DatabaseObjectUtils;
 import org.reactome.server.graph.utils.ReactomeGraphCore;
-import org.reactome.server.tools.sbml.config.ReactomeNeo4jConfig;
 import org.reactome.server.tools.sbml.util.ProgressBar;
 import org.reactome.server.tools.sbml.util.Utils;
 import org.slf4j.Logger;
@@ -41,7 +40,6 @@ public class Main {
         SimpleJSAP jsap = new SimpleJSAP(Main.class.getName(), "A tool for generating SBML files",
                 new Parameter[]{
                         new FlaggedOption("host", JSAP.STRING_PARSER, "bolt://localhost:7687", JSAP.REQUIRED, 'h', "host", "The neo4j host"),
-                   //     new FlaggedOption("port", JSAP.STRING_PARSER, "7474", JSAP.NOT_REQUIRED, 'b', "port", "The neo4j port"),
                         new FlaggedOption("user", JSAP.STRING_PARSER, "neo4j", JSAP.REQUIRED, 'u', "user", "The neo4j user"),
                         new FlaggedOption("password", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'p', "password", "The neo4j password"),
                         new FlaggedOption("mysql_host", JSAP.STRING_PARSER, "localhost", JSAP.REQUIRED, 'm', "mysql_host", "The mysql host"),
@@ -69,7 +67,7 @@ public class Main {
                                     config.getString("mysql_user"),
                                     config.getString("mysql_password"),
                                     Integer.parseInt(config.getString("mysql_port"))); // Cannot auto-parse? This is weird.
-        ReactomeGraphCore.initialise(config.getString("host"), config.getString("user"), config.getString("password"), ReactomeNeo4jConfig.class);
+        ReactomeGraphCore.initialise(config.getString("host"), config.getString("user"), config.getString("password"));
 
 
         //Check if target pathways are specified
