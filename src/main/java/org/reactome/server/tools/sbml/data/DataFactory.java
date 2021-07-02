@@ -1,8 +1,10 @@
 package org.reactome.server.tools.sbml.data;
 
+import org.reactome.server.graph.domain.model.PhysicalEntity;
 import org.reactome.server.graph.exception.CustomQueryException;
 import org.reactome.server.graph.service.AdvancedDatabaseObjectService;
 import org.reactome.server.graph.service.DatabaseObjectService;
+import org.reactome.server.tools.sbml.data.model.IdentifierBase;
 import org.reactome.server.tools.sbml.data.model.Participant;
 import org.reactome.server.tools.sbml.data.model.ParticipantDetails;
 import org.reactome.server.tools.sbml.data.model.ReactionBase;
@@ -45,15 +47,15 @@ public abstract class DataFactory {
             "OPTIONAL MATCH (rle)-[:disease]->(d:Disease) " +
             "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, COLLECT(DISTINCT d.url) AS diseases " +
             "OPTIONAL MATCH (rle)-[i:input]->(pei:PhysicalEntity) " +
-            "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, COLLECT(DISTINCT CASE pei WHEN NULL THEN NULL ELSE {n: i.stoichiometry,  pe: pei} END) AS inputs " +
+            "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, COLLECT(DISTINCT CASE pei WHEN NULL THEN NULL ELSE {n: i.stoichiometry,  pe: pei.stId} END) AS inputs " +
             "OPTIONAL MATCH (rle)-[o:output]->(peo:PhysicalEntity) " +
-            "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, inputs, COLLECT(DISTINCT CASE peo WHEN NULL THEN NULL ELSE {n: o.stoichiometry,  pe: peo} END) AS outputs " +
+            "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, inputs, COLLECT(DISTINCT CASE peo WHEN NULL THEN NULL ELSE {n: o.stoichiometry,  pe: peo.stId} END) AS outputs " +
             "OPTIONAL MATCH (rle)-[:catalystActivity]->(:CatalystActivity)-[:physicalEntity]->(pec:PhysicalEntity) " +
-            "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, inputs, outputs, COLLECT(DISTINCT CASE pec WHEN NULL THEN NULL ELSE {n: 0,  pe: pec} END) AS catalysts " +
+            "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, inputs, outputs, COLLECT(DISTINCT CASE pec WHEN NULL THEN NULL ELSE {n: 0,  pe: pec.stId} END) AS catalysts " +
             "OPTIONAL MATCH (rle)-[:regulatedBy]->(:PositiveRegulation)-[:regulator]->(pepr:PhysicalEntity) " +
-            "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, inputs, outputs, catalysts, COLLECT(DISTINCT CASE pepr WHEN NULL THEN NULL ELSE {n: 0,  pe: pepr} END) AS positiveRegulators " +
+            "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, inputs, outputs, catalysts, COLLECT(DISTINCT CASE pepr WHEN NULL THEN NULL ELSE {n: 0,  pe: pepr.stId} END) AS positiveRegulators " +
             "OPTIONAL MATCH (rle)-[:regulatedBy]->(:NegativeRegulation)-[:regulator]->(penr:PhysicalEntity) " +
-            "RETURN DISTINCT rle.stId AS rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, inputs, outputs, catalysts, positiveRegulators, COLLECT(DISTINCT CASE penr WHEN NULL THEN NULL ELSE {n: 0,  pe: penr} END) AS negativeRegulators";
+            "RETURN DISTINCT rle.stId AS rle, goTerms, ecNumbers, literatureRefs, xrefs, diseases, inputs, outputs, catalysts, positiveRegulators, COLLECT(DISTINCT CASE penr WHEN NULL THEN NULL ELSE {n: 0,  pe: penr.stId} END) AS negativeRegulators";
 
     private static final String PARTICIPANTS_QUERY = "" +
             "OPTIONAL MATCH (rle1:ReactionLikeEvent{stId:$stId}) " +
@@ -75,19 +77,12 @@ public abstract class DataFactory {
             "       }) AS ids, " +
             "       COLLECT(DISTINCT re.url) AS urls";
 
-//    @Autowired
-//    public static void setDs(DatabaseObjectService ds) {
-//        DataFactory.ds = ds;
-//    }
-
-    //work with DataFactoryHelper
+    //work with DataFactoryHelper to autowire the DatabaseObjectService
     public DataFactory(DatabaseObjectService ds) {
         DataFactory.ds = ds;
     }
 
     public static Collection<ReactionBase> getReactionList(String eventStId, AdvancedDatabaseObjectService ads) {
-
-        //DatabaseObjectService ds = ReactomeGraphCore.getService(DatabaseObjectService.class);
 
         try {
             Collection<ReactionBaseResult> reactionBaseResults = ads.getCustomQueryResults(ReactionBaseResult.class, REACTIONS_QUERY, Collections.singletonMap("stId", eventStId));
@@ -120,9 +115,19 @@ public abstract class DataFactory {
             Collection<ParticipantDetails> participantDetails = new ArrayList<>();
             for (ParticipantDetailsResult participantDetailsResult : participantDetailsResults) {
                 ParticipantDetails participantDetail = new ParticipantDetails();
-                participantDetail.setIds(participantDetailsResult.getIds());
-                participantDetail.setUrls(participantDetailsResult.getUrls());
+
+                for(IdentifierBase identifierBase: participantDetailsResult.getIds()){
+                    participantDetail.addIdentifierBase(identifierBase);
+                }
+                for(String url: participantDetailsResult.getUrls()){
+                    participantDetail.addUrl(url);
+                }
+
+                String peStId = participantDetailsResult.getPeStId();
+                PhysicalEntity pe = ds.findByIdNoRelations(participantDetailsResult.getPeStId());
+                System.out.println(peStId + "" + pe.getDisplayName());
                 participantDetail.setPhysicalEntity(ds.findByIdNoRelations(participantDetailsResult.getPeStId()));
+                participantDetails.add(participantDetail);
             }
             return participantDetails;
         } catch (CustomQueryException e) {
@@ -133,11 +138,11 @@ public abstract class DataFactory {
 
     public static List<Participant> getParticipantResults(DatabaseObjectService ds, List<ParticipantResult> participantsQueryResults) {
         List<Participant> participants = new ArrayList<>();
-        for (ParticipantResult participant : participantsQueryResults) {
-            Participant peParticipant = new Participant();
-            peParticipant.setStoichiometry(peParticipant.getStoichiometry());
-            peParticipant.setPhysicalEntity(ds.findByIdNoRelations(participant.getPhysicalEntity()));
-            participants.add(peParticipant);
+        Participant participant = new Participant();
+        for (ParticipantResult participantResult : participantsQueryResults) {
+            participant.setStoichiometry(participantResult.getStoichiometry());
+            participant.setPhysicalEntity(ds.findByIdNoRelations(participantResult.getPhysicalEntity()));
+            participants.add(participant);
         }
         return participants;
     }
