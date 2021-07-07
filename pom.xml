@@ -4,7 +4,7 @@
 
     <groupId>org.reactome.server.tools</groupId>
     <artifactId>sbml-exporter</artifactId>
-    <version>2.1.1-SNAPSHOT</version>
+    <version>2.1.2</version>
     <packaging>jar</packaging>
 
     <name>sbml-exporter</name>
