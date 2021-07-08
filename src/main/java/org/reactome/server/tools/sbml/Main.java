@@ -145,7 +145,9 @@ public class Main {
             ProgressBar progressBar = new ProgressBar(species.getDisplayName(), total, verbose);
             progressBar.start();
             try {
-                pathways.stream().parallel().forEach(pathway -> {
+                // Check from parallel to avoid any thread issues for the time being
+//                pathways.stream().parallel().forEach(pathway -> {
+                pathways.stream().forEach(pathway -> {
                     progressBar.update(pathway.getStId(), i.get());
                     SbmlConverterForRel c = new SbmlConverterForRel(pathway.getStId(), 
                                                                     version,
