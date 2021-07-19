@@ -25,6 +25,8 @@
         <maven.jar.version>3.2.0</maven.jar.version>
         <maven.assembly.version>3.3.0</maven.assembly.version>
 
+        <spring-boot-maven-plugin.version>2.5.2</spring-boot-maven-plugin.version>
+        <main.class>org.reactome.server.tools.sbml.Main</main.class>
     </properties>
 
     <developers>
@@ -142,29 +144,8 @@
     </dependencies>
 
     <build>
+        <finalName>${project.name}</finalName>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>${maven.jar.version}</version>
-                <executions>
-                    <execution>
-                        <id>default-jar</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <excludes>
-                                <exclude>org/reactome/server/tools/sbml/Main.class</exclude>
-                                <exclude>org/reactome/server/tools/sbml/config/GraphNeo4jConfig.class</exclude>
-                                <exclude>**/log4j2.xml</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -174,28 +155,38 @@
                     <target>${jdk.version}</target>
                 </configuration>
             </plugin>
-
-            <!-- Generate jar with dependencies -->
             <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>${maven.assembly.version}</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven.jar.version}</version>
+                <executions>
+                    <execution>
+                        <id>default-jar</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>**/log4j2.xml</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot-maven-plugin.version}</version>
                 <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>org.reactome.server.tools.sbml.Main</mainClass>
-                        </manifest>
-                    </archive>
-                    <finalName>sbml-exporter</finalName>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
+                    <mainClass>${main.class}</mainClass>
+                    <fork>true</fork>
+                    <classifier>exec</classifier>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
                         <goals>
-                            <goal>single</goal>
+                            <goal>repackage</goal>
                         </goals>
                     </execution>
                 </executions>

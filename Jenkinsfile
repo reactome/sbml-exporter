@@ -36,7 +36,7 @@ pipeline{
 				script{
 					sh "mkdir -p ${env.OUTPUT_FOLDER}"
 					withCredentials([usernamePassword(credentialsId: 'neo4jUsernamePassword', passwordVariable: 'pass', usernameVariable: 'user')]){
-						sh "java -Xmx${env.JAVA_MEM_MAX}m -jar target/sbml-exporter-jar-with-dependencies.jar --user $user --password $pass --output ./${env.OUTPUT_FOLDER} --verbose"
+						sh "java -Xmx${env.JAVA_MEM_MAX}m -jar target/sbml-exporter-exec.jar --user $user --password $pass --output ./${env.OUTPUT_FOLDER} --verbose"
 					}
 				}
 			}
