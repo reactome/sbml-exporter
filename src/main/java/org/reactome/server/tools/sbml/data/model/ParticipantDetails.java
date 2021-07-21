@@ -45,6 +45,7 @@ public class ParticipantDetails {
     }
 
     private String getAccessions() {
+        if (ids == null) return "";
         StringJoiner joiner = new StringJoiner(", ", "(", ")");
         for (IdentifierBase id : ids) joiner.add(id.toString());
         return joiner.toString();
