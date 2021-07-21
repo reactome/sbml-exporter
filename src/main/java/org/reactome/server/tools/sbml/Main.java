@@ -11,6 +11,7 @@ import org.reactome.server.graph.domain.model.Species;
 import org.reactome.server.graph.service.*;
 import org.reactome.server.graph.service.util.DatabaseObjectUtils;
 import org.reactome.server.graph.utils.ReactomeGraphCore;
+import org.reactome.server.tools.sbml.config.GraphNeo4jConfig;
 import org.reactome.server.tools.sbml.util.ProgressBar;
 import org.reactome.server.tools.sbml.util.Utils;
 import org.slf4j.Logger;
@@ -63,11 +64,12 @@ public class Main {
 
         //Initialising ReactomeCore Neo4j configuration
         mysqlDba = new MySQLAdaptor(config.getString("mysql_host"),
-                                    config.getString("mysql_db"),
-                                    config.getString("mysql_user"),
-                                    config.getString("mysql_password"),
-                                    Integer.parseInt(config.getString("mysql_port"))); // Cannot auto-parse? This is weird.
-        ReactomeGraphCore.initialise(config.getString("host"), config.getString("user"), config.getString("password"));
+                config.getString("mysql_db"),
+                config.getString("mysql_user"),
+                config.getString("mysql_password"),
+                Integer.parseInt(config.getString("mysql_port"))); // Cannot auto-parse? This is weird.
+
+        ReactomeGraphCore.initialise(config.getString("host"), config.getString("user"), config.getString("password"), GraphNeo4jConfig.class);
 
 
         //Check if target pathways are specified
@@ -107,8 +109,8 @@ public class Main {
                 Event p = dbs.findById(identifier);
                 info(String.format("\t>%s: %s", p.getStId(), p.getDisplayName()));
                 SbmlConverterForRel c = new SbmlConverterForRel(p.getStId(),
-                                                                version,
-                                                                ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class));
+                        version,
+                        ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class));
                 c.setDBA(mysqlDba);
                 c.convert();
                 c.writeToFile(output);
@@ -136,13 +138,15 @@ public class Main {
             try {
                 pathways.stream().parallel().forEach(pathway -> {
                     progressBar.update(pathway.getStId(), i.get());
-                    SbmlConverterForRel c = new SbmlConverterForRel(pathway.getStId(),
-                                                                    version,
-                                                                    ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class));
+                    SbmlConverterForRel c = new SbmlConverterForRel(
+                            pathway.getStId(),
+                            version,
+                            ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class)
+                    );
                     c.setDBA(mysqlDba);
                     c.convert();
                     c.writeToFile(output);
-                    if (i.incrementAndGet() % 10 == 0) ReactomeGraphCore.getService(GeneralService.class).clearCache();
+                    if (i.incrementAndGet() % 10 == 0) ReactomeGraphCore.getService(GeneralService.class);
                 });
                 progressBar.done();
             } catch (Exception e) {
@@ -152,12 +156,12 @@ public class Main {
         }
     }
 
-    private static void info(String msg){
+    private static void info(String msg) {
         logger.info(msg);
         if (verbose) System.out.println(msg);
     }
 
-    private static void error(String msg){
+    private static void error(String msg) {
         logger.error(msg);
         if (verbose) System.err.println(msg);
     }
