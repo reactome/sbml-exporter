@@ -136,17 +136,17 @@ public class Main {
             ProgressBar progressBar = new ProgressBar(species.getDisplayName(), total, verbose);
             progressBar.start();
             try {
-                pathways.stream().parallel().forEach(pathway -> {
+                // Check from parallel to avoid any thread issues for the time being
+//                pathways.stream().parallel().forEach(pathway -> {
+                pathways.stream().forEach(pathway -> {
                     progressBar.update(pathway.getStId(), i.get());
-                    SbmlConverterForRel c = new SbmlConverterForRel(
-                            pathway.getStId(),
-                            version,
-                            ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class)
-                    );
+                    SbmlConverterForRel c = new SbmlConverterForRel(pathway.getStId(),
+                                                                    version,
+                                                                    ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class));
                     c.setDBA(mysqlDba);
                     c.convert();
                     c.writeToFile(output);
-                    if (i.incrementAndGet() % 10 == 0) ReactomeGraphCore.getService(GeneralService.class);
+                    if (i.incrementAndGet() % 10 == 0) ReactomeGraphCore.getService(GeneralService.class).clearCache();
                 });
                 progressBar.done();
             } catch (Exception e) {
@@ -156,12 +156,12 @@ public class Main {
         }
     }
 
-    private static void info(String msg) {
+    private static void info(String msg){
         logger.info(msg);
         if (verbose) System.out.println(msg);
     }
 
-    private static void error(String msg) {
+    private static void error(String msg){
         logger.error(msg);
         if (verbose) System.err.println(msg);
     }

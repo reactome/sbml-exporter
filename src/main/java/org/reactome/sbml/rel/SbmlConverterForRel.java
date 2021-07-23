@@ -15,7 +15,6 @@ import org.gk.persistence.MySQLAdaptor;
 import org.gk.render.Renderable;
 import org.gk.render.RenderablePathway;
 import org.gk.render.RenderableReaction;
-import org.reactome.server.graph.aop.LazyFetchAspect;
 import org.reactome.server.graph.domain.model.DatabaseObject;
 import org.reactome.server.graph.domain.model.Pathway;
 import org.reactome.server.graph.domain.model.PhysicalEntity;
@@ -31,8 +30,6 @@ import org.sbml.jsbml.SBMLWriter;
 import org.sbml.jsbml.TidySBMLWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 /**
  * A customized SBMLConverter to handle objects directly loaded from a RelationDatabase.
@@ -73,6 +70,9 @@ public class SbmlConverterForRel extends SbmlConverter {
         Helper.setUseIdentifierURL(true);
     }
     
+    /**
+     * The following method should not be provided in the production env!
+     */
     private void setUpSpring() {
 //        ApplicationContext context = new AnnotationConfigApplicationContext(DumbGraphNeo4jConfig.class);
 //        // Disable it. This has to be called.
@@ -230,7 +230,7 @@ public class SbmlConverterForRel extends SbmlConverter {
 
     public static void main(String[] args) throws Exception {
         MySQLAdaptor dba = new MySQLAdaptor("localhost",
-                                            "gk_current_ver76",
+                                            "gk_current_ver77",
                                             "",
                                             "");
         String targetStId = "R-MMU-211119";
@@ -245,7 +245,8 @@ public class SbmlConverterForRel extends SbmlConverter {
 //        targetStId = "R-HSA-187037"; // Signaling by NTRK1 (TRKA): busy pathway with process nodes
 //        targetStId = "R-HSA-69620"; // Cell Cycle Checkpoints
 //        targetStId = "R-HSA-73884"; // A big pathway: no SBGN diagram
-        
+        targetStId = "R-MMU-8963691"; // Check species not listed enough in the production site
+
         SbmlConverterForRel converter = new SbmlConverterForRel(targetStId);
         converter.setDBA(dba);
         SBMLDocument doc = converter.convert();

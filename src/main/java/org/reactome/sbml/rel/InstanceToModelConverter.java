@@ -6,10 +6,10 @@ import static org.gk.model.ReactomeJavaConstants.created;
 import static org.gk.model.ReactomeJavaConstants.hasModifiedResidue;
 import static org.gk.model.ReactomeJavaConstants.identifier;
 import static org.gk.model.ReactomeJavaConstants.psiMod;
-import static org.gk.model.ReactomeJavaConstants.pubMedIdentifier;
 import static org.gk.model.ReactomeJavaConstants.referenceDatabase;
 import static org.gk.model.ReactomeJavaConstants.summation;
 import static org.gk.model.ReactomeJavaConstants.text;
+import static org.gk.model.ReactomeJavaConstants.pubMedIdentifier;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -35,6 +35,7 @@ import org.reactome.server.graph.domain.model.LiteratureReference;
 import org.reactome.server.graph.domain.model.Pathway;
 import org.reactome.server.graph.domain.model.Person;
 import org.reactome.server.graph.domain.model.PsiMod;
+import org.reactome.server.graph.domain.model.Publication;
 import org.reactome.server.graph.domain.model.Summation;
 import org.reactome.server.graph.domain.model.TranslationalModification;
 import org.reactome.server.tools.sbml.data.model.IdentifierBase;
@@ -171,10 +172,11 @@ public class InstanceToModelConverter {
                                summation,
                                summAssigner);
         // LiteratureReference
-        ValueAssigner<LiteratureReference> litAssigner = (src, target) -> {
-            if (src.getSchemClass().isa(ReactomeJavaConstants.LiteratureReference)) {
+        ValueAssigner<Publication> litAssigner = (src, target) -> {
+            if (src.getSchemClass().isa(ReactomeJavaConstants.LiteratureReference) &&
+                target instanceof LiteratureReference) {
                 Integer pubmedId = (Integer) src.getAttributeValue(pubMedIdentifier);
-                target.setPubMedIdentifier(pubmedId);
+                ((LiteratureReference)target).setPubMedIdentifier(pubmedId);
             }
         };
         convertAttributeValues(inst, instObj, ReactomeJavaConstants.literatureReference, litAssigner);

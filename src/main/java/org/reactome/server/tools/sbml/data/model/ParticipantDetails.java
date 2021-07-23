@@ -45,7 +45,8 @@ public class ParticipantDetails {
     }
 
     private String getAccessions() {
-        if (ids == null) return "";
+        if (ids == null)
+            return ""; // Added by GW to avoid null exception on July 8, 2021.
         StringJoiner joiner = new StringJoiner(", ", "(", ")");
         for (IdentifierBase id : ids) joiner.add(id.toString());
         return joiner.toString();
