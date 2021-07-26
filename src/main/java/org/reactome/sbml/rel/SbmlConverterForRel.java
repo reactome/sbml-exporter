@@ -246,7 +246,6 @@ public class SbmlConverterForRel extends SbmlConverter {
 //        targetStId = "R-HSA-69620"; // Cell Cycle Checkpoints
 //        targetStId = "R-HSA-73884"; // A big pathway: no SBGN diagram
         targetStId = "R-MMU-8963691"; // Check species not listed enough in the production site
-
         SbmlConverterForRel converter = new SbmlConverterForRel(targetStId);
         converter.setDBA(dba);
         SBMLDocument doc = converter.convert();
