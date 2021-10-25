@@ -1,0 +1,15 @@
+url	identifier_url
+http://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:	https://identifiers.org/CHEBI:
+http://www.genome.ad.jp/dbget-bin/www_bget?cpd:	https://identifiers.org/kegg.compound:
+http://www.guidetopharmacology.org/GRAC/LigandDisplayForward?ligandId=	https://identifiers.org/iuphar.ligand:
+http://www.ncbi.nlm.nih.gov/nuccore/	https://identifiers.org/refseq:
+http://www.ncbi.nlm.nih.gov/pubmed/	https://identifiers.org/pubmed:
+http://www.uniprot.org/entry/	https://identifiers.org/uniprot:
+http://purl.uniprot.org/uniprot/	https://identifiers.org/uniprot:
+https://identifiers.org/ec-code/	https://identifiers.org/ec-code:
+https://reactome.org/content/detail/	https://identifiers.org/reactome:
+https://www.ebi.ac.uk/QuickGO/term/GO:	https://identifiers.org/GO:
+https://www.ebi.ac.uk/ols/ontologies/doid/terms?obo_id=DOID:	https://identifiers.org/DOID:
+# The actual URL used is: https://www.ebi.ac.uk/ols/search?q=MOD:00005&amp;exact=on&amp;start=0. Don't copy the part after MOID id.
+https://www.ebi.ac.uk/ols/search?q=MOD:	https://identifiers.org/MOD:
+http://pubchem.ncbi.nlm.nih.gov/summary/summary.cgi?cid=	https://identifiers.org/pubchem.compound:

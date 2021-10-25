@@ -2,6 +2,8 @@ package org.reactome.server.tools.sbml;
 
 import com.martiansoftware.jsap.*;
 import org.apache.commons.lang3.ArrayUtils;
+import org.gk.persistence.MySQLAdaptor;
+import org.reactome.sbml.rel.SbmlConverterForRel;
 import org.reactome.server.graph.domain.model.DBInfo;
 import org.reactome.server.graph.domain.model.Event;
 import org.reactome.server.graph.domain.model.Pathway;
@@ -10,7 +12,6 @@ import org.reactome.server.graph.service.*;
 import org.reactome.server.graph.service.util.DatabaseObjectUtils;
 import org.reactome.server.graph.utils.ReactomeGraphCore;
 import org.reactome.server.tools.sbml.config.GraphNeo4jConfig;
-import org.reactome.server.tools.sbml.converter.SbmlConverter;
 import org.reactome.server.tools.sbml.util.ProgressBar;
 import org.reactome.server.tools.sbml.util.Utils;
 import org.slf4j.Logger;
@@ -33,14 +34,20 @@ public class Main {
 
     private static Boolean verbose = false;
 
-    public static void main(String[] args) throws JSAPException {
+    private static MySQLAdaptor mysqlDba;
+
+    public static void main(String[] args) throws Exception {
 
         SimpleJSAP jsap = new SimpleJSAP(Main.class.getName(), "A tool for generating SBML files",
                 new Parameter[]{
-                        new FlaggedOption("host", JSAP.STRING_PARSER, "localhost", JSAP.REQUIRED, 'h', "host", "The neo4j host"),
-                        new FlaggedOption("port", JSAP.STRING_PARSER, "7474", JSAP.NOT_REQUIRED, 'b', "port", "The neo4j port"),
+                        new FlaggedOption("host", JSAP.STRING_PARSER, "bolt://localhost:7687", JSAP.REQUIRED, 'h', "host", "The neo4j host"),
                         new FlaggedOption("user", JSAP.STRING_PARSER, "neo4j", JSAP.REQUIRED, 'u', "user", "The neo4j user"),
                         new FlaggedOption("password", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'p', "password", "The neo4j password"),
+                        new FlaggedOption("mysql_host", JSAP.STRING_PARSER, "localhost", JSAP.REQUIRED, 'm', "mysql_host", "The mysql host"),
+                        new FlaggedOption("mysql_db", JSAP.STRING_PARSER, "release_current", JSAP.REQUIRED, 'd', "mysql_db", "The mysql host"),
+                        new FlaggedOption("mysql_port", JSAP.STRING_PARSER, "3306", JSAP.NOT_REQUIRED, 'n', "mysql_port", "The mysql port"),
+                        new FlaggedOption("mysql_user", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'l', "mysql_user", "The mysql user"),
+                        new FlaggedOption("mysql_password", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'w', "mysql_password", "The mysql password"),
                         new FlaggedOption("output", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'o', "output", "The output directory"),
                         new QualifiedSwitch("target", JSAP.STRING_PARSER, "ALL", JSAP.NOT_REQUIRED, 't', "target", "Target events to convert. Use either (1) comma separated event identifiers, (2) a given species (e.g. 'Homo sapiens') or  (3)'all' to export every pathway").setList(true).setListSeparator(','),
                         new QualifiedSwitch("verbose", JSAP.BOOLEAN_PARSER, null, JSAP.NOT_REQUIRED, 'v', "verbose", "Requests verbose output.")
@@ -56,7 +63,14 @@ public class Main {
         Utils.outputCheck(output);
 
         //Initialising ReactomeCore Neo4j configuration
-        ReactomeGraphCore.initialise(config.getString("host"), config.getString("port"), config.getString("user"), config.getString("password"), GraphNeo4jConfig.class);
+        mysqlDba = new MySQLAdaptor(config.getString("mysql_host"),
+                config.getString("mysql_db"),
+                config.getString("mysql_user"),
+                config.getString("mysql_password"),
+                Integer.parseInt(config.getString("mysql_port"))); // Cannot auto-parse? This is weird.
+
+        ReactomeGraphCore.initialise(config.getString("host"), config.getString("user"), config.getString("password"), GraphNeo4jConfig.class);
+
 
         //Check if target pathways are specified
         String[] target = config.getStringArray("target");
@@ -94,7 +108,10 @@ public class Main {
             try {
                 Event p = dbs.findById(identifier);
                 info(String.format("\t>%s: %s", p.getStId(), p.getDisplayName()));
-                SbmlConverter c = new SbmlConverter(p, version, ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class));
+                SbmlConverterForRel c = new SbmlConverterForRel(p.getStId(),
+                        version,
+                        ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class));
+                c.setDBA(mysqlDba);
                 c.convert();
                 c.writeToFile(output);
             } catch (ClassCastException e) {
@@ -119,9 +136,14 @@ public class Main {
             ProgressBar progressBar = new ProgressBar(species.getDisplayName(), total, verbose);
             progressBar.start();
             try {
-                pathways.stream().parallel().forEach(pathway -> {
+                // Check from parallel to avoid any thread issues for the time being
+//                pathways.stream().parallel().forEach(pathway -> {
+                pathways.stream().forEach(pathway -> {
                     progressBar.update(pathway.getStId(), i.get());
-                    SbmlConverter c = new SbmlConverter(pathway, version, ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class));
+                    SbmlConverterForRel c = new SbmlConverterForRel(pathway.getStId(),
+                                                                    version,
+                                                                    ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class));
+                    c.setDBA(mysqlDba);
                     c.convert();
                     c.writeToFile(output);
                     if (i.incrementAndGet() % 10 == 0) ReactomeGraphCore.getService(GeneralService.class).clearCache();

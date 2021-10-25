@@ -1,23 +1,51 @@
 package org.reactome.server.tools.sbml.converter;
 
-import org.reactome.server.graph.domain.model.*;
+import static org.sbml.jsbml.JSBML.getJSBMLDottedVersion;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.StringJoiner;
+
+import javax.xml.stream.XMLStreamException;
+
+import org.apache.commons.collections4.map.HashedMap;
+import org.reactome.server.graph.domain.model.AbstractModifiedResidue;
+import org.reactome.server.graph.domain.model.Affiliation;
+import org.reactome.server.graph.domain.model.Complex;
+import org.reactome.server.graph.domain.model.EntitySet;
+import org.reactome.server.graph.domain.model.EntityWithAccessionedSequence;
 import org.reactome.server.graph.domain.model.Event;
+import org.reactome.server.graph.domain.model.GO_BiologicalProcess;
+import org.reactome.server.graph.domain.model.InstanceEdit;
+import org.reactome.server.graph.domain.model.LiteratureReference;
+import org.reactome.server.graph.domain.model.Person;
+import org.reactome.server.graph.domain.model.PhysicalEntity;
+import org.reactome.server.graph.domain.model.Polymer;
+import org.reactome.server.graph.domain.model.Publication;
+import org.reactome.server.graph.domain.model.Summation;
+import org.reactome.server.graph.domain.model.TranslationalModification;
 import org.reactome.server.tools.sbml.data.model.ParticipantDetails;
 import org.reactome.server.tools.sbml.data.model.ReactionBase;
-import org.sbml.jsbml.*;
+import org.sbml.jsbml.Annotation;
+import org.sbml.jsbml.CVTerm;
+import org.sbml.jsbml.Creator;
+import org.sbml.jsbml.History;
 import org.sbml.jsbml.Reaction;
+import org.sbml.jsbml.SBase;
 import org.sbml.jsbml.Species;
 import org.sbml.jsbml.xml.XMLNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import javax.xml.stream.XMLStreamException;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.*;
-
-import static org.sbml.jsbml.JSBML.getJSBMLDottedVersion;
 
 /**
  * Contains methods that are commonly used in the {@link SbmlConverter}
@@ -26,11 +54,19 @@ import static org.sbml.jsbml.JSBML.getJSBMLDottedVersion;
  * @author Kostas Sidiropoulos (ksidiro@ebi.ac.uk)
  * @author Sarah Keating (skeating@ebi.ac.uk)
  */
-class Helper {
+public class Helper {
 
     private static Logger logger = LoggerFactory.getLogger("sbml-exporter");
 
     private static final String REACTOME_URI = "https://reactome.org/content/detail/";
+    
+    // To control is we should use identifier URLs
+    private static boolean useIdentifierURL = false;
+    private static Map<String, String> url2identifier;
+    
+    public static void setUseIdentifierURL(boolean use) {
+        useIdentifierURL = use;
+    }
 
     static void addAnnotations(Species s, ParticipantDetails participant) {
         PhysicalEntity pe = participant.getPhysicalEntity();
@@ -160,13 +196,13 @@ class Helper {
     }
 
     private static void addCVTerm(SBase sBase, CVTerm.Qualifier qualifier, List<String> uris) {
-        addCVTerm(sBase, qualifier, uris.toArray(new String[0]));
+        addCVTerm(sBase, qualifier, uris == null ? null : uris.toArray(new String[0]));
     }
 
     static void addCVTerm(SBase sBase, CVTerm.Qualifier qualifier, String... uris) {
-        if (uris.length > 0) {
+        if (uris != null && uris.length > 0) {
             CVTerm term = new CVTerm(qualifier);
-            for (String s : uris) term.addResourceURI(s);
+            for (String s : uris) term.addResourceURI(convertUrl(s));
             sBase.addCVTerm(term);
         }
     }
@@ -174,9 +210,53 @@ class Helper {
     private static void addCVTerm(Annotation annotation, CVTerm.Qualifier qualifier, List<String> uris) {
         if (!uris.isEmpty()) {
             CVTerm term = new CVTerm(qualifier);
-            for (String s : uris) term.addResourceURI(s);
+            for (String s : uris) term.addResourceURI(convertUrl(s));
             annotation.addCVTerm(term);
         }
+    }
+    
+    private static String convertUrl(String url) {
+        if (!useIdentifierURL)
+            return url;
+        if (url2identifier == null) {
+            // Need to load
+            url2identifier = loadUrl2identigier();
+        }
+        for (String key : url2identifier.keySet()) {
+            if (url.startsWith(key)) {
+                // Get the id from url
+                int index1 = key.length();
+                int index2 = url.indexOf('&', index1);
+                if (index2 < 0)
+                    index2 = url.length();
+                return url2identifier.get(key) + url.substring(index1, index2);
+            }
+        }
+        return url;
+    }
+    
+    private static Map<String, String> loadUrl2identigier() {
+        Map<String, String> rtn = new HashedMap<>();
+        try {
+            InputStream is = Helper.class.getClassLoader().getResourceAsStream("url2identifier.txt");
+            InputStreamReader isr = new InputStreamReader(is);
+            BufferedReader br = new BufferedReader(isr);
+            String line = br.readLine();
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith("#"))
+                    continue;
+                String[] tokens = line.split("\t");
+                rtn.put(tokens[0], tokens[1]);
+            }
+            br.close();
+            isr.close();
+            is.close();
+            logger.info("Loaded url2identiier.txt: " + rtn.size());
+        }
+        catch(IOException e) {
+            logger.error(e.getMessage(), e);
+        }
+        return rtn;
     }
 
     private static void addNotes(SBase sBase, List<String> content) {

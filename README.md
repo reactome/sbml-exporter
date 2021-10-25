@@ -55,15 +55,15 @@ mvn clean package
 
 ```console
 mkdir outputdir
-java -jar target/sbml-exporter-jar-with-dependencies.jar -h localhost -b 7474 -u user -p not4share -o outputdir
+java -jar target/sbml-exporter-exec.jar -h localhost -b 7474 -u user -p not4share -o outputdir
 ```
 
 3. Compress Homo Sapiens file for the Download Page 
 
 ```console
 cd outputdir
-tar -cvf homo_sapiens.3.1.sbml.tgz R-HSA-*
-tar -czvf all_species.3.1.sbml.tgz *
+tar -czvf all_species.3.1.sbml.tgz .
+tar -czvf homo_sapiens.3.1.sbml.tgz R-HSA-*
 ```
 
 4. Distribute the files
