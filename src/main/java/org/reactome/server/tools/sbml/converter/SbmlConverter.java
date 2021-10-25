@@ -115,11 +115,11 @@ public class SbmlConverter {
 
             addCompartment(rn, rxn.getCompartments());
 
-            addInputs(rxn.getDbId(), rn, rxn.getInputs());
-            addOutputs(rxn.getDbId(), rn, rxn.getOutpus());
-            addModifier(rxn.getDbId(), rn, rxn.getCatalysts(), Role.CATALYST);
-            addModifier(rxn.getDbId(), rn, rxn.getPositiveRegulators(), Role.POSITIVE_REGULATOR);
-            addModifier(rxn.getDbId(), rn, rxn.getNegativeRegulators(), Role.NEGATIVE_REGULATOR);
+            if (rxn.getInputs() != null && !rxn.getInputs().isEmpty()) addInputs(rxn.getDbId(), rn, rxn.getInputs());
+            if (rxn.getOutpus() != null && !rxn.getOutpus().isEmpty()) addOutputs(rxn.getDbId(), rn, rxn.getOutpus());
+            if (rxn.getCatalysts() != null && !rxn.getCatalysts().isEmpty()) addModifier(rxn.getDbId(), rn, rxn.getCatalysts(), Role.CATALYST);
+            if (rxn.getPositiveRegulators() != null && !rxn.getPositiveRegulators().isEmpty()) addModifier(rxn.getDbId(), rn, rxn.getPositiveRegulators(), Role.POSITIVE_REGULATOR);
+            if (rxn.getNegativeRegulators() != null && !rxn.getNegativeRegulators().isEmpty()) addModifier(rxn.getDbId(), rn, rxn.getNegativeRegulators(), Role.NEGATIVE_REGULATOR);
 
             Helper.addAnnotations(rn, rxn.getReactionLikeEvent());
             Helper.addCVTerms(rn, rxn);

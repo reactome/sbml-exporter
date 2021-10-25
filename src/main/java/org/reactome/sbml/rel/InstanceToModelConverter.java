@@ -74,7 +74,7 @@ public class InstanceToModelConverter {
             return rtn;
         String instClsName = instance.getSchemClass().getName();
         Class<?> modelCls = Class.forName(MODEL_PACKAGE_NAME + "." + instClsName);
-        Object obj = modelCls.newInstance();
+        Object obj = modelCls.getDeclaredConstructor().newInstance();
         if (!(obj instanceof DatabaseObject)) {
             throw new IllegalArgumentException(instClsName + " is not defined.");
         }

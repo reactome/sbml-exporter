@@ -104,7 +104,7 @@ public class SbmlConverterForRel extends SbmlConverter {
         if (targetStId.startsWith("R-")) // This is a stable id
             instance = fetchEventForStableId(dba, targetStId);
         else
-            instance = dba.fetchInstance(new Long(targetStId));
+            instance = dba.fetchInstance(Long.valueOf(targetStId));
         if (instance == null)
             throw new IllegalArgumentException("Cannot find an Event with id " + targetStId + " in the provided database.");
         return instance;
@@ -246,7 +246,6 @@ public class SbmlConverterForRel extends SbmlConverter {
 //        targetStId = "R-HSA-69620"; // Cell Cycle Checkpoints
 //        targetStId = "R-HSA-73884"; // A big pathway: no SBGN diagram
         targetStId = "R-MMU-8963691"; // Check species not listed enough in the production site
-        
         SbmlConverterForRel converter = new SbmlConverterForRel(targetStId);
         converter.setDBA(dba);
         SBMLDocument doc = converter.convert();

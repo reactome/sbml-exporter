@@ -4,22 +4,27 @@
 
     <groupId>org.reactome.server.tools</groupId>
     <artifactId>sbml-exporter</artifactId>
-    <version>2.1.4</version>
+    <version>2.2.0</version>
     <packaging>jar</packaging>
 
     <name>sbml-exporter</name>
     <url>http://maven.apache.org</url>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <graph.core>1.1.27</graph.core>
+        <graph.core>2.0.0</graph.core>
         <sbml.lib.version>1.5</sbml.lib.version>
         <jasp.version>2.1</jasp.version>
+        <junit.version>5.8.0-M1</junit.version>
+        <mysql.connector.version>8.0.25</mysql.connector.version>
+        <jdom.version>1.1.3</jdom.version>
 
-        <maven.compiler.version>3.5.1</maven.compiler.version>
-        <jdk.version>1.8</jdk.version>
-        <junit.version>4.13.1</junit.version>
+        <jdk.version>11</jdk.version>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <main.class>org.reactome.server.tools.sbml.Main</main.class>
+
+        <spring.boot.version>2.5.3</spring.boot.version>
+        <maven.compiler.version>3.8.1</maven.compiler.version>
+        <maven.jar.version>3.2.0</maven.jar.version>
     </properties>
 
     <developers>
@@ -44,66 +49,60 @@
     </developers>
 
     <dependencies>
-		<!-- Mysql Connector -->
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<version>5.1.28</version>
-		</dependency>
+        <!-- Mysql Connector -->
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>${mysql.connector.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.reactome.base</groupId>
-			<artifactId>reactome-base</artifactId>
-			<version>2.1.0-SNAPSHOT</version>
-		    	<exclusions>
-				<exclusion>
-				    <groupId>org.apache.xmlgraphics</groupId>
-				    <artifactId>batik-awt-util</artifactId>
-				</exclusion>
-				<exclusion>
-				    <groupId>org.apache.xmlgraphics</groupId>
-				    <artifactId>batik-constants</artifactId>
-				</exclusion>
-				<exclusion>
-				    <groupId>org.apache.xmlgraphics</groupId>
-				    <artifactId>batik-dom</artifactId>
-				</exclusion>
-				<exclusion>
-				    <groupId>org.apache.xmlgraphics</groupId>
-				    <artifactId>batik-i18n</artifactId>
-				</exclusion>
-				<exclusion>
-				    <groupId>org.apache.xmlgraphics</groupId>
-				    <artifactId>batik-svggen</artifactId>
-				</exclusion>
-				<exclusion>
-				    <groupId>org.apache.xmlgraphics</groupId>
-				    <artifactId>batik-util</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>commons-httpclient</groupId>
-					<artifactId>commons-httpclient</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
+        <dependency>
+            <groupId>org.reactome.base</groupId>
+            <artifactId>reactome-base</artifactId>
+            <version>2.1.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                    <artifactId>batik-awt-util</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                    <artifactId>batik-constants</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                    <artifactId>batik-dom</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                    <artifactId>batik-i18n</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                    <artifactId>batik-svggen</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.apache.xmlgraphics</groupId>
+                    <artifactId>batik-util</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>commons-httpclient</groupId>
+                    <artifactId>commons-httpclient</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 
-		<dependency>
-			<groupId>org.jdom</groupId>
-			<artifactId>jdom</artifactId>
-			<version>1.1.3</version>
-		</dependency>
+        <!-- Cannot update JDOM to latest version 2.X duo to the Reactome-base uses JDOM 1.X and cannot update the Reactome-base-->
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
+            <version>${jdom.version}</version>
+        </dependency>
 
-        <!-- Reactome Graph-Core -->
         <dependency>
             <groupId>org.reactome.server.graph</groupId>
             <artifactId>graph-core</artifactId>
             <version>${graph.core}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>ch.qos.logback</groupId>
-                    <artifactId>logback-classic</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- SBML lib -->
@@ -121,8 +120,14 @@
         </dependency>
 
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+            <version>4.4</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-api</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
@@ -130,29 +135,8 @@
     </dependencies>
 
     <build>
+        <finalName>${project.name}</finalName>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.0.2</version>
-                <executions>
-                    <execution>
-                        <id>default-jar</id>
-                        <phase>install</phase>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <excludes>
-                                <exclude>org/reactome/server/tools/sbml/Main.class</exclude>
-                                <exclude>org/reactome/server/tools/sbml/config/GraphNeo4jConfig.class</exclude>
-                                <exclude>**/log4j2.xml</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -162,28 +146,47 @@
                     <target>${jdk.version}</target>
                 </configuration>
             </plugin>
-
-            <!-- Generate jar with dependencies -->
             <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <version>2.6</version>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>${maven.jar.version}</version>
+                <executions>
+                    <execution>
+                        <id>exec-jar</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <classifier>exec</classifier>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>default-jar</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                        <configuration>
+                            <excludes>
+                                <exclude>org/reactome/server/tools/sbml/Main.class</exclude>
+                                <exclude>org/reactome/server/tools/sbml/config/GraphNeo4jConfig.class</exclude>
+                                <exclude>**/logback.xml</exclude>
+                            </excludes>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring.boot.version}</version>
                 <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>org.reactome.server.tools.sbml.Main</mainClass>
-                        </manifest>
-                    </archive>
-                    <finalName>sbml-exporter</finalName>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
+                    <mainClass>${main.class}</mainClass>
+                    <classifier>exec</classifier>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>make-assembly</id>
-                        <phase>package</phase>
                         <goals>
-                            <goal>single</goal>
+                            <goal>repackage</goal>
                         </goals>
                     </execution>
                 </executions>
@@ -196,7 +199,7 @@
         <repository>
             <id>nexus-ebi-repo</id>
             <name>The EBI internal repository</name>
-            <url>http://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-repo/</url>
+            <url>https://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-repo/</url>
             <releases>
                 <enabled>true</enabled>
             </releases>
@@ -209,7 +212,7 @@
         <repository>
             <id>nexus-ebi-snapshot-repo</id>
             <name>The EBI internal snapshot repository</name>
-            <url>http://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-snapshots/</url>
+            <url>https://www.ebi.ac.uk/Tools/maven/repos/content/groups/ebi-snapshots/</url>
             <releases>
                 <enabled>false</enabled>
             </releases>
@@ -222,8 +225,10 @@
         <repository>
             <id>ebi-repo</id>
             <name>The EBI repository</name>
-            <url>http://www.ebi.ac.uk/~maven/m2repo</url>
-            <releases><enabled>true</enabled></releases>
+            <url>https://www.ebi.ac.uk/~maven/m2repo</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
         </repository>
 
         <!-- BioJava repo -->
@@ -241,14 +246,14 @@
         <repository>
             <id>pst-release</id>
             <name>EBI Nexus Repository</name>
-            <url>http://www.ebi.ac.uk/Tools/maven/repos/content/repositories/pst-release</url>
+            <url>https://www.ebi.ac.uk/Tools/maven/repos/content/repositories/pst-release</url>
         </repository>
         <!-- EBI SNAPSHOT repo -->
         <snapshotRepository>
             <uniqueVersion>false</uniqueVersion>
             <id>pst-snapshots</id>
             <name>EBI Nexus Snapshots Repository</name>
-            <url>http://www.ebi.ac.uk/Tools/maven/repos/content/repositories/pst-snapshots</url>
+            <url>https://www.ebi.ac.uk/Tools/maven/repos/content/repositories/pst-snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
