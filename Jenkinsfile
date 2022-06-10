@@ -64,7 +64,7 @@ pipeline{
 			steps{
 				script{
 					def dataFiles = ["all_species.3.1.sbml.tgz", "homo_sapiens.3.1.sbml.tgz"]
-					def logFiles = ["jsbml.log"]
+					def logFiles = ["reactome-sbml-export.log"]
 					def foldersToDelete = ["${env.OUTPUT_FOLDER}"]
 					utils.cleanUpAndArchiveBuildFiles("sbml_exporter", dataFiles, logFiles, foldersToDelete)
 				}
