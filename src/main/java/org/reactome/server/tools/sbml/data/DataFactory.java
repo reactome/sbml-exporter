@@ -65,7 +65,7 @@ public abstract class DataFactory {
             "WITH COLLECT(DISTINCT pe) AS pes " +
             "UNWIND pes AS pe " +
             //GEE do not have RE but they must be in the species (without identifier)
-            "OPTIONAL MATCH path=(pe)-[:hasComponent|hasMember|repeatedUnit|referenceEntity*]->(re:ReferenceEntity) " +
+            "OPTIONAL MATCH path=(pe)-[:hasComponent|hasMember|repeatedUnit|referenceEntity|proteinMarker|RNAMarker*]->(re:ReferenceEntity) " +
             "WITH pe, re, REDUCE(s = 1, x IN RELATIONSHIPS(path) | s * x.stoichiometry) AS n " +
             "RETURN pe.stId AS pe, " +
             "       COLLECT(DISTINCT {" +
