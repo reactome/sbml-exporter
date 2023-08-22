@@ -11,6 +11,7 @@ pipeline{
 	// Set output folder that will hold the files output by this step.
 	environment {
         	OUTPUT_FOLDER = "sbml"
+		ECRURL = '851227637779.dkr.ecr.us-east-1.amazonaws.com'
     	}
 
 	stages{
@@ -22,11 +23,13 @@ pipeline{
 				}
 			}
 		}
-		// This stage builds the jar file using maven.
-		stage('Setup: Build jar file'){
-			steps{
+		stage('pull image') {
+			steps {
 				script{
-					sh "mvn clean package"
+					sh("eval \$(aws ecr get-login --no-include-email --region us-east-1)")
+					docker.withRegistry("https://" + ECRURL) {
+						docker.image("sbml-exporter:latest").pull()
+					}
 				}
 			}
 		}
@@ -38,7 +41,7 @@ pipeline{
 					withCredentials([ usernamePassword(credentialsId: 'neo4jUsernamePassword', passwordVariable: 'neo4jPass', usernameVariable: 'neo4jUser'),
 							  usernamePassword(credentialsId: 'mySQLUsernamePassword', passwordVariable: 'mysqlPass', usernameVariable: 'mysqlUser') ])
 					{
-						sh "java -Xmx${env.JAVA_MEM_MAX}m -jar target/sbml-exporter-exec.jar --user $neo4jUser --password $neo4jPass --mysql_db ${env.RELEASE_CURRENT_DB} --mysql_user $mysqlUser --mysql_password $mysqlPass --output ./${env.OUTPUT_FOLDER} --verbose"
+						sh "docker run -v \$(pwd)/output:/graphdb --net=host  ${ECRURL}/sbml-exporter:latest java -Xmx${env.JAVA_MEM_MAX}m -jar target/sbml-exporter-exec.jar --user $neo4jUser --password $neo4jPass --mysql_db ${env.RELEASE_CURRENT_DB} --mysql_user $mysqlUser --mysql_password $mysqlPass --output ./${env.OUTPUT_FOLDER} --verbose"
 					}
 				}
 			}
