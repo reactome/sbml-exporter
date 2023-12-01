@@ -65,7 +65,7 @@ pipeline{
 				script{
 					sh "mv logs/sbml-exporter.log ."
 					def dataFiles = ["all_species.3.1.sbml.tgz", "homo_sapiens.3.1.sbml.tgz"]
-					def logFiles = ["sbml-export.log"]
+					def logFiles = ["sbml-exporter.log"]
 					def foldersToDelete = ["${env.OUTPUT_FOLDER}"]
 					utils.cleanUpAndArchiveBuildFiles("sbml_exporter", dataFiles, logFiles, foldersToDelete)
 				}
