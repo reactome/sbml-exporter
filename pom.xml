@@ -8,12 +8,12 @@
     <packaging>jar</packaging>
 
     <name>sbml-exporter</name>
-    <url>http://maven.apache.org</url>
+    <url>https://maven.apache.org</url>
 
     <parent>
         <groupId>org.reactome.maven</groupId>
         <artifactId>reactome-parent</artifactId>
-        <version>1.0.3</version>
+        <version>1.0.5</version>
     </parent>
 
     <properties>
