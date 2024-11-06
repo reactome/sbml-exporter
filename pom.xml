@@ -19,6 +19,7 @@
     <properties>
 
         <main.class>org.reactome.server.tools.sbml.Main</main.class>
+        <log.file>sbml-exporter.log</log.file>
 
     </properties>
 
