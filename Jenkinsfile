@@ -11,6 +11,9 @@ pipeline{
 	// Set output folder that will hold the files output by this step.
 	environment {
         	OUTPUT_FOLDER = "sbml"
+		ECR_URL = 'public.ecr.aws/reactome/sbml-exporter'
+		CONT_NAME = 'sbml_exporter_container'
+		CONT_ROOT = '/opt/sbml-exporter'
     	}
 
 	stages{
@@ -22,24 +25,35 @@ pipeline{
 				}
 			}
 		}
-		// This stage builds the jar file using maven.
-		stage('Setup: Build jar file'){
+
+		stage('Setup: Pull and clean docker environment'){
 			steps{
-				script{
-					sh "mvn clean package"
-				}
+				sh "docker pull ${ECR_URL}:latest"
+				sh """
+					if docker ps -a --format '{{.Names}}' | grep -Eq '${CONT_NAME}'; then
+						docker rm -f ${CONT_NAME}
+					fi
+				"""
 			}
 		}
+		
 		// Execute the jar file, producing sbml files.
 		stage('Main: Run SBML-Exporter'){
 			steps{
 				script{
 					sh "mkdir -p ${env.OUTPUT_FOLDER}"
+					sh "rm -rf ${env.OUTPUT_FOLDER}/*"
+					sh "mkdir -p logs"
+					sh "rm -rf logs/*"
 					withCredentials([ usernamePassword(credentialsId: 'neo4jUsernamePassword', passwordVariable: 'neo4jPass', usernameVariable: 'neo4jUser'),
 							  usernamePassword(credentialsId: 'mySQLUsernamePassword', passwordVariable: 'mysqlPass', usernameVariable: 'mysqlUser') ])
 					{
-						sh "java -Xmx${env.JAVA_MEM_MAX}m -jar target/sbml-exporter-exec.jar --user $neo4jUser --password $neo4jPass --mysql_db ${env.RELEASE_CURRENT_DB} --mysql_user $mysqlUser --mysql_password $mysqlPass --output ./${env.OUTPUT_FOLDER} --verbose"
+						sh """\
+						    docker run -v \$(pwd)/logs:${CONT_ROOT}/logs -v \$(pwd)/${env.OUTPUT_FOLDER}:${CONT_ROOT}/${env.OUTPUT_FOLDER} --net=host --name ${CONT_NAME} ${ECR_URL}:latest /bin/bash -c 'java -Xmx${env.JAVA_MEM_MAX}m -jar target/sbml-exporter-exec.jar --user $neo4jUser --password $neo4jPass --mysql_db ${env.RELEASE_CURRENT_DB} --mysql_user $mysqlUser --mysql_password $mysqlPass --output ./${env.OUTPUT_FOLDER} --verbose'
+	                                        """
 					}
+					sh "sudo chown jenkins:jenkins logs"
+					sh "sudo chown jenkins:jenkins ${env.OUTPUT_FOLDER}"
 				}
 			}
 		}
