@@ -1,0 +1,30 @@
+NOTICE
+
+This project is licensed under the Apache License, Version 2.0. You may obtain a copy of the Apache License,
+Version 2.0 at: https://www.apache.org/licenses/LICENSE-2.0
+
+This project makes use of the following third-party libraries, which are licensed under different licenses:
+
+    MySQL Connector/J (mysql-connector-java)
+        License: GNU General Public License v2 (GPLv2) with a FOSS License Exception
+        Copyright © Oracle Corporation
+        License URL: https://www.mysql.com/about/legal/licensing/oem/
+        Summary: MySQL Connector/J is a Java driver for connecting to MySQL databases.
+
+    JSBML (jsbml)
+        License: GNU Lesser General Public License v2.1 (LGPLv2.1)
+        Copyright © The SBML Team
+        License URL: https://github.com/sbmlteam/jsbml/blob/master/LICENSE
+        Summary: JSBML is a Java library for handling SBML (Systems Biology Markup Language) files.
+
+    JSAP (jsap)
+        License: GNU Lesser General Public License (LGPL)
+        Copyright © Martian Software
+        License URL: https://www.martiansoftware.com/jsap/doc/pr01
+        Summary: JSAP is a flexible command-line argument parser for Java.
+
+The inclusion of the above third-party libraries in this project does not alter the licensing terms of this project,
+which remains licensed under the Apache License, Version 2.0. However, users of this project must comply with the
+terms of the respective licenses when using the above libraries.
+
+Please review the above licenses for details about your rights and responsibilities when using these dependencies.
