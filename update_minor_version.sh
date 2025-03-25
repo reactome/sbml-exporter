@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PACKAGE_NAME=analysis.report
+PACKAGE_NAME=sbml.exporter
 
 # Exit on error
 set -e
