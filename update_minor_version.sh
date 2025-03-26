@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PACKAGE_NAME=sbml.exporter
+PACKAGE_NAME=SBML_EXPORTER_VERSION
 
 # Check if VERSIONS_FILE_PATH is not set or empty
 if [ -z "${VERSIONS_FILE_PATH}" ]; then
