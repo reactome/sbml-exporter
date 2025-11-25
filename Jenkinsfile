@@ -77,9 +77,16 @@ pipeline{
 		stage('Post: Archive Outputs'){
 			steps{
 				script{
-					sh "mv logs/sbml-exporter.log ."
+					def logFile = "sbml-exporter.log"
+					def logFilePath = "logs/${logFile}"
+					sh """
+						if [ -f "${logFile}" ]; then
+						    mv "${logFile}" .
+						fi
+					"""
+					
 					def dataFiles = ["all_species.3.1.sbml.tgz", "homo_sapiens.3.1.sbml.tgz"]
-					def logFiles = ["sbml-exporter.log"]
+					def logFiles = ["${logFile}"]
 					def foldersToDelete = ["${env.OUTPUT_FOLDER}"]
 					utils.cleanUpAndArchiveBuildFiles("sbml_exporter", dataFiles, logFiles, foldersToDelete)
 				}
