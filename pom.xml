@@ -21,6 +21,7 @@
         <jdk.version>11</jdk.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <main.class>org.reactome.server.tools.sbml.Main</main.class>
+        <verifier.main.class>org.reactome.verifier.SBMLExportVerifier</verifier.main.class>
 
         <spring.boot.version>2.6.4</spring.boot.version>
         <maven.compiler.version>3.8.1</maven.compiler.version>
@@ -152,47 +153,35 @@
                 </configuration>
             </plugin>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>${maven.jar.version}</version>
-                <executions>
-                    <execution>
-                        <id>exec-jar</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <classifier>exec</classifier>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>default-jar</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                        <configuration>
-                            <excludes>
-                                <exclude>org/reactome/server/tools/sbml/Main.class</exclude>
-                                <exclude>org/reactome/server/tools/sbml/config/GraphNeo4jConfig.class</exclude>
-                                <exclude>**/logback.xml</exclude>
-                            </excludes>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>${spring.boot.version}</version>
                 <configuration>
-                    <mainClass>${main.class}</mainClass>
-                    <classifier>exec</classifier>
+                    <fork>true</fork>
+                    <mainClass>NONE</mainClass>
                 </configuration>
                 <executions>
                     <execution>
+                        <id>primary-exec</id>
                         <goals>
                             <goal>repackage</goal>
                         </goals>
+                        <configuration>
+                            <mainClass>${main.class}</mainClass>
+                            <classifier>exec</classifier>
+                            <skipIfEmpty>true</skipIfEmpty>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>verifier-exec</id>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>${verifier.main.class}</mainClass>
+                            <classifier>verifier</classifier>
+                            <skipIfEmpty>true</skipIfEmpty>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>
