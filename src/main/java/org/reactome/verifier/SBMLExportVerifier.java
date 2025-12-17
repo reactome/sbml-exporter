@@ -1,6 +1,5 @@
 package org.reactome.verifier;
 
-import com.martiansoftware.jsap.*;
 import org.reactome.release.verifier.DefaultVerifier;
 import org.reactome.release.verifier.Verifier;
 
@@ -12,7 +11,7 @@ import java.io.IOException;
  */
 public class SBMLExportVerifier {
 
-    public static void main(String[] args) throws JSAPException, IOException {
+    public static void main(String[] args) throws IOException {
         Verifier verifier = new DefaultVerifier("sbml_exporter");
         verifier.parseCommandLineArgs(args);
         verifier.run();
