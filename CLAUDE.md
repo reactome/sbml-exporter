@@ -67,14 +67,11 @@ Don't trust these until the first spec has fixed them (constitution, Principle I
 
 ## Proving what is written
 
-- **The model** is compared byte for byte, the generation note's timestamp set
-  aside. The reference is the graph-only converter with its five defects fixed,
-  run by WebsiteAngular spec 015's reference harness:
-  - with `Helper.setUseIdentifierURL(true)`;
-  - with the outputs kept outside both repositories.
-
-  Issue #14 lists the defects. The reference outputs are not regenerated from
-  the code under test.
+- **The model** is compared element by element with today's relational output
+  of the same release (constitution, Principle I): the timestamp, element order
+  and, until the layout is ported, the layout set aside; every other difference
+  recorded in `specs/001-graph-only-sbml/differences.md` with its reason.
+  `ci/compare.py` does it (T016).
 - **The layout** is compared by meaning with today's: the same glyphs, ids, roles
   and order, and the diagram's own coordinates.
 - **Runs need a fixed time zone and locale** (UTC, `en_US`). The generation note

@@ -4,7 +4,7 @@
 
 Each code or document task is one pull request into `graph-only`, reviewed before it merges, and ticks itself here with its number. Tasks that are a setting, a conversation or a merge (T010, T025, T029–T031) record their outcome here by pull request. "Seen failing" means the check is run once on a deliberately broken change and the failure is quoted in the pull request. `[P]` marks tasks that can run alongside others in their phase.
 
-References kept outside the repository (the private graph copy, spec 015's reference outputs, the published archives, the release's diagram output) are named by where to get them, never committed.
+References kept outside the repository (the private graph copy, today's relational files, the published archives, the diagram files) are named by where to get them, never committed.
 
 **Standing task:** whenever `main` changes, merge it into `graph-only` by pull request, so its checks run on the result.
 
@@ -28,7 +28,7 @@ References kept outside the repository (the private graph copy, spec 015's refer
 
 ## Phase 2: The model (US2)
 
-**Goal**: the graph-only model is correct and matches the reference.
+**Goal**: the graph-only model is correct and matches today's relational output.
 **Independent test**: the comparison over the 30-event sample (T016).
 
 - [x] T011 [P] [US2] (#22) Fix defect 4, the reused `Participant`, in `DataFactory.getParticipantResults`, with a test (mocked `DatabaseObjectService`) that fails without the fix.
@@ -36,7 +36,7 @@ References kept outside the repository (the private graph copy, spec 015's refer
 - [x] T013 [US2] (#24) Fix defects 1–3 in `DataFactory.getReactionList` (catalysts, positive and negative regulators each from their own column), with a test for each (mocked `AdvancedDatabaseObjectService`; the static service set through `DataFactoryHelper` and reset before each test) that fails without its fix. Add tests for the two queries' row mapping.
 - [x] T014 [P] [US2] (#25) Identifier URLs always on (R6, FR-005): replace the static `Helper.setUseIdentifierURL` flag; a test that two converters in parallel write identifiers.org URLs.
 - [x] T015 [P] [US2] (#26) Time zone and locale (R6, FR-006): parse history dates in `UTC` and format the generation note with `UTC` and `Locale.US`, keeping the `hh` parse quirk; a test run under another default zone and locale writes the same output.
-- [ ] T016 [US2] Compare the fixed converter's models with spec 015's reference over the 30-event sample, run against the private copy of the reference's release, with WebsiteAngular spec 015's SBML comparison tool (its T030). Byte-identical apart from what US2 sets aside, or each difference recorded in `differences.md` (created here; spec 015's `contracts/differences.md` links to it for SBML). Result in the pull request.
+- [ ] T016 [US2] `ci/compare.py` (python-libsbml, as `ci/validate.py`): compares two folders of SBML element by element as US2 says (FR-004), the set-aside list written in the script, names hashed in its report; seen failing on a changed file. Run it over the 30-event sample: the fixed converter's files from the private copy of release 97, against the relational converter's files for release 97 from a ContentService that is not production, fetched one event at a time. Each difference in `differences.md` (created here; spec 015's `contracts/differences.md` links to it). Result in the pull request.
 - [ ] T017 [US2] Pin graph-core to the version agreed in spec 015's T029 (with spec 010's service and BioPAX3Exporter), update T003's list, and rerun T016. A change in output is a recorded difference, not a reason to regenerate the reference.
 
 **Checkpoint**: the model is proven.
@@ -46,10 +46,10 @@ References kept outside the repository (the private graph copy, spec 015's refer
 **Goal**: the layout from the diagram files, matching today's by meaning.
 **Independent test**: the comparison over the sample's events with diagrams (T021).
 
-- [ ] T018 [US3] Get the diagram files for the reference's release (R8): the release's own diagram output as one archive, from the release's maintainers, kept outside the repository. Not fetched file by file. Blocks T021, T026 and T027.
+- [ ] T018 [US3] Fetch the diagram files a comparison needs from the release's download directory (`download.reactome.org/{release}/diagram/{stId}.json`; R8): one at a time, in sequence, kept outside the repository. A script `ci/fetch-diagrams.sh` takes a list of ids and a release, and skips files it already has.
 - [ ] T019 [US3] Read the diagram files (R8): decide between `reactome/diagram-reader`'s model and a small Jackson model (record it in research.md R8); read `diagram/{stId}.json` from a folder the caller gives, refusing it when the stated release differs from the graph's `DBInfo` version. Tests over the fixture's diagram file.
 - [ ] T020 [US3] Port `LayoutConverter`'s algorithm (`org.reactome.sbml.rel.LayoutConverter`, on `main`; removed from this branch in #30) to a new `layout` package over the diagram model (FR-007): ids, order, glyph sets, roles, backbone rules, RNA inset, hidden compartments, the SBO override and the root attributes; a layout only when the event's own diagram draws a reaction. Unit tests for each rule, each seen failing.
-- [ ] T021 [US3] Compare the layouts with today's files over the sample's events with diagrams: glyph sets, ids, roles, order and targets exactly; coordinates against the diagram's; the resized nodes and label sizes as recorded differences. Re-compare every model, outside the layout, with the reference byte for byte (spec 015 T039), since the layout changes SBO terms and the root. Result in the pull request.
+- [ ] T021 [US3] Compare the layouts with today's files over the sample's events with diagrams, with `ci/compare.py` extended to the layout: glyph sets, ids, roles, order and targets exactly; coordinates against the diagram's; the resized nodes and label sizes as recorded differences. Re-run T016's comparison with the layout no longer set aside, since the layout changes SBO terms and the root. Result in the pull request.
 
 **Checkpoint**: the graph-only converter needs no relational database.
 
@@ -86,4 +86,4 @@ References kept outside the repository (the private graph copy, spec 015's refer
 - In Phase 2, T011–T015 can run in any order; T016 needs spec 015's T030 and the private copy; T017 needs spec 015's T029.
 - Phase 3 needs T016, since the layout changes the model; T018 before T021.
 - Phase 4 needs Phases 2 and 3. T022 before T023; T023 before T024.
-- Phase 5 needs Phase 4 and T018. Phase 6 needs everything (T029 whenever `verifier-lib` is released).
+- Phase 5 needs Phase 4, and T018's script for the species' diagrams. Phase 6 needs everything (T029 whenever `verifier-lib` is released).
