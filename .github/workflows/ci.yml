@@ -74,7 +74,7 @@ jobs:
                 ports:
                     - 7687:7687
                 options: >-
-                    --health-cmd "cypher-shell -d system 'RETURN 1'"
+                    --health-cmd "cypher-shell -d graph.db 'RETURN 1'"
                     --health-interval 5s --health-timeout 10s --health-retries 30
         steps:
             - uses: actions/checkout@v4
