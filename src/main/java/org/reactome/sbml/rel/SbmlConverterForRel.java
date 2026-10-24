@@ -20,7 +20,6 @@ import org.reactome.server.graph.domain.model.Pathway;
 import org.reactome.server.graph.domain.model.PhysicalEntity;
 import org.reactome.server.graph.domain.model.ReactionLikeEvent;
 import org.reactome.server.graph.service.AdvancedDatabaseObjectService;
-import org.reactome.server.tools.sbml.converter.Helper;
 import org.reactome.server.tools.sbml.converter.SbmlConverter;
 import org.reactome.server.tools.sbml.data.model.ParticipantDetails;
 import org.reactome.server.tools.sbml.data.model.ReactionBase;
@@ -60,14 +59,12 @@ public class SbmlConverterForRel extends SbmlConverter {
         setUpSpring();
         instanceConverter = new InstanceToModelConverter();
         layoutConverter = new LayoutConverter();
-        Helper.setUseIdentifierURL(true);
     }
     
     public SbmlConverterForRel(String targetId, Integer version, AdvancedDatabaseObjectService ads) {
         super(targetId, version);
         instanceConverter = new InstanceToModelConverter();
         layoutConverter = new LayoutConverter();
-        Helper.setUseIdentifierURL(true);
     }
     
     /**

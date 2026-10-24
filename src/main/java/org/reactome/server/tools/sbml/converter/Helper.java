@@ -60,13 +60,9 @@ public class Helper {
 
     private static final String REACTOME_URI = "https://reactome.org/content/detail/";
     
-    // To control is we should use identifier URLs
-    private static boolean useIdentifierURL = false;
-    private static Map<String, String> url2identifier;
-    
-    public static void setUseIdentifierURL(boolean use) {
-        useIdentifierURL = use;
-    }
+    // Identifiers are always written as identifiers.org URLs (spec 001, FR-005). The map is
+    // loaded once, when the class is, so concurrent conversions never see it half-filled.
+    private static final Map<String, String> url2identifier = loadUrl2identigier();
 
     static void addAnnotations(Species s, ParticipantDetails participant) {
         PhysicalEntity pe = participant.getPhysicalEntity();
@@ -216,12 +212,6 @@ public class Helper {
     }
     
     private static String convertUrl(String url) {
-        if (!useIdentifierURL)
-            return url;
-        if (url2identifier == null) {
-            // Need to load
-            url2identifier = loadUrl2identigier();
-        }
         for (String key : url2identifier.keySet()) {
             if (url.startsWith(key)) {
                 // Get the id from url
