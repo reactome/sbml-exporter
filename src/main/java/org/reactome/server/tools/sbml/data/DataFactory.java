@@ -68,16 +68,17 @@ public abstract class DataFactory {
             "WITH COLLECT(DISTINCT pe) AS pes " +
             "UNWIND pes AS pe " +
             //GEE do not have RE but they must be in the species (without identifier)
-            "OPTIONAL MATCH path=(pe)-[:hasComponent|hasMember|repeatedUnit|referenceEntity|proteinMarker|RNAMarker*]->(re:ReferenceEntity) " +
-            "WITH pe, re, REDUCE(s = 1, x IN RELATIONSHIPS(path) | s * x.stoichiometry) AS n " +
+            // The parts as the relational converter found them: through components, members, candidates
+            // and repeated units; a part reached by several paths counted on each path; and each part named by
+            // its identifier, never an isoform's, in its database's access URL.
+            "OPTIONAL MATCH path=(pe)-[:hasComponent|hasMember|hasCandidate|repeatedUnit|referenceEntity*]->(re:ReferenceEntity) " +
+            "WITH pe, re, SUM(REDUCE(s = 1, x IN RELATIONSHIPS(path) | s * x.stoichiometry)) AS n " +
+            "OPTIONAL MATCH (re)-[:referenceDatabase]->(db:ReferenceDatabase) " +
             "RETURN pe.stId AS pe, " +
-            "       COLLECT(DISTINCT {" +
-            "               n:  CASE n WHEN NULL THEN 1 ELSE n END, " +  //n is null when no RE present for a PE
-            "               id: CASE re WHEN NULL THEN '' " +            //empty identifier when no RE present for a PE
-            "                           ELSE CASE re.variantIdentifier WHEN NULL THEN re.identifier ELSE re.variantIdentifier END " +
-            "                   END " +
-            "       }) AS ids, " +
-            "       COLLECT(DISTINCT re.url) AS urls";
+            // One entry per reference entity, even when two share an identifier (isoforms), and none when
+            // there is no reference entity, so a complex without one says "" rather than "()", as today
+            "       COLLECT(CASE re WHEN NULL THEN NULL ELSE {n: n, id: re.identifier} END) AS ids, " +
+            "       COLLECT(DISTINCT REPLACE(db.accessUrl, '###ID###', re.identifier)) AS urls";
 
     //work with DataFactoryHelper to autowire the DatabaseObjectService
     public DataFactory(DatabaseObjectService ds) {

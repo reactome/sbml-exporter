@@ -140,7 +140,7 @@ The release's SBML step makes both archives from the graph and the diagram files
 **The model**
 
 - **FR-003**: The five defects (issue #14) MUST be fixed, each with a unit test that fails without its fix.
-- **FR-004**: The model MUST match today's relational output of the same release for the 30-event sample, element by element (compartments, species, reactions, reactants, products and modifiers with role and stoichiometry, names, SBO terms, notes, annotations and identifier URLs), apart from the generation note's timestamp, element order and the layout (US2), or each difference recorded with its reason. A change of graph-core version that alters the output is a recorded difference.
+- **FR-004**: The model MUST match today's relational output of the same release for the 30-event sample, element by element (compartments, species, reactions, reactants, products and modifiers with role and stoichiometry, names, SBO terms, notes, annotations and identifier URLs), apart from the generation note's timestamp, element order (including the order of a complex's parts in its species' note, which today's files take from a HashMap) and the layout (US2), or each difference recorded with its reason. A change of graph-core version that alters the output is a recorded difference.
 - **FR-005**: Identifiers MUST be written as the URLs today's relational files have (identifiers.org), in both the library and the command line, without a static flag.
 - **FR-006**: Output MUST NOT depend on the machine's time zone or locale: the library fixes UTC and `en_US` for the generation note and for history dates itself.
 

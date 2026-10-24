@@ -17,6 +17,9 @@ Set aside, as FR-004 says:
 - element order, including the order of an annotation's resources: elements are
   matched by id and resources compared as sets;
 - metaids, which follow element order;
+- the order of a complex's parts in its species' note ("nested structure for
+  this complex: (...)"): today's comes from a HashMap of database instances,
+  which no run reproduces, so the parts are compared sorted;
 - the layout, until it is ported (T021): the layout package, the root's
   `layout:required` and namespace, and the SBO term of every species the
   reference's layout draws, since the layout sets those.
@@ -32,6 +35,7 @@ import sys
 import libsbml
 
 GENERATED = re.compile(r"( generated from Reactome version \S+) on .*? (using )")
+STRUCTURE = re.compile(r"(nested structure for this complex: \()([^)]*)(\))")
 
 
 def text(value):
@@ -54,7 +58,8 @@ def describe(sbase, path, out, skip_sbo=False):
     if sbase.isSetSBOTerm() and not skip_sbo:
         out[f"{path}/sboTerm"] = sbase.getSBOTermID()
     if sbase.isSetNotes():
-        out[f"{path}/notes"] = text(sbase.getNotesString())
+        notes = text(sbase.getNotesString())
+        out[f"{path}/notes"] = STRUCTURE.sub(lambda m: m.group(1) + ", ".join(sorted(m.group(2).split(", "))) + m.group(3), notes)
     resources = {}
     for i in range(sbase.getNumCVTerms()):
         term = sbase.getCVTerm(i)

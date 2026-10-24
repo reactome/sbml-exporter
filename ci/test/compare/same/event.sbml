@@ -45,7 +45,11 @@
     <listOfSpecies>
       <species boundaryCondition="false" compartment="compartment_1" constant="false" hasOnlySubstanceUnits="false" id="species_2" metaid="mid_3" name="B [cytosol]" sboTerm="SBO:0000247"/>
       <species boundaryCondition="false" compartment="compartment_1" constant="false" hasOnlySubstanceUnits="false" id="species_1" metaid="mid_2" name="A [cytosol]" sboTerm="SBO:0000247"/>
-      <species boundaryCondition="false" compartment="compartment_1" constant="false" hasOnlySubstanceUnits="false" id="species_3" metaid="mid_4" name="E [cytosol]" sboTerm="SBO:0000297"/>
+      <species boundaryCondition="false" compartment="compartment_1" constant="false" hasOnlySubstanceUnits="false" id="species_3" metaid="mid_4" name="E [cytosol]" sboTerm="SBO:0000297">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome Complex. Here is Reactomes nested structure for this complex: (C, A, 2xB). Reactome uses a nested structure for complexes.</p>
+        </notes>
+      </species>
     </listOfSpecies>
     <listOfReactions>
       <reaction compartment="compartment_1" fast="false" id="reaction_1" metaid="mid_5" name="A to B" reversible="false" sboTerm="SBO:0000176">

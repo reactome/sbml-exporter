@@ -31,6 +31,7 @@ reference is checked before it is trusted.
   their reactants, products and modifiers (role and stoichiometry), names, SBO
   terms, notes and annotations, identifier URLs included. Set aside: the
   generation note's timestamp, the order of elements (they are matched by id)
+  and of a complex's parts in its note (today's is HashMap order)
   and, until the layout is ported, the layout. Every other difference is
   recorded with its reason. The reference is:
   - per event, the relational converter's file from a ContentService of that
@@ -147,4 +148,4 @@ what it cost to learn. A principle with no cost behind it does not belong here.
 
 `CLAUDE.md` carries day-to-day guidance; where the two disagree, this file wins.
 
-**Version**: 1.2.0 | **Ratified**: 2026-10-24 | **Last Amended**: 2026-10-24
+**Version**: 1.2.1 | **Ratified**: 2026-10-24 | **Last Amended**: 2026-10-24
