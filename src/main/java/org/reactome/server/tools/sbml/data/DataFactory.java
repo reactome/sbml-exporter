@@ -96,8 +96,9 @@ public abstract class DataFactory {
                 reactionBase.setDiseases(reactionBaseResult.getDiseases());
                 reactionBase.setInputs(getParticipantResults(ds, reactionBaseResult.getInputs()));
                 reactionBase.setOutputs(getParticipantResults(ds, reactionBaseResult.getOutputs()));
-                reactionBase.setCatalysts(getParticipantResults(ds, reactionBaseResult.getPositiveRegulators()));
-                reactionBase.setNegativeRegulators(getParticipantResults(ds, reactionBaseResult.getPositiveRegulators()));
+                reactionBase.setCatalysts(getParticipantResults(ds, reactionBaseResult.getCatalysts()));
+                reactionBase.setPositiveRegulators(getParticipantResults(ds, reactionBaseResult.getPositiveRegulators()));
+                reactionBase.setNegativeRegulators(getParticipantResults(ds, reactionBaseResult.getNegativeRegulators()));
                 reactionBases.add(reactionBase);
             }
             return reactionBases;
