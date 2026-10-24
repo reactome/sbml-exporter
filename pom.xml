@@ -130,6 +130,18 @@
     <build>
         <finalName>${project.name}</finalName>
         <plugins>
+            <!-- Lint on the repository's own rules (spec 001, research R3). Pinned: unpinned,
+                 the plugin's version, and so Checkstyle's, drift under the build. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <configLocation>checkstyle.xml</configLocation>
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                    <consoleOutput>true</consoleOutput>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>

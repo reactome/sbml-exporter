@@ -34,10 +34,12 @@ SHELL ["/bin/bash", "-c"]
 # run lint if container started
 ENTRYPOINT []
 
-CMD mvn -B -q checkstyle:check | \
-    grep -i --color=never '\.java\|failed to execute goal' > lint.log && \
-    exit 1 || \
-    exit 0
+# Maven's own status decides: a failure that names no .java file (an unresolvable
+# parent, say) fails lint too. lint.log is what CI shows.
+CMD mvn -B -q -nsu checkstyle:check > lint.log 2>&1; \
+    status=$?; \
+    cat lint.log; \
+    exit $status
 
 
 # ===== stage 2 =====
