@@ -57,6 +57,62 @@ jobs:
                 name: image-artifact
                 path: /tmp/image.tar
 
+    # Spec 001, T009: the graph converter over the fixture graph (ci/fixture), its output
+    # valid (libSBML) and as expected (ci/compare.py against ci/fixture/expected, which
+    # catches a lazy-loading failure that valid SBML would not: lost creators, notes or
+    # compartments).
+    validity:
+        needs: docker-build
+        runs-on: ubuntu-latest
+        services:
+            neo4j:
+                image: neo4j:4.4.48-community
+                env:
+                    NEO4J_AUTH: none
+                    # graph-core hard-codes this name
+                    NEO4J_dbms_default__database: graph.db
+                ports:
+                    - 7687:7687
+                options: >-
+                    --health-cmd "cypher-shell -d system 'RETURN 1'"
+                    --health-interval 5s --health-timeout 10s --health-retries 30
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Check the fixture's placeholders
+              run: ci/fixture/check-placeholders.sh
+
+            - name: Load the fixture graph
+              run: |
+                docker cp ci/fixture/fixture.cypher ${{ job.services.neo4j.id }}:/fixture.cypher
+                docker exec ${{ job.services.neo4j.id }} cypher-shell -d graph.db -f /fixture.cypher
+
+            - uses: actions/download-artifact@v4
+              with:
+                name: image-artifact
+                path: /tmp
+
+            - name: Convert the fixture's events
+              run: |
+                docker load --input /tmp/image.tar
+                mkdir -m 777 out
+                docker run --rm --network host -v "$PWD/out:/out" tmp-tag \
+                  java -Duser.timezone=UTC -Duser.language=en -Duser.country=US \
+                  -jar target/sbml-exporter-exec.jar --host bolt://localhost:7687 --user neo4j --password none \
+                  --output /out --target R-HSA-9613354,R-HSA-8932284,R-HSA-5667111
+
+            - uses: actions/setup-python@v5
+              with:
+                python-version: '3.12'
+
+            - name: Valid
+              run: |
+                pip install python-libsbml==5.21.2
+                python ci/validate.py out
+
+            - name: As expected
+              run: python ci/compare.py ci/fixture/expected out
+
     docker-push:
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         needs: docker-build

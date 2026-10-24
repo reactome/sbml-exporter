@@ -1,0 +1,213 @@
+<?xml version='1.0' encoding='utf-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+  <notes>
+    <annotation>
+      <p xmlns="http://www.w3.org/1999/xhtml">SBML generated from Reactome version 97 on 10/24/26, 9:03 PM using JSBML version 1.5.</p>
+    </annotation>
+  </notes>
+  <model id="no_parent_pathway" metaid="metaid_0" name="No parent pathway detected">
+    <listOfCompartments>
+      <compartment constant="true" id="compartment_70101" metaid="metaid_2" name="cytosol" sboTerm="SBO:0000290">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_2">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/GO:0005829" />
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </compartment>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species boundaryCondition="false" compartment="compartment_70101" constant="false" hasOnlySubstanceUnits="false" id="species_5658565" metaid="metaid_1" name="PARK2:SNCAIP [cytosol]" sboTerm="SBO:0000253">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome Complex. Here is Reactomes nested structure for this complex: (O60260, Q9Y6H5). Reactome uses a nested structure for complexes, which cannot be fully represented in SBML Level 3 Version 1 core</p>
+        </notes>
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_1">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-5658565" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:hasPart>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:O60260" />
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:Q9Y6H5" />
+                </rdf:Bag>
+              </bqbiol:hasPart>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species boundaryCondition="false" compartment="compartment_70101" constant="false" hasOnlySubstanceUnits="false" id="species_450152" metaid="metaid_3" name="K63polyUb [cytosol]" sboTerm="SBO:0000240">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome Polymer. Molecules that consist of an indeterminate number of repeated units. Includes complexes whose stoichiometry is variable or unknown. The repeated unit(s) is(are) identified in the repeatedUnit slot</p>
+        </notes>
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_3">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-450152" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:hasPart>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:P0CG47" />
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:P62987" />
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:P0CG48" />
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:P62979" />
+                </rdf:Bag>
+              </bqbiol:hasPart>
+              <bqbiol:isHomologTo>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-MMU-450152" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-RNO-450152" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-CFA-450152" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-BTA-450152" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-SSC-450152" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-DRE-450152" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-XTR-450152" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-GGA-450152" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-DME-450152" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-CEL-450152" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-DDI-450152" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-PFA-450152" />
+                </rdf:Bag>
+              </bqbiol:isHomologTo>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species boundaryCondition="false" compartment="compartment_70101" constant="false" hasOnlySubstanceUnits="false" id="species_5333629" metaid="metaid_4" name="SNCAIP [cytosol]" sboTerm="SBO:0000297">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome EntityWithAccessionedSequence. This is a protein</p>
+        </notes>
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_4">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:Q9Y6H5" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-5333629" />
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species boundaryCondition="false" compartment="compartment_70101" constant="false" hasOnlySubstanceUnits="false" id="species_5667114" metaid="metaid_5" name="K63Ub-SNCAIP [cytosol]" sboTerm="SBO:0000297">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome EntityWithAccessionedSequence. This is a protein</p>
+        </notes>
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_5">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:Q9Y6H5" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-5667114" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:hasVersion>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://www.ebi.ac.uk/ols4/ontologies/mod/terms?obo_id=MOD:01148" />
+                </rdf:Bag>
+              </bqbiol:hasVersion>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+    </listOfSpecies>
+    <listOfReactions>
+      <reaction compartment="compartment_70101" fast="false" id="reaction_5667111" metaid="metaid_6" name="PARK2 K63-Ubiquitinates SNCAIP" reversible="false">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">SNCAIP is ubiquitinated by several different E3 ubiquitin-ligases, including Parkin (PARK2). PARK2 overexpression with SNCAIP in cell culture leads to the formation of protein aggregates (Chung et al. 2001). PARK2 preferentially mediates the addition of lysine-63 (K63)-linked polyubiquitination of SNCAIP (Lim et al. 2005). This leads to SNCAIP degradation only at an unusually high PARK2 to SNCAIP ratio (Lim et al. 2005). K63-linked ubiquitination may be a signal that leads to the degradation of inclusions by autophagy when the ubiquitin-proteasome system is dysfunctional (Lim et al. 2005, Tan et al. 2008).</p>
+        </notes>
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_6">
+              <dc:creator>
+                <rdf:Bag>
+                  <rdf:li rdf:parseType="Resource">
+                    <vCard:N rdf:parseType="Resource">
+                      <vCard:Family>Person3</vCard:Family>
+                      <vCard:Given>Placeholder</vCard:Given>
+                    </vCard:N>
+                  </rdf:li>
+                  <rdf:li rdf:parseType="Resource">
+                    <vCard:N rdf:parseType="Resource">
+                      <vCard:Family>Person3</vCard:Family>
+                      <vCard:Given>Placeholder</vCard:Given>
+                    </vCard:N>
+                  </rdf:li>
+                  <rdf:li rdf:parseType="Resource">
+                    <vCard:N rdf:parseType="Resource">
+                      <vCard:Family>Person1</vCard:Family>
+                      <vCard:Given>Placeholder</vCard:Given>
+                    </vCard:N>
+                  </rdf:li>
+                </rdf:Bag>
+              </dc:creator>
+              <dcterms:created rdf:parseType="Resource">
+                <dcterms:W3CDTF>2015-01-23T16:56:29Z</dcterms:W3CDTF>
+              </dcterms:created>
+              <dcterms:modified rdf:parseType="Resource">
+                <dcterms:W3CDTF>2023-03-08T14:40:28Z</dcterms:W3CDTF>
+              </dcterms:modified>
+              <dcterms:modified rdf:parseType="Resource">
+                <dcterms:W3CDTF>2015-01-23T18:21:30Z</dcterms:W3CDTF>
+              </dcterms:modified>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-5667111" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:isDescribedBy>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/pubmed:11590439" />
+                </rdf:Bag>
+              </bqbiol:isDescribedBy>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-5667111" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/GO:0004842" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/ec-code:6.3.2.19" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:isDescribedBy>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/pubmed:15728840" />
+                  <rdf:li rdf:resource="https://identifiers.org/pubmed:17981811" />
+                </rdf:Bag>
+              </bqbiol:isDescribedBy>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+        <listOfReactants>
+          <speciesReference constant="true" id="speciesreference_5667111_input_5333629" sboTerm="SBO:0000010" species="species_5333629" stoichiometry="1" />
+          <speciesReference constant="true" id="speciesreference_5667111_input_450152" sboTerm="SBO:0000010" species="species_450152" stoichiometry="1" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference constant="true" id="speciesreference_5667111_output_5667114" sboTerm="SBO:0000011" species="species_5667114" stoichiometry="1" />
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference id="modifierspeciesreference_5667111_catalyst_5658565" sboTerm="SBO:0000013" species="species_5658565" />
+        </listOfModifiers>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>
