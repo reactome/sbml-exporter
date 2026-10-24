@@ -72,12 +72,10 @@ public class SbmlConverter {
         this.targetStId = event.getStId();
         this.reactomeVersion = version;
         this.ads = ads;
-        if (event instanceof Pathway) {
-            this.pathway = (Pathway) event;
-        } else {
-            List<Pathway> parents = event.getEventOf();
-            this.pathway = parents.isEmpty() ? null : parents.get(0); //Only one can be chosen... so let's take the first one
-        }
+        // A reaction's own export names no parent pathway, as the relational converter's does: a
+        // reaction can have several parents (733 human reactions in release 97), and any one of
+        // them would be arbitrary (spec 001, differences.md).
+        this.pathway = event instanceof Pathway ? (Pathway) event : null;
     }
 
     @SuppressWarnings("UnusedReturnValue")
