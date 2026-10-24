@@ -1,0 +1,719 @@
+<?xml version='1.0' encoding='utf-8' standalone='no'?>
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+  <notes>
+    <annotation>
+      <p xmlns="http://www.w3.org/1999/xhtml">SBML generated from Reactome version 97 on 10/24/26, 9:03 PM using JSBML version 1.5.</p>
+    </annotation>
+  </notes>
+  <model id="pathway_9613354" metaid="metaid_0" name="Lipophagy">
+    <notes>
+      <p xmlns="http://www.w3.org/1999/xhtml">Triglycerides stored in lipid droplets are hydrolysed under nutrient starvation to release fatty acids for energy. The content of lipid droplets may vary but they are all coated with a protective protein called perilipin. When this protein is degraded, lipid droplets associate with autophagic components and breakdown into fatty acids (Ward C et al. 2016, Schulze R J et al. 2017). This process is termed as lipophagy (Singh R et al. 2009).</p>
+    </notes>
+    <annotation>
+      <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+        <rdf:Description rdf:about="#metaid_0">
+          <dc:creator>
+            <rdf:Bag>
+              <rdf:li rdf:parseType="Resource">
+                <vCard:N rdf:parseType="Resource">
+                  <vCard:Family>Person6</vCard:Family>
+                  <vCard:Given>Placeholder</vCard:Given>
+                </vCard:N>
+              </rdf:li>
+              <rdf:li rdf:parseType="Resource">
+                <vCard:N rdf:parseType="Resource">
+                  <vCard:Family>Person6</vCard:Family>
+                  <vCard:Given>Placeholder</vCard:Given>
+                </vCard:N>
+              </rdf:li>
+              <rdf:li rdf:parseType="Resource">
+                <vCard:N rdf:parseType="Resource">
+                  <vCard:Family>Person5</vCard:Family>
+                  <vCard:Given>Placeholder</vCard:Given>
+                </vCard:N>
+              </rdf:li>
+            </rdf:Bag>
+          </dc:creator>
+          <dcterms:created rdf:parseType="Resource">
+            <dcterms:W3CDTF>2018-07-13T18:51:57Z</dcterms:W3CDTF>
+          </dcterms:created>
+          <dcterms:modified rdf:parseType="Resource">
+            <dcterms:W3CDTF>2026-05-18T04:55:01Z</dcterms:W3CDTF>
+          </dcterms:modified>
+          <dcterms:modified rdf:parseType="Resource">
+            <dcterms:W3CDTF>2019-02-21T21:47:28Z</dcterms:W3CDTF>
+          </dcterms:modified>
+          <bqbiol:is>
+            <rdf:Bag>
+              <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-9613354" />
+              <rdf:li rdf:resource="https://identifiers.org/GO:0061724" />
+            </rdf:Bag>
+          </bqbiol:is>
+          <bqbiol:isDescribedBy>
+            <rdf:Bag>
+              <rdf:li rdf:resource="https://identifiers.org/pubmed:19339967" />
+              <rdf:li rdf:resource="https://identifiers.org/pubmed:28642194" />
+              <rdf:li rdf:resource="https://identifiers.org/pubmed:26778751" />
+            </rdf:Bag>
+          </bqbiol:isDescribedBy>
+        </rdf:Description>
+      </rdf:RDF>
+    </annotation>
+    <listOfCompartments>
+      <compartment constant="true" id="compartment_70101" metaid="metaid_2" name="cytosol" sboTerm="SBO:0000290">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_2">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/GO:0005829" />
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </compartment>
+      <compartment constant="true" id="compartment_13977" metaid="metaid_4" name="lipid droplet" sboTerm="SBO:0000290">
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_4">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/GO:0005811" />
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </compartment>
+    </listOfCompartments>
+    <listOfSpecies>
+      <species boundaryCondition="false" compartment="compartment_70101" constant="false" hasOnlySubstanceUnits="false" id="species_264476" metaid="metaid_1" name="HSPA8 [cytosol]" sboTerm="SBO:0000297">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome EntityWithAccessionedSequence. This is a protein</p>
+        </notes>
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_1">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:P11142" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-264476" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:isHomologTo>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-MMU-264476" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-RNO-264476" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-CFA-264476" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-CFA-264476-2" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-CFA-264476-3" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-BTA-264476" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-SSC-264476" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-DRE-264476" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-XTR-264476" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-GGA-264476" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-DME-264476" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-CEL-264476" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-DDI-264476" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-DDI-264476-2" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-DDI-264476-3" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-DDI-264476-4" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-DDI-264476-5" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-DDI-264476-6" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-SPO-264476" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-SPO-264476-2" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-SPO-264476-3" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-SPO-264476-4" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-SPO-264476-5" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-SCE-264476" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-SCE-264476-2" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-SCE-264476-3" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-SCE-264476-4" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-SCE-264476-5" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-SCE-264476-6" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-SCE-264476-7" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-SCE-264476-8" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-PFA-264476" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-PFA-264476-2" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-PFA-264476-3" />
+                </rdf:Bag>
+              </bqbiol:isHomologTo>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species boundaryCondition="false" compartment="compartment_13977" constant="false" hasOnlySubstanceUnits="false" id="species_9613328" metaid="metaid_3" name="PLINs on lipid droplet surface [lipid droplet]">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome DefinedSet. This is a list of alternative entities, any of which can perform the given function</p>
+        </notes>
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_3">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-9613328" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:hasPart>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:O60664" />
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:Q99541" />
+                </rdf:Bag>
+              </bqbiol:hasPart>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species boundaryCondition="false" compartment="compartment_13977" constant="false" hasOnlySubstanceUnits="false" id="species_9613350" metaid="metaid_5" name="PLINs:HSPA8 [lipid droplet]" sboTerm="SBO:0000253">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome Complex. Here is Reactomes nested structure for this complex: (P11142, O60664, Q99541). Reactome uses a nested structure for complexes, which cannot be fully represented in SBML Level 3 Version 1 core</p>
+        </notes>
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_5">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-9613350" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:hasPart>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:P11142" />
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:O60664" />
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:Q99541" />
+                </rdf:Bag>
+              </bqbiol:hasPart>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species boundaryCondition="false" compartment="compartment_70101" constant="false" hasOnlySubstanceUnits="false" id="species_200405" metaid="metaid_6" name="PRKAA2 [cytosol]" sboTerm="SBO:0000297">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome EntityWithAccessionedSequence. This is a protein</p>
+        </notes>
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_6">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:P54646" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-200405" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:isHomologTo>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-MMU-1454691" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-RNO-200405" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-CFA-200405" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-BTA-200405" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-SSC-200405" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-DRE-200405" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-DME-200405" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-CEL-200405" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-DDI-200405" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-SPO-200405" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-SCE-200405" />
+                </rdf:Bag>
+              </bqbiol:isHomologTo>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species boundaryCondition="false" compartment="compartment_13977" constant="false" hasOnlySubstanceUnits="false" id="species_9613508" metaid="metaid_7" name="PLINs:HSPA8:PRKAA2 [lipid droplet]" sboTerm="SBO:0000253">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome Complex. Here is Reactomes nested structure for this complex: (P54646, P11142, O60664, Q99541). Reactome uses a nested structure for complexes, which cannot be fully represented in SBML Level 3 Version 1 core</p>
+        </notes>
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_7">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-9613508" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:hasPart>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:P54646" />
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:P11142" />
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:O60664" />
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:Q99541" />
+                </rdf:Bag>
+              </bqbiol:hasPart>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species boundaryCondition="false" compartment="compartment_70101" constant="false" hasOnlySubstanceUnits="false" id="species_1454683" metaid="metaid_8" name="AMPK-alpha2:AMPK-beta:AMPK-gamma:AMP [cytosol]" sboTerm="SBO:0000253">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome Complex. Here is Reactomes nested structure for this complex: (P54646, O43741, Q9Y478, 456215, Q9UGJ0, P54619, Q9UGI9). Reactome uses a nested structure for complexes, which cannot be fully represented in SBML Level 3 Version 1 core</p>
+        </notes>
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_8">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-1454683" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:hasPart>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:P54646" />
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:O43741" />
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:Q9Y478" />
+                  <rdf:li rdf:resource="https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:456215" />
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:Q9UGJ0" />
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:P54619" />
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:Q9UGI9" />
+                </rdf:Bag>
+              </bqbiol:hasPart>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species boundaryCondition="false" compartment="compartment_70101" constant="false" hasOnlySubstanceUnits="false" id="species_113592" metaid="metaid_9" name="ATP [cytosol]" sboTerm="SBO:0000247">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome SimpleEntity. This is a small compound</p>
+        </notes>
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_9">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:30616" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-ALL-113592" />
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species boundaryCondition="false" compartment="compartment_70101" constant="false" hasOnlySubstanceUnits="false" id="species_29370" metaid="metaid_10" name="ADP [cytosol]" sboTerm="SBO:0000247">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome SimpleEntity. This is a small compound</p>
+        </notes>
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_10">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://www.ebi.ac.uk/chebi/searchId.do?chebiId=CHEBI:456216" />
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-ALL-29370" />
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species boundaryCondition="false" compartment="compartment_13977" constant="false" hasOnlySubstanceUnits="false" id="species_9613547" metaid="metaid_11" name="p-PLINs:HSPA8:PRKAA2 [lipid droplet]" sboTerm="SBO:0000253">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome Complex. Here is Reactomes nested structure for this complex: (P54646, P11142, O60664, Q99541). Reactome uses a nested structure for complexes, which cannot be fully represented in SBML Level 3 Version 1 core</p>
+        </notes>
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_11">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-9613547" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:hasPart>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:P54646" />
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:P11142" />
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:O60664" />
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:Q99541" />
+                </rdf:Bag>
+              </bqbiol:hasPart>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species boundaryCondition="false" compartment="compartment_13977" constant="false" hasOnlySubstanceUnits="false" id="species_9613533" metaid="metaid_12" name="p-PLINs:HSPA8 [lipid droplet]" sboTerm="SBO:0000253">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome Complex. Here is Reactomes nested structure for this complex: (P11142, O60664, Q99541). Reactome uses a nested structure for complexes, which cannot be fully represented in SBML Level 3 Version 1 core</p>
+        </notes>
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_12">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-9613533" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:hasPart>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:P11142" />
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:O60664" />
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:Q99541" />
+                </rdf:Bag>
+              </bqbiol:hasPart>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+      <species boundaryCondition="false" compartment="compartment_70101" constant="false" hasOnlySubstanceUnits="false" id="species_9620192" metaid="metaid_13" name="p-PLINs:HSPA8 [cytosol]" sboTerm="SBO:0000253">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome Complex. Here is Reactomes nested structure for this complex: (P11142, O60664, Q99541). Reactome uses a nested structure for complexes, which cannot be fully represented in SBML Level 3 Version 1 core</p>
+        </notes>
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_13">
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-9620192" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:hasPart>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:P11142" />
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:O60664" />
+                  <rdf:li rdf:resource="https://identifiers.org/uniprot:Q99541" />
+                </rdf:Bag>
+              </bqbiol:hasPart>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+      </species>
+    </listOfSpecies>
+    <listOfReactions>
+      <reaction compartment="compartment_70101" fast="false" id="reaction_9613352" metaid="metaid_14" name="PLINs bind HSPA8" reversible="false">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Lipophagy is the process of autophagic degradation of lipid droplets into fatty acids. A key step in this process is the elimination of perilipin (PLIN) proteins on lipid droplet surface. This mechanism is initiated when the cytosolic Heat shock cognate 71 kDa protein (HSPA8) binds PLIN2 and PLIN3 on the lipid droplet surface. Consequently, perilipins are phosphorylated and targeted to degradation making the lipid available for hydrolysis (S Kaushik et al. 2015). Experiments confirming this interaction were performed in rats.</p>
+        </notes>
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_14">
+              <dc:creator>
+                <rdf:Bag>
+                  <rdf:li rdf:parseType="Resource">
+                    <vCard:N rdf:parseType="Resource">
+                      <vCard:Family>Person6</vCard:Family>
+                      <vCard:Given>Placeholder</vCard:Given>
+                    </vCard:N>
+                  </rdf:li>
+                  <rdf:li rdf:parseType="Resource">
+                    <vCard:N rdf:parseType="Resource">
+                      <vCard:Family>Person6</vCard:Family>
+                      <vCard:Given>Placeholder</vCard:Given>
+                    </vCard:N>
+                  </rdf:li>
+                  <rdf:li rdf:parseType="Resource">
+                    <vCard:N rdf:parseType="Resource">
+                      <vCard:Family>Person1</vCard:Family>
+                      <vCard:Given>Placeholder</vCard:Given>
+                    </vCard:N>
+                  </rdf:li>
+                </rdf:Bag>
+              </dc:creator>
+              <dcterms:created rdf:parseType="Resource">
+                <dcterms:W3CDTF>2018-07-13T18:51:57Z</dcterms:W3CDTF>
+              </dcterms:created>
+              <dcterms:modified rdf:parseType="Resource">
+                <dcterms:W3CDTF>2023-03-08T14:40:28Z</dcterms:W3CDTF>
+              </dcterms:modified>
+              <dcterms:modified rdf:parseType="Resource">
+                <dcterms:W3CDTF>2019-02-21T21:47:28Z</dcterms:W3CDTF>
+              </dcterms:modified>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-9613352" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:isDescribedBy>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/pubmed:25961502" />
+                </rdf:Bag>
+              </bqbiol:isDescribedBy>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-9613352" />
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+        <listOfReactants>
+          <speciesReference constant="true" id="speciesreference_9613352_input_9613328" sboTerm="SBO:0000010" species="species_9613328" stoichiometry="1" />
+          <speciesReference constant="true" id="speciesreference_9613352_input_264476" sboTerm="SBO:0000010" species="species_264476" stoichiometry="1" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference constant="true" id="speciesreference_9613352_output_9613350" sboTerm="SBO:0000011" species="species_9613350" stoichiometry="1" />
+        </listOfProducts>
+      </reaction>
+      <reaction compartment="compartment_70101" fast="false" id="reaction_9613513" metaid="metaid_15" name="PLINs:HSPA8 binds PRKAA2" reversible="false">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Lipophagy is the process of autophagic degradation of lipid droplets into fatty acids. Lipid droplets are coated with perilipin (PLIN) protiens and they need to be eliminated for the degradation of the lipids inside. Cytosolic Heat shock cognate 71 kDa protein (HSPA8) binds PLIN2 and PLIN3 on the lipid droplet surface. Consequently, PRKAA2 bind and phosphorylate perilipins targeting them for lipophagy (S Kaushik et al. 2015, S Kaushik et al. 2016). Experiments confirming this interaction were performed in mouse.</p>
+        </notes>
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_15">
+              <dc:creator>
+                <rdf:Bag>
+                  <rdf:li rdf:parseType="Resource">
+                    <vCard:N rdf:parseType="Resource">
+                      <vCard:Family>Person6</vCard:Family>
+                      <vCard:Given>Placeholder</vCard:Given>
+                    </vCard:N>
+                  </rdf:li>
+                  <rdf:li rdf:parseType="Resource">
+                    <vCard:N rdf:parseType="Resource">
+                      <vCard:Family>Person6</vCard:Family>
+                      <vCard:Given>Placeholder</vCard:Given>
+                    </vCard:N>
+                  </rdf:li>
+                  <rdf:li rdf:parseType="Resource">
+                    <vCard:N rdf:parseType="Resource">
+                      <vCard:Family>Person1</vCard:Family>
+                      <vCard:Given>Placeholder</vCard:Given>
+                    </vCard:N>
+                  </rdf:li>
+                </rdf:Bag>
+              </dc:creator>
+              <dcterms:created rdf:parseType="Resource">
+                <dcterms:W3CDTF>2018-07-16T13:15:50Z</dcterms:W3CDTF>
+              </dcterms:created>
+              <dcterms:modified rdf:parseType="Resource">
+                <dcterms:W3CDTF>2023-03-08T14:40:28Z</dcterms:W3CDTF>
+              </dcterms:modified>
+              <dcterms:modified rdf:parseType="Resource">
+                <dcterms:W3CDTF>2019-02-21T21:47:28Z</dcterms:W3CDTF>
+              </dcterms:modified>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-9613513" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:isDescribedBy>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/pubmed:25961502" />
+                  <rdf:li rdf:resource="https://identifiers.org/pubmed:26902588" />
+                </rdf:Bag>
+              </bqbiol:isDescribedBy>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-9613513" />
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+        <listOfReactants>
+          <speciesReference constant="true" id="speciesreference_9613513_input_9613350" sboTerm="SBO:0000010" species="species_9613350" stoichiometry="1" />
+          <speciesReference constant="true" id="speciesreference_9613513_input_200405" sboTerm="SBO:0000010" species="species_200405" stoichiometry="1" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference constant="true" id="speciesreference_9613513_output_9613508" sboTerm="SBO:0000011" species="species_9613508" stoichiometry="1" />
+        </listOfProducts>
+      </reaction>
+      <reaction compartment="compartment_70101" fast="false" id="reaction_9613530" metaid="metaid_16" name="PRKAA2 phosphorylates PLINs" reversible="false">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Lipophagy is the process of autophagic degradation of lipid droplets into fatty acids. Lipid droplets are coated with perilipin (PLIN) proteins and they need to be eliminated for the degradation of the lipids inside. Cytosolic Heat shock cognate 71 kDa protein (HSPA8) binds PLIN2 and PLIN3 on the lipid droplet surface. Subsequently, AMPK binds and phosphorylates perilipins targeting them for lipophagy (S Kaushik et al. 2015, S Kaushik et al. 2016). The precise phosphorylation site(s) on PLINs are unknown. Experiments confirming this finding were performed in mouse models.</p>
+        </notes>
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_16">
+              <dc:creator>
+                <rdf:Bag>
+                  <rdf:li rdf:parseType="Resource">
+                    <vCard:N rdf:parseType="Resource">
+                      <vCard:Family>Person6</vCard:Family>
+                      <vCard:Given>Placeholder</vCard:Given>
+                    </vCard:N>
+                  </rdf:li>
+                  <rdf:li rdf:parseType="Resource">
+                    <vCard:N rdf:parseType="Resource">
+                      <vCard:Family>Person6</vCard:Family>
+                      <vCard:Given>Placeholder</vCard:Given>
+                    </vCard:N>
+                  </rdf:li>
+                  <rdf:li rdf:parseType="Resource">
+                    <vCard:N rdf:parseType="Resource">
+                      <vCard:Family>Person1</vCard:Family>
+                      <vCard:Given>Placeholder</vCard:Given>
+                    </vCard:N>
+                  </rdf:li>
+                </rdf:Bag>
+              </dc:creator>
+              <dcterms:created rdf:parseType="Resource">
+                <dcterms:W3CDTF>2018-07-16T14:09:58Z</dcterms:W3CDTF>
+              </dcterms:created>
+              <dcterms:modified rdf:parseType="Resource">
+                <dcterms:W3CDTF>2023-03-08T14:40:28Z</dcterms:W3CDTF>
+              </dcterms:modified>
+              <dcterms:modified rdf:parseType="Resource">
+                <dcterms:W3CDTF>2019-02-21T21:47:28Z</dcterms:W3CDTF>
+              </dcterms:modified>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-9613530" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:isDescribedBy>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/pubmed:26902588" />
+                  <rdf:li rdf:resource="https://identifiers.org/pubmed:25961502" />
+                </rdf:Bag>
+              </bqbiol:isDescribedBy>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-9613530" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/GO:0004674" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/ec-code:2.7.11.1" />
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+        <listOfReactants>
+          <speciesReference constant="true" id="speciesreference_9613530_input_9613508" sboTerm="SBO:0000010" species="species_9613508" stoichiometry="1" />
+          <speciesReference constant="true" id="speciesreference_9613530_input_113592" sboTerm="SBO:0000010" species="species_113592" stoichiometry="1" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference constant="true" id="speciesreference_9613530_output_9613547" sboTerm="SBO:0000011" species="species_9613547" stoichiometry="1" />
+          <speciesReference constant="true" id="speciesreference_9613530_output_29370" sboTerm="SBO:0000011" species="species_29370" stoichiometry="1" />
+        </listOfProducts>
+        <listOfModifiers>
+          <modifierSpeciesReference id="modifierspeciesreference_9613530_catalyst_1454683" sboTerm="SBO:0000013" species="species_1454683" />
+        </listOfModifiers>
+      </reaction>
+      <reaction compartment="compartment_70101" fast="false" id="reaction_9613565" metaid="metaid_17" name="PRKAA2 dissociate from p-PLINs:HSPA8" reversible="false">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Once phosphorylated, PLINs are believed to dissociate from PRKAA2 and translocate to the cytosol (S Kaushik et al. 2015, S Kaushik et al. 2016). The precise dissociation mechanism of Plins is unclear. The experiments showing this finding were performed in mouse models.</p>
+        </notes>
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_17">
+              <dc:creator>
+                <rdf:Bag>
+                  <rdf:li rdf:parseType="Resource">
+                    <vCard:N rdf:parseType="Resource">
+                      <vCard:Family>Person6</vCard:Family>
+                      <vCard:Given>Placeholder</vCard:Given>
+                    </vCard:N>
+                  </rdf:li>
+                  <rdf:li rdf:parseType="Resource">
+                    <vCard:N rdf:parseType="Resource">
+                      <vCard:Family>Person6</vCard:Family>
+                      <vCard:Given>Placeholder</vCard:Given>
+                    </vCard:N>
+                  </rdf:li>
+                  <rdf:li rdf:parseType="Resource">
+                    <vCard:N rdf:parseType="Resource">
+                      <vCard:Family>Person1</vCard:Family>
+                      <vCard:Given>Placeholder</vCard:Given>
+                    </vCard:N>
+                  </rdf:li>
+                </rdf:Bag>
+              </dc:creator>
+              <dcterms:created rdf:parseType="Resource">
+                <dcterms:W3CDTF>2018-07-16T14:51:22Z</dcterms:W3CDTF>
+              </dcterms:created>
+              <dcterms:modified rdf:parseType="Resource">
+                <dcterms:W3CDTF>2023-03-08T14:40:28Z</dcterms:W3CDTF>
+              </dcterms:modified>
+              <dcterms:modified rdf:parseType="Resource">
+                <dcterms:W3CDTF>2019-02-21T21:47:28Z</dcterms:W3CDTF>
+              </dcterms:modified>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-9613565" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:isDescribedBy>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/pubmed:26902588" />
+                  <rdf:li rdf:resource="https://identifiers.org/pubmed:25961502" />
+                </rdf:Bag>
+              </bqbiol:isDescribedBy>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-9613565" />
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+        <listOfReactants>
+          <speciesReference constant="true" id="speciesreference_9613565_input_9613547" sboTerm="SBO:0000010" species="species_9613547" stoichiometry="1" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference constant="true" id="speciesreference_9613565_output_9613533" sboTerm="SBO:0000011" species="species_9613533" stoichiometry="1" />
+          <speciesReference constant="true" id="speciesreference_9613565_output_200405" sboTerm="SBO:0000011" species="species_200405" stoichiometry="1" />
+        </listOfProducts>
+      </reaction>
+      <reaction compartment="compartment_70101" fast="false" id="reaction_9613666" metaid="metaid_18" name="p-PLINs translocate from lipid droplet surface to cytosol" reversible="false">
+        <notes>
+          <p xmlns="http://www.w3.org/1999/xhtml">Lipophagy is the process of autophagic degradation of lipid droplets into fatty acids. Lipid droplets are coated with perilipin (PLIN) proteins and they need to be eliminated for the degradation of the lipids inside. Cytosolic Heat shock cognate 71 kDa protein (HSPA8) binds PLIN2 and PLIN3 on the lipid droplet surface. Subsequently, PRKAA2 binds and phosphorylates perilipins. Phosphorylated PLINs dissociate from PRKAA2 and are believed to translocate to the cytosol (S Kaushik et al. 2015, S Kaushik et al. 2016). Experiments suggesting this event were performed in mouse models.</p>
+        </notes>
+        <annotation>
+          <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
+            <rdf:Description rdf:about="#metaid_18">
+              <dc:creator>
+                <rdf:Bag>
+                  <rdf:li rdf:parseType="Resource">
+                    <vCard:N rdf:parseType="Resource">
+                      <vCard:Family>Person6</vCard:Family>
+                      <vCard:Given>Placeholder</vCard:Given>
+                    </vCard:N>
+                  </rdf:li>
+                  <rdf:li rdf:parseType="Resource">
+                    <vCard:N rdf:parseType="Resource">
+                      <vCard:Family>Person6</vCard:Family>
+                      <vCard:Given>Placeholder</vCard:Given>
+                    </vCard:N>
+                  </rdf:li>
+                  <rdf:li rdf:parseType="Resource">
+                    <vCard:N rdf:parseType="Resource">
+                      <vCard:Family>Person1</vCard:Family>
+                      <vCard:Given>Placeholder</vCard:Given>
+                    </vCard:N>
+                  </rdf:li>
+                </rdf:Bag>
+              </dc:creator>
+              <dcterms:created rdf:parseType="Resource">
+                <dcterms:W3CDTF>2018-07-17T18:40:26Z</dcterms:W3CDTF>
+              </dcterms:created>
+              <dcterms:modified rdf:parseType="Resource">
+                <dcterms:W3CDTF>2023-03-08T14:40:28Z</dcterms:W3CDTF>
+              </dcterms:modified>
+              <dcterms:modified rdf:parseType="Resource">
+                <dcterms:W3CDTF>2019-02-21T21:47:28Z</dcterms:W3CDTF>
+              </dcterms:modified>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-9613666" />
+                </rdf:Bag>
+              </bqbiol:is>
+              <bqbiol:isDescribedBy>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/pubmed:26902588" />
+                  <rdf:li rdf:resource="https://identifiers.org/pubmed:25961502" />
+                </rdf:Bag>
+              </bqbiol:isDescribedBy>
+              <bqbiol:is>
+                <rdf:Bag>
+                  <rdf:li rdf:resource="https://identifiers.org/reactome:R-HSA-9613666" />
+                </rdf:Bag>
+              </bqbiol:is>
+            </rdf:Description>
+          </rdf:RDF>
+        </annotation>
+        <listOfReactants>
+          <speciesReference constant="true" id="speciesreference_9613666_input_9613533" sboTerm="SBO:0000010" species="species_9613533" stoichiometry="1" />
+        </listOfReactants>
+        <listOfProducts>
+          <speciesReference constant="true" id="speciesreference_9613666_output_9620192" sboTerm="SBO:0000011" species="species_9620192" stoichiometry="1" />
+        </listOfProducts>
+      </reaction>
+    </listOfReactions>
+  </model>
+</sbml>
