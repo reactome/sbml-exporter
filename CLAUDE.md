@@ -27,7 +27,9 @@ graph-core. It holds two converters:
     does not exist yet.
 
 The plan is in [issue #14](https://github.com/reactome/sbml-exporter/issues/14)
-and in this repository's specs.
+and in [spec 001](specs/001-graph-only-sbml/spec.md). Its work is on the
+`graph-only` branch, which merges into `main` once it is proven; until then
+`main` is what the release uses.
 
 ## Specs first: use Spec Kit
 
@@ -52,8 +54,12 @@ Feature-sized work goes through Spec Kit before any code, and the specs live in
 Don't trust these until the first spec has fixed them (constitution, Principle II):
 
 - **The build is broken on `main`.** `verifier-lib:1.0-SNAPSHOT` now resolves to a
-  version without the classes `SBMLExportVerifier` uses. Pin it, or fix the
-  verifier, before anything else.
+  version without the classes `SBMLExportVerifier` uses (the snapshot published
+  on 19 Oct 2026). Fixing the published library is its maintainer's. Spec 001's
+  branch builds `verifier-lib` from a fixed commit of `release-verifier-lib`
+  instead; locally, install that commit first
+  (`mvn install -DskipTests -Dmaven.javadoc.skip=true -Dgpg.skip=true`), then
+  build with `mvn -nsu` so Maven does not fetch the broken snapshot.
 - **There are no tests**, so nothing tests the code yet.
 - **The lint stage** runs Checkstyle's default rules, not the repository's
   `checkstyle.xml`, and reports over a thousand existing violations. New code

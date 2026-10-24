@@ -47,7 +47,8 @@ reference is checked before it is trusted.
 None of this repository's checks can pass or fail on a change today:
 
 - **The build is broken on `main`.** It depends on `verifier-lib:1.0-SNAPSHOT`,
-  which now resolves to a version without the classes `SBMLExportVerifier` uses.
+  which now resolves to a version without the classes `SBMLExportVerifier` uses
+  (the snapshot published on 19 Oct 2026; the earlier one now answers 404).
   `mvn test` and the Docker build fail at compile, before any test.
 - **There are no tests.** The defects above survived for years.
 - **The lint stage runs `mvn checkstyle:check` with no configuration**, so it
@@ -123,9 +124,16 @@ each one real (Principle II):
   `/speckit-specify` → `/speckit-plan` → `/speckit-tasks`. The specs live in
   `specs/`. The pull request that completes a task ticks it, with its number. A
   single-PR fix names the spec it belongs to, if any.
-- **Every change is a pull request.** `main` requires one approving review. Admins
-  and the release bot can still merge past it, and no CI check is required yet.
-  Until the checks above are required, run them before asking for a merge.
+- **Every change is a pull request.** `main` requires a pull request but no
+  approving review, and no CI check is required yet. Each pull request is still
+  reviewed before it merges. Until the checks above are required, run them before
+  asking for a merge.
+- **Work that changes what the release produces goes on an integration branch**
+  until it is proven, then merges into `main` in one pull request. `main` keeps
+  what the release uses meanwhile. Spec 001's work is on `graph-only`. Why: the
+  release runs the image CI builds from `main`, and the graph-only converter sat
+  unproven for years with five defects; landing its changes on `main` one by one
+  would change the release before the whole was compared.
 - **Work that also touches the website** keeps its website part in the website's
   own specs, and links across.
 
@@ -136,4 +144,4 @@ what it cost to learn. A principle with no cost behind it does not belong here.
 
 `CLAUDE.md` carries day-to-day guidance; where the two disagree, this file wins.
 
-**Version**: 1.0.0 | **Ratified**: 2026-10-24 | **Last Amended**: 2026-10-24
+**Version**: 1.1.0 | **Ratified**: 2026-10-24 | **Last Amended**: 2026-10-24
