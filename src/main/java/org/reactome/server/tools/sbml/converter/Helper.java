@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.StringJoiner;
+import java.util.TimeZone;
 
 import javax.xml.stream.XMLStreamException;
 
@@ -59,6 +60,8 @@ public class Helper {
     private static Logger logger = LoggerFactory.getLogger("sbml-exporter");
 
     private static final String REACTOME_URI = "https://reactome.org/content/detail/";
+
+    private static final TimeZone UTC = TimeZone.getTimeZone("UTC");
     
     // Identifiers are always written as identifiers.org URLs (spec 001, FR-005). The map is
     // loaded once, when the class is, so concurrent conversions never see it half-filled.
@@ -277,15 +280,13 @@ public class Helper {
      * Adds information about the reactomeDB version and jsbml version
      */
     static void addProvenanceAnnotation(SBase sBase, Integer version) {
-        Date date = new Date();
-        DateFormat dateFormat = new SimpleDateFormat();
         String jsbml = String.format("" +
                         "<annotation>" +
                         "<p xmlns=\"http://www.w3.org/1999/xhtml\">" +
                         "SBML generated from Reactome version %d on %s using JSBML version %s." +
                         "</p>" +
                         "</annotation>",
-                version, dateFormat.format(date), getJSBMLDottedVersion());
+                version, generationTime(new Date()), getJSBMLDottedVersion());
 
         try {
             XMLNode node = XMLNode.convertStringToXMLNode(jsbml);
@@ -293,6 +294,16 @@ public class Helper {
         } catch (Exception e) {
             logger.error(String.format("An error occurred while generating the provenance annotation for '%s'", sBase.getId()), e);
         }
+    }
+
+    /**
+     * The generation note's time: UTC, in en_US's short format, wherever this runs (spec 001,
+     * FR-006). The reference was made that way.
+     */
+    static String generationTime(Date date) {
+        DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.US);
+        dateFormat.setTimeZone(UTC);
+        return dateFormat.format(date);
     }
 
     static void addSBOTerm(SBase sBase, Integer term) {
@@ -334,8 +345,10 @@ public class Helper {
      * @return Date object created from the String or null if this
      * cannot be parsed.
      */
-    private static Date formatDate(String datetime) {
+    static Date formatDate(String datetime) {
+        // Read as UTC wherever this runs (FR-006). The 12-hour hh is the reference's.
         DateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss", Locale.ENGLISH);
+        format.setTimeZone(UTC);
         try {
             return format.parse(datetime);
         } catch (ParseException e) {
