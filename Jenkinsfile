@@ -45,8 +45,7 @@ pipeline{
 					sh "rm -rf ${env.OUTPUT_FOLDER}/*"
 					sh "mkdir -p logs"
 					sh "rm -rf logs/*"
-					withCredentials([ usernamePassword(credentialsId: 'neo4jUsernamePassword', passwordVariable: 'neo4jPass', usernameVariable: 'neo4jUser'),
-							  usernamePassword(credentialsId: 'mySQLUsernamePassword', passwordVariable: 'mysqlPass', usernameVariable: 'mysqlUser') ])
+					withCredentials([ usernamePassword(credentialsId: 'neo4jUsernamePassword', passwordVariable: 'neo4jPass', usernameVariable: 'neo4jUser') ])
 					{
 						sh """\
 							docker run \\
@@ -55,7 +54,7 @@ pipeline{
 							--net=host \\
 							--name ${CONT_NAME} \\
 							${ECR_URL}:latest \\
-							/bin/bash -c 'java -Xmx${env.JAVA_MEM_MAX}m -jar target/sbml-exporter-exec.jar --user $neo4jUser --password $neo4jPass --mysql_db ${env.RELEASE_CURRENT_DB} --mysql_user $mysqlUser --mysql_password $mysqlPass --output ./${env.OUTPUT_FOLDER} --verbose'
+							/bin/bash -c 'java -Xmx${env.JAVA_MEM_MAX}m -jar target/sbml-exporter-exec.jar --user $neo4jUser --password $neo4jPass --output ./${env.OUTPUT_FOLDER} --verbose'
 						"""
 					}
 					sh "sudo chown jenkins:jenkins logs"
