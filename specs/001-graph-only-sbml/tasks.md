@@ -32,7 +32,7 @@ References kept outside the repository (the private graph copy, spec 015's refer
 **Independent test**: the comparison over the 30-event sample (T016).
 
 - [x] T011 [P] [US2] (#22) Fix defect 4, the reused `Participant`, in `DataFactory.getParticipantResults`, with a test (mocked `DatabaseObjectService`) that fails without the fix.
-- [ ] T012 [P] [US2] Fix defect 5, `ReactionBaseResult.build` not reading `catalysts`, with a test over an `InternalRecord` built from the driver's `Values` that fails without the fix.
+- [x] T012 [P] [US2] (#23) Fix defect 5, `ReactionBaseResult.build` not reading `catalysts`, with a test over an `InternalRecord` built from the driver's `Values` that fails without the fix.
 - [ ] T013 [US2] Fix defects 1–3 in `DataFactory.getReactionList` (catalysts, positive and negative regulators each from their own column), with a test for each (mocked `AdvancedDatabaseObjectService`; the static service set through `DataFactoryHelper` and reset before each test) that fails without its fix. Add tests for the two queries' row mapping.
 - [ ] T014 [P] [US2] Identifier URLs always on (R6, FR-005): replace the static `Helper.setUseIdentifierURL` flag; a test that two converters in parallel write identifiers.org URLs.
 - [ ] T015 [P] [US2] Time zone and locale (R6, FR-006): parse history dates in `UTC` and format the generation note with `UTC` and `Locale.US`, keeping the `hh` parse quirk; a test run under another default zone and locale writes the same output.
