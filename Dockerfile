@@ -48,6 +48,9 @@ FROM setup-env AS build-jar
 # -nsu: keep the verifier-lib installed above, not the published snapshot.
 RUN mvn -B -nsu clean package
 
+# Fail if a snapshot dependency changed under the build (spec 001, research R2).
+RUN ci/snapshots.sh check
+
 
 # ===== stage 3 =====
 FROM eclipse-temurin:11-jre-focal
