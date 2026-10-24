@@ -2,8 +2,6 @@ package org.reactome.server.tools.sbml;
 
 import com.martiansoftware.jsap.*;
 import org.apache.commons.lang3.ArrayUtils;
-import org.gk.persistence.MySQLAdaptor;
-import org.reactome.sbml.rel.SbmlConverterForRel;
 import org.reactome.server.graph.domain.model.DBInfo;
 import org.reactome.server.graph.domain.model.Event;
 import org.reactome.server.graph.domain.model.Pathway;
@@ -35,10 +33,6 @@ public class Main {
 
     private static Boolean verbose = false;
 
-    private static MySQLAdaptor mysqlDba;
-
-    private static boolean graphOnly = false;
-
     public static void main(String[] args) throws Exception {
 
         SimpleJSAP jsap = new SimpleJSAP(Main.class.getName(), "A tool for generating SBML files",
@@ -46,17 +40,9 @@ public class Main {
                         new FlaggedOption("host", JSAP.STRING_PARSER, "bolt://localhost:7687", JSAP.REQUIRED, 'h', "host", "The neo4j host"),
                         new FlaggedOption("user", JSAP.STRING_PARSER, "neo4j", JSAP.REQUIRED, 'u', "user", "The neo4j user"),
                         new FlaggedOption("password", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'p', "password", "The neo4j password"),
-                        new FlaggedOption("mysql_host", JSAP.STRING_PARSER, "localhost", JSAP.REQUIRED, 'm', "mysql_host", "The mysql host"),
-                        new FlaggedOption("mysql_db", JSAP.STRING_PARSER, "release_current", JSAP.REQUIRED, 'd', "mysql_db", "The mysql host"),
-                        new FlaggedOption("mysql_port", JSAP.STRING_PARSER, "3306", JSAP.NOT_REQUIRED, 'n', "mysql_port", "The mysql port"),
-                        new FlaggedOption("mysql_user", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'l', "mysql_user", "The mysql user"),
-                        new FlaggedOption("mysql_password", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.NOT_REQUIRED, 'w', "mysql_password", "The mysql password"),
                         new FlaggedOption("output", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'o', "output", "The output directory"),
                         new FlaggedOption("target", JSAP.STRING_PARSER, "ALL", JSAP.NOT_REQUIRED, 't', "target", "Target events to convert. Use either (1) comma separated event identifiers, (2) a given species (e.g. 'Homo sapiens') or  (3)'all' to export every pathway").setList(true).setListSeparator(','),
-                        new QualifiedSwitch("verbose", JSAP.BOOLEAN_PARSER, null, JSAP.NOT_REQUIRED, 'v', "verbose", "Requests verbose output."),
-                        // Until the command line itself is graph-only (spec 001, T023): the graph
-                        // converter, no relational database and no layout, for listed events only.
-                        new Switch("graph-only", JSAP.NO_SHORTFLAG, "graph-only", "Convert listed events from the graph alone, with no layout and no relational database.")
+                        new QualifiedSwitch("verbose", JSAP.BOOLEAN_PARSER, null, JSAP.NOT_REQUIRED, 'v', "verbose", "Requests verbose output.")
                 }
         );
 
@@ -68,19 +54,7 @@ public class Main {
         String output = config.getString("output");
         Utils.outputCheck(output);
 
-        graphOnly = config.getBoolean("graph-only");
-        if (!graphOnly && (config.getString("mysql_user") == null || config.getString("mysql_password") == null)) {
-            System.err.println("--mysql_user and --mysql_password are required, unless --graph-only is given.");
-            System.exit(1);
-        }
-
         //Initialising ReactomeCore Neo4j configuration
-        if (!graphOnly) mysqlDba = new MySQLAdaptor(config.getString("mysql_host"),
-                config.getString("mysql_db"),
-                config.getString("mysql_user"),
-                config.getString("mysql_password"),
-                Integer.parseInt(config.getString("mysql_port"))); // Cannot auto-parse? This is weird.
-
         ReactomeGraphCore.initialise(config.getString("host"), config.getString("user"), config.getString("password"), GraphNeo4jConfig.class);
 
 
@@ -96,9 +70,6 @@ public class Main {
             String aux = target[0];
             if (DatabaseObjectUtils.isStId(aux) || DatabaseObjectUtils.isDbId(aux)) {
                 convertPathways(target, dbInfo.getVersion(), output);
-            } else if (graphOnly) {
-                error("--graph-only converts listed events only, not " + aux);
-                System.exit(1);
             } else {
                 SpeciesService speciesService = ReactomeGraphCore.getService(SpeciesService.class);
                 if (aux.toLowerCase().equals("all")) {
@@ -123,16 +94,7 @@ public class Main {
             try {
                 Event p = dbs.findById(identifier);
                 info(String.format("\t>%s: %s", p.getStId(), p.getDisplayName()));
-                if (graphOnly) {
-                    SbmlConverter g = new SbmlConverter(p, version, ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class));
-                    g.convert();
-                    g.writeToFile(output);
-                    continue;
-                }
-                SbmlConverterForRel c = new SbmlConverterForRel(p.getStId(),
-                        version,
-                        ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class));
-                c.setDBA(mysqlDba);
+                SbmlConverter c = new SbmlConverter(p, version, ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class));
                 c.convert();
                 c.writeToFile(output);
             } catch (ClassCastException e) {
@@ -161,10 +123,7 @@ public class Main {
 //                pathways.stream().parallel().forEach(pathway -> {
                 pathways.stream().forEach(pathway -> {
                     progressBar.update(pathway.getStId(), i.get());
-                    SbmlConverterForRel c = new SbmlConverterForRel(pathway.getStId(),
-                                                                    version,
-                                                                    ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class));
-                    c.setDBA(mysqlDba);
+                    SbmlConverter c = new SbmlConverter(pathway, version, ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class));
                     c.convert();
                     c.writeToFile(output);
                     if (i.incrementAndGet() % 10 == 0) ReactomeGraphCore.getService(GeneralService.class).clearCache();
