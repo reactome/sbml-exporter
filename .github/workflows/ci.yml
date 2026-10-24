@@ -5,10 +5,13 @@ on:
     pull_request:
         types:
             - opened
-            - synchronize  
+            - synchronize
+            - reopened
     push:
         branches:
             - main
+            # spec 001's integration branch; docker-push below stays on main only
+            - graph-only
 
 permissions:
     id-token: write
