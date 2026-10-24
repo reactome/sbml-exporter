@@ -120,7 +120,7 @@ The release's SBML step makes both archives from the graph and the diagram files
 - **Black-box events, disease and inferred events, and set-heavy events** are in the sample and must pass like the rest.
 - **A species with no pathways** writes no files and does not fail the run.
 - **An event drawn only on a parent's diagram** gets no layout, as today.
-- **Diagram files of another release.** The layout refuses diagram files whose release differs from the graph's (spec 015, R3).
+- **Diagram files of another release.** The caller states the diagram folder's release, and the layout refuses it when it differs from the graph's (spec 015, R3).
 - **People's names.** Model history names its creators. Fixtures replace them, and comparisons hash them (constitution, Principle V).
 
 ## Requirements *(mandatory)*
@@ -162,7 +162,7 @@ The release's SBML step makes both archives from the graph and the diagram files
 
 **Before `main`**
 
-- **FR-011**: `graph-only` MUST NOT merge into `main` until: the comparisons of FR-004 and FR-007 pass; a full bulk dry run is compared with the same release's published archives (SC-004, SC-007); the maintainers agree; and the timing is agreed with the release's maintainers.
+- **FR-011**: `graph-only` MUST NOT merge into `main` until: the comparisons of FR-004 and FR-007 pass; a full bulk dry run is compared with the same release's published archives, including the release verifier's size check (SC-004, SC-007); the maintainers agree; and the timing is agreed with the release's maintainers. Until the website's service switches too (spec 010, WebsiteAngular spec 015), the release's SBML and the website's would come from different converters; the merge either waits for that switch in the same release, or that release's difference is accepted and recorded (constitution, Principle III).
 - **FR-012**: No request is made to Reactome's production services. The release's published archives are the one exception, fetched one at a time and kept out of the repository (constitution, Principle IV).
 
 ### Key Entities
@@ -170,7 +170,7 @@ The release's SBML step makes both archives from the graph and the diagram files
 - **Reference**: the graph-only converter with the five defects fixed, run by WebsiteAngular spec 015's reference harness with `Helper.setUseIdentifierURL(true)`; its outputs are kept outside both repositories.
 - **Sample**: WebsiteAngular spec 015's 30 events (top-level pathways including Signal Transduction, sub-pathways with and without diagrams, reactions, a black box, disease, inferred and set-heavy events).
 - **Diagram files**: the release's `diagram/{stId}.json`, which the website draws, given as a folder.
-- **Recorded difference**: a difference from the reference or today's output that is accepted, with its reason, in this spec's `differences.md`.
+- **Recorded difference**: a difference from the reference or today's output that is accepted, with its reason, in this spec's `differences.md`, the one list for SBML (WebsiteAngular spec 015 links to it).
 
 ## Success Criteria *(mandatory)*
 
