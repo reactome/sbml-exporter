@@ -133,8 +133,8 @@ public abstract class DataFactory {
 
     public static List<Participant> getParticipantResults(DatabaseObjectService ds, List<ParticipantResult> participantsQueryResults) {
         List<Participant> participants = new ArrayList<>();
-        Participant participant = new Participant();
         for (ParticipantResult participantResult : participantsQueryResults) {
+            Participant participant = new Participant();
             participant.setStoichiometry(participantResult.getStoichiometry());
             participant.setPhysicalEntity(ds.findByIdNoRelations(participantResult.getPhysicalEntity()));
             participants.add(participant);
