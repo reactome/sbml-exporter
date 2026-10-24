@@ -26,21 +26,23 @@ showed.
 **So:** a change to what is written is compared with a reference, and the
 reference is checked before it is trusted.
 
-- **The model** is compared byte for byte, the generation note's timestamp set
-  aside. The reference is the graph-only converter with those defects fixed, run
-  by the reference harness in WebsiteAngular spec 015 (`reference-harness.md`):
-  - with `Helper.setUseIdentifierURL(true)`, as ContentService sets it;
-  - with the outputs kept outside both repositories, because they hold people's
-    names.
+- **The model** is compared with **today's relational output of the same
+  release**, element by element: the same compartments, species, reactions and
+  their reactants, products and modifiers (role and stoichiometry), names, SBO
+  terms, notes and annotations, identifier URLs included. Set aside: the
+  generation note's timestamp, the order of elements (they are matched by id)
+  and, until the layout is ported, the layout. Every other difference is
+  recorded with its reason. The reference is:
+  - per event, the relational converter's file from a ContentService of that
+    release that is not production;
+  - for the bulk run, the release's published archives;
+  - kept outside the repository, because it holds people's names.
 
-  Once the fixes land here, the reference outputs stay as they were generated.
-  They are not regenerated from the code under test.
+  Why today's output and not a fixed copy of the graph converter: the files
+  people use are today's, and a reference made by the code under test cannot
+  catch what that code gets wrong (decided 24 Oct 2026).
 - **The layout** is compared by meaning with today's relational layout: the same
   glyphs, ids, roles and order (spec 015 R3).
-- **The release's published archives** come from the relational converter, so
-  they can only be compared by meaning: species and reaction order and some
-  annotations differ (R1). They are the reference for the bulk run's file set,
-  not for bytes.
 
 ### II. Verify the instrument
 
@@ -83,7 +85,8 @@ Reactome's production services (the website, its APIs and its databases) are
 not used for development, comparison or verification: a burst of requests can
 load the live site.
 
-**The reference for the bulk output is the release's own published archives**,
+**The reference for the bulk output is the release's own published archives**, and
+the layout's source is the release's diagram files (`diagram/{stId}.json`), both
 static files in the release's download directory
 (`download.reactome.org/{release}/`). Fetching them is allowed, one file at a
 time, only when a comparison needs them, and they are kept out of the
@@ -144,4 +147,4 @@ what it cost to learn. A principle with no cost behind it does not belong here.
 
 `CLAUDE.md` carries day-to-day guidance; where the two disagree, this file wins.
 
-**Version**: 1.1.0 | **Ratified**: 2026-10-24 | **Last Amended**: 2026-10-24
+**Version**: 1.2.0 | **Ratified**: 2026-10-24 | **Last Amended**: 2026-10-24

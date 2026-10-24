@@ -75,11 +75,11 @@ The image keeps `target/sbml-exporter-exec.jar` and `target/sbml-exporter-verifi
 
 ## R8. Reading the diagram files
 
-**Measured.** The diagram files are made by the release's diagram step (`reactome/diagram-converter`), which reads the relational database as well as the graph, so they cannot be regenerated from a graph copy. The JSON has no release field. Beta does not serve the diagram files locally (spec 015 R3), and fetching one per pathway from the production download area would be thousands of requests.
+**Measured.** The diagram files are made by the release's diagram step (`reactome/diagram-converter`), which reads the relational database as well as the graph, so they cannot be regenerated from a graph copy. The JSON has no release field. Beta does not serve the diagram files locally (spec 015 R3), The release's download directory publishes them per pathway (`download.reactome.org/{release}/diagram/{stId}.json`, with no listing).
 
 **Decision.**
 
 - The layout reads `diagram/{stId}.json` from a folder the caller gives, with Jackson, into the few classes the algorithm needs (nodes with their positions, props and render class; edges with segments and reactants; compartments; connectors). Whether `reactome/diagram-reader`'s model can be reused instead is checked in T019.
 - **The release check:** the caller states the folder's release, and the library refuses it if it differs from the graph's `DBInfo` version. The command line takes it as an option.
-- **The source for comparisons and dry runs** is the release's own diagram output for the reference's release, as one archive from the release's maintainers (or one published archive, if the release publishes one). Never fetched file by file. **This is open** (T018) and blocks T021, T026 and T027.
+- **The source for comparisons and dry runs** is the release's download directory (decided 24 Oct 2026): only the files a run needs, fetched one at a time and in sequence, kept outside the repository. A species or full dry run needs one per pathway with a diagram.
 - **CI** uses the fixture pathway's own diagram file, committed beside the fixture.

@@ -14,7 +14,7 @@ Today both of Reactome's SBML outputs come from `SbmlConverterForRel`, which rea
 
 The graph-only `SbmlConverter` has been in this repository since 2021, but nothing calls it. Run against release 97's graph (reactome/WebsiteAngular spec 015, research R1 and R9), it had five data defects that nothing caught, because nothing compared its output with anything (constitution, Principle I).
 
-The website's own half of this work (its routes, its links and the service that calls the library) is in [WebsiteAngular spec 015](https://github.com/reactome/WebsiteAngular/tree/main/specs/015-graph-exports). That spec also holds the measurements, the 30-event sample and the reference harness this spec relies on.
+The website's own half of this work (its routes, its links and the service that calls the library) is in [WebsiteAngular spec 015](https://github.com/reactome/WebsiteAngular/tree/main/specs/015-graph-exports). That spec also holds the measurements and the 30-event sample this spec relies on.
 
 ## How the work lands
 
@@ -56,13 +56,13 @@ A researcher downloads SBML for a pathway or reaction and gets every reactant, p
 
 **Why this priority**: the five defects make the graph-only output wrong; nothing can switch to it until they are fixed.
 
-**Independent Test**: the fixed converter's models are compared byte for byte with the reference over WebsiteAngular spec 015's 30-event sample, with three things set aside (spec 015, FR-002): the generation note's timestamp; the layout itself; and what adding a layout changes in the model (the drawn species' SBO terms, `layout:required` and the layout namespace).
+**Independent Test**: the fixed converter's models are compared element by element with today's relational output of the same release over WebsiteAngular spec 015's 30-event sample, with three things set aside: the generation note's timestamp; the order of elements, which are matched by id; and, until US3, the layout and what adding it changes in the model (the drawn species' SBO terms, `layout:required` and the layout namespace).
 
 **Acceptance Scenarios**:
 
 1. **Given** R-HSA-69604, **When** its SBML is written, **Then** it has two reactants, two products and one catalyst, as the relational converter's file has; unfixed, it has one of each and the positive regulators appear as catalysts.
 2. **Given** each of the five defects, **When** its fix is undone, **Then** a unit test fails.
-3. **Given** any event in the sample, **When** its model is written, **Then** it is byte-identical to the reference apart from what is set aside above, or the difference is recorded with its reason.
+3. **Given** any event in the sample, **When** its model is written, **Then** it matches today's relational file of the same release apart from what is set aside above, or the difference is recorded with its reason.
 
 ---
 
@@ -140,8 +140,8 @@ The release's SBML step makes both archives from the graph and the diagram files
 **The model**
 
 - **FR-003**: The five defects (issue #14) MUST be fixed, each with a unit test that fails without its fix.
-- **FR-004**: The model MUST be byte-identical to the reference for the 30-event sample, apart from the generation note's timestamp, the layout and what the layout changes in the model (US2), or each difference recorded with its reason. The reference outputs are never regenerated from the code under test; a change of graph-core version that alters the output is a recorded difference, not a reason to regenerate.
-- **FR-005**: Identifiers MUST be written as identifiers.org URLs, as the reference (made with `Helper.setUseIdentifierURL(true)`) and today's files have them, in both the library and the command line, without a static flag.
+- **FR-004**: The model MUST match today's relational output of the same release for the 30-event sample, element by element (compartments, species, reactions, reactants, products and modifiers with role and stoichiometry, names, SBO terms, notes, annotations and identifier URLs), apart from the generation note's timestamp, element order and the layout (US2), or each difference recorded with its reason. A change of graph-core version that alters the output is a recorded difference.
+- **FR-005**: Identifiers MUST be written as the URLs today's relational files have (identifiers.org), in both the library and the command line, without a static flag.
 - **FR-006**: Output MUST NOT depend on the machine's time zone or locale: the library fixes UTC and `en_US` for the generation note and for history dates itself.
 
 **The layout**
@@ -167,7 +167,7 @@ The release's SBML step makes both archives from the graph and the diagram files
 
 ### Key Entities
 
-- **Reference**: the graph-only converter with the five defects fixed, run by WebsiteAngular spec 015's reference harness with `Helper.setUseIdentifierURL(true)`; its outputs are kept outside both repositories.
+- **Reference**: today's relational output of the same release: per event, the relational converter's file from a ContentService of that release that is not production; for the bulk run, the published archives. Kept outside both repositories.
 - **Sample**: WebsiteAngular spec 015's 30 events (top-level pathways including Signal Transduction, sub-pathways with and without diagrams, reactions, a black box, disease, inferred and set-heavy events).
 - **Diagram files**: the release's `diagram/{stId}.json`, which the website draws, given as a folder.
 - **Recorded difference**: a difference from the reference or today's output that is accepted, with its reason, in this spec's `differences.md`, the one list for SBML (WebsiteAngular spec 015 links to it).
@@ -177,7 +177,7 @@ The release's SBML step makes both archives from the graph and the diagram files
 ### Measurable Outcomes
 
 - **SC-001**: On the branch, the build, tests, lint and validity check run on every pull request, and each has been seen failing once.
-- **SC-002**: 100% of the sample's models match the reference exactly, apart from what US2 sets aside, or carry a recorded difference.
+- **SC-002**: 100% of the sample's models match today's relational files, apart from what US2 sets aside, or carry a recorded difference.
 - **SC-003**: Every layout in the sample matches today's by meaning, apart from recorded differences.
 - **SC-004**: Every file of a full bulk dry run passes libSBML's consistency check with zero errors, and the file names match the published archives'.
 - **SC-005**: Neither the library nor the command line needs the relational database.
