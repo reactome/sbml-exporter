@@ -121,6 +121,7 @@ public class ReactionBaseResult implements CustomQuery {
         if (!r.get("diseases").isNull()) reactionBaseResult.setDiseases(r.get("diseases").asList(Value::asString));
         if (!r.get("inputs").isNull()) reactionBaseResult.setInputs(r.get("inputs").asList(ParticipantResult::build));
         if (!r.get("outputs").isNull()) reactionBaseResult.setOutputs(r.get("outputs").asList(ParticipantResult::build));
+        if (!r.get("catalysts").isNull()) reactionBaseResult.setCatalysts(r.get("catalysts").asList(ParticipantResult::build));
         if (!r.get("positiveRegulators").isNull()) reactionBaseResult.setPositiveRegulators(r.get("positiveRegulators").asList(ParticipantResult::build));
         if (!r.get("negativeRegulators").isNull()) reactionBaseResult.setNegativeRegulators(r.get("negativeRegulators").asList(ParticipantResult::build));
         return reactionBaseResult;
