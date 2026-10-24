@@ -49,21 +49,26 @@ Feature-sized work goes through Spec Kit before any code, and the specs live in
   this work, and holds the measurements and the reference harness this work
   started from.
 
-## Checks that do not work yet
+## The checks
 
-Don't trust these until the first spec has fixed them (constitution, Principle II):
+On `graph-only`, CI runs and requires three checks, each seen failing once
+(constitution, Principle II):
 
-- **The build is broken on `main`.** `verifier-lib:1.0-SNAPSHOT` now resolves to a
-  version without the classes `SBMLExportVerifier` uses (the snapshot published
-  on 19 Oct 2026). Fixing the published library is its maintainer's. Spec 001's
-  branch builds `verifier-lib` from a fixed commit of `release-verifier-lib`
-  instead; locally, install that commit first
-  (`mvn install -DskipTests -Dmaven.javadoc.skip=true -Dgpg.skip=true`), then
-  build with `mvn -nsu` so Maven does not fetch the broken snapshot.
-- **There are no tests**, so nothing tests the code yet.
-- **The lint stage** runs Checkstyle's default rules, not the repository's
-  `checkstyle.xml`, and reports over a thousand existing violations. New code
-  should add none.
+- **`docker-build`**: the build and the unit tests. `verifier-lib:1.0-SNAPSHOT`
+  now resolves to a version without the classes `SBMLExportVerifier` uses (the
+  snapshot published on 19 Oct 2026), and fixing the published library is its
+  maintainer's. So the `Dockerfile` builds `verifier-lib` from a fixed commit of
+  `release-verifier-lib`; locally, install that commit first
+  (`mvn install -DskipTests -Dmaven.javadoc.skip=true -Dgpg.skip=true`), then build
+  with `mvn -nsu` so Maven does not fetch the broken snapshot. The build also fails
+  if a snapshot dependency changes under it (`ci/snapshots.sh`).
+- **`lint`**: Checkstyle with the repository's `checkstyle.xml`.
+- **`validity`**: the converter over the fixture graph (`ci/fixture`), its output
+  valid by libSBML (`ci/validate.py`) and equal to `ci/fixture/expected`
+  (`ci/compare.py`).
+
+`main` is unchanged until `graph-only` merges: its build is broken, it has no
+tests, and its lint uses Checkstyle's defaults.
 
 ## Proving what is written
 
@@ -97,7 +102,10 @@ descriptions:
 
 ## Before pushing
 
-- The build compiles and the tests run and pass: see "Checks that do not work
-  yet". Every fix has a test seen failing first.
+- The build compiles and the tests run and pass (`mvn -nsu test`, see "The
+  checks"). Every fix has a test seen failing first.
+- A change to what is written: run `ci/compare.py` against today's files, and put
+  the result in the pull request. If the fixture's output changes, regenerate
+  `ci/fixture/expected` and say why.
 - New code adds no Checkstyle violations.
 - No personal names in fixtures, logs or test output.
