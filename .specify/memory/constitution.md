@@ -47,17 +47,21 @@ reference is checked before it is trusted.
 
 ### II. Verify the instrument
 
-None of this repository's checks can pass or fail on a change today:
+Until spec 001, none of this repository's checks could pass or fail on a change:
 
-- **The build is broken on `main`.** It depends on `verifier-lib:1.0-SNAPSHOT`,
+- **The build broke on `main`.** It depends on `verifier-lib:1.0-SNAPSHOT`,
   which now resolves to a version without the classes `SBMLExportVerifier` uses
   (the snapshot published on 19 Oct 2026; the earlier one now answers 404).
   `mvn test` and the Docker build fail at compile, before any test.
-- **There are no tests.** The defects above survived for years.
-- **The lint stage runs `mvn checkstyle:check` with no configuration**, so it
-  uses Checkstyle's default rules. The repository's own `checkstyle.xml` is not
-  used. It reports over a thousand existing violations and has failed on earlier
-  pull requests. It is not a required check.
+- **There were no tests.** The defects above survived for years.
+- **The lint stage ran `mvn checkstyle:check` with no configuration**, so it
+  used Checkstyle's default rules, not the repository's `checkstyle.xml`, and
+  reported over a thousand existing violations.
+
+On `graph-only` all of them are now real and required, each seen failing once:
+the build (with `verifier-lib` built from a fixed commit), 14 unit tests, lint on
+`checkstyle.xml`, and the validity job over a fixture graph (spec 001, T001–T010).
+`main` is unchanged until the branch merges.
 
 **So:** name what a check actually reads, and see it fail once before relying on
 it. A gate that cannot fail, or cannot pass, is not a gate.
@@ -108,19 +112,20 @@ such as the pom's developer list.
 
 ## Quality Gates
 
-Every change is to pass the following checks. The first spec's first tasks make
-each one real (Principle II):
+Every change is to pass the following checks. On `graph-only` they are CI's
+required checks: `docker-build` (the build and unit tests), `lint` and `validity`.
 
-- **The build compiles**, with `verifier-lib` pinned or the verifier fixed. This
-  comes first.
+- **The build compiles**, with `verifier-lib` built from a fixed commit until it is
+  released (spec 001, T029).
 - **The unit tests run and pass.** Each fix comes with a test seen failing first.
 - **Checkstyle with the repository's own `checkstyle.xml`.** New code adds no
   violations.
-- **libSBML's consistency check, with zero errors**, over the output for a
-  fixture graph. Warnings are allowed. The fixture has to support graph-core's
-  lazy loading, not only the two queries (see `CLAUDE.md`).
+- **libSBML's consistency check, with zero errors**, over the output for the
+  fixture graph (`ci/fixture`), and that output equal to the expected files,
+  which catches what valid SBML would not: a lazy-loading failure. Warnings are
+  allowed.
 - **For a change to what is written:** the comparison with the reference
-  (Principle I), with its result in the pull request.
+  (Principle I, `ci/compare.py`), with its result in the pull request.
 
 ## Development Workflow
 
@@ -128,10 +133,10 @@ each one real (Principle II):
   `/speckit-specify` → `/speckit-plan` → `/speckit-tasks`. The specs live in
   `specs/`. The pull request that completes a task ticks it, with its number. A
   single-PR fix names the spec it belongs to, if any.
-- **Every change is a pull request.** `main` requires a pull request but no
-  approving review, and no CI check is required yet. Each pull request is still
-  reviewed before it merges. Until the checks above are required, run them before
-  asking for a merge.
+- **Every change is a pull request.** `main` and `graph-only` require a pull
+  request but no approving review. Each pull request is still reviewed before it
+  merges. `graph-only` also requires the checks above, and the branch to be up to
+  date; `main` requires none yet, since its build is broken (Principle II).
 - **Work that changes what the release produces goes on an integration branch**
   until it is proven, then merges into `main` in one pull request. `main` keeps
   what the release uses meanwhile. Spec 001's work is on `graph-only`. Why: the
@@ -148,4 +153,4 @@ what it cost to learn. A principle with no cost behind it does not belong here.
 
 `CLAUDE.md` carries day-to-day guidance; where the two disagree, this file wins.
 
-**Version**: 1.2.1 | **Ratified**: 2026-10-24 | **Last Amended**: 2026-10-24
+**Version**: 1.3.0 | **Ratified**: 2026-10-24 | **Last Amended**: 2026-10-24
