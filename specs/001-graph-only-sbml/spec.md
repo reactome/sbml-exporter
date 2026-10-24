@@ -116,7 +116,7 @@ The release's SBML step makes both archives from the graph and the diagram files
 
 ### Edge Cases
 
-- **A reaction's model names its first parent pathway**, where today's relational output says "no parent pathway". The graph-only form is kept, and the difference recorded.
+- **A reaction's own export names no parent pathway**, as today's relational output does: a reaction can have several parents, and any one would be arbitrary (decided 24 Oct 2026, #37).
 - **Black-box events, disease and inferred events, and set-heavy events** are in the sample and must pass like the rest.
 - **A species with no pathways** writes no files and does not fail the run.
 - **An event drawn only on a parent's diagram** gets no layout, as today.

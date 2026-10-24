@@ -15,8 +15,8 @@ layout is ported, the layout) is listed in the script, not here.
   release's own output.
 - **The graph converter's files:** from a private copy of release 97's graph, after
   #33 and #34.
-- **Result:** 30 files, all valid (`ci/validate.py`); 3,727 differences, every one of
-  them below.
+- **Result:** 30 files, all valid (`ci/validate.py`); 3,727 differences after #34, every
+  one of them below or fixed since.
 
 ## In the data, not the converter
 
@@ -33,5 +33,10 @@ something different from the relational database of the same release.
 
 | Difference | Count in the sample | What today does | What the graph converter does |
 | --- | --- | --- | --- |
-| Reactions' cross-references (`bqmodel:hasInstance`) | 2,695 reaction entries across the sample's files; 2,747 more links: 2,626 MONDO (`monarchinitiative.org`) and 121 Rhea | No MONDO, 44 Rhea | Every cross-reference the graph holds. The MONDO ones were curated (each has a creation record), so why the relational output lacks them is not yet known |
-| A single reaction's model | 9 reactions | `no_parent_pathway`, "No parent pathway detected", no annotations | The reaction's first parent pathway: its id, name, notes, references and history |
+| Reactions' cross-references (`bqmodel:hasInstance`) | 2,695 reaction entries across the sample's files; 2,747 more links: 2,626 MONDO (`monarchinitiative.org`) and 121 Rhea | No MONDO, 44 Rhea | Every cross-reference the graph holds. The MONDO ones were curated (each has a creation record), so why the relational output lacks them is not yet known. Asked in #36 |
+
+## Decided
+
+| Difference | Decision |
+| --- | --- |
+| A single reaction's model was its first parent pathway (id, name, notes, references, history) | Matched to today's in #37: `no_parent_pathway`, "No parent pathway detected". A reaction can have several parents (733 human reactions in release 97, up to 10), so any one would be arbitrary. Five of the sample's nine reactions now match today's exactly; the other four differ only in EC numbers or cross-references |
