@@ -39,8 +39,11 @@ public abstract class DataFactory {
             "OPTIONAL MATCH (cat)-[:activity]->(gomf:GO_MolecularFunction)  " +
             "WITH DISTINCT rle, COLLECT(DISTINCT \"https://identifiers.org/ec-code/\" + gomf.ecNumber) AS ecNumbers, COLLECT(DISTINCT gomf.url) AS gomfs, COLLECT(DISTINCT gobp.url) AS gobps " +
             "WITH DISTINCT rle, ecNumbers, CASE SIZE(gomfs) WHEN 0 THEN gobps ELSE gomfs END as goTerms " +
-            "OPTIONAL MATCH (rle)-[:summation|literatureReference*]->(lit:LiteratureReference) " +
-            "WITH DISTINCT rle, goTerms, ecNumbers, COLLECT(DISTINCT lit.url) AS literatureRefs " +
+            // The summations' literature, as the relational converter wrote it: a LiteratureReference
+            // by its PubMed id (the graph stores no url; this is graph-core's getUrl()), a URL by its
+            // address, and the event's own references left to its annotation (Helper.addAnnotations).
+            "OPTIONAL MATCH (rle)-[:summation]->(:Summation)-[:literatureReference]->(lit:Publication) WHERE NOT (rle)-[:literatureReference]->(lit) " +
+            "WITH DISTINCT rle, goTerms, ecNumbers, COLLECT(DISTINCT CASE WHEN lit:URL THEN lit.uniformResourceLocator ELSE \"http://www.ncbi.nlm.nih.gov/pubmed/\" + lit.pubMedIdentifier END) AS literatureRefs " +
             "OPTIONAL MATCH (rle)-[:crossReference]->(xref:DatabaseIdentifier) " +
             "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, COLLECT(DISTINCT xref.url) AS xrefs " +
             "OPTIONAL MATCH (rle)-[:disease]->(d:Disease) " +
