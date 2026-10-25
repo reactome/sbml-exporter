@@ -100,10 +100,10 @@ public class LayoutConverter {
      *     overflows is later resized about its centre, so its box may not match).</li>
      * </ul>
      * Measured over all 1,137 human pathways with a layout in release 97's published SBML (453 of them disease
-     * diagrams): the objects with both are exactly those today's layouts leave out. Either alone is not enough: an id above every normal object's
-     * would also take disease objects the curators drew last (12 diagrams), and lying over an earlier object would
-     * take disease reactions the curators drew over their normal ones (2). Drawing the copies is suggested in
-     * sbml-exporter #48.
+     * diagrams): the objects with both are exactly those today's layouts leave out. Either alone is not enough: an id
+     * above every normal object's would also take disease objects the curators drew last (12 diagrams), and lying
+     * over an earlier object would take disease reactions the curators drew over their normal ones (2). Drawing the
+     * copies is suggested in sbml-exporter #48.
      */
     static Set<Long> copies(Diagram diagram) {
         if (!Boolean.FALSE.equals(diagram.getForNormalDraw())) return Collections.emptySet();
