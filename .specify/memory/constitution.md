@@ -32,7 +32,7 @@ reference is checked before it is trusted.
   terms, notes and annotations, identifier URLs included. Set aside: the
   generation note's timestamp, the order of elements (they are matched by id)
   and of a complex's parts in its note (today's is HashMap order)
-  and, until the layout is ported, the layout. Every other difference is
+  and the layout, which is compared on its own (below). Every other difference is
   recorded with its reason. The reference is:
   - per event, the relational converter's file from a ContentService of that
     release that is not production;
@@ -45,11 +45,11 @@ reference is checked before it is trusted.
 - **The layout** is compared with the diagram files the website draws from, not with
   today's relational layout: one glyph for each object the website draws, at the
   file's position and size (spec 002). Until spec 002 lands, spec 001's port is
-  compared by meaning with today's layout (spec 015 R3).
+  compared by meaning with today's layout (reactome/WebsiteAngular's spec 015, research R3).
 
   Why not today's layout any longer: its box sizes came from the old drawing code
-  measuring labels in the exporting machine's fonts. It asks for a font this host
-  does not have and silently substitutes another, so today's own sizes are not
+  measuring labels in the exporting machine's fonts. The font it asks for is often
+  absent, and Java silently substitutes another, so today's own sizes are not
   reproducible from one machine to the next. It also leaves out much of what the
   website shows. Reactome is moving away from that drawing code (decided 25 Oct 2026).
 

@@ -74,11 +74,13 @@ tests, and its lint uses Checkstyle's defaults.
 
 - **The model** is compared element by element with today's relational output
   of the same release (constitution, Principle I): the timestamp, element order
-  and, until the layout is ported, the layout set aside; every other difference
+  and the layout (compared on its own, below) set aside; every other difference
   recorded in `specs/001-graph-only-sbml/differences.md` with its reason.
   `ci/compare.py` does it (T016).
 - **The layout** is compared by meaning with today's: the same glyphs, ids, roles
-  and order, and the diagram's own coordinates.
+  and order, and the diagram's own coordinates. Spec 002 replaces that: the layout
+  is to be compared with the diagram files as the website draws them (constitution,
+  Principle I).
 - **Runs need a fixed time zone and locale** (UTC, `en_US`). The generation note
   uses the default date format, and history dates are parsed in the default
   zone. Write the output as UTF-8.
