@@ -86,33 +86,64 @@ public class LayoutConverter {
     /**
      * The diagram step's copies in a disease diagram, which the relational diagram never had.
      *
-     * For a disease diagram not drawn as a normal one, the diagram step (reactome/diagram-converter, through
-     * CuratorTool's DiseasePathwayImageEditor) copies the glyph of the normal reaction of each disease reaction the
-     * stored diagram does not draw, and adds a disease node over each normal node that reaction replaces. The
-     * relational converter read the stored diagram alone, so its layout has none of them (spec 001,
-     * differences.md). The file does not list them; their ids do tell them apart: a new object takes its id from
-     * a counter that runs across the whole conversion, past the stored diagram's ids, so the copies are the disease
-     * objects with an id above every normal object's. Drawing them is suggested in sbml-exporter #48, and listing
-     * them in the file, which would make this exact, in #49.
+     * For a disease diagram not drawn as a normal one, the diagram step (reactome/diagram-converter's DiagramFetcher,
+     * through reactome-base's PathwayDiagramXMLGenerator and DiseasePathwayImageEditor) copies the glyph of the
+     * normal reaction of each disease reaction the stored diagram does not draw, and adds a disease node over each
+     * normal node that reaction replaces. The relational converter read the stored diagram alone, so its layout has
+     * none of them (spec 001, differences.md). The file does not list them (#49), but two things the code
+     * guarantees of every copy tell them apart:
+     * <ul>
+     *     <li>its id is above every stored object's, so above every normal object's: a new object takes its id
+     *     from a counter that the reader moves past each stored id it reads, and nothing resets;</li>
+     *     <li>it lies exactly over the stored object it copies, which has a lower id: a reaction's copy keeps its
+     *     position (shallowCopy), a node's its box (copyRenderInfo).</li>
+     * </ul>
+     * Measured over release 97's 453 human disease diagrams, against the published SBML: the objects with both
+     * are exactly those today's layouts leave out. Either alone is not enough: an id above every normal object's
+     * would also take disease objects the curators drew last (12 diagrams), and lying over an earlier object would
+     * take disease reactions the curators drew over their normal ones (2). Drawing the copies is suggested in
+     * sbml-exporter #48.
      */
     static Set<Long> copies(Diagram diagram) {
         if (!Boolean.FALSE.equals(diagram.getForNormalDraw())) return Collections.emptySet();
-        List<DiagramObject> drawn = new ArrayList<>();
-        if (diagram.getNodes() != null) drawn.addAll(diagram.getNodes());
-        if (diagram.getEdges() != null) drawn.addAll(diagram.getEdges());
-        List<DiagramObject> all = new ArrayList<>(drawn);
+        List<Node> nodes = diagram.getNodes() == null ? Collections.emptyList() : diagram.getNodes();
+        List<Edge> edges = diagram.getEdges() == null ? Collections.emptyList() : diagram.getEdges();
+        List<DiagramObject> all = new ArrayList<>(nodes);
+        all.addAll(edges);
         if (diagram.getCompartments() != null) all.addAll(diagram.getCompartments());
         if (diagram.getNotes() != null) all.addAll(diagram.getNotes());
+        if (diagram.getLinks() != null) all.addAll(diagram.getLinks());
         long normalMax = Long.MIN_VALUE;
         for (DiagramObject o : all) {
             if (!Boolean.TRUE.equals(o.getIsDisease())) normalMax = Math.max(normalMax, o.getId());
         }
         Set<Long> rtn = new HashSet<>();
         if (normalMax == Long.MIN_VALUE) return rtn; // Nothing normal to tell the copies by
-        for (DiagramObject o : drawn) {
-            if (Boolean.TRUE.equals(o.getIsDisease()) && o.getId() > normalMax) rtn.add(o.getId());
+        for (Edge e : edges) {
+            if (isNewDisease(e, normalMax) && e.getPosition() != null
+                    && edges.stream().anyMatch(o -> o.getId() < e.getId() && samePoint(o.getPosition(), e.getPosition()))) {
+                rtn.add(e.getId());
+            }
+        }
+        for (Node n : nodes) {
+            if (isNewDisease(n, normalMax) && n.getProp() != null
+                    && nodes.stream().anyMatch(o -> o.getId() < n.getId() && sameCorner(o.getProp(), n.getProp()))) {
+                rtn.add(n.getId());
+            }
         }
         return rtn;
+    }
+
+    private static boolean isNewDisease(DiagramObject o, long normalMax) {
+        return Boolean.TRUE.equals(o.getIsDisease()) && o.getId() > normalMax;
+    }
+
+    private static boolean samePoint(Coordinate a, Coordinate b) {
+        return a != null && a.getX().equals(b.getX()) && a.getY().equals(b.getY());
+    }
+
+    private static boolean sameCorner(NodeProperties a, NodeProperties b) {
+        return a != null && a.getX().equals(b.getX()) && a.getY().equals(b.getY());
     }
 
     /** The diagram's nodes, without the diagram step's copies. */
