@@ -137,7 +137,10 @@ public class SbmlConverter {
 
         // A layout only from the pathway's own diagram, and only when it draws a reaction (FR-007)
         if (pathway != null && diagrams != null) {
-            diagrams.read(targetStId, Boolean.TRUE.equals(pathway.getHasDiagram()))
+            if (pathway.getHasDiagram() == null) {
+                throw new IllegalStateException("The graph does not say whether " + targetStId + " has a diagram");
+            }
+            diagrams.read(targetStId, pathway.getHasDiagram())
                     .filter(LayoutConverter::hasReactions)
                     .ifPresent(diagram -> LayoutConverter.addLayout(model, diagram));
         }

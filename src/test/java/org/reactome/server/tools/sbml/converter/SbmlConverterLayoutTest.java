@@ -28,7 +28,7 @@ class SbmlConverterLayoutTest {
 
     private static final DiagramFiles FIXTURE = new DiagramFiles(Paths.get("ci", "fixture"), 97, 97);
 
-    private static Pathway pathway(String stId, boolean hasDiagram) {
+    private static Pathway pathway(String stId, Boolean hasDiagram) {
         Pathway pathway = mock(Pathway.class);
         doReturn(1L).when(pathway).getDbId();
         doReturn(stId).when(pathway).getStId();
@@ -67,6 +67,11 @@ class SbmlConverterLayoutTest {
     @Test
     void aPathwaysMissingDiagramFileIsAnError() {
         assertThrows(IllegalStateException.class, () -> convert(pathway("R-HSA-5667111", true), FIXTURE));
+    }
+
+    @Test
+    void aPathwayOfUnknownDiagramIsAnError() {
+        assertThrows(IllegalStateException.class, () -> convert(pathway("R-HSA-9613354", null), FIXTURE));
     }
 
     @Test
