@@ -52,6 +52,8 @@ import org.sbml.jsbml.ext.layout.TextGlyph;
  * handed out (and was, in R-HSA-112409): the glyphs are written in the order of their diagram ids, each kind in its
  * own pass. T021 checks the order on every event compared.
  *
+ * Unlike the relational converter, the layout has an id and dimensions, which SBML requires and libSBML checks.
+ *
  * Unlike the relational converter, which logged any failure and wrote what it had, a diagram that cannot be laid
  * out (a node without a box, a reaction without a position) fails the conversion, naming the diagram.
  */
@@ -59,6 +61,8 @@ public class LayoutConverter {
 
     public static final String LAYOUT_ID_PREFIX = "layout_";
     public static final String TEXT_PREFIX = "text_";
+    // Glyph ids are LAYOUT_ID_PREFIX and a number, so this cannot be one
+    public static final String LAYOUT_ID = "layout";
 
     // The relational renderer's constants: org.gk.render.DefaultRenderConstants.EDGE_TYPE_WIDGET_WIDTH and
     // RenderableRNA.LOOP_WIDTH.
@@ -96,7 +100,11 @@ public class LayoutConverter {
     private static void layOut(Model model, Diagram diagram) {
         LayoutModelPlugin lModel = new LayoutModelPlugin(model);
         model.addExtension(LayoutConstants.namespaceURI, lModel);
-        Layout layout = lModel.createLayout();
+        // Unlike the relational converter's, whose layout libSBML refuses (no id, no dimensions): the layout
+        // spans the diagram from its origin.
+        Layout layout = lModel.createLayout(LAYOUT_ID);
+        double[] bounds = getDiagramBounds(diagram);
+        layout.createDimensions(Math.max(0, bounds[2]), Math.max(0, bounds[3]), 0);
         handleCompartments(layout, diagram);
         handleNodes(layout, diagram);
         handleReactions(layout, diagram);
@@ -286,14 +294,15 @@ public class LayoutConverter {
                                     reactionHub.getY() - EDGE_TYPE_WIDGET_WIDTH / 2.0d,
                                     EDGE_TYPE_WIDGET_WIDTH, EDGE_TYPE_WIDGET_WIDTH));
         convertToCurve(backbone, rg.createCurve());
-        handleBranches(edge.getInputs(), points.inputs, inputHub, SpeciesReferenceRole.SUBSTRATE, rg, layoutId);
-        handleBranches(edge.getOutputs(), points.outputs, outputHub, SpeciesReferenceRole.PRODUCT, rg, layoutId);
-        handleBranches(edge.getCatalysts(), branches(edge.getCatalysts()), reactionHub, SpeciesReferenceRole.MODIFIER, rg, layoutId);
-        handleBranches(edge.getActivators(), branches(edge.getActivators()), reactionHub, SpeciesReferenceRole.ACTIVATOR, rg, layoutId);
-        handleBranches(edge.getInhibitors(), branches(edge.getInhibitors()), reactionHub, SpeciesReferenceRole.INHIBITOR, rg, layoutId);
+        handleBranches(layout, edge.getInputs(), points.inputs, inputHub, SpeciesReferenceRole.SUBSTRATE, rg, layoutId);
+        handleBranches(layout, edge.getOutputs(), points.outputs, outputHub, SpeciesReferenceRole.PRODUCT, rg, layoutId);
+        handleBranches(layout, edge.getCatalysts(), branches(edge.getCatalysts()), reactionHub, SpeciesReferenceRole.MODIFIER, rg, layoutId);
+        handleBranches(layout, edge.getActivators(), branches(edge.getActivators()), reactionHub, SpeciesReferenceRole.ACTIVATOR, rg, layoutId);
+        handleBranches(layout, edge.getInhibitors(), branches(edge.getInhibitors()), reactionHub, SpeciesReferenceRole.INHIBITOR, rg, layoutId);
     }
 
-    private static void handleBranches(List<ReactionPart> parts,
+    private static void handleBranches(Layout layout,
+                                       List<ReactionPart> parts,
                                        List<List<Point2D>> branches,
                                        Point2D hub,
                                        SpeciesReferenceRole role,
@@ -301,9 +310,13 @@ public class LayoutConverter {
                                        String layoutId) {
         if (parts == null || parts.isEmpty()) return;
         for (int i = 0; i < parts.size(); i++) {
+            String speciesGlyphId = LAYOUT_ID_PREFIX + parts.get(i).getId();
+            // A part not drawn as a species (not in the model: a failed reaction's overlay names the normal
+            // reaction's product, say) gets no glyph, which would point at nothing; the others keep their numbers.
+            if (layout.getSpeciesGlyph(speciesGlyphId) == null) continue;
             String speciesRefGlyphId = layoutId + "_" + role.toString().toLowerCase(Locale.ROOT) + "_" + i;
             SpeciesReferenceGlyph srg = rg.createSpeciesReferenceGlyph(speciesRefGlyphId);
-            srg.setSpeciesGlyph(LAYOUT_ID_PREFIX + parts.get(i).getId());
+            srg.setSpeciesGlyph(speciesGlyphId);
             // As the relational converter: no role is set, since Minerva could not read activators and
             // inhibitors.
             List<Point2D> branch;
