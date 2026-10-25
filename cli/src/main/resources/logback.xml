@@ -32,16 +32,16 @@
         <appender-ref ref="file" level="error"/>
     </root>
 
-    <logger name="sbml-exporter" level="info">
+    <logger name="sbml-exporter" level="info" additivity="false">
         <appender-ref ref="file" level="info"/>
         <appender-ref ref="console" level="error"/>
     </logger>
 
-    <logger name="org.neo4j" level="error">
+    <logger name="org.neo4j" level="error" additivity="false">
         <appender-ref ref="file" level="error"/>
     </logger>
 
-    <logger name="org.sbml.jsbml.Model" level="error">
+    <logger name="org.sbml.jsbml.Model" level="error" additivity="false">
         <appender-ref ref="file" level="error"/>
     </logger>
 </configuration>
