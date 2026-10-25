@@ -56,7 +56,8 @@
             <artifactId>jsbml</artifactId>
         </dependency>
 
-        <!-- The diagram files' model, as the diagram exporter reads them (spec 001, research R8) -->
+        <!-- The diagram files' model, as the diagram exporter reads them (spec 001, research R8). Pinned
+             here as well as in reactome-bom, since that BOM is a snapshot. -->
         <dependency>
             <groupId>org.reactome.server.tools</groupId>
             <artifactId>diagram-reader</artifactId>
