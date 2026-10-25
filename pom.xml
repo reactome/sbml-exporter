@@ -56,6 +56,13 @@
             <artifactId>jsbml</artifactId>
         </dependency>
 
+        <!-- The diagram files' model, as the diagram exporter reads them (spec 001, research R8) -->
+        <dependency>
+            <groupId>org.reactome.server.tools</groupId>
+            <artifactId>diagram-reader</artifactId>
+            <version>1.2.5</version>
+        </dependency>
+
         <!--JSAP console reader-->
         <dependency>
             <groupId>com.martiansoftware</groupId>

@@ -79,7 +79,9 @@ The image keeps `target/sbml-exporter-exec.jar` and `target/sbml-exporter-verifi
 
 **Decision.**
 
-- The layout reads `diagram/{stId}.json` from a folder the caller gives, with Jackson, into the few classes the algorithm needs (nodes with their positions, props and render class; edges with segments and reactants; compartments; connectors). Whether `reactome/diagram-reader`'s model can be reused instead is checked in T019.
+- The layout reads `{stId}.json` from a folder the caller gives, with `reactome/diagram-reader`'s model (decided in T019, #41), not a model of our own. It is Reactome's own reading of these files, used by the diagram exporter; version 1.2.5 is a release, from the same repository as graph-core, and it brings only Jackson (databind, core and the mrbean module). It has everything the algorithm reads: each node's id, Reactome id, render class, box (`prop`) and label position; each reaction's id, Reactome id, position, backbone (`segments`) and, per input, output, catalyst, activator and inhibitor, the branch's points; each compartment's box and label position.
+- **What the files lack:** a label's size. The relational layout's text glyph boxes are the node's text bounds; the files give the label's position only. T020 decides the box and T021 records the difference.
+- An event with no file of its own has no layout (a reaction, or a pathway drawn only on a parent's diagram).
 - **The release check:** the caller states the folder's release, and the library refuses it if it differs from the graph's `DBInfo` version. The command line takes it as an option.
 - **The source for comparisons and dry runs** is the release's download directory (decided 24 Oct 2026): only the files a run needs, fetched one at a time and in sequence, kept outside the repository. A species or full dry run needs one per pathway with a diagram.
 - **CI** uses the fixture pathway's own diagram file, committed beside the fixture.
