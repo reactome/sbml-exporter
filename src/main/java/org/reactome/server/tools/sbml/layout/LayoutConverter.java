@@ -1,0 +1,358 @@
+package org.reactome.server.tools.sbml.layout;
+
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.reactome.server.tools.diagram.data.layout.Compartment;
+import org.reactome.server.tools.diagram.data.layout.Coordinate;
+import org.reactome.server.tools.diagram.data.layout.Diagram;
+import org.reactome.server.tools.diagram.data.layout.DiagramObject;
+import org.reactome.server.tools.diagram.data.layout.Edge;
+import org.reactome.server.tools.diagram.data.layout.Node;
+import org.reactome.server.tools.diagram.data.layout.NodeCommon;
+import org.reactome.server.tools.diagram.data.layout.NodeProperties;
+import org.reactome.server.tools.diagram.data.layout.ReactionPart;
+import org.reactome.server.tools.diagram.data.layout.Segment;
+import org.reactome.server.tools.sbml.converter.SbmlConverter;
+import org.sbml.jsbml.ListOf;
+import org.sbml.jsbml.Model;
+import org.sbml.jsbml.Species;
+import org.sbml.jsbml.ext.layout.BoundingBox;
+import org.sbml.jsbml.ext.layout.CompartmentGlyph;
+import org.sbml.jsbml.ext.layout.Curve;
+import org.sbml.jsbml.ext.layout.Dimensions;
+import org.sbml.jsbml.ext.layout.Layout;
+import org.sbml.jsbml.ext.layout.LayoutConstants;
+import org.sbml.jsbml.ext.layout.LayoutModelPlugin;
+import org.sbml.jsbml.ext.layout.Point;
+import org.sbml.jsbml.ext.layout.ReactionGlyph;
+import org.sbml.jsbml.ext.layout.SpeciesGlyph;
+import org.sbml.jsbml.ext.layout.SpeciesReferenceGlyph;
+import org.sbml.jsbml.ext.layout.SpeciesReferenceRole;
+import org.sbml.jsbml.ext.layout.TextGlyph;
+
+/**
+ * Converts a pathway's diagram file to the SBML layout package (spec 001, FR-007).
+ *
+ * A port of the relational converter's {@code LayoutConverter} (on {@code main}, {@code org.reactome.sbml.rel}),
+ * rule for rule, reading the release's diagram file instead of the relational database's diagram. Where it
+ * cannot follow the relational one, by decision (FR-007, differences.md):
+ * <ul>
+ *     <li>the coordinates are the diagram file's own;</li>
+ *     <li>a node's size is the stored one, with no font-based resizing ({@code tightNodes});</li>
+ *     <li>a label's box is its glyph's box: the file has no label size.</li>
+ * </ul>
+ * The relational diagram listed its components by id, so the glyphs are written in the order of their diagram
+ * ids, each kind in its own pass.
+ */
+public class LayoutConverter {
+
+    public static final String LAYOUT_ID_PREFIX = "layout_";
+    public static final String TEXT_PREFIX = "text_";
+
+    // The relational renderer's constants: org.gk.render.DefaultRenderConstants.EDGE_TYPE_WIDGET_WIDTH and
+    // RenderableRNA.LOOP_WIDTH.
+    static final int EDGE_TYPE_WIDGET_WIDTH = 12;
+    static final int RNA_LOOP_WIDTH = 16;
+    private static final double SHIFT_VALUE = 0.5d;
+
+    private static final Comparator<DiagramObject> BY_ID = Comparator.comparing(DiagramObject::getId);
+
+    private LayoutConverter() {
+    }
+
+    /**
+     * Whether the diagram draws a reaction: only then has the event a layout, as today.
+     */
+    public static boolean hasReactions(Diagram diagram) {
+        return diagram.getEdges() != null && diagram.getEdges().stream().anyMatch(e -> e.getReactomeId() != null);
+    }
+
+    public static void addLayout(Model model, Diagram diagram) {
+        LayoutModelPlugin lModel = new LayoutModelPlugin(model);
+        model.addExtension(LayoutConstants.namespaceURI, lModel);
+        Layout layout = lModel.createLayout();
+        handleCompartments(layout, diagram);
+        handleNodes(layout, diagram);
+        handleReactions(layout, diagram);
+    }
+
+    private static <T extends DiagramObject> List<T> byId(List<T> objects) {
+        List<T> rtn = objects == null ? new ArrayList<>() : new ArrayList<>(objects);
+        rtn.sort(BY_ID);
+        return rtn;
+    }
+
+    private static void handleCompartments(Layout layout, Diagram diagram) {
+        Set<String> handled = new HashSet<>();
+        for (Compartment comp : byId(diagram.getCompartments())) {
+            if (comp.getReactomeId() == null) continue;
+            String compartmentId = SbmlConverter.COMPARTMENT_PREFIX + comp.getReactomeId();
+            if (!layout.getModel().containsCompartment(compartmentId)) continue;
+            String id = LAYOUT_ID_PREFIX + comp.getId();
+            CompartmentGlyph cg = layout.createCompartmentGlyph(id);
+            cg.setCompartment(compartmentId);
+            cg.setBoundingBox(createBox(comp.getProp()));
+            handleText(id, layout, comp, cg.getBoundingBox());
+            handled.add(compartmentId);
+        }
+        // The relational converter's hack to keep Minerva from drawing the undrawn compartments: a glyph of
+        // 1 x 1 at the bottom centre of the diagram for each.
+        ListOf<org.sbml.jsbml.Compartment> compartments = layout.getModel().getListOfCompartments();
+        if (handled.size() == compartments.size()) return;
+        int count = 0;
+        double[] bounds = getDiagramBounds(diagram);
+        BoundingBox box = createBox((int) ((bounds[0] + bounds[2]) / 2), (int) bounds[3], 1, 1);
+        for (org.sbml.jsbml.Compartment compartment : compartments) {
+            if (handled.contains(compartment.getId())) continue;
+            CompartmentGlyph cg = layout.createCompartmentGlyph(LAYOUT_ID_PREFIX + "hidden_compartment_" + count++);
+            cg.setCompartment(compartment);
+            cg.setBoundingBox(box.clone());
+        }
+    }
+
+    /**
+     * minX, minY, maxX, maxY over every node's and compartment's box, in whole units as the relational
+     * diagram's rectangles had them.
+     */
+    private static double[] getDiagramBounds(Diagram diagram) {
+        int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
+        List<NodeCommon> all = new ArrayList<>();
+        if (diagram.getNodes() != null) all.addAll(diagram.getNodes());
+        if (diagram.getCompartments() != null) all.addAll(diagram.getCompartments());
+        for (NodeCommon node : all) {
+            NodeProperties p = node.getProp();
+            if (p == null) continue;
+            minX = Math.min(minX, p.getX().intValue());
+            minY = Math.min(minY, p.getY().intValue());
+            maxX = Math.max(maxX, (int) (p.getX() + p.getWidth()));
+            maxY = Math.max(maxY, (int) (p.getY() + p.getHeight()));
+        }
+        return new double[]{minX, minY, maxX, maxY};
+    }
+
+    private static void handleNodes(Layout layout, Diagram diagram) {
+        for (Node node : byId(diagram.getNodes())) {
+            if (node.getReactomeId() == null) continue;
+            String speciesId = SbmlConverter.SPECIES_PREFIX + node.getReactomeId();
+            // Some nodes are not in the model (a pathway, say)
+            if (!layout.getModel().containsSpecies(speciesId)) continue;
+            // A species may be drawn several times (ATP, say): the glyph's id is the node's, not the species'.
+            String layoutId = LAYOUT_ID_PREFIX + node.getId();
+            SpeciesGlyph sg = layout.createSpeciesGlyph(layoutId);
+            sg.setSpecies(speciesId);
+            sg.setBoundingBox(getNodeBox(node));
+            handleText(layoutId, layout, node, sg.getBoundingBox());
+            // Minerva reads the species' kind from its SBO term
+            Species species = layout.getModel().getSpecies(speciesId);
+            species.setSBOTerm(getSBOTerm(node.getRenderableClass()));
+        }
+    }
+
+    private static BoundingBox getNodeBox(Node node) {
+        NodeProperties p = node.getProp();
+        // An RNA's arrow points inside its box
+        if ("RNA".equals(node.getRenderableClass()) || "RNADrug".equals(node.getRenderableClass())) {
+            return createBox(p.getX(), p.getY() + RNA_LOOP_WIDTH / 2, p.getWidth(), p.getHeight() - RNA_LOOP_WIDTH);
+        }
+        return createBox(p);
+    }
+
+    private static void handleText(String layoutId, Layout layout, NodeCommon node, BoundingBox box) {
+        TextGlyph textGlyph = layout.createTextGlyph(TEXT_PREFIX + layoutId);
+        textGlyph.setBoundingBox(box.clone());
+        textGlyph.setText(node.getDisplayName());
+        textGlyph.setGraphicalObject(layoutId);
+    }
+
+    private static void handleReactions(Layout layout, Diagram diagram) {
+        for (Edge edge : byId(diagram.getEdges())) {
+            if (edge.getReactomeId() != null) handleReaction(layout, edge);
+        }
+    }
+
+    /**
+     * The backbone as points, with the relational converter's rules for SBML's sake: a two-point backbone gets
+     * its midpoint, and a reaction with a single input (output) gets an input (output) branch, its backbone's
+     * first (last) stretch. Midpoints are whole units, as the relational diagram's points were.
+     *
+     * @return the backbone, and each role's branches by the part's index (null: the role has none)
+     */
+    static Points reactionPoints(Edge edge) {
+        List<Point2D> backbone = new ArrayList<>();
+        List<Segment> segments = edge.getSegments() == null ? Collections.emptyList() : edge.getSegments();
+        for (Segment segment : segments) {
+            if (backbone.isEmpty()) backbone.add(point(segment.getFrom()));
+            backbone.add(point(segment.getTo()));
+        }
+        Points rtn = new Points(backbone);
+        rtn.inputs = branches(edge.getInputs());
+        rtn.outputs = branches(edge.getOutputs());
+        if (backbone.size() == 2) backbone.add(1, middle(backbone.get(0), backbone.get(1)));
+        if (backbone.size() < 2) return rtn;
+        if (edge.getInputs() != null && edge.getInputs().size() == 1) {
+            Point2D first = backbone.get(0);
+            backbone.set(0, middle(first, backbone.get(1)));
+            rtn.inputs = Collections.singletonList(Collections.singletonList(first));
+        }
+        if (edge.getOutputs() != null && edge.getOutputs().size() == 1) {
+            int last = backbone.size() - 1;
+            Point2D end = backbone.get(last);
+            backbone.set(last, middle(end, backbone.get(last - 1)));
+            rtn.outputs = Collections.singletonList(Collections.singletonList(end));
+        }
+        return rtn;
+    }
+
+    static final class Points {
+        final List<Point2D> backbone;
+        List<List<Point2D>> inputs;
+        List<List<Point2D>> outputs;
+
+        Points(List<Point2D> backbone) {
+            this.backbone = backbone;
+        }
+    }
+
+    /**
+     * Each part's branch points, or null when no part of the role has any: the relational diagram then had no
+     * branches for the role.
+     */
+    private static List<List<Point2D>> branches(List<ReactionPart> parts) {
+        if (parts == null || parts.stream().allMatch(p -> p.getPoints() == null || p.getPoints().isEmpty())) return null;
+        List<List<Point2D>> rtn = new ArrayList<>();
+        for (ReactionPart part : parts) {
+            List<Point2D> branch = new ArrayList<>();
+            if (part.getPoints() != null) part.getPoints().forEach(c -> branch.add(point(c)));
+            rtn.add(branch);
+        }
+        return rtn;
+    }
+
+    private static Point2D point(Coordinate c) {
+        return new Point2D.Double(c.getX(), c.getY());
+    }
+
+    private static Point2D middle(Point2D a, Point2D b) {
+        return new Point2D.Double((int) ((a.getX() + b.getX()) / 2), (int) ((a.getY() + b.getY()) / 2));
+    }
+
+    private static void handleReaction(Layout layout, Edge edge) {
+        String rxtId = SbmlConverter.REACTION_PREFIX + edge.getReactomeId();
+        if (!layout.getModel().containsReaction(rxtId)) return;
+        Points points = reactionPoints(edge);
+        List<Point2D> backbone = points.backbone;
+        // Basic requirement for converting
+        if (backbone.size() < 3) return;
+        Point2D inputHub = backbone.get(0);
+        Point2D outputHub = backbone.get(backbone.size() - 1);
+        Point2D reactionHub = point(edge.getPosition());
+        String layoutId = LAYOUT_ID_PREFIX + edge.getId();
+        ReactionGlyph rg = layout.createReactionGlyph(layoutId);
+        rg.setReaction(rxtId);
+        rg.setBoundingBox(createBox(reactionHub.getX() - EDGE_TYPE_WIDGET_WIDTH / 2.0d,
+                                    reactionHub.getY() - EDGE_TYPE_WIDGET_WIDTH / 2.0d,
+                                    EDGE_TYPE_WIDGET_WIDTH, EDGE_TYPE_WIDGET_WIDTH));
+        convertToCurve(backbone, rg.createCurve());
+        handleBranches(edge.getInputs(), points.inputs, inputHub, SpeciesReferenceRole.SUBSTRATE, rg, layoutId);
+        handleBranches(edge.getOutputs(), points.outputs, outputHub, SpeciesReferenceRole.PRODUCT, rg, layoutId);
+        handleBranches(edge.getCatalysts(), branches(edge.getCatalysts()), reactionHub, SpeciesReferenceRole.MODIFIER, rg, layoutId);
+        handleBranches(edge.getActivators(), branches(edge.getActivators()), reactionHub, SpeciesReferenceRole.ACTIVATOR, rg, layoutId);
+        handleBranches(edge.getInhibitors(), branches(edge.getInhibitors()), reactionHub, SpeciesReferenceRole.INHIBITOR, rg, layoutId);
+    }
+
+    private static void handleBranches(List<ReactionPart> parts,
+                                       List<List<Point2D>> branches,
+                                       Point2D hub,
+                                       SpeciesReferenceRole role,
+                                       ReactionGlyph rg,
+                                       String layoutId) {
+        if (parts == null || parts.isEmpty()) return;
+        for (int i = 0; i < parts.size(); i++) {
+            String speciesRefGlyphId = layoutId + "_" + role.toString().toLowerCase() + "_" + i;
+            SpeciesReferenceGlyph srg = rg.createSpeciesReferenceGlyph(speciesRefGlyphId);
+            srg.setSpeciesGlyph(LAYOUT_ID_PREFIX + parts.get(i).getId());
+            // As the relational converter: no role is set, since Minerva could not read activators and
+            // inhibitors.
+            List<Point2D> branch;
+            if (branches != null) {
+                branch = new ArrayList<>(branches.get(i));
+            } else {
+                // A curve cannot be empty: a point a little off the hub
+                branch = new ArrayList<>();
+                branch.add(new Point2D.Double(hub.getX() + SHIFT_VALUE, hub.getY() + SHIFT_VALUE));
+            }
+            branch.add(hub);
+            if (role == SpeciesReferenceRole.SUBSTRATE || role == SpeciesReferenceRole.PRODUCT) Collections.reverse(branch);
+            convertToCurve(branch, srg.createCurve());
+        }
+    }
+
+    private static void convertToCurve(List<Point2D> points, Curve curve) {
+        for (int i = 0; i < points.size() - 1; i++) {
+            curve.createLineSegment(convertPoint(points.get(i)), convertPoint(points.get(i + 1)));
+        }
+    }
+
+    private static Point convertPoint(Point2D point) {
+        Point rtn = new Point();
+        rtn.setX(point.getX());
+        rtn.setY(point.getY());
+        return rtn;
+    }
+
+    private static BoundingBox createBox(NodeProperties p) {
+        return createBox(p.getX(), p.getY(), p.getWidth(), p.getHeight());
+    }
+
+    private static BoundingBox createBox(double x, double y, double width, double height) {
+        BoundingBox box = new BoundingBox();
+        Point point = new Point();
+        point.setX(x);
+        point.setY(y);
+        box.setPosition(point);
+        Dimensions dimensions = new Dimensions();
+        dimensions.setWidth(width);
+        dimensions.setHeight(height);
+        box.setDimensions(dimensions);
+        return box;
+    }
+
+    /**
+     * The relational converter's SBO terms by renderable class, after Minerva's
+     * ({@code lcsb/mapviewer/converter/model/sbml/species/SBOTermSpeciesType}). The relational classes for a
+     * protein, chemical or RNA drug extend the protein's, chemical's and RNA's, which it tested first, so those
+     * drugs take their plain kind's term; only a set holding a drug took the drug's.
+     */
+    static String getSBOTerm(String renderableClass) {
+        if (renderableClass == null) return "SBO:0000285";
+        switch (renderableClass) {
+            case "Protein":
+            case "ProteinDrug":
+                return "SBO:0000252";
+            case "Complex":
+            case "ComplexDrug":
+                return "SBO:0000297";
+            case "Chemical":
+            case "ChemicalDrug":
+                return "SBO:0000247";
+            case "RNA":
+            case "RNADrug":
+                return "SBO:0000278";
+            case "Gene":
+                return "SBO:0000243";
+            case "EntitySetDrug":
+                return "SBO:0000298";
+            case "EntitySet":
+                // For a functional compartment, on Minerva's advice
+                return "SBO:0000289";
+            default:
+                return "SBO:0000285";
+        }
+    }
+}
