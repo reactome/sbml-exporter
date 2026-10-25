@@ -6,20 +6,22 @@ Code to create an [SBML](http://sbml.org "SBML") file from a pathway drawn from 
 
 ## Usage
 
-SBMLExportLauncher takes a number of arguments and outputs one or more SBML files that capture the reactions exported from Reactome.
+The command line (`cli/target/sbml-exporter-exec.jar`) takes a number of arguments and outputs one or more SBML files that capture the reactions exported from Reactome. It writes its log to `logs/sbml-exporter.log`.
 
 ### Arguments
 
-The following arguments are required
-
 ```console
- -h "host"      The neo4j host for the ReactomeDB
- -b "port"      The neo4j port
- -u "user"      The neoj4 username
- -p "password"  The neo4j password
- -o "output"    The directory where output files will be written
- -t "target"    Target events to convert. Use either (1) comma separated event identifiers, (2) a given species (e.g. 'Homo sapiens') or  (3)'all' to export every pathway"
+ -h, --host "host"                The neo4j host (default bolt://localhost:7687)
+ -u, --user "user"                The neo4j user (default neo4j)
+ -p, --password "password"        The neo4j password (required)
+ -o, --output "output"            The directory where output files will be written (required)
+ -d, --diagrams "folder"          The folder of the release's diagram files ({stId}.json), for the layout (required)
+ -r, --diagram-release "release"  The release the diagram files are from: it must be the graph's (required)
+ -t, --target "target"            Target events to convert. Use either (1) comma separated event identifiers, (2) a given species (e.g. 'Homo sapiens') or (3) 'all' to export every pathway (default all)
+ -v, --verbose                    Requests verbose output
 ```
+
+The run ends with exit status 1 if any conversion failed; the log says which.
 
 ## SBML
 
@@ -51,7 +53,7 @@ cd sbml-exporter
 mvn clean package
 ```
 
-The build has two modules: `lib` (`sbml-exporter-lib`, the converter, which the website uses too) and `cli` (`sbml-exporter`, the command line and the release's verifier, built to `cli/target/`).
+The build has two modules: `lib` (`sbml-exporter-lib`, the converter, which the website will use too) and `cli` (`sbml-exporter`, the command line and the release's verifier, built to `cli/target/`).
 
 2. Generating SBML files, with the layout from the release's diagram files (`{stId}.json`, as the diagram step writes them)
 
