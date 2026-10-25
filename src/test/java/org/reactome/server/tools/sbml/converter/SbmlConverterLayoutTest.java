@@ -5,6 +5,7 @@ import org.junit.jupiter.api.io.TempDir;
 import org.reactome.server.graph.domain.model.Pathway;
 import org.reactome.server.graph.domain.model.Reaction;
 import org.reactome.server.graph.service.AdvancedDatabaseObjectService;
+import org.reactome.server.graph.service.DatabaseObjectService;
 import org.reactome.server.tools.sbml.layout.DiagramFiles;
 import org.sbml.jsbml.Model;
 import org.sbml.jsbml.ext.layout.LayoutConstants;
@@ -38,7 +39,7 @@ class SbmlConverterLayoutTest {
     }
 
     private static Model convert(org.reactome.server.graph.domain.model.Event event, DiagramFiles diagrams) {
-        return new SbmlConverter(event, 97, mock(AdvancedDatabaseObjectService.class), diagrams).convert().getModel();
+        return new SbmlConverter(event, 97, mock(DatabaseObjectService.class), mock(AdvancedDatabaseObjectService.class), diagrams).convert().getModel();
     }
 
     @Test

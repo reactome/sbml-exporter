@@ -17,6 +17,7 @@ import org.reactome.server.tools.sbml.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -63,7 +64,7 @@ public class Main {
         verbose = config.getBoolean("verbose");
 
         String output = config.getString("output");
-        Utils.outputCheck(output);
+        outputCheck(output);
 
         //Initialising ReactomeCore Neo4j configuration
         ReactomeGraphCore.initialise(config.getString("host"), config.getString("user"), config.getString("password"), GraphNeo4jConfig.class);
@@ -115,7 +116,7 @@ public class Main {
             try {
                 Event p = dbs.findById(identifier);
                 info(String.format("\t>%s: %s", p.getStId(), p.getDisplayName()));
-                SbmlConverter c = new SbmlConverter(p, version, ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class), diagrams);
+                SbmlConverter c = new SbmlConverter(p, version, ReactomeGraphCore.getService(DatabaseObjectService.class), ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class), diagrams);
                 c.convert();
                 c.writeToFile(output);
             } catch (ClassCastException e) {
@@ -144,7 +145,7 @@ public class Main {
 //                pathways.stream().parallel().forEach(pathway -> {
                 pathways.stream().forEach(pathway -> {
                     progressBar.update(pathway.getStId(), i.get());
-                    SbmlConverter c = new SbmlConverter(pathway, version, ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class), diagrams);
+                    SbmlConverter c = new SbmlConverter(pathway, version, ReactomeGraphCore.getService(DatabaseObjectService.class), ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class), diagrams);
                     c.convert();
                     c.writeToFile(output);
                     if (i.incrementAndGet() % 10 == 0) ReactomeGraphCore.getService(GeneralService.class).clearCache();
@@ -155,6 +156,15 @@ public class Main {
                 progressBar.interrupt();
                 failed = true;
             }
+        }
+    }
+
+    private static void outputCheck(String output){
+        File folder = new File(output);
+        if(!folder.exists() && !folder.mkdir()){
+            String msg = String.format("'%s' does not exist and cannot be created. Please check the path and try again", folder.getAbsolutePath());
+            logger.error(msg); System.err.println(msg);
+            System.exit(1);
         }
     }
 

@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.reactome.server.graph.domain.model.Pathway;
 import org.reactome.server.graph.domain.model.Reaction;
 import org.reactome.server.graph.service.AdvancedDatabaseObjectService;
+import org.reactome.server.graph.service.DatabaseObjectService;
 import org.sbml.jsbml.Model;
 
 import java.util.Collections;
@@ -32,7 +33,7 @@ class SbmlConverterModelTest {
         doReturn(Collections.singletonList(parent)).when(reaction).getEventOf();
 
         // The mock answers every query with no rows: the model's root is all this test reads.
-        SbmlConverter converter = new SbmlConverter(reaction, 97, mock(AdvancedDatabaseObjectService.class));
+        SbmlConverter converter = new SbmlConverter(reaction, 97, mock(DatabaseObjectService.class), mock(AdvancedDatabaseObjectService.class));
         Model model = converter.convert().getModel();
 
         assertEquals("no_parent_pathway", model.getId());

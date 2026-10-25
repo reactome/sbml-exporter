@@ -11,6 +11,7 @@ import org.reactome.server.graph.domain.model.Pathway;
 import org.reactome.server.graph.domain.model.PhysicalEntity;
 import org.reactome.server.graph.domain.model.PositiveRegulation;
 import org.reactome.server.graph.service.AdvancedDatabaseObjectService;
+import org.reactome.server.graph.service.DatabaseObjectService;
 import org.reactome.server.tools.sbml.data.DataFactory;
 import org.reactome.server.tools.sbml.data.model.Participant;
 import org.reactome.server.tools.sbml.data.model.ParticipantDetails;
@@ -55,6 +56,7 @@ public class SbmlConverter {
     public static final String SPECIES_PREFIX = "species_";
     public static final String COMPARTMENT_PREFIX = "compartment_";
 
+    private DatabaseObjectService ds;
     private AdvancedDatabaseObjectService ads;
     protected Pathway pathway;
     protected String targetStId;
@@ -72,16 +74,18 @@ public class SbmlConverter {
         this.diagrams = null;
     }
     
-    public SbmlConverter(Event event, Integer version, AdvancedDatabaseObjectService ads) {
-        this(event, version, ads, null);
+    public SbmlConverter(Event event, Integer version, DatabaseObjectService ds, AdvancedDatabaseObjectService ads) {
+        this(event, version, ds, ads, null);
     }
 
     /**
+     * @param ds       graph-core's services, which the caller owns: the converter keeps no service of its own
      * @param diagrams the release's diagram files, for the layout; null for none
      */
-    public SbmlConverter(Event event, Integer version, AdvancedDatabaseObjectService ads, DiagramFiles diagrams) {
+    public SbmlConverter(Event event, Integer version, DatabaseObjectService ds, AdvancedDatabaseObjectService ads, DiagramFiles diagrams) {
         this.targetStId = event.getStId();
         this.reactomeVersion = version;
+        this.ds = ds;
         this.ads = ads;
         this.diagrams = diagrams;
         // A reaction's own export names no parent pathway, as the relational converter's does: a
@@ -154,7 +158,7 @@ public class SbmlConverter {
      * @return
      */
     protected Collection<ParticipantDetails> getParticipantDetails() {
-        return DataFactory.getParticipantDetails(targetStId, ads);
+        return DataFactory.getParticipantDetails(targetStId, ds, ads);
     }
     
     /**
@@ -163,7 +167,7 @@ public class SbmlConverter {
      * @return
      */
     protected Collection<ReactionBase> getReactionList() {
-        return DataFactory.getReactionList(targetStId, ads);
+        return DataFactory.getReactionList(targetStId, ds, ads);
     }
 
     public void writeToFile(String output) {

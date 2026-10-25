@@ -23,11 +23,9 @@ import java.util.List;
  *
  * @author Antonio Fabregat (fabregat@ebi.ac.uk)
  */
-public abstract class DataFactory {
+public final class DataFactory {
 
     private static Logger logger = LoggerFactory.getLogger("sbml-exporter");
-
-    private static DatabaseObjectService ds;
 
     private static final String REACTIONS_QUERY = "" +
             "OPTIONAL MATCH (rle1:ReactionLikeEvent{stId:$stId}) " +
@@ -80,12 +78,10 @@ public abstract class DataFactory {
             "       COLLECT(CASE re WHEN NULL THEN NULL ELSE {n: n, id: re.identifier} END) AS ids, " +
             "       COLLECT(DISTINCT REPLACE(db.accessUrl, '###ID###', re.identifier)) AS urls";
 
-    //work with DataFactoryHelper to autowire the DatabaseObjectService
-    public DataFactory(DatabaseObjectService ds) {
-        DataFactory.ds = ds;
+    private DataFactory() {
     }
 
-    public static Collection<ReactionBase> getReactionList(String eventStId, AdvancedDatabaseObjectService ads) {
+    public static Collection<ReactionBase> getReactionList(String eventStId, DatabaseObjectService ds, AdvancedDatabaseObjectService ads) {
 
         try {
             Collection<ReactionBaseResult> reactionBaseResults = ads.getCustomQueryResults(ReactionBaseResult.class, REACTIONS_QUERY, Collections.singletonMap("stId", eventStId));
@@ -112,7 +108,7 @@ public abstract class DataFactory {
         }
     }
 
-    public static Collection<ParticipantDetails> getParticipantDetails(String eventStId, AdvancedDatabaseObjectService ads) {
+    public static Collection<ParticipantDetails> getParticipantDetails(String eventStId, DatabaseObjectService ds, AdvancedDatabaseObjectService ads) {
         try {
             Collection<ParticipantDetailsResult> participantDetailsResults = ads.getCustomQueryResults(ParticipantDetailsResult.class, PARTICIPANTS_QUERY, Collections.singletonMap("stId", eventStId));
             Collection<ParticipantDetails> participantDetails = new ArrayList<>();
