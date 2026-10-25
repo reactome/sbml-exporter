@@ -103,8 +103,8 @@ class LayoutConverterTest {
 
     // A disease diagram: normal objects up to id 50 (the compartment), a disease node the curators drew (20), a
     // normal reaction (45), and the diagram step's copies (90 over node 10, 95 over reaction 45), whose ids its
-    // counter took past the stored diagram's. The copied node keeps its original's centre but was resized, as a
-    // node whose label overflows is.
+    // counter took past the stored diagram's. The copied node keeps its original's position (centre) but has
+    // another box, as a node whose label overflows gets; its tall box shows it is left out of the bounds.
     private static final String DRAWN_DISEASE = "{\"id\": 20, \"reactomeId\": 2, \"displayName\": \"B\", \"renderableClass\": \"Chemical\", " +
             "\"isDisease\": true, \"position\": {\"x\": 320, \"y\": 115}, \"prop\": {\"x\": 300, \"y\": 100, \"width\": 40, \"height\": 30}}";
     private static final String NORMAL = "{\"id\": 10, \"reactomeId\": 1, \"displayName\": \"A\", \"renderableClass\": \"Protein\", " +
