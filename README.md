@@ -51,11 +51,13 @@ cd sbml-exporter
 mvn clean package
 ```
 
-2. Generating SBML files
+The build has two modules: `lib` (`sbml-exporter-lib`, the converter, which the website uses too) and `cli` (`sbml-exporter`, the command line and the release's verifier, built to `cli/target/`).
+
+2. Generating SBML files, with the layout from the release's diagram files (`{stId}.json`, as the diagram step writes them)
 
 ```console
 mkdir outputdir
-java -jar target/sbml-exporter-exec.jar -h localhost -b 7474 -u user -p not4share -o outputdir
+java -jar cli/target/sbml-exporter-exec.jar --host bolt://localhost:7687 --user neo4j --password <password> --output outputdir --diagrams <diagram folder> --diagram-release <release>
 ```
 
 3. Compress Homo Sapiens file for the Download Page 

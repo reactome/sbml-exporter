@@ -36,4 +36,4 @@ local.properties
 *.log
 output
 # What a test run writes when logback.xml's file name is not filtered
-/@log.file@
+@log.file@

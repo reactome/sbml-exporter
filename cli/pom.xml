@@ -1,0 +1,82 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- The release's command line and its verifier (spec 001, R7): the only module repackaged. -->
+    <artifactId>sbml-exporter</artifactId>
+    <packaging>jar</packaging>
+
+    <name>sbml-exporter</name>
+
+    <parent>
+        <groupId>org.reactome.server.tools</groupId>
+        <artifactId>sbml-exporter-parent</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
+
+    <properties>
+        <main.class>org.reactome.server.tools.sbml.Main</main.class>
+        <verifier.main.class>org.reactome.verifier.SBMLExportVerifier</verifier.main.class>
+        <log.file>sbml-exporter.log</log.file>
+    </properties>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.reactome.server.tools</groupId>
+            <artifactId>sbml-exporter-lib</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!--JSAP console reader-->
+        <dependency>
+            <groupId>com.martiansoftware</groupId>
+            <artifactId>jsap</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.reactome.release.verifier</groupId>
+            <artifactId>verifier-lib</artifactId>
+            <version>1.0-SNAPSHOT</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.name}</finalName>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
+                <configuration>
+                    <fork>true</fork>
+                    <mainClass>NONE</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>primary-exec</id>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>${main.class}</mainClass>
+                            <classifier>exec</classifier>
+                            <skipIfEmpty>true</skipIfEmpty>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>verifier-exec</id>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>${verifier.main.class}</mainClass>
+                            <classifier>verifier</classifier>
+                            <skipIfEmpty>true</skipIfEmpty>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

@@ -1,0 +1,77 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- The converter, for the release's command line and the website alike (spec 001, R7). -->
+    <artifactId>sbml-exporter-lib</artifactId>
+    <packaging>jar</packaging>
+
+    <name>sbml-exporter-lib</name>
+
+    <parent>
+        <groupId>org.reactome.server.tools</groupId>
+        <artifactId>sbml-exporter-parent</artifactId>
+        <version>3.0.0-SNAPSHOT</version>
+    </parent>
+
+    <dependencies>
+
+        <dependency>
+            <groupId>org.reactome.server.graph</groupId>
+            <artifactId>graph-core</artifactId>
+        </dependency>
+
+        <!-- SBML lib -->
+        <dependency>
+            <groupId>org.sbml.jsbml</groupId>
+            <artifactId>jsbml</artifactId>
+        </dependency>
+
+        <!-- The diagram files' model, as the diagram exporter reads them (spec 001, research R8). Pinned
+             here as well as in reactome-bom, since that BOM is a snapshot. -->
+        <dependency>
+            <groupId>org.reactome.server.tools</groupId>
+            <artifactId>diagram-reader</artifactId>
+            <version>1.2.5</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- What the library must never bring to the website: the relational reader and the
+                 release's verifier (spec 001, R7). -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>library-dependencies</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <excludes>
+                                        <exclude>mysql:mysql-connector-java</exclude>
+                                        <exclude>com.mysql:*</exclude>
+                                        <exclude>org.reactome.base:*</exclude>
+                                        <exclude>org.jdom:*</exclude>
+                                        <exclude>org.reactome.release.verifier:*</exclude>
+                                        <exclude>com.martiansoftware:jsap</exclude>
+                                    </excludes>
+                                </bannedDependencies>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

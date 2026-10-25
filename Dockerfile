@@ -62,5 +62,6 @@ ARG VERIFIER_JAR_FILE=target/sbml-exporter-verifier.jar
 
 WORKDIR ${REPO_DIR}
 
-COPY --from=build-jar ${REPO_DIR}/${EXEC_JAR_FILE} ./target/
-COPY --from=build-jar ${REPO_DIR}/${VERIFIER_JAR_FILE} ./target/
+# The command line's module builds the jars; the image keeps them where they always were.
+COPY --from=build-jar ${REPO_DIR}/cli/${EXEC_JAR_FILE} ./target/
+COPY --from=build-jar ${REPO_DIR}/cli/${VERIFIER_JAR_FILE} ./target/
