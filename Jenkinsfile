@@ -46,7 +46,14 @@ pipeline{
 				script{
 					def releaseVersion = utils.getReleaseVersion()
 					def diagramPath = "${env.ABS_DOWNLOAD_PATH}/${releaseVersion}/${env.DIAGRAM_FOLDER}"
-					sh "test -d ${diagramPath}"
+					// The diagram files must be at the folder's top: rerun, the diagram step recreates the folder empty
+					// and moves its output into it, one level down.
+					sh """
+						if ! find ${diagramPath} -maxdepth 1 -name 'R-*.json' -print -quit | grep -q .; then
+							echo "No diagram files at the top of ${diagramPath}"
+							exit 1
+						fi
+					"""
 					sh "mkdir -p ${env.OUTPUT_FOLDER}"
 					sh "rm -rf ${env.OUTPUT_FOLDER}/*"
 					sh "mkdir -p logs"
@@ -121,7 +128,7 @@ pipeline{
 				}
 			}
 		}
-		// Archive everything on S3, and move the 'diagram' folder to the download/vXX folder.
+		// Archive the SBML archives and the logs on S3.
 		stage('Post: Archive Outputs'){
 			steps{
 				script{
