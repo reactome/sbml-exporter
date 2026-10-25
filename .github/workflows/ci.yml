@@ -127,6 +127,28 @@ jobs:
             - name: As expected
               run: python ci/compare.py ci/fixture/expected out
 
+            # US4 (spec 001, T022): a program that depends only on the library (ci/library-check),
+            # on JDK 17 as the website's service runs, converts the same events one after another and
+            # twice at once. Its files must be the command line's, and the parallel ones the same.
+            - uses: actions/setup-java@v4
+              with:
+                distribution: temurin
+                java-version: '17'
+
+            - name: The library, built and tested on JDK 17
+              run: mvn -B -nsu install -pl lib -am
+
+            - name: The library alone gives the command line's files, in parallel too
+              run: |
+                mvn -B -q -nsu -f ci/library-check/pom.xml package
+                java -Duser.timezone=UTC -Duser.language=en -Duser.country=US \
+                  -jar ci/library-check/target/sbml-exporter-library-check-exec.jar \
+                  bolt://localhost:7687 neo4j none ci/fixture 97 library \
+                  R-HSA-9613354 R-HSA-8932284 R-HSA-5667111
+                python ci/compare.py out library/sequence
+                python ci/compare.py library/sequence library/parallel-a
+                python ci/compare.py library/sequence library/parallel-b
+
     docker-push:
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
         needs: docker-build

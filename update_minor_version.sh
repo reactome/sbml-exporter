@@ -33,6 +33,6 @@ echo "Maven ${PACKAGE_NAME} updated to ${!PACKAGE_NAME}"
 echo "Maven parent updated to ${REACTOME_PARENT_VERSION}"
 
 
-# deleting custom versions of org.reactome.server (the root pom's only: the modules' are deliberate,
-# diagram-reader's and verifier-lib's pins and the library's own version)
-xmlstarlet ed -L -d "//_:dependency[_:groupId[starts-with(text(),'org.reactome')]]/_:version" pom.xml
+# The single pom's custom org.reactome versions were deleted here. Since the module split (spec 001, T022)
+# the root pom has no dependencies of that group, and the modules' versions are deliberate: diagram-reader's
+# and verifier-lib's pins, and the library's own.
