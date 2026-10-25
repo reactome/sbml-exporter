@@ -9,7 +9,14 @@ paired by name. Each file is reduced to a set of (path, value) pairs:
   by id: name, SBO term, attributes, notes, annotations (each qualifier's
   resources) and history;
 - each reaction's reactants, products and modifiers by species: stoichiometry,
-  SBO term and constant.
+  SBO term and constant;
+- the layout (FR-007, T021): whether the package is required; each kind of
+  glyph's ids, in order; each glyph's target and box; each reaction glyph's
+  curve and its species reference glyphs, in order, with their species glyph,
+  role and curve; each text glyph's text and object. Coordinates are compared
+  after taking off the offset between the two files' layouts, the commonest
+  difference between the same species glyph's positions: today's coordinates
+  are the diagram's shifted by a fixed amount per diagram.
 
 Set aside, as FR-004 says:
 
@@ -20,9 +27,8 @@ Set aside, as FR-004 says:
 - the order of a complex's parts in its species' note ("nested structure for
   this complex: (...)"): today's comes from a HashMap of database instances,
   which no run reproduces, so the parts are compared sorted;
-- the layout, until it is ported (T021): the layout package, the root's
-  `layout:required` and namespace, and the SBO term of every species the
-  reference's layout draws, since the layout sets those.
+- a text glyph's box: the diagram files have no label size, so a label's box
+  is its glyph's (FR-007).
 
 History creators are compared as hashes, so the report never prints a name.
 Every other difference is printed and fails the comparison.
@@ -53,9 +59,9 @@ def qualifier(term):
     return "bqbiol:" + libsbml.BiolQualifierType_toString(term.getBiologicalQualifierType())
 
 
-def describe(sbase, path, out, skip_sbo=False):
+def describe(sbase, path, out):
     """Add an element's common parts: SBO term, notes, annotations, history."""
-    if sbase.isSetSBOTerm() and not skip_sbo:
+    if sbase.isSetSBOTerm():
         out[f"{path}/sboTerm"] = sbase.getSBOTermID()
     if sbase.isSetNotes():
         notes = text(sbase.getNotesString())
@@ -76,17 +82,73 @@ def describe(sbase, path, out, skip_sbo=False):
         out[f"{path}/modified"] = sorted(history.getModifiedDate(i).getDateAsString() for i in range(history.getNumModifiedDates()))
 
 
-def drawn_species(model):
-    """The ids of the species the model's layouts draw (their SBO term is the layout's)."""
+def number(value):
+    return f"{value:g}"
+
+
+def box(glyph, offset):
+    b = glyph.getBoundingBox()
+    return (f"{number(b.getX() - offset[0])},{number(b.getY() - offset[1])} "
+            f"{number(b.getWidth())}x{number(b.getHeight())}")
+
+
+def curve(glyph, offset):
+    if not glyph.isSetCurve():
+        return ""
+    c = glyph.getCurve()
+    return "; ".join(f"{number(s.getStart().getXOffset() - offset[0])},{number(s.getStart().getYOffset() - offset[1])}-"
+                     f"{number(s.getEnd().getXOffset() - offset[0])},{number(s.getEnd().getYOffset() - offset[1])}"
+                     for s in (c.getCurveSegment(i) for i in range(c.getNumCurveSegments())))
+
+
+def layouts(model):
     plugin = model.getPlugin("layout")
-    drawn = set()
-    if plugin is None:
-        return drawn
-    for i in range(plugin.getNumLayouts()):
-        layout = plugin.getLayout(i)
-        for j in range(layout.getNumSpeciesGlyphs()):
-            drawn.add(layout.getSpeciesGlyph(j).getSpeciesId())
-    return drawn
+    return [] if plugin is None else [plugin.getLayout(i) for i in range(plugin.getNumLayouts())]
+
+
+def positions(model):
+    """Each species glyph's position, by id."""
+    return {g.getId(): (g.getBoundingBox().getX(), g.getBoundingBox().getY())
+            for layout in layouts(model)
+            for g in (layout.getSpeciesGlyph(i) for i in range(layout.getNumSpeciesGlyphs()))}
+
+
+def offset(reference, candidate):
+    """The commonest difference between the same species glyphs' positions: what to take off the reference's."""
+    old, new = positions(reference), positions(candidate)
+    shifts = [(old[k][0] - new[k][0], old[k][1] - new[k][1]) for k in old.keys() & new.keys()]
+    return max(set(shifts), key=shifts.count) if shifts else (0, 0)
+
+
+def layout(document, at_offset, out):
+    model = document.getModel()
+    if document.isPackageEnabled("layout"):
+        out["layout/required"] = document.getPackageRequired("layout")
+    for n, lay in enumerate(layouts(model)):
+        at = f"layout[{n}]"
+        kinds = (("compartmentGlyph", lay.getNumCompartmentGlyphs, lay.getCompartmentGlyph, "getCompartmentId"),
+                 ("speciesGlyph", lay.getNumSpeciesGlyphs, lay.getSpeciesGlyph, "getSpeciesId"),
+                 ("reactionGlyph", lay.getNumReactionGlyphs, lay.getReactionGlyph, "getReactionId"),
+                 ("textGlyph", lay.getNumTextGlyphs, lay.getTextGlyph, "getGraphicalObjectId"))
+        for kind, count, get, target in kinds:
+            glyphs = [get(i) for i in range(count())]
+            out[f"{at}/{kind}s"] = " ".join(g.getId() for g in glyphs)
+            for g in glyphs:
+                gat = f"{at}/{kind}[{g.getId()}]"
+                out[f"{gat}/target"] = getattr(g, target)()
+                if kind == "textGlyph":
+                    out[f"{gat}/text"] = g.getText()
+                    continue
+                out[f"{gat}/box"] = box(g, at_offset)
+                if kind == "reactionGlyph":
+                    out[f"{gat}/curve"] = curve(g, at_offset)
+                    refs = [g.getSpeciesReferenceGlyph(i) for i in range(g.getNumSpeciesReferenceGlyphs())]
+                    out[f"{gat}/speciesReferenceGlyphs"] = " ".join(r.getId() for r in refs)
+                    for r in refs:
+                        rat = f"{gat}/speciesReferenceGlyph[{r.getId()}]"
+                        out[f"{rat}/speciesGlyph"] = r.getSpeciesGlyphId()
+                        out[f"{rat}/role"] = r.getRoleString() if r.isSetRole() else ""
+                        out[f"{rat}/curve"] = curve(r, at_offset)
 
 
 def participants(references, path, out):
@@ -104,19 +166,23 @@ def participants(references, path, out):
                 out[f"{at}/constant"] = ref.getConstant()
 
 
-def reduce(path, skip_sbo_of=()):
-    """Return ({path: value}, drawn species ids) for one file."""
+def read(path):
     document = libsbml.readSBMLFromFile(str(path))
     # Only an unreadable file stops the comparison. Validity is ci/validate.py's
     # job, and today's layouts have errors of their own (a layout with no id).
     if document.getNumErrors(libsbml.LIBSBML_SEV_FATAL):
         raise ValueError(f"{path}: cannot be read: {document.getError(0).getMessage().strip()}")
+    return document
+
+
+def reduce(document, at_offset=(0, 0)):
+    """Return {path: value} for one file."""
     out = {}
     if document.isSetNotes():
         out["sbml/notes"] = GENERATED.sub(r"\1 on <date> \2", text(document.getNotesString()))
     model = document.getModel()
     if model is None:
-        return out, set()
+        return out
     out["model/id"] = model.getId()
     out["model/name"] = model.getName()
     describe(model, "model", out)
@@ -132,7 +198,7 @@ def reduce(path, skip_sbo_of=()):
         out[f"{at}/compartment"] = s.getCompartment()
         for attribute in ("BoundaryCondition", "Constant", "HasOnlySubstanceUnits"):
             out[f"{at}/{attribute[0].lower() + attribute[1:]}"] = getattr(s, "get" + attribute)()
-        describe(s, at, out, skip_sbo=s.getId() in skip_sbo_of)
+        describe(s, at, out)
     for i in range(model.getNumReactions()):
         r = model.getReaction(i)
         at = f"reaction[{r.getId()}]"
@@ -144,7 +210,8 @@ def reduce(path, skip_sbo_of=()):
         participants(r.getListOfReactants(), f"{at}/reactant", out)
         participants(r.getListOfProducts(), f"{at}/product", out)
         participants(r.getListOfModifiers(), f"{at}/modifier", out)
-    return out, drawn_species(model)
+    layout(document, at_offset, out)
+    return out
 
 
 def shown(value):
@@ -154,9 +221,11 @@ def shown(value):
 
 def compare(reference, candidate):
     """Return the differences between two files, as printable lines."""
-    _, drawn = reduce(reference)
-    old, _ = reduce(reference, skip_sbo_of=drawn)
-    new, _ = reduce(candidate, skip_sbo_of=drawn)
+    old_document, new_document = read(reference), read(candidate)
+    shift = (0, 0)
+    if old_document.getModel() is not None and new_document.getModel() is not None:
+        shift = offset(old_document.getModel(), new_document.getModel())
+    old, new = reduce(old_document, shift), reduce(new_document)
     lines = []
     for key in sorted(old.keys() | new.keys()):
         if key not in new:

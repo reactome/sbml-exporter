@@ -190,6 +190,17 @@ class LayoutConverterTest {
     }
 
     @Test
+    void theLayoutHasAnIdAndSpansTheDiagram() throws Exception {
+        // libSBML refuses a layout without them (6020305, 6020315), as today's are
+        Model model = model(new long[]{1, 2}, new long[]{7}, new long[]{3});
+        LayoutConverter.addLayout(model, diagram(NODES, TWO_INPUTS, COMPARTMENTS));
+        Layout layout = layout(model);
+        assertEquals("layout", layout.getId());
+        assertEquals(450d, layout.getDimensions().getWidth());
+        assertEquals(350d, layout.getDimensions().getHeight());
+    }
+
+    @Test
     void notesCountInTheDiagramsBounds() throws Exception {
         Model model = model(new long[]{}, new long[]{9}, new long[]{});
         String note = "{\"id\": 60, \"displayName\": \"a note\", \"renderableClass\": \"Note\", " +
@@ -231,6 +242,16 @@ class LayoutConverterTest {
         assertEquals("layout_10", rg.getListOfSpeciesReferenceGlyphs().get(1).getSpeciesGlyph());
         // No role, as the relational converter left it
         assertFalse(first.isSetSpeciesReferenceRole());
+    }
+
+    @Test
+    void aPartNotDrawnAsASpeciesHasNoGlyph() throws Exception {
+        // species_2 is not in the model, so node 20 has no species glyph
+        Model model = model(new long[]{1}, new long[]{}, new long[]{3});
+        LayoutConverter.addLayout(model, diagram(NODES, TWO_INPUTS, ""));
+        ReactionGlyph rg = layout(model).getReactionGlyph("layout_30");
+        assertEquals(List.of("layout_30_substrate_1"),
+                rg.getListOfSpeciesReferenceGlyphs().stream().map(SpeciesReferenceGlyph::getId).collect(Collectors.toList()));
     }
 
     @Test

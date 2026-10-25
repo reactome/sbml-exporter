@@ -149,7 +149,9 @@ The release's SBML step makes both archives from the graph and the diagram files
 - **FR-007**: The layout MUST be ported from `LayoutConverter`'s algorithm to read the release's diagram files (`diagram/{stId}.json`), from a folder the caller gives, never fetched over the network. It keeps today's ids, order, glyph sets, roles, backbone rules, hidden compartments, SBO override and root attributes, and still writes a layout only when the event's own diagram draws a reaction. Accepted differences, each recorded:
   - coordinates are the diagram's own;
   - node sizes are the diagram's stored sizes, with no font-based resizing;
-  - a label's size is its node's box.
+  - a label's size is its node's box;
+  - the layout has an id and dimensions, and a branch to a part not drawn as a species is left out, so that it is valid, which today's are not;
+  - what the diagram files draw differently from the relational diagram: disease reactions over their normal counterparts, an inferred diagram's order, a species drawn as a set there but a protein in the file (differences.md, measured in T021).
 
 **The release's step**
 
