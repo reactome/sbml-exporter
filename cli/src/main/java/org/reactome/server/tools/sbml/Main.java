@@ -38,8 +38,8 @@ public class Main {
 
     private static DiagramFiles diagrams;
 
-    // A conversion that failed (a species cut short by a missing diagram file, an id that is not a pathway, a species
-    // not found): the run goes on, as it always has, but ends with exit status 1, so that a release step does not
+    // A conversion that failed (a species cut short by a missing diagram file, a listed id that is not in the graph,
+    // not a pathway or not converted, a species not found): the run goes on, as it always has, but ends with exit status 1, so that a release step does not
     // package what is missing.
     private static boolean failed = false;
 
@@ -115,6 +115,10 @@ public class Main {
         for (String identifier : identifiers) {
             try {
                 Event p = dbs.findById(identifier);
+                if (p == null) {
+                    error(identifier + " cannot be converted. Reason: It is not in the graph");
+                    continue;
+                }
                 info(String.format("\t>%s: %s", p.getStId(), p.getDisplayName()));
                 SbmlConverter c = new SbmlConverter(p, version, ReactomeGraphCore.getService(DatabaseObjectService.class), ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class), diagrams);
                 c.convert();
@@ -122,9 +126,10 @@ public class Main {
             } catch (ClassCastException e) {
                 error(identifier + " cannot be converted. Reason: This identifier does not belong to a Pathway");
             } catch (RuntimeException e) {
-                // Not found, a missing diagram file, a file that cannot be written: the others still go on
+                // A missing diagram file, a file that cannot be written: the others still go on
                 logger.error(identifier + " cannot be converted", e);
-                error(identifier + " cannot be converted. Reason: " + e);
+                if (verbose) System.err.println(identifier + " cannot be converted. Reason: " + e);
+                failed = true;
             }
         }
     }

@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 class DiagramFilesTest {
 
     // Surefire runs in the project's folder.
-    private static final Path FIXTURE = Paths.get("ci", "fixture");
+    private static final Path FIXTURE = Paths.get("..", "ci", "fixture") /* the repository's, from the module */;
 
     @Test
     void readsWhatTheLayoutNeeds() {

@@ -2,12 +2,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- The library and the command line (spec 001, research R7). The command line keeps the
+         coordinate org.reactome.server.tools:sbml-exporter; the website uses sbml-exporter-lib. -->
     <groupId>org.reactome.server.tools</groupId>
-    <artifactId>sbml-exporter</artifactId>
-    <version>2.2.7</version>
-    <packaging>jar</packaging>
+    <artifactId>sbml-exporter-parent</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-    <name>sbml-exporter</name>
+    <name>sbml-exporter-parent</name>
     <url>https://maven.apache.org</url>
 
     <parent>
@@ -16,11 +18,10 @@
         <version>1.0.5-SNAPSHOT</version>
     </parent>
 
-    <properties>
-        <main.class>org.reactome.server.tools.sbml.Main</main.class>
-        <verifier.main.class>org.reactome.verifier.SBMLExportVerifier</verifier.main.class>
-        <log.file>sbml-exporter.log</log.file>
-    </properties>
+    <modules>
+        <module>lib</module>
+        <module>cli</module>
+    </modules>
 
     <developers>
         <developer>
@@ -44,37 +45,6 @@
     </developers>
 
     <dependencies>
-
-        <dependency>
-            <groupId>org.reactome.server.graph</groupId>
-            <artifactId>graph-core</artifactId>
-        </dependency>
-
-        <!-- SBML lib -->
-        <dependency>
-            <groupId>org.sbml.jsbml</groupId>
-            <artifactId>jsbml</artifactId>
-        </dependency>
-
-        <!-- The diagram files' model, as the diagram exporter reads them (spec 001, research R8). Pinned
-             here as well as in reactome-bom, since that BOM is a snapshot. -->
-        <dependency>
-            <groupId>org.reactome.server.tools</groupId>
-            <artifactId>diagram-reader</artifactId>
-            <version>1.2.5</version>
-        </dependency>
-
-        <!--JSAP console reader-->
-        <dependency>
-            <groupId>com.martiansoftware</groupId>
-            <artifactId>jsap</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
@@ -91,16 +61,9 @@
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <dependency>
-            <groupId>org.reactome.release.verifier</groupId>
-            <artifactId>verifier-lib</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
     </dependencies>
 
     <build>
-        <finalName>${project.name}</finalName>
         <plugins>
             <!-- Lint on the repository's own rules (spec 001, research R3). Pinned: unpinned,
                  the plugin's version, and so Checkstyle's, drift under the build. -->
@@ -109,7 +72,7 @@
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>3.6.0</version>
                 <configuration>
-                    <configLocation>checkstyle.xml</configLocation>
+                    <configLocation>${maven.multiModuleProjectDirectory}/checkstyle.xml</configLocation>
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
                     <consoleOutput>true</consoleOutput>
                 </configuration>
@@ -122,39 +85,6 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
-                <configuration>
-                    <fork>true</fork>
-                    <mainClass>NONE</mainClass>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>primary-exec</id>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>${main.class}</mainClass>
-                            <classifier>exec</classifier>
-                            <skipIfEmpty>true</skipIfEmpty>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>verifier-exec</id>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>${verifier.main.class}</mainClass>
-                            <classifier>verifier</classifier>
-                            <skipIfEmpty>true</skipIfEmpty>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

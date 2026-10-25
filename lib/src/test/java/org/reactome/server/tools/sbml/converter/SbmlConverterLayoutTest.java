@@ -27,7 +27,7 @@ import static org.mockito.Mockito.mock;
  */
 class SbmlConverterLayoutTest {
 
-    private static final DiagramFiles FIXTURE = new DiagramFiles(Paths.get("ci", "fixture"), 97, 97);
+    private static final DiagramFiles FIXTURE = new DiagramFiles(Paths.get("..", "ci", "fixture") /* the repository's, from the module */, 97, 97);
 
     private static Pathway pathway(String stId, Boolean hasDiagram) {
         Pathway pathway = mock(Pathway.class);
