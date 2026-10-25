@@ -80,7 +80,7 @@ public class LayoutConverter {
      * Whether the diagram draws a reaction: only then has the event a layout, as today.
      */
     public static boolean hasReactions(Diagram diagram) {
-        return edges(diagram).stream().anyMatch(LayoutConverter::isReaction);
+        return new Drawn(diagram).edges.stream().anyMatch(LayoutConverter::isReaction);
     }
 
     /**
@@ -96,10 +96,11 @@ public class LayoutConverter {
      *     <li>its id is above every stored object's, so above every normal object's: a new object takes its id
      *     from a counter that the reader moves past each stored id it reads, and nothing resets;</li>
      *     <li>it lies exactly over the stored object it copies, which has a lower id: a reaction's copy keeps its
-     *     position (shallowCopy), a node's its box (copyRenderInfo).</li>
+     *     position (shallowCopy), and a node's its centre (copyRenderInfo copies its position; a node whose label
+     *     overflows is later resized about its centre, so its box may not match).</li>
      * </ul>
-     * Measured over release 97's 453 human disease diagrams, against the published SBML: the objects with both
-     * are exactly those today's layouts leave out. Either alone is not enough: an id above every normal object's
+     * Measured over all 1,137 human pathways with a layout in release 97's published SBML (453 of them disease
+     * diagrams): the objects with both are exactly those today's layouts leave out. Either alone is not enough: an id above every normal object's
      * would also take disease objects the curators drew last (12 diagrams), and lying over an earlier object would
      * take disease reactions the curators drew over their normal ones (2). Drawing the copies is suggested in
      * sbml-exporter #48.
@@ -126,8 +127,8 @@ public class LayoutConverter {
             }
         }
         for (Node n : nodes) {
-            if (isNewDisease(n, normalMax) && n.getProp() != null
-                    && nodes.stream().anyMatch(o -> o.getId() < n.getId() && sameCorner(o.getProp(), n.getProp()))) {
+            if (isNewDisease(n, normalMax) && n.getPosition() != null
+                    && nodes.stream().anyMatch(o -> o.getId() < n.getId() && samePoint(o.getPosition(), n.getPosition()))) {
                 rtn.add(n.getId());
             }
         }
@@ -142,22 +143,18 @@ public class LayoutConverter {
         return a != null && a.getX().equals(b.getX()) && a.getY().equals(b.getY());
     }
 
-    private static boolean sameCorner(NodeProperties a, NodeProperties b) {
-        return a != null && a.getX().equals(b.getX()) && a.getY().equals(b.getY());
-    }
+    /** The diagram's nodes and edges without the diagram step's copies: what the relational diagram drew. */
+    private static final class Drawn {
+        final List<Node> nodes;
+        final List<Edge> edges;
 
-    /** The diagram's nodes, without the diagram step's copies. */
-    private static List<Node> nodes(Diagram diagram) {
-        Set<Long> copies = copies(diagram);
-        return diagram.getNodes() == null ? new ArrayList<>() :
-                diagram.getNodes().stream().filter(n -> !copies.contains(n.getId())).collect(Collectors.toList());
-    }
-
-    /** The diagram's edges, without the diagram step's copies. */
-    private static List<Edge> edges(Diagram diagram) {
-        Set<Long> copies = copies(diagram);
-        return diagram.getEdges() == null ? new ArrayList<>() :
-                diagram.getEdges().stream().filter(e -> !copies.contains(e.getId())).collect(Collectors.toList());
+        Drawn(Diagram diagram) {
+            Set<Long> copies = copies(diagram);
+            nodes = diagram.getNodes() == null ? new ArrayList<>() :
+                    diagram.getNodes().stream().filter(n -> !copies.contains(n.getId())).collect(Collectors.toList());
+            edges = diagram.getEdges() == null ? new ArrayList<>() :
+                    diagram.getEdges().stream().filter(e -> !copies.contains(e.getId())).collect(Collectors.toList());
+        }
     }
 
     private static boolean isReaction(Edge edge) {
@@ -181,11 +178,12 @@ public class LayoutConverter {
         // Unlike the relational converter's, whose layout libSBML refuses (no id, no dimensions): the layout
         // spans the diagram from its origin.
         Layout layout = lModel.createLayout(LAYOUT_ID);
-        double[] bounds = getDiagramBounds(diagram);
+        Drawn drawn = new Drawn(diagram);
+        double[] bounds = getDiagramBounds(diagram, drawn.nodes);
         layout.createDimensions(Math.max(0, bounds[2]), Math.max(0, bounds[3]), 0);
-        handleCompartments(layout, diagram);
-        handleNodes(layout, diagram);
-        handleReactions(layout, diagram);
+        handleCompartments(layout, diagram, bounds);
+        handleNodes(layout, drawn.nodes);
+        handleReactions(layout, drawn.edges);
     }
 
     private static <T extends DiagramObject> List<T> byId(List<T> objects) {
@@ -194,7 +192,7 @@ public class LayoutConverter {
         return rtn;
     }
 
-    private static void handleCompartments(Layout layout, Diagram diagram) {
+    private static void handleCompartments(Layout layout, Diagram diagram, double[] bounds) {
         Set<String> handled = new HashSet<>();
         for (Compartment comp : byId(diagram.getCompartments())) {
             if (comp.getReactomeId() == null) continue;
@@ -212,7 +210,6 @@ public class LayoutConverter {
         ListOf<org.sbml.jsbml.Compartment> compartments = layout.getModel().getListOfCompartments();
         if (handled.size() == compartments.size()) return;
         int count = 0;
-        double[] bounds = getDiagramBounds(diagram);
         BoundingBox box = createBox((int) ((bounds[0] + bounds[2]) / 2), (int) bounds[3], 1, 1);
         for (org.sbml.jsbml.Compartment compartment : compartments) {
             if (handled.contains(compartment.getId())) continue;
@@ -226,10 +223,9 @@ public class LayoutConverter {
      * minX, minY, maxX, maxY over every node's, note's and compartment's box (the relational diagram's nodes, a
      * note being one), in whole units as the relational diagram's rectangles had them.
      */
-    private static double[] getDiagramBounds(Diagram diagram) {
+    private static double[] getDiagramBounds(Diagram diagram, List<Node> nodes) {
         int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
-        List<NodeCommon> all = new ArrayList<>();
-        all.addAll(nodes(diagram));
+        List<NodeCommon> all = new ArrayList<>(nodes);
         if (diagram.getNotes() != null) all.addAll(diagram.getNotes());
         if (diagram.getCompartments() != null) all.addAll(diagram.getCompartments());
         for (NodeCommon node : all) {
@@ -242,8 +238,8 @@ public class LayoutConverter {
         return new double[]{minX, minY, maxX, maxY};
     }
 
-    private static void handleNodes(Layout layout, Diagram diagram) {
-        for (Node node : byId(nodes(diagram))) {
+    private static void handleNodes(Layout layout, List<Node> nodes) {
+        for (Node node : byId(nodes)) {
             if (node.getReactomeId() == null) continue;
             String speciesId = SbmlConverter.SPECIES_PREFIX + node.getReactomeId();
             // Some nodes are not in the model (a pathway, say)
@@ -276,8 +272,8 @@ public class LayoutConverter {
         textGlyph.setGraphicalObject(layoutId);
     }
 
-    private static void handleReactions(Layout layout, Diagram diagram) {
-        for (Edge edge : byId(edges(diagram))) {
+    private static void handleReactions(Layout layout, List<Edge> edges) {
+        for (Edge edge : byId(edges)) {
             if (isReaction(edge)) handleReaction(layout, edge);
         }
     }
@@ -389,8 +385,9 @@ public class LayoutConverter {
         if (parts == null || parts.isEmpty()) return;
         for (int i = 0; i < parts.size(); i++) {
             String speciesGlyphId = LAYOUT_ID_PREFIX + parts.get(i).getId();
-            // A part not drawn as a species (not in the model: a failed reaction's overlay names the normal
-            // reaction's product, say) gets no glyph, which would point at nothing; the others keep their numbers.
+            // A part not drawn as a species (not in the model) gets no glyph, which would point at nothing (libSBML
+            // 6021011); the others keep their numbers. No diagram of release 97 has one once the diagram step's
+            // copies are left out: this keeps the layout valid if one does.
             if (layout.getSpeciesGlyph(speciesGlyphId) == null) continue;
             String speciesRefGlyphId = layoutId + "_" + role.toString().toLowerCase(Locale.ROOT) + "_" + i;
             SpeciesReferenceGlyph srg = rg.createSpeciesReferenceGlyph(speciesRefGlyphId);

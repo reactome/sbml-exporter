@@ -103,13 +103,14 @@ class LayoutConverterTest {
 
     // A disease diagram: normal objects up to id 50 (the compartment), a disease node the curators drew (20), a
     // normal reaction (45), and the diagram step's copies (90 over node 10, 95 over reaction 45), whose ids its
-    // counter took past the stored diagram's.
+    // counter took past the stored diagram's. The copied node keeps its original's centre but was resized, as a
+    // node whose label overflows is.
     private static final String DRAWN_DISEASE = "{\"id\": 20, \"reactomeId\": 2, \"displayName\": \"B\", \"renderableClass\": \"Chemical\", " +
-            "\"isDisease\": true, \"prop\": {\"x\": 300, \"y\": 100, \"width\": 40, \"height\": 30}}";
+            "\"isDisease\": true, \"position\": {\"x\": 320, \"y\": 115}, \"prop\": {\"x\": 300, \"y\": 100, \"width\": 40, \"height\": 30}}";
     private static final String NORMAL = "{\"id\": 10, \"reactomeId\": 1, \"displayName\": \"A\", \"renderableClass\": \"Protein\", " +
-            "\"isFadeOut\": true, \"prop\": {\"x\": 100, \"y\": 100, \"width\": 60, \"height\": 20}}";
+            "\"isFadeOut\": true, \"position\": {\"x\": 130, \"y\": 110}, \"prop\": {\"x\": 100, \"y\": 100, \"width\": 60, \"height\": 20}}";
     private static final String COPY_NODE = "{\"id\": 90, \"reactomeId\": 8, \"displayName\": \"C\", \"renderableClass\": \"Protein\", " +
-            "\"isDisease\": true, \"prop\": {\"x\": 100, \"y\": 100, \"width\": 60, \"height\": 900}}";
+            "\"isDisease\": true, \"position\": {\"x\": 130, \"y\": 110}, \"prop\": {\"x\": 90, \"y\": 60, \"width\": 80, \"height\": 900}}";
     private static final String COPY_EDGE = edge(95, 3, seg(200, 110, 230, 110) + "," + seg(230, 110, 260, 110), at(230, 110),
             "\"isDisease\": true, \"inputs\": [{\"id\": 90}]");
     private static final String NORMAL_COMPARTMENT = COMPARTMENTS.replace("\"id\": 5,", "\"id\": 50,");
@@ -129,7 +130,7 @@ class LayoutConverterTest {
         assertEquals(List.of("layout_10", "layout_20"), layout.getListOfSpeciesGlyphs().stream().map(SpeciesGlyph::getId).collect(Collectors.toList()));
         assertEquals(0, layout.getNumReactionGlyphs());
         assertTrue(layout.getListOfSpeciesGlyphs().stream().noneMatch(g -> g.getId().equals("layout_90")));
-        // Nor are they in the bounds: the copy node reaches y 1000, the compartment 350
+        // Nor are they in the bounds: the copy node reaches y 960, the compartment 350
         assertEquals("250,350 1x1", box(layout.getCompartmentGlyph("layout_hidden_compartment_0").getBoundingBox()));
     }
 
@@ -153,7 +154,7 @@ class LayoutConverterTest {
         assertEquals(java.util.Set.of(), LayoutConverter.copies(disease(true, NORMAL + "," + COPY_NODE, COPY_EDGE, NORMAL_COMPARTMENT)));
         assertEquals(java.util.Set.of(), LayoutConverter.copies(disease(null, NORMAL + "," + COPY_NODE, COPY_EDGE, NORMAL_COMPARTMENT)));
         // With nothing normal, nothing tells the copies apart
-        String under = DRAWN_DISEASE.replace("\"x\": 300,", "\"x\": 100,");
+        String under = DRAWN_DISEASE.replace("\"position\": {\"x\": 320, \"y\": 115}", "\"position\": {\"x\": 130, \"y\": 110}");
         assertEquals(java.util.Set.of(), LayoutConverter.copies(disease(false, under + "," + COPY_NODE, "", "")));
     }
 
