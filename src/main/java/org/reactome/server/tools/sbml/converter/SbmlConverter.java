@@ -15,6 +15,8 @@ import org.reactome.server.tools.sbml.data.DataFactory;
 import org.reactome.server.tools.sbml.data.model.Participant;
 import org.reactome.server.tools.sbml.data.model.ParticipantDetails;
 import org.reactome.server.tools.sbml.data.model.ReactionBase;
+import org.reactome.server.tools.sbml.layout.DiagramFiles;
+import org.reactome.server.tools.sbml.layout.LayoutConverter;
 import org.reactome.server.tools.sbml.util.Utils;
 import org.sbml.jsbml.CVTerm;
 import org.sbml.jsbml.Compartment;
@@ -62,16 +64,26 @@ public class SbmlConverter {
     private long metaid_count = 0L;
     private Set<String> existingObjects = new HashSet<>();
     private final Integer reactomeVersion;
+    private final DiagramFiles diagrams;
 
     protected SbmlConverter(String targetId, Integer version) {
         this.targetStId = targetId;
         this.reactomeVersion = version;
+        this.diagrams = null;
     }
     
     public SbmlConverter(Event event, Integer version, AdvancedDatabaseObjectService ads) {
+        this(event, version, ads, null);
+    }
+
+    /**
+     * @param diagrams the release's diagram files, for the layout; null for none
+     */
+    public SbmlConverter(Event event, Integer version, AdvancedDatabaseObjectService ads, DiagramFiles diagrams) {
         this.targetStId = event.getStId();
         this.reactomeVersion = version;
         this.ads = ads;
+        this.diagrams = diagrams;
         // A reaction's own export names no parent pathway, as the relational converter's does: a
         // reaction can have several parents (733 human reactions in release 97), and any one of
         // them would be arbitrary (spec 001, differences.md).
@@ -121,6 +133,13 @@ public class SbmlConverter {
 
             Helper.addAnnotations(rn, rxn.getReactionLikeEvent());
             Helper.addCVTerms(rn, rxn);
+        }
+
+        // A layout only from the pathway's own diagram, and only when it draws a reaction (FR-007)
+        if (pathway != null && diagrams != null) {
+            diagrams.read(targetStId, Boolean.TRUE.equals(pathway.getHasDiagram()))
+                    .filter(LayoutConverter::hasReactions)
+                    .ifPresent(diagram -> LayoutConverter.addLayout(model, diagram));
         }
 
         return sbmlDocument;
