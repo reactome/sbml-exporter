@@ -46,9 +46,6 @@ class DataFactoryReactionsTest {
             entities.put(stId, entity);
             doReturn(entity).when(ds).findByIdNoRelations(stId);
         }
-        // Sets the static service getReactionList reads, as Spring does.
-        new DataFactoryHelper(ds);
-
         ReactionBaseResult row = new ReactionBaseResult();
         row.setRle("R-TST-0");
         row.setInputs(column("R-TST-1"));
@@ -60,7 +57,7 @@ class DataFactoryReactionsTest {
         doReturn(Collections.singletonList(row)).when(ads)
                 .getCustomQueryResults(eq(ReactionBaseResult.class), anyString(), anyMap());
 
-        Collection<ReactionBase> reactions = DataFactory.getReactionList("R-TST-0", ads);
+        Collection<ReactionBase> reactions = DataFactory.getReactionList("R-TST-0", ds, ads);
         assertEquals(1, reactions.size());
         reaction = reactions.iterator().next();
     }
