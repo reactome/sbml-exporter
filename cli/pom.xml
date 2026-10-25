@@ -17,7 +17,6 @@
     <properties>
         <main.class>org.reactome.server.tools.sbml.Main</main.class>
         <verifier.main.class>org.reactome.verifier.SBMLExportVerifier</verifier.main.class>
-        <log.file>sbml-exporter.log</log.file>
     </properties>
 
     <dependencies>

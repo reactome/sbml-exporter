@@ -39,8 +39,8 @@ public class Main {
     private static DiagramFiles diagrams;
 
     // A conversion that failed (a species cut short by a missing diagram file, a listed id that is not in the graph,
-    // not a pathway or not converted, a species not found): the run goes on, as it always has, but ends with exit status 1, so that a release step does not
-    // package what is missing.
+    // not a pathway or not converted, a species not found): the run goes on, as it always has, but ends with exit
+    // status 1, so that a release step does not package what is missing.
     private static boolean failed = false;
 
     public static void main(String[] args) throws Exception {
