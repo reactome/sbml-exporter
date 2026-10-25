@@ -42,11 +42,21 @@ comparison; it is not a difference of the converter's. Glyph sets, ids, targets,
 curves are otherwise the same as today's, R-HSA-2894858's entirely; every other difference is
 one of these.
 
+The whole run then went through the graph (#57): the command line over all 30 events from
+the private copy, with `--diagrams` holding release 97's files for every sample pathway with
+a diagram (18 of the 30; the other 12, reactions and pathways drawn on a parent's diagram,
+have none), each compared with today's file. It finished without error, all 30 files valid
+(`ci/validate.py`), and its layout differences are those of the six files above but one, the
+hidden compartments' numbering (below). Its model differences are those of the tables above
+and below, no others: EC numbers (957 reactions), cross-references (2,695 entries, still to
+decide), 3 last-modified dates, 1 `isHomologTo`, and the 4 SBO terms below.
+
 | Difference | Count in the sample | Cause |
 | --- | --- | --- |
 | A node's box | 46 of 538 species glyphs, in five events | Today's are resized to their label's font (`tightNodes`); the files keep the drawn size (FR-007) |
 | A branch's end, or a backbone's end, a few units off | 67 branch ends, all at a resized node; 24 backbone ends | Follow the resized nodes: today's re-attached to the resized box |
 | The hidden compartments' anchor | R-HSA-112409 | It is the diagram's bottom centre, which a resized node moved |
+| Which compartment each hidden compartment glyph (`layout_hidden_compartment_N`) stands for | 2 of 3 in R-HSA-109606 | They are numbered in the model's compartment order, which differs between the two converters; element order is set aside by design |
 | Glyph order | R-MMU-69620 (its species, reaction and text glyphs) | The relational diagram's order was that of its making; an inferred diagram's is neither its ids' nor the file's. The sets, ids and targets are the same |
 | SBO term of a drawn species: a protein's (252), not a set's (289) | 4 species in R-MMU-69620 | The relational converter took the stored drawing's class, a set copied from the human diagram; the diagram step corrects a class that disagrees with the graph (`fixBrokenRenderableClass`), and these are single proteins in the graph. The stored class is not in the file |
 | A backbone the relational diagram stored with a repeated point: its curve, the reaction's box (its hub moved), and its product's branch | 1 reaction in R-HSA-9839373 | The file's backbone has the point between; the relational one cannot be recovered from it |
