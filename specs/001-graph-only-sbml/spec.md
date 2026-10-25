@@ -151,7 +151,9 @@ The release's SBML step makes both archives from the graph and the diagram files
   - node sizes are the diagram's stored sizes, with no font-based resizing;
   - a label's size is its node's box;
   - the layout has an id and dimensions, and a branch to a part not drawn as a species is left out, so that it is valid, which today's are not;
-  - what the diagram files draw differently from the relational diagram: disease reactions over their normal counterparts, an inferred diagram's order, a species drawn as a set there but a protein in the file (differences.md, measured in T021).
+  - what the diagram files cannot give back: an inferred diagram's order, a stored drawing's class the diagram step corrected, a backbone stored with a repeated point, and the stored objects a disease diagram's file leaves out (differences.md, measured in T021).
+
+  The diagram step's copies in a disease diagram, which the relational diagram never had, are left out, so that the layout is today's.
 
 **The release's step**
 

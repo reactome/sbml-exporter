@@ -95,6 +95,68 @@ class LayoutConverterTest {
     private static final String TWO_INPUTS = edge(30, 3, seg(200, 110, 230, 110) + "," + seg(230, 110, 260, 110), at(230, 110),
             "\"inputs\": [{\"id\": 20, \"points\": [" + at(190, 90) + "]}, {\"id\": 10, \"points\": [" + at(190, 130) + "]}]");
 
+    private static Diagram disease(Boolean forNormalDraw, String nodes, String edges, String compartments) throws Exception {
+        return DiagramFactory.getDiagram("{\"dbId\": 1, \"stableId\": \"R-TST-1\"" +
+                (forNormalDraw == null ? "" : ", \"forNormalDraw\": " + forNormalDraw) + ", \"nodes\": [" + nodes + "], " +
+                "\"edges\": [" + edges + "], \"compartments\": [" + compartments + "]}");
+    }
+
+    // A disease diagram: normal objects up to id 50 (the compartment), a disease node the curators drew (20), a
+    // normal reaction (45), and the diagram step's copies (90 over node 10, 95 over reaction 45), whose ids its
+    // counter took past the stored diagram's.
+    private static final String DRAWN_DISEASE = "{\"id\": 20, \"reactomeId\": 2, \"displayName\": \"B\", \"renderableClass\": \"Chemical\", " +
+            "\"isDisease\": true, \"prop\": {\"x\": 300, \"y\": 100, \"width\": 40, \"height\": 30}}";
+    private static final String NORMAL = "{\"id\": 10, \"reactomeId\": 1, \"displayName\": \"A\", \"renderableClass\": \"Protein\", " +
+            "\"isFadeOut\": true, \"prop\": {\"x\": 100, \"y\": 100, \"width\": 60, \"height\": 20}}";
+    private static final String COPY_NODE = "{\"id\": 90, \"reactomeId\": 8, \"displayName\": \"C\", \"renderableClass\": \"Protein\", " +
+            "\"isDisease\": true, \"prop\": {\"x\": 100, \"y\": 100, \"width\": 60, \"height\": 900}}";
+    private static final String COPY_EDGE = edge(95, 3, seg(200, 110, 230, 110) + "," + seg(230, 110, 260, 110), at(230, 110),
+            "\"isDisease\": true, \"inputs\": [{\"id\": 90}]");
+    private static final String NORMAL_COMPARTMENT = COMPARTMENTS.replace("\"id\": 5,", "\"id\": 50,");
+    private static final String NORMAL_EDGE = edge(45, 4, seg(200, 110, 230, 110) + "," + seg(230, 110, 260, 110), at(230, 110),
+            "\"isFadeOut\": true");
+
+    @Test
+    void theDiagramStepsDiseaseCopiesAreLeftOut() throws Exception {
+        Diagram diagram = disease(false, NORMAL + "," + DRAWN_DISEASE + "," + COPY_NODE, NORMAL_EDGE + "," + COPY_EDGE, NORMAL_COMPARTMENT);
+        assertEquals(java.util.Set.of(90L, 95L), LayoutConverter.copies(diagram));
+        // A copy always lies over an earlier reaction, so a diagram with copies draws one anyway
+        assertTrue(LayoutConverter.hasReactions(diagram));
+
+        Model model = model(new long[]{1, 2, 8}, new long[]{9}, new long[]{3});
+        LayoutConverter.addLayout(model, diagram);
+        Layout layout = layout(model);
+        assertEquals(List.of("layout_10", "layout_20"), layout.getListOfSpeciesGlyphs().stream().map(SpeciesGlyph::getId).collect(Collectors.toList()));
+        assertEquals(0, layout.getNumReactionGlyphs());
+        assertTrue(layout.getListOfSpeciesGlyphs().stream().noneMatch(g -> g.getId().equals("layout_90")));
+        // Nor are they in the bounds: the copy node reaches y 1000, the compartment 350
+        assertEquals("250,350 1x1", box(layout.getCompartmentGlyph("layout_hidden_compartment_0").getBoundingBox()));
+    }
+
+    @Test
+    void aDiseaseObjectTheCuratorsDrewLastIsNoCopy() throws Exception {
+        // Above every normal object, but over nothing earlier: drawn by the curators after the normal objects
+        String late = DRAWN_DISEASE.replace("\"id\": 20,", "\"id\": 60,");
+        String lateEdge = edge(61, 6, seg(400, 300, 430, 300) + "," + seg(430, 300, 460, 300), at(430, 300), "\"isDisease\": true");
+        assertEquals(java.util.Set.of(), LayoutConverter.copies(disease(false, NORMAL + "," + late, NORMAL_EDGE + "," + lateEdge, NORMAL_COMPARTMENT)));
+    }
+
+    @Test
+    void aDiseaseReactionTheCuratorsDrewOverItsNormalOneIsNoCopy() throws Exception {
+        // Over the normal reaction, but below a normal object's id: stored, not copied
+        String over = COPY_EDGE.replace("\"id\": 95,", "\"id\": 46,");
+        assertEquals(java.util.Set.of(), LayoutConverter.copies(disease(false, NORMAL, NORMAL_EDGE + "," + over, NORMAL_COMPARTMENT)));
+    }
+
+    @Test
+    void onlyADiseaseDiagramNotDrawnAsNormalHasCopies() throws Exception {
+        assertEquals(java.util.Set.of(), LayoutConverter.copies(disease(true, NORMAL + "," + COPY_NODE, COPY_EDGE, NORMAL_COMPARTMENT)));
+        assertEquals(java.util.Set.of(), LayoutConverter.copies(disease(null, NORMAL + "," + COPY_NODE, COPY_EDGE, NORMAL_COMPARTMENT)));
+        // With nothing normal, nothing tells the copies apart
+        String under = DRAWN_DISEASE.replace("\"x\": 300,", "\"x\": 100,");
+        assertEquals(java.util.Set.of(), LayoutConverter.copies(disease(false, under + "," + COPY_NODE, "", "")));
+    }
+
     @Test
     void aLayoutOnlyWhenTheDiagramDrawsAReaction() throws Exception {
         assertTrue(LayoutConverter.hasReactions(diagram(NODES, TWO_INPUTS, COMPARTMENTS)));
