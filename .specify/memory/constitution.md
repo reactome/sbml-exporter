@@ -42,8 +42,16 @@ reference is checked before it is trusted.
   Why today's output and not a fixed copy of the graph converter: the files
   people use are today's, and a reference made by the code under test cannot
   catch what that code gets wrong (decided 24 Oct 2026).
-- **The layout** is compared by meaning with today's relational layout: the same
-  glyphs, ids, roles and order (spec 015 R3).
+- **The layout** is compared with the diagram files the website draws from, not with
+  today's relational layout: one glyph for each object the website draws, at the
+  file's position and size (spec 002). Until spec 002 lands, spec 001's port is
+  compared by meaning with today's layout (spec 015 R3).
+
+  Why not today's layout any longer: its box sizes came from the old drawing code
+  measuring labels in the exporting machine's fonts. It asks for a font this host
+  does not have and silently substitutes another, so today's own sizes are not
+  reproducible from one machine to the next. It also leaves out much of what the
+  website shows. Reactome is moving away from that drawing code (decided 25 Oct 2026).
 
 ### II. Verify the instrument
 
@@ -153,4 +161,4 @@ what it cost to learn. A principle with no cost behind it does not belong here.
 
 `CLAUDE.md` carries day-to-day guidance; where the two disagree, this file wins.
 
-**Version**: 1.3.0 | **Ratified**: 2026-10-24 | **Last Amended**: 2026-10-24
+**Version**: 1.4.0 | **Ratified**: 2026-10-24 | **Last Amended**: 2026-10-25
