@@ -11,11 +11,13 @@ import org.reactome.server.graph.service.util.DatabaseObjectUtils;
 import org.reactome.server.graph.utils.ReactomeGraphCore;
 import org.reactome.server.tools.sbml.config.GraphNeo4jConfig;
 import org.reactome.server.tools.sbml.converter.SbmlConverter;
+import org.reactome.server.tools.sbml.layout.DiagramFiles;
 import org.reactome.server.tools.sbml.util.ProgressBar;
 import org.reactome.server.tools.sbml.util.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -33,6 +35,8 @@ public class Main {
 
     private static Boolean verbose = false;
 
+    private static DiagramFiles diagrams;
+
     public static void main(String[] args) throws Exception {
 
         SimpleJSAP jsap = new SimpleJSAP(Main.class.getName(), "A tool for generating SBML files",
@@ -41,6 +45,8 @@ public class Main {
                         new FlaggedOption("user", JSAP.STRING_PARSER, "neo4j", JSAP.REQUIRED, 'u', "user", "The neo4j user"),
                         new FlaggedOption("password", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'p', "password", "The neo4j password"),
                         new FlaggedOption("output", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'o', "output", "The output directory"),
+                        new FlaggedOption("diagrams", JSAP.STRING_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'd', "diagrams", "The folder of the release's diagram files ({stId}.json), for the layout"),
+                        new FlaggedOption("diagram-release", JSAP.INTEGER_PARSER, JSAP.NO_DEFAULT, JSAP.REQUIRED, 'r', "diagram-release", "The release the diagram files are from: it must be the graph's"),
                         new FlaggedOption("target", JSAP.STRING_PARSER, "ALL", JSAP.NOT_REQUIRED, 't', "target", "Target events to convert. Use either (1) comma separated event identifiers, (2) a given species (e.g. 'Homo sapiens') or  (3)'all' to export every pathway").setList(true).setListSeparator(','),
                         new QualifiedSwitch("verbose", JSAP.BOOLEAN_PARSER, null, JSAP.NOT_REQUIRED, 'v', "verbose", "Requests verbose output.")
                 }
@@ -62,6 +68,7 @@ public class Main {
         String[] target = config.getStringArray("target");
 
         DBInfo dbInfo = ReactomeGraphCore.getService(GeneralService.class).getDBInfo();
+        diagrams = new DiagramFiles(Paths.get(config.getString("diagrams")), config.getInt("diagram-release"), dbInfo.getVersion());
 
         long start = System.currentTimeMillis();
         if (target.length > 1) {
@@ -94,7 +101,7 @@ public class Main {
             try {
                 Event p = dbs.findById(identifier);
                 info(String.format("\t>%s: %s", p.getStId(), p.getDisplayName()));
-                SbmlConverter c = new SbmlConverter(p, version, ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class));
+                SbmlConverter c = new SbmlConverter(p, version, ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class), diagrams);
                 c.convert();
                 c.writeToFile(output);
             } catch (ClassCastException e) {
@@ -123,7 +130,7 @@ public class Main {
 //                pathways.stream().parallel().forEach(pathway -> {
                 pathways.stream().forEach(pathway -> {
                     progressBar.update(pathway.getStId(), i.get());
-                    SbmlConverter c = new SbmlConverter(pathway, version, ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class));
+                    SbmlConverter c = new SbmlConverter(pathway, version, ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class), diagrams);
                     c.convert();
                     c.writeToFile(output);
                     if (i.incrementAndGet() % 10 == 0) ReactomeGraphCore.getService(GeneralService.class).clearCache();

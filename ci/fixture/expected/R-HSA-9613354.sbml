@@ -1,8 +1,8 @@
 <?xml version='1.0' encoding='utf-8' standalone='no'?>
-<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" level="3" version="1">
+<sbml xmlns="http://www.sbml.org/sbml/level3/version1/core" layout:required="false" level="3" version="1" xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1">
   <notes>
     <annotation>
-      <p xmlns="http://www.w3.org/1999/xhtml">SBML generated from Reactome version 97 on 10/24/26, 9:03 PM using JSBML version 1.5.</p>
+      <p xmlns="http://www.w3.org/1999/xhtml">SBML generated from Reactome version 97 on 10/25/26, 3:30 AM using JSBML version 1.5.</p>
     </annotation>
   </notes>
   <model id="pathway_9613354" metaid="metaid_0" name="Lipophagy">
@@ -59,6 +59,447 @@
         </rdf:Description>
       </rdf:RDF>
     </annotation>
+    <layout:listOfLayouts xmlns:layout="http://www.sbml.org/sbml/level3/version1/layout/version1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <layout:layout layout:id="layout">
+        <layout:dimensions layout:depth="0" layout:height="734" layout:width="988" />
+        <layout:listOfCompartmentGlyphs>
+          <layout:compartmentGlyph layout:compartment="compartment_70101" layout:id="layout_6">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0" />
+              <layout:dimensions layout:height="734" layout:width="988" />
+            </layout:boundingBox>
+          </layout:compartmentGlyph>
+          <layout:compartmentGlyph layout:compartment="compartment_13977" layout:id="layout_53">
+            <layout:boundingBox>
+              <layout:position layout:x="273" layout:y="165" />
+              <layout:dimensions layout:height="303" layout:width="349" />
+            </layout:boundingBox>
+          </layout:compartmentGlyph>
+        </layout:listOfCompartmentGlyphs>
+        <layout:listOfSpeciesGlyphs>
+          <layout:speciesGlyph layout:id="layout_8" layout:species="species_264476">
+            <layout:boundingBox>
+              <layout:position layout:x="237" layout:y="48" />
+              <layout:dimensions layout:height="22" layout:width="110" />
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="layout_9" layout:species="species_9613328">
+            <layout:boundingBox>
+              <layout:position layout:x="230" layout:y="144" />
+              <layout:dimensions layout:height="50" layout:width="112" />
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="layout_10" layout:species="species_9613350">
+            <layout:boundingBox>
+              <layout:position layout:x="434" layout:y="151" />
+              <layout:dimensions layout:height="36" layout:width="128" />
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="layout_20" layout:species="species_200405">
+            <layout:boundingBox>
+              <layout:position layout:x="659" layout:y="159" />
+              <layout:dimensions layout:height="22" layout:width="104" />
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="layout_21" layout:species="species_9613508">
+            <layout:boundingBox>
+              <layout:position layout:x="536" layout:y="313" />
+              <layout:dimensions layout:height="37" layout:width="134" />
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="layout_23" layout:species="species_9613547">
+            <layout:boundingBox>
+              <layout:position layout:x="540" layout:y="446" />
+              <layout:dimensions layout:height="36" layout:width="126" />
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="layout_34" layout:species="species_9613533">
+            <layout:boundingBox>
+              <layout:position layout:x="309" layout:y="446" />
+              <layout:dimensions layout:height="36" layout:width="111" />
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="layout_44" layout:species="species_9620192">
+            <layout:boundingBox>
+              <layout:position layout:x="316" layout:y="659" />
+              <layout:dimensions layout:height="36" layout:width="99" />
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="layout_56" layout:species="species_1454683">
+            <layout:boundingBox>
+              <layout:position layout:x="673" layout:y="376" />
+              <layout:dimensions layout:height="42" layout:width="168" />
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="layout_57" layout:species="species_113592">
+            <layout:boundingBox>
+              <layout:position layout:x="688" layout:y="336" />
+              <layout:dimensions layout:height="30" layout:width="40" />
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+          <layout:speciesGlyph layout:id="layout_58" layout:species="species_29370">
+            <layout:boundingBox>
+              <layout:position layout:x="690" layout:y="429" />
+              <layout:dimensions layout:height="30" layout:width="41" />
+            </layout:boundingBox>
+          </layout:speciesGlyph>
+        </layout:listOfSpeciesGlyphs>
+        <layout:listOfReactionGlyphs>
+          <layout:reactionGlyph layout:id="layout_7" layout:reaction="reaction_9613352">
+            <layout:boundingBox>
+              <layout:position layout:x="441" layout:y="101" />
+              <layout:dimensions layout:height="12" layout:width="12" />
+            </layout:boundingBox>
+            <layout:curve>
+              <layout:listOfCurveSegments>
+                <layout:curveSegment xsi:type="LineSegment">
+                  <layout:start layout:x="385" layout:y="106" />
+                  <layout:end layout:x="447" layout:y="107" />
+                </layout:curveSegment>
+                <layout:curveSegment xsi:type="LineSegment">
+                  <layout:start layout:x="447" layout:y="107" />
+                  <layout:end layout:x="465" layout:y="127" />
+                </layout:curveSegment>
+              </layout:listOfCurveSegments>
+            </layout:curve>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="layout_7_substrate_0" layout:speciesGlyph="layout_8">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="385" layout:y="106" />
+                      <layout:end layout:x="313" layout:y="73" />
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+              <layout:speciesReferenceGlyph layout:id="layout_7_substrate_1" layout:speciesGlyph="layout_9">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="385" layout:y="106" />
+                      <layout:end layout:x="325" layout:y="138" />
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+              <layout:speciesReferenceGlyph layout:id="layout_7_product_0" layout:speciesGlyph="layout_10">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="465" layout:y="127" />
+                      <layout:end layout:x="483" layout:y="148" />
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="layout_19" layout:reaction="reaction_9613513">
+            <layout:boundingBox>
+              <layout:position layout:x="597" layout:y="270" />
+              <layout:dimensions layout:height="12" layout:width="12" />
+            </layout:boundingBox>
+            <layout:curve>
+              <layout:listOfCurveSegments>
+                <layout:curveSegment xsi:type="LineSegment">
+                  <layout:start layout:x="603" layout:y="241" />
+                  <layout:end layout:x="603" layout:y="276" />
+                </layout:curveSegment>
+                <layout:curveSegment xsi:type="LineSegment">
+                  <layout:start layout:x="603" layout:y="276" />
+                  <layout:end layout:x="603" layout:y="293" />
+                </layout:curveSegment>
+              </layout:listOfCurveSegments>
+            </layout:curve>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="layout_19_substrate_0" layout:speciesGlyph="layout_20">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="603" layout:y="241" />
+                      <layout:end layout:x="694" layout:y="184" />
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+              <layout:speciesReferenceGlyph layout:id="layout_19_substrate_1" layout:speciesGlyph="layout_10">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="603" layout:y="241" />
+                      <layout:end layout:x="524" layout:y="190" />
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+              <layout:speciesReferenceGlyph layout:id="layout_19_product_0" layout:speciesGlyph="layout_21">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="603" layout:y="293" />
+                      <layout:end layout:x="603" layout:y="310" />
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="layout_33" layout:reaction="reaction_9613565">
+            <layout:boundingBox>
+              <layout:position layout:x="496" layout:y="456" />
+              <layout:dimensions layout:height="12" layout:width="12" />
+            </layout:boundingBox>
+            <layout:curve>
+              <layout:listOfCurveSegments>
+                <layout:curveSegment xsi:type="LineSegment">
+                  <layout:start layout:x="519" layout:y="462" />
+                  <layout:end layout:x="502" layout:y="462" />
+                </layout:curveSegment>
+                <layout:curveSegment xsi:type="LineSegment">
+                  <layout:start layout:x="502" layout:y="462" />
+                  <layout:end layout:x="466" layout:y="463" />
+                </layout:curveSegment>
+              </layout:listOfCurveSegments>
+            </layout:curve>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="layout_33_substrate_0" layout:speciesGlyph="layout_23">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="519" layout:y="462" />
+                      <layout:end layout:x="537" layout:y="462" />
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+              <layout:speciesReferenceGlyph layout:id="layout_33_product_0" layout:speciesGlyph="layout_34">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="466" layout:y="463" />
+                      <layout:end layout:x="423" layout:y="463" />
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+              <layout:speciesReferenceGlyph layout:id="layout_33_product_1" layout:speciesGlyph="layout_20">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="466" layout:y="463" />
+                      <layout:end layout:x="466" layout:y="535" />
+                    </layout:curveSegment>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="466" layout:y="535" />
+                      <layout:end layout:x="919" layout:y="533" />
+                    </layout:curveSegment>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="919" layout:y="533" />
+                      <layout:end layout:x="920" layout:y="170" />
+                    </layout:curveSegment>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="920" layout:y="170" />
+                      <layout:end layout:x="766" layout:y="170" />
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="layout_43" layout:reaction="reaction_9613666">
+            <layout:boundingBox>
+              <layout:position layout:x="358" layout:y="571" />
+              <layout:dimensions layout:height="12" layout:width="12" />
+            </layout:boundingBox>
+            <layout:curve>
+              <layout:listOfCurveSegments>
+                <layout:curveSegment xsi:type="LineSegment">
+                  <layout:start layout:x="364" layout:y="531" />
+                  <layout:end layout:x="364" layout:y="577" />
+                </layout:curveSegment>
+                <layout:curveSegment xsi:type="LineSegment">
+                  <layout:start layout:x="364" layout:y="577" />
+                  <layout:end layout:x="364" layout:y="616" />
+                </layout:curveSegment>
+              </layout:listOfCurveSegments>
+            </layout:curve>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="layout_43_substrate_0" layout:speciesGlyph="layout_34">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="364" layout:y="531" />
+                      <layout:end layout:x="364" layout:y="485" />
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+              <layout:speciesReferenceGlyph layout:id="layout_43_product_0" layout:speciesGlyph="layout_44">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="364" layout:y="616" />
+                      <layout:end layout:x="364" layout:y="656" />
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+          <layout:reactionGlyph layout:id="layout_55" layout:reaction="reaction_9613530">
+            <layout:boundingBox>
+              <layout:position layout:x="597" layout:y="391" />
+              <layout:dimensions layout:height="12" layout:width="12" />
+            </layout:boundingBox>
+            <layout:curve>
+              <layout:listOfCurveSegments>
+                <layout:curveSegment xsi:type="LineSegment">
+                  <layout:start layout:x="603" layout:y="375" />
+                  <layout:end layout:x="603" layout:y="397" />
+                </layout:curveSegment>
+                <layout:curveSegment xsi:type="LineSegment">
+                  <layout:start layout:x="603" layout:y="397" />
+                  <layout:end layout:x="603" layout:y="420" />
+                </layout:curveSegment>
+              </layout:listOfCurveSegments>
+            </layout:curve>
+            <layout:listOfSpeciesReferenceGlyphs>
+              <layout:speciesReferenceGlyph layout:id="layout_55_substrate_0" layout:speciesGlyph="layout_57">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="603" layout:y="375" />
+                      <layout:end layout:x="685" layout:y="355" />
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+              <layout:speciesReferenceGlyph layout:id="layout_55_substrate_1" layout:speciesGlyph="layout_21">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="603" layout:y="375" />
+                      <layout:end layout:x="603" layout:y="353" />
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+              <layout:speciesReferenceGlyph layout:id="layout_55_product_0" layout:speciesGlyph="layout_23">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="603" layout:y="420" />
+                      <layout:end layout:x="603" layout:y="443" />
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+              <layout:speciesReferenceGlyph layout:id="layout_55_product_1" layout:speciesGlyph="layout_58">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="603" layout:y="420" />
+                      <layout:end layout:x="687" layout:y="439" />
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+              <layout:speciesReferenceGlyph layout:id="layout_55_modifier_0" layout:speciesGlyph="layout_56">
+                <layout:curve>
+                  <layout:listOfCurveSegments>
+                    <layout:curveSegment xsi:type="LineSegment">
+                      <layout:start layout:x="670" layout:y="397" />
+                      <layout:end layout:x="603" layout:y="397" />
+                    </layout:curveSegment>
+                  </layout:listOfCurveSegments>
+                </layout:curve>
+              </layout:speciesReferenceGlyph>
+            </layout:listOfSpeciesReferenceGlyphs>
+          </layout:reactionGlyph>
+        </layout:listOfReactionGlyphs>
+        <layout:listOfTextGlyphs>
+          <layout:textGlyph layout:graphicalObject="layout_6" layout:id="text_layout_6" layout:text="cytosol">
+            <layout:boundingBox>
+              <layout:position layout:x="0" layout:y="0" />
+              <layout:dimensions layout:height="734" layout:width="988" />
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="layout_53" layout:id="text_layout_53" layout:text="lipid droplet">
+            <layout:boundingBox>
+              <layout:position layout:x="273" layout:y="165" />
+              <layout:dimensions layout:height="303" layout:width="349" />
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="layout_8" layout:id="text_layout_8" layout:text="HSPA8">
+            <layout:boundingBox>
+              <layout:position layout:x="237" layout:y="48" />
+              <layout:dimensions layout:height="22" layout:width="110" />
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="layout_9" layout:id="text_layout_9" layout:text="PLINs on lipid droplet surface">
+            <layout:boundingBox>
+              <layout:position layout:x="230" layout:y="144" />
+              <layout:dimensions layout:height="50" layout:width="112" />
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="layout_10" layout:id="text_layout_10" layout:text="PLINs:HSPA8">
+            <layout:boundingBox>
+              <layout:position layout:x="434" layout:y="151" />
+              <layout:dimensions layout:height="36" layout:width="128" />
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="layout_20" layout:id="text_layout_20" layout:text="PRKAA2">
+            <layout:boundingBox>
+              <layout:position layout:x="659" layout:y="159" />
+              <layout:dimensions layout:height="22" layout:width="104" />
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="layout_21" layout:id="text_layout_21" layout:text="PLINs:HSPA8:PRKAA2">
+            <layout:boundingBox>
+              <layout:position layout:x="536" layout:y="313" />
+              <layout:dimensions layout:height="37" layout:width="134" />
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="layout_23" layout:id="text_layout_23" layout:text="p-PLINs:HSPA8:PRKAA2">
+            <layout:boundingBox>
+              <layout:position layout:x="540" layout:y="446" />
+              <layout:dimensions layout:height="36" layout:width="126" />
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="layout_34" layout:id="text_layout_34" layout:text="p-PLINs:HSPA8">
+            <layout:boundingBox>
+              <layout:position layout:x="309" layout:y="446" />
+              <layout:dimensions layout:height="36" layout:width="111" />
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="layout_44" layout:id="text_layout_44" layout:text="p-PLINs:HSPA8">
+            <layout:boundingBox>
+              <layout:position layout:x="316" layout:y="659" />
+              <layout:dimensions layout:height="36" layout:width="99" />
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="layout_56" layout:id="text_layout_56" layout:text="AMPK-alpha2:AMPK-beta:AMPK-gamma:AMP">
+            <layout:boundingBox>
+              <layout:position layout:x="673" layout:y="376" />
+              <layout:dimensions layout:height="42" layout:width="168" />
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="layout_57" layout:id="text_layout_57" layout:text="ATP">
+            <layout:boundingBox>
+              <layout:position layout:x="688" layout:y="336" />
+              <layout:dimensions layout:height="30" layout:width="40" />
+            </layout:boundingBox>
+          </layout:textGlyph>
+          <layout:textGlyph layout:graphicalObject="layout_58" layout:id="text_layout_58" layout:text="ADP">
+            <layout:boundingBox>
+              <layout:position layout:x="690" layout:y="429" />
+              <layout:dimensions layout:height="30" layout:width="41" />
+            </layout:boundingBox>
+          </layout:textGlyph>
+        </layout:listOfTextGlyphs>
+      </layout:layout>
+    </layout:listOfLayouts>
     <listOfCompartments>
       <compartment constant="true" id="compartment_70101" metaid="metaid_2" name="cytosol" sboTerm="SBO:0000290">
         <annotation>
@@ -88,7 +529,7 @@
       </compartment>
     </listOfCompartments>
     <listOfSpecies>
-      <species boundaryCondition="false" compartment="compartment_70101" constant="false" hasOnlySubstanceUnits="false" id="species_264476" metaid="metaid_1" name="HSPA8 [cytosol]" sboTerm="SBO:0000297">
+      <species boundaryCondition="false" compartment="compartment_70101" constant="false" hasOnlySubstanceUnits="false" id="species_264476" metaid="metaid_1" name="HSPA8 [cytosol]" sboTerm="SBO:0000252">
         <notes>
           <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome EntityWithAccessionedSequence. This is a protein</p>
         </notes>
@@ -143,7 +584,7 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species boundaryCondition="false" compartment="compartment_13977" constant="false" hasOnlySubstanceUnits="false" id="species_9613328" metaid="metaid_3" name="PLINs on lipid droplet surface [lipid droplet]">
+      <species boundaryCondition="false" compartment="compartment_13977" constant="false" hasOnlySubstanceUnits="false" id="species_9613328" metaid="metaid_3" name="PLINs on lipid droplet surface [lipid droplet]" sboTerm="SBO:0000289">
         <notes>
           <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome DefinedSet. This is a list of alternative entities, any of which can perform the given function</p>
         </notes>
@@ -165,7 +606,7 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species boundaryCondition="false" compartment="compartment_13977" constant="false" hasOnlySubstanceUnits="false" id="species_9613350" metaid="metaid_5" name="PLINs:HSPA8 [lipid droplet]" sboTerm="SBO:0000253">
+      <species boundaryCondition="false" compartment="compartment_13977" constant="false" hasOnlySubstanceUnits="false" id="species_9613350" metaid="metaid_5" name="PLINs:HSPA8 [lipid droplet]" sboTerm="SBO:0000297">
         <notes>
           <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome Complex. Here is Reactomes nested structure for this complex: (P11142, O60664, Q99541). Reactome uses a nested structure for complexes, which cannot be fully represented in SBML Level 3 Version 1 core</p>
         </notes>
@@ -188,7 +629,7 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species boundaryCondition="false" compartment="compartment_70101" constant="false" hasOnlySubstanceUnits="false" id="species_200405" metaid="metaid_6" name="PRKAA2 [cytosol]" sboTerm="SBO:0000297">
+      <species boundaryCondition="false" compartment="compartment_70101" constant="false" hasOnlySubstanceUnits="false" id="species_200405" metaid="metaid_6" name="PRKAA2 [cytosol]" sboTerm="SBO:0000252">
         <notes>
           <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome EntityWithAccessionedSequence. This is a protein</p>
         </notes>
@@ -220,7 +661,7 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species boundaryCondition="false" compartment="compartment_13977" constant="false" hasOnlySubstanceUnits="false" id="species_9613508" metaid="metaid_7" name="PLINs:HSPA8:PRKAA2 [lipid droplet]" sboTerm="SBO:0000253">
+      <species boundaryCondition="false" compartment="compartment_13977" constant="false" hasOnlySubstanceUnits="false" id="species_9613508" metaid="metaid_7" name="PLINs:HSPA8:PRKAA2 [lipid droplet]" sboTerm="SBO:0000297">
         <notes>
           <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome Complex. Here is Reactomes nested structure for this complex: (P54646, P11142, O60664, Q99541). Reactome uses a nested structure for complexes, which cannot be fully represented in SBML Level 3 Version 1 core</p>
         </notes>
@@ -244,7 +685,7 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species boundaryCondition="false" compartment="compartment_70101" constant="false" hasOnlySubstanceUnits="false" id="species_1454683" metaid="metaid_8" name="AMPK-alpha2:AMPK-beta:AMPK-gamma:AMP [cytosol]" sboTerm="SBO:0000253">
+      <species boundaryCondition="false" compartment="compartment_70101" constant="false" hasOnlySubstanceUnits="false" id="species_1454683" metaid="metaid_8" name="AMPK-alpha2:AMPK-beta:AMPK-gamma:AMP [cytosol]" sboTerm="SBO:0000297">
         <notes>
           <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome Complex. Here is Reactomes nested structure for this complex: (P54646, O43741, Q9Y478, 456215, Q9UGJ0, P54619, Q9UGI9). Reactome uses a nested structure for complexes, which cannot be fully represented in SBML Level 3 Version 1 core</p>
         </notes>
@@ -305,7 +746,7 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species boundaryCondition="false" compartment="compartment_13977" constant="false" hasOnlySubstanceUnits="false" id="species_9613547" metaid="metaid_11" name="p-PLINs:HSPA8:PRKAA2 [lipid droplet]" sboTerm="SBO:0000253">
+      <species boundaryCondition="false" compartment="compartment_13977" constant="false" hasOnlySubstanceUnits="false" id="species_9613547" metaid="metaid_11" name="p-PLINs:HSPA8:PRKAA2 [lipid droplet]" sboTerm="SBO:0000297">
         <notes>
           <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome Complex. Here is Reactomes nested structure for this complex: (P54646, P11142, O60664, Q99541). Reactome uses a nested structure for complexes, which cannot be fully represented in SBML Level 3 Version 1 core</p>
         </notes>
@@ -329,7 +770,7 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species boundaryCondition="false" compartment="compartment_13977" constant="false" hasOnlySubstanceUnits="false" id="species_9613533" metaid="metaid_12" name="p-PLINs:HSPA8 [lipid droplet]" sboTerm="SBO:0000253">
+      <species boundaryCondition="false" compartment="compartment_13977" constant="false" hasOnlySubstanceUnits="false" id="species_9613533" metaid="metaid_12" name="p-PLINs:HSPA8 [lipid droplet]" sboTerm="SBO:0000297">
         <notes>
           <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome Complex. Here is Reactomes nested structure for this complex: (P11142, O60664, Q99541). Reactome uses a nested structure for complexes, which cannot be fully represented in SBML Level 3 Version 1 core</p>
         </notes>
@@ -352,7 +793,7 @@
           </rdf:RDF>
         </annotation>
       </species>
-      <species boundaryCondition="false" compartment="compartment_70101" constant="false" hasOnlySubstanceUnits="false" id="species_9620192" metaid="metaid_13" name="p-PLINs:HSPA8 [cytosol]" sboTerm="SBO:0000253">
+      <species boundaryCondition="false" compartment="compartment_70101" constant="false" hasOnlySubstanceUnits="false" id="species_9620192" metaid="metaid_13" name="p-PLINs:HSPA8 [cytosol]" sboTerm="SBO:0000297">
         <notes>
           <p xmlns="http://www.w3.org/1999/xhtml">Derived from a Reactome Complex. Here is Reactomes nested structure for this complex: (P11142, O60664, Q99541). Reactome uses a nested structure for complexes, which cannot be fully represented in SBML Level 3 Version 1 core</p>
         </notes>
