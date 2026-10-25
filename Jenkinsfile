@@ -11,6 +11,9 @@ pipeline{
 	// Set output folder that will hold the files output by this step.
 	environment {
 		OUTPUT_FOLDER = "sbml"
+		// The 'DiagramConverter' step's output folder, which it moves into the release's download folder:
+		// the diagram files the layout is drawn from.
+		DIAGRAM_FOLDER = "diagram"
 		ECR_URL = 'public.ecr.aws/reactome/sbml-exporter'
 		CONT_NAME = 'sbml_exporter_container'
 		CONT_ROOT = '/opt/sbml-exporter'
@@ -41,6 +44,9 @@ pipeline{
 		stage('Main: Run SBML-Exporter'){
 			steps{
 				script{
+					def releaseVersion = utils.getReleaseVersion()
+					def diagramPath = "${env.ABS_DOWNLOAD_PATH}/${releaseVersion}/${env.DIAGRAM_FOLDER}"
+					sh "test -d ${diagramPath}"
 					sh "mkdir -p ${env.OUTPUT_FOLDER}"
 					sh "rm -rf ${env.OUTPUT_FOLDER}/*"
 					sh "mkdir -p logs"
@@ -51,10 +57,11 @@ pipeline{
 							docker run \\
 							-v \$(pwd)/logs:${CONT_ROOT}/logs \\
 							-v \$(pwd)/${env.OUTPUT_FOLDER}:${CONT_ROOT}/${env.OUTPUT_FOLDER} \\
+							-v ${diagramPath}:${CONT_ROOT}/${env.DIAGRAM_FOLDER}:ro \\
 							--net=host \\
 							--name ${CONT_NAME} \\
 							${ECR_URL}:latest \\
-							/bin/bash -c 'java -Xmx${env.JAVA_MEM_MAX}m -jar target/sbml-exporter-exec.jar --user $neo4jUser --password $neo4jPass --output ./${env.OUTPUT_FOLDER} --verbose'
+							/bin/bash -c 'java -Xmx${env.JAVA_MEM_MAX}m -jar target/sbml-exporter-exec.jar --user $neo4jUser --password $neo4jPass --output ./${env.OUTPUT_FOLDER} --diagrams ./${env.DIAGRAM_FOLDER} --diagram-release ${releaseVersion} --verbose'
 						"""
 					}
 					sh "sudo chown jenkins:jenkins logs"
@@ -118,16 +125,10 @@ pipeline{
 		stage('Post: Archive Outputs'){
 			steps{
 				script{
-					def logFile = "sbml-exporter.log"
-					def logFilePath = "logs/${logFile}"
-					sh """
-						if [ -f "${logFile}" ]; then
-							mv "${logFile}" .
-						fi
-					"""
-
+					// The container writes its log, and the logs rolled past 10 MB (sbml-exporter-N-log.zip), to
+					// logs/, the folder cleanUpAndArchiveBuildFiles archives whole.
 					def dataFiles = ["all_species.3.1.sbml.tgz", "homo_sapiens.3.1.sbml.tgz"]
-					def logFiles = ["${logFile}"]
+					def logFiles = ["logs/sbml-exporter.log"]
 					def foldersToDelete = ["${env.OUTPUT_FOLDER}"]
 					utils.cleanUpAndArchiveBuildFiles("sbml_exporter", dataFiles, logFiles, foldersToDelete)
 				}
