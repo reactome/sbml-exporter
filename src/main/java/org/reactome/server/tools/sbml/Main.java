@@ -121,6 +121,10 @@ public class Main {
                 c.writeToFile(output);
             } catch (ClassCastException e) {
                 error(identifier + " cannot be converted. Reason: This identifier does not belong to a Pathway");
+            } catch (RuntimeException e) {
+                // Not found, a missing diagram file, a file that cannot be written: the others still go on
+                logger.error(identifier + " cannot be converted", e);
+                error(identifier + " cannot be converted. Reason: " + e);
             }
         }
     }
