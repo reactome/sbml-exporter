@@ -46,8 +46,8 @@ pipeline{
 				script{
 					def releaseVersion = utils.getReleaseVersion()
 					def diagramPath = "${env.ABS_DOWNLOAD_PATH}/${releaseVersion}/${env.DIAGRAM_FOLDER}"
-					// The diagram files must be at the folder's top: when it is rerun, the diagram step recreates the
-					// folder empty and moves its output into it, one level down.
+					// The diagram files must be at the folder's top, where the exporter reads them: fail here, before the
+					// run, if the folder is missing or holds none.
 					sh """
 						if ! find '${diagramPath}/' -maxdepth 1 -name 'R-*.json' -print -quit | grep -q .; then
 							echo "No diagram files at the top of ${diagramPath}"
