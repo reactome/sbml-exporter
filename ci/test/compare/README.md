@@ -9,6 +9,9 @@ Files for showing `ci/compare.py` works, each folder holding one `event.sbml`:
   reports 0 differences.
 - `changed`: the reference with a product removed, a species' SBO term changed,
   a literature reference removed and a part's count changed in a complex's note;
-  and in the layout, two species glyphs swapped in order, a backbone point
-  moved, a substrate's glyph pointing at the other species and a label's text
-  changed. The comparison reports each and fails.
+  and in the layout: the package required, two species glyphs swapped in
+  order, a species glyph resized, the compartment glyph's target changed, a
+  backbone point moved, a substrate's glyph pointing at the other species, a
+  modifier's branch moved and given a role, a product's branch added, and a
+  label's text changed. Each layout key the comparison reads is changed here
+  at least once. The comparison reports each and fails.

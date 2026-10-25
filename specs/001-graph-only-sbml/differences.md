@@ -31,28 +31,34 @@ something different from the relational database of the same release.
 
 ## The layout
 
-Measured in #47 (T021) over the sample's six events with a layout today (R-HSA-112409,
-R-HSA-2894858, R-HSA-9839373, R-HSA-109606, R-MMU-69620, R-HSA-69620): today's model of
-each was laid out again from release 97's diagram file, and `ci/compare.py` compared the
-two. Each file's offset (today's coordinates are the diagram's shifted by a fixed amount,
-from +3, +24 to +113, +38) is taken off, and labels' boxes are set aside (FR-007). The
-re-laid files are all valid (`ci/validate.py`), where today's are not (below). Glyph ids,
-targets, kinds and curves are otherwise the same; every difference is one of these.
+Measured in #47 and #50 (T021) over the sample's six events with a layout today
+(R-HSA-112409, R-HSA-2894858, R-HSA-9839373, R-HSA-109606, R-MMU-69620, R-HSA-69620): today's
+model of each was laid out again from release 97's diagram file, and `ci/compare.py`
+compared the two. Each file's offset is taken off (today's coordinates are the diagram's
+shifted by a fixed amount per diagram: +3, +24; +53, +27; +22, +71; +113, +38; +48, +29 for
+both R-HSA-69620 and R-MMU-69620), and labels' boxes are set aside (FR-007). The generation
+note differs in all six only because of how the files were laid out again for this
+comparison; it is not a difference of the converter's. Glyph sets, ids, targets, order and
+curves are otherwise the same as today's, R-HSA-2894858's entirely; every other difference is
+one of these.
 
 | Difference | Count in the sample | Cause |
 | --- | --- | --- |
 | A node's box | 46 of 538 species glyphs, in five events | Today's are resized to their label's font (`tightNodes`); the files keep the drawn size (FR-007) |
 | A branch's end, or a backbone's end, a few units off | 67 branch ends, all at a resized node; 24 backbone ends | Follow the resized nodes: today's re-attached to the resized box |
 | The hidden compartments' anchor | R-HSA-112409 | It is the diagram's bottom centre, which a resized node moved |
-| Disease reactions drawn over their normal counterparts: 19 reaction glyphs, 16 species glyphs and their labels added, and the 15 species' SBO terms set by the layout | R-HSA-2894858, a disease diagram | The diagram step draws each disease reaction over its faded normal one, as the website shows it; the relational diagram drew 2 of the pathway's 21 reactions. Kept: the layout shows what the website's diagram shows (US3) |
-| Glyph order | R-MMU-69620 (each kind's glyphs) | The relational diagram's order was that of its making; an inferred diagram's is neither its ids' nor the file's. The sets, ids and targets are the same |
-| SBO term of a drawn species: protein (252), not set (289) | 4 species in R-MMU-69620 | Single proteins in the graph and the file, drawn as sets in the relational diagram copied from the human one |
-| A backbone the relational diagram stored with a repeated point, and its product's branch | 1 reaction in R-HSA-9839373 | The file's backbone has the point between; the relational one cannot be recovered from it |
+| Glyph order | R-MMU-69620 (its species, reaction and text glyphs) | The relational diagram's order was that of its making; an inferred diagram's is neither its ids' nor the file's. The sets, ids and targets are the same |
+| SBO term of a drawn species: a protein's (252), not a set's (289) | 4 species in R-MMU-69620 | The relational converter took the stored drawing's class, a set copied from the human diagram; the diagram step corrects a class that disagrees with the graph (`fixBrokenRenderableClass`), and these are single proteins in the graph. The stored class is not in the file |
+| A backbone the relational diagram stored with a repeated point: its curve, the reaction's box (its hub moved), and its product's branch | 1 reaction in R-HSA-9839373 | The file's backbone has the point between; the relational one cannot be recovered from it |
 
-Fixed against today's, since today's layouts are invalid:
+Matched to today's (decided 25 Oct 2026: match today, and suggest improvements as issues):
+
+- **The diagram step's copies in a disease diagram are left out.** For a disease diagram not drawn as a normal one, the diagram step (reactome/diagram-converter, through CuratorTool's `DiseasePathwayImageEditor`) copies the normal reaction's glyph for each disease reaction the stored diagram does not draw, and adds disease nodes over the normal ones it replaces. The relational converter read the stored diagram alone, so its layout has none: in R-HSA-2894858, 2 of the 21 reactions, where the files have 21 (19 reaction and 16 species glyphs copied). The file does not list the copies, but their ids tell them apart: a new object takes its id from a counter running across the whole conversion, past the stored diagram's ids, so the copies are the disease objects with an id above every normal object's (95906 and up, against 2996). With them left out, R-HSA-2894858's layout is today's. Drawing them, as the website does, is suggested in #48; having the diagram step list them, which would make the rule exact, in #49.
+
+Fixed, since they make the layout invalid:
 
 - **The layout has an id and dimensions** (the diagram's extent): libSBML refuses a layout without them (6020305, 6020315), and every one of today's has neither.
-- **A branch to a part not drawn as a species is left out**: a failed reaction's overlay names its normal counterpart's product, which is not in the model, and a glyph pointing at no species glyph is invalid (6021011). The others keep their numbers.
+- **A branch to a part not drawn as a species is left out**, so that no glyph points at nothing (6021011); the others keep their numbers. None of today's six files has one: the port's own output did, from a disease copy, before the copies were left out.
 
 With the layout valid, libSBML goes on to warn that a set's SBO term, 289 (functional compartment), is not a material entity's (10713): the relational converter's choice for Minerva, kept.
 

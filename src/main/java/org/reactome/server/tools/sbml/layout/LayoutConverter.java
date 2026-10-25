@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.reactome.server.tools.diagram.data.layout.Compartment;
 import org.reactome.server.tools.diagram.data.layout.Coordinate;
@@ -61,7 +62,7 @@ public class LayoutConverter {
 
     public static final String LAYOUT_ID_PREFIX = "layout_";
     public static final String TEXT_PREFIX = "text_";
-    // Glyph ids are LAYOUT_ID_PREFIX and a number, so this cannot be one
+    // Every glyph id has more after LAYOUT_ID_PREFIX ("layout_"), so none can be this
     public static final String LAYOUT_ID = "layout";
 
     // The relational renderer's constants: org.gk.render.DefaultRenderConstants.EDGE_TYPE_WIDGET_WIDTH and
@@ -79,7 +80,53 @@ public class LayoutConverter {
      * Whether the diagram draws a reaction: only then has the event a layout, as today.
      */
     public static boolean hasReactions(Diagram diagram) {
-        return diagram.getEdges() != null && diagram.getEdges().stream().anyMatch(LayoutConverter::isReaction);
+        return edges(diagram).stream().anyMatch(LayoutConverter::isReaction);
+    }
+
+    /**
+     * The diagram step's copies in a disease diagram, which the relational diagram never had.
+     *
+     * For a disease diagram not drawn as a normal one, the diagram step (reactome/diagram-converter, through
+     * CuratorTool's DiseasePathwayImageEditor) copies the glyph of the normal reaction of each disease reaction the
+     * stored diagram does not draw, and adds a disease node over each normal node that reaction replaces. The
+     * relational converter read the stored diagram alone, so its layout has none of them (spec 001,
+     * differences.md). The file does not list them; their ids do tell them apart: a new object takes its id from
+     * a counter that runs across the whole conversion, past the stored diagram's ids, so the copies are the disease
+     * objects with an id above every normal object's. Drawing them is suggested in sbml-exporter #48, and listing
+     * them in the file, which would make this exact, in #49.
+     */
+    static Set<Long> copies(Diagram diagram) {
+        if (!Boolean.FALSE.equals(diagram.getForNormalDraw())) return Collections.emptySet();
+        List<DiagramObject> drawn = new ArrayList<>();
+        if (diagram.getNodes() != null) drawn.addAll(diagram.getNodes());
+        if (diagram.getEdges() != null) drawn.addAll(diagram.getEdges());
+        List<DiagramObject> all = new ArrayList<>(drawn);
+        if (diagram.getCompartments() != null) all.addAll(diagram.getCompartments());
+        if (diagram.getNotes() != null) all.addAll(diagram.getNotes());
+        long normalMax = Long.MIN_VALUE;
+        for (DiagramObject o : all) {
+            if (!Boolean.TRUE.equals(o.getIsDisease())) normalMax = Math.max(normalMax, o.getId());
+        }
+        Set<Long> rtn = new HashSet<>();
+        if (normalMax == Long.MIN_VALUE) return rtn; // Nothing normal to tell the copies by
+        for (DiagramObject o : drawn) {
+            if (Boolean.TRUE.equals(o.getIsDisease()) && o.getId() > normalMax) rtn.add(o.getId());
+        }
+        return rtn;
+    }
+
+    /** The diagram's nodes, without the diagram step's copies. */
+    private static List<Node> nodes(Diagram diagram) {
+        Set<Long> copies = copies(diagram);
+        return diagram.getNodes() == null ? new ArrayList<>() :
+                diagram.getNodes().stream().filter(n -> !copies.contains(n.getId())).collect(Collectors.toList());
+    }
+
+    /** The diagram's edges, without the diagram step's copies. */
+    private static List<Edge> edges(Diagram diagram) {
+        Set<Long> copies = copies(diagram);
+        return diagram.getEdges() == null ? new ArrayList<>() :
+                diagram.getEdges().stream().filter(e -> !copies.contains(e.getId())).collect(Collectors.toList());
     }
 
     private static boolean isReaction(Edge edge) {
@@ -151,7 +198,7 @@ public class LayoutConverter {
     private static double[] getDiagramBounds(Diagram diagram) {
         int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
         List<NodeCommon> all = new ArrayList<>();
-        if (diagram.getNodes() != null) all.addAll(diagram.getNodes());
+        all.addAll(nodes(diagram));
         if (diagram.getNotes() != null) all.addAll(diagram.getNotes());
         if (diagram.getCompartments() != null) all.addAll(diagram.getCompartments());
         for (NodeCommon node : all) {
@@ -165,7 +212,7 @@ public class LayoutConverter {
     }
 
     private static void handleNodes(Layout layout, Diagram diagram) {
-        for (Node node : byId(diagram.getNodes())) {
+        for (Node node : byId(nodes(diagram))) {
             if (node.getReactomeId() == null) continue;
             String speciesId = SbmlConverter.SPECIES_PREFIX + node.getReactomeId();
             // Some nodes are not in the model (a pathway, say)
@@ -199,7 +246,7 @@ public class LayoutConverter {
     }
 
     private static void handleReactions(Layout layout, Diagram diagram) {
-        for (Edge edge : byId(diagram.getEdges())) {
+        for (Edge edge : byId(edges(diagram))) {
             if (isReaction(edge)) handleReaction(layout, edge);
         }
     }

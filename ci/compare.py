@@ -30,6 +30,10 @@ Set aside, as FR-004 says:
 - a text glyph's box: the diagram files have no label size, so a label's box
   is its glyph's (FR-007).
 
+Not compared, as today's files have none of them: the layout's own id and
+dimensions (today's layouts have neither, which libSBML refuses; the graph
+converter's have both), general glyphs, and species reference glyphs' boxes.
+
 History creators are compared as hashes, so the report never prints a name.
 Every other difference is printed and fails the comparison.
 """
@@ -83,7 +87,9 @@ def describe(sbase, path, out):
 
 
 def number(value):
-    return f"{value:g}"
+    """A coordinate, exact to a thousandth at any size."""
+    value = round(value, 3)
+    return str(int(value)) if value == int(value) else repr(value)
 
 
 def box(glyph, offset):
@@ -117,7 +123,8 @@ def offset(reference, candidate):
     """The commonest difference between the same species glyphs' positions: what to take off the reference's."""
     old, new = positions(reference), positions(candidate)
     shifts = [(old[k][0] - new[k][0], old[k][1] - new[k][1]) for k in old.keys() & new.keys()]
-    return max(set(shifts), key=shifts.count) if shifts else (0, 0)
+    # The commonest; a tie goes to the smallest, so that every run takes the same.
+    return max(sorted(set(shifts)), key=shifts.count) if shifts else (0, 0)
 
 
 def layout(document, at_offset, out):
