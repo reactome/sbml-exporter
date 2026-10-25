@@ -1,5 +1,6 @@
 package org.reactome.server.tools.sbml.layout;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.reactome.server.tools.diagram.data.layout.Diagram;
@@ -14,6 +15,7 @@ import java.nio.file.Paths;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Reading the fixture's diagram file (Lipophagy, release 97; ci/fixture/README.md), and the folder's release
@@ -26,7 +28,7 @@ class DiagramFilesTest {
 
     @Test
     void readsWhatTheLayoutNeeds() {
-        Diagram diagram = new DiagramFiles(FIXTURE, 97, 97).read("R-HSA-9613354").orElseThrow(AssertionError::new);
+        Diagram diagram = new DiagramFiles(FIXTURE, 97, 97).read("R-HSA-9613354", true).orElseThrow(AssertionError::new);
 
         assertEquals("R-HSA-9613354", diagram.getStableId());
         assertEquals(11, diagram.getNodes().size());
@@ -54,13 +56,38 @@ class DiagramFilesTest {
         assertEquals(423d, reaction.getOutputs().get(0).getPoints().get(0).getX());
         assertEquals(4, reaction.getOutputs().get(1).getPoints().size());
 
+        // A catalyst's branch.
+        Edge catalysed = diagram.getEdges().stream().filter(e -> e.getId() == 55L).findFirst().orElseThrow(AssertionError::new);
+        assertEquals(56L, catalysed.getCatalysts().get(0).getId());
+        assertEquals(1, catalysed.getCatalysts().get(0).getPoints().size());
+
         assertEquals(13977L, diagram.getCompartments().get(0).getReactomeId());
         assertEquals(349d, diagram.getCompartments().get(0).getProp().getWidth());
     }
 
     @Test
     void anEventWithoutItsOwnFileHasNoDiagram() {
-        assertFalse(new DiagramFiles(FIXTURE, 97, 97).read("R-HSA-8932284").isPresent());
+        assertFalse(new DiagramFiles(FIXTURE, 97, 97).read("R-HSA-8932284", false).isPresent());
+    }
+
+    @Test
+    void aMissingFileForADiagramIsAnError() {
+        // A fetch that was skipped or failed, not a pathway without a diagram.
+        assertThrows(IllegalStateException.class, () -> new DiagramFiles(FIXTURE, 97, 97).read("R-HSA-8932284", true));
+    }
+
+    @Test
+    void anObjectThatIsNotTheEventsDiagramIsAnError(@TempDir Path tmp) throws Exception {
+        Files.write(tmp.resolve("R-TST-1.json"), "{}".getBytes(StandardCharsets.UTF_8));
+        Files.copy(FIXTURE.resolve("R-HSA-9613354.json"), tmp.resolve("R-TST-2.json"));
+        DiagramFiles files = new DiagramFiles(tmp, 97, 97);
+        assertThrows(IllegalStateException.class, () -> files.read("R-TST-1", true));
+        assertThrows(IllegalStateException.class, () -> files.read("R-TST-2", true));
+    }
+
+    @Test
+    void refusesWhatIsNotAStableId() {
+        assertThrows(IllegalArgumentException.class, () -> new DiagramFiles(FIXTURE, 97, 97).read("../R-HSA-9613354", false));
     }
 
     @Test
@@ -77,6 +104,8 @@ class DiagramFilesTest {
     @Test
     void anUnreadableFileIsAnError(@TempDir Path tmp) throws Exception {
         Files.write(tmp.resolve("R-TST-1.json"), "{\"nodes\": [".getBytes(StandardCharsets.UTF_8));
-        assertThrows(IllegalStateException.class, () -> new DiagramFiles(tmp, 97, 97).read("R-TST-1"));
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> new DiagramFiles(tmp, 97, 97).read("R-TST-1", true));
+        // Jackson's own error, not diagram-reader's, whose message holds the whole file.
+        assertTrue(e.getCause() instanceof JsonProcessingException);
     }
 }
