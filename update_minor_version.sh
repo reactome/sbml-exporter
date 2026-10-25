@@ -29,6 +29,12 @@ for module in lib cli; do
   xmlstarlet ed -L -u "//_:project/_:parent/_:version" -v "${!PACKAGE_NAME}" "${module}/pom.xml"
 done
 
+# the library check (ci/library-check) stands alone, at the library's version
+xmlstarlet ed -L \
+  -u "//_:project/_:parent/_:version" -v "${REACTOME_PARENT_VERSION}" \
+  -u "//_:project/_:version" -v "${!PACKAGE_NAME}" \
+  "ci/library-check/pom.xml"
+
 echo "Maven ${PACKAGE_NAME} updated to ${!PACKAGE_NAME}"
 echo "Maven parent updated to ${REACTOME_PARENT_VERSION}"
 

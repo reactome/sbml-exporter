@@ -139,6 +139,7 @@ jobs:
               run: mvn -B -nsu install -pl lib -am
 
             - name: The library alone gives the command line's files, in parallel too
+              timeout-minutes: 15
               run: |
                 mvn -B -q -nsu -f ci/library-check/pom.xml package
                 java -Duser.timezone=UTC -Duser.language=en -Duser.country=US \
@@ -148,6 +149,14 @@ jobs:
                 python ci/compare.py out library/sequence
                 python ci/compare.py library/sequence library/parallel-a
                 python ci/compare.py library/sequence library/parallel-b
+                # The same JVM writes all three folders, so they must be the same bytes but the time
+                # of writing: stricter than compare.py, which sets aside order and metaids.
+                for f in library/sequence/*.sbml; do
+                  for copy in parallel-a parallel-b; do
+                    diff <(sed -E 's/ on [^<]* using / on <date> using /' "$f") \
+                         <(sed -E 's/ on [^<]* using / on <date> using /' "library/$copy/$(basename "$f")")
+                  done
+                done
 
     docker-push:
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
