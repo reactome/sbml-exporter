@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 
 import org.reactome.server.tools.diagram.data.layout.Compartment;
@@ -47,8 +48,12 @@ import org.sbml.jsbml.ext.layout.TextGlyph;
  *     <li>a node's size is the stored one, with no font-based resizing ({@code tightNodes});</li>
  *     <li>a label's box is its glyph's box: the file has no label size.</li>
  * </ul>
- * The relational diagram listed its components by id, so the glyphs are written in the order of their diagram
- * ids, each kind in its own pass.
+ * The relational diagram listed its components in the order they were added to it, which is their ids' as ids are
+ * handed out (and was, in R-HSA-112409): the glyphs are written in the order of their diagram ids, each kind in its
+ * own pass. T021 checks the order on every event compared.
+ *
+ * Unlike the relational converter, which logged any failure and wrote what it had, a diagram that cannot be laid
+ * out (a node without a box, a reaction without a position) fails the conversion, naming the diagram.
  */
 public class LayoutConverter {
 
@@ -70,10 +75,25 @@ public class LayoutConverter {
      * Whether the diagram draws a reaction: only then has the event a layout, as today.
      */
     public static boolean hasReactions(Diagram diagram) {
-        return diagram.getEdges() != null && diagram.getEdges().stream().anyMatch(e -> e.getReactomeId() != null);
+        return diagram.getEdges() != null && diagram.getEdges().stream().anyMatch(LayoutConverter::isReaction);
     }
 
+    private static boolean isReaction(Edge edge) {
+        return edge.getReactomeId() != null && "Reaction".equals(edge.getRenderableClass());
+    }
+
+    /**
+     * @throws IllegalStateException when the diagram cannot be laid out
+     */
     public static void addLayout(Model model, Diagram diagram) {
+        try {
+            layOut(model, diagram);
+        } catch (RuntimeException e) {
+            throw new IllegalStateException("The diagram " + diagram.getStableId() + " cannot be laid out", e);
+        }
+    }
+
+    private static void layOut(Model model, Diagram diagram) {
         LayoutModelPlugin lModel = new LayoutModelPlugin(model);
         model.addExtension(LayoutConstants.namespaceURI, lModel);
         Layout layout = lModel.createLayout();
@@ -117,17 +137,17 @@ public class LayoutConverter {
     }
 
     /**
-     * minX, minY, maxX, maxY over every node's and compartment's box, in whole units as the relational
-     * diagram's rectangles had them.
+     * minX, minY, maxX, maxY over every node's, note's and compartment's box (the relational diagram's nodes, a
+     * note being one), in whole units as the relational diagram's rectangles had them.
      */
     private static double[] getDiagramBounds(Diagram diagram) {
         int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE, maxX = Integer.MIN_VALUE, maxY = Integer.MIN_VALUE;
         List<NodeCommon> all = new ArrayList<>();
         if (diagram.getNodes() != null) all.addAll(diagram.getNodes());
+        if (diagram.getNotes() != null) all.addAll(diagram.getNotes());
         if (diagram.getCompartments() != null) all.addAll(diagram.getCompartments());
         for (NodeCommon node : all) {
             NodeProperties p = node.getProp();
-            if (p == null) continue;
             minX = Math.min(minX, p.getX().intValue());
             minY = Math.min(minY, p.getY().intValue());
             maxX = Math.max(maxX, (int) (p.getX() + p.getWidth()));
@@ -172,7 +192,7 @@ public class LayoutConverter {
 
     private static void handleReactions(Layout layout, Diagram diagram) {
         for (Edge edge : byId(diagram.getEdges())) {
-            if (edge.getReactomeId() != null) handleReaction(layout, edge);
+            if (isReaction(edge)) handleReaction(layout, edge);
         }
     }
 
@@ -181,7 +201,9 @@ public class LayoutConverter {
      * its midpoint, and a reaction with a single input (output) gets an input (output) branch, its backbone's
      * first (last) stretch. Midpoints are whole units, as the relational diagram's points were.
      *
-     * @return the backbone, and each role's branches by the part's index (null: the role has none)
+     * @return the backbone; the reaction's hub, its position or, once a two-point backbone has its midpoint, that
+     * midpoint (the relational reaction's validatePosition moved it there); and each role's branches by the
+     * part's index (null: the role has none)
      */
     static Points reactionPoints(Edge edge) {
         List<Point2D> backbone = new ArrayList<>();
@@ -191,9 +213,13 @@ public class LayoutConverter {
             backbone.add(point(segment.getTo()));
         }
         Points rtn = new Points(backbone);
+        rtn.hub = point(edge.getPosition());
         rtn.inputs = branches(edge.getInputs());
         rtn.outputs = branches(edge.getOutputs());
-        if (backbone.size() == 2) backbone.add(1, middle(backbone.get(0), backbone.get(1)));
+        if (backbone.size() == 2) {
+            backbone.add(1, middle(backbone.get(0), backbone.get(1)));
+            rtn.hub = backbone.get(1);
+        }
         if (backbone.size() < 2) return rtn;
         if (edge.getInputs() != null && edge.getInputs().size() == 1) {
             Point2D first = backbone.get(0);
@@ -211,6 +237,7 @@ public class LayoutConverter {
 
     static final class Points {
         final List<Point2D> backbone;
+        Point2D hub;
         List<List<Point2D>> inputs;
         List<List<Point2D>> outputs;
 
@@ -251,7 +278,7 @@ public class LayoutConverter {
         if (backbone.size() < 3) return;
         Point2D inputHub = backbone.get(0);
         Point2D outputHub = backbone.get(backbone.size() - 1);
-        Point2D reactionHub = point(edge.getPosition());
+        Point2D reactionHub = points.hub;
         String layoutId = LAYOUT_ID_PREFIX + edge.getId();
         ReactionGlyph rg = layout.createReactionGlyph(layoutId);
         rg.setReaction(rxtId);
@@ -274,7 +301,7 @@ public class LayoutConverter {
                                        String layoutId) {
         if (parts == null || parts.isEmpty()) return;
         for (int i = 0; i < parts.size(); i++) {
-            String speciesRefGlyphId = layoutId + "_" + role.toString().toLowerCase() + "_" + i;
+            String speciesRefGlyphId = layoutId + "_" + role.toString().toLowerCase(Locale.ROOT) + "_" + i;
             SpeciesReferenceGlyph srg = rg.createSpeciesReferenceGlyph(speciesRefGlyphId);
             srg.setSpeciesGlyph(LAYOUT_ID_PREFIX + parts.get(i).getId());
             // As the relational converter: no role is set, since Minerva could not read activators and
@@ -337,6 +364,8 @@ public class LayoutConverter {
                 return "SBO:0000252";
             case "Complex":
             case "ComplexDrug":
+            // The relational RenderableCell extends RenderableComplex
+            case "Cell":
                 return "SBO:0000297";
             case "Chemical":
             case "ChemicalDrug":

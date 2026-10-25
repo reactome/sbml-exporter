@@ -24,6 +24,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
@@ -98,6 +99,8 @@ class LayoutConverterTest {
     void aLayoutOnlyWhenTheDiagramDrawsAReaction() throws Exception {
         assertTrue(LayoutConverter.hasReactions(diagram(NODES, TWO_INPUTS, COMPARTMENTS)));
         assertFalse(LayoutConverter.hasReactions(diagram(NODES, "", COMPARTMENTS)));
+        // As the relational converter's RenderableReaction: an edge of another class is not a reaction
+        assertFalse(LayoutConverter.hasReactions(diagram(NODES, TWO_INPUTS.replace("\"Reaction\"", "\"Interaction\""), COMPARTMENTS)));
     }
 
     @Test
@@ -158,6 +161,8 @@ class LayoutConverterTest {
         assertEquals("SBO:0000247", model.getSpecies("species_2").getSBOTermID());
 
         assertEquals("SBO:0000297", LayoutConverter.getSBOTerm("Complex"));
+        // The relational RenderableCell extends RenderableComplex
+        assertEquals("SBO:0000297", LayoutConverter.getSBOTerm("Cell"));
         assertEquals("SBO:0000278", LayoutConverter.getSBOTerm("RNA"));
         assertEquals("SBO:0000243", LayoutConverter.getSBOTerm("Gene"));
         assertEquals("SBO:0000289", LayoutConverter.getSBOTerm("EntitySet"));
@@ -182,6 +187,26 @@ class LayoutConverterTest {
         assertEquals("compartment_9", glyphs.get(1).getCompartment());
         assertEquals("compartment_6", glyphs.get(2).getCompartment());
         assertEquals("250,350 1x1", box(glyphs.get(1).getBoundingBox()));
+    }
+
+    @Test
+    void notesCountInTheDiagramsBounds() throws Exception {
+        Model model = model(new long[]{}, new long[]{9}, new long[]{});
+        String note = "{\"id\": 60, \"displayName\": \"a note\", \"renderableClass\": \"Note\", " +
+                "\"prop\": {\"x\": 500, \"y\": 600, \"width\": 100, \"height\": 20}}";
+        Diagram diagram = DiagramFactory.getDiagram("{\"dbId\": 1, \"stableId\": \"R-TST-1\", \"nodes\": [" + NODES + "], " +
+                "\"edges\": [], \"compartments\": [" + COMPARTMENTS + "], \"notes\": [" + note + "]}");
+        LayoutConverter.addLayout(model, diagram);
+        // x 50-600, y 50-620
+        assertEquals("325,620 1x1", box(layout(model).getCompartmentGlyph("layout_hidden_compartment_0").getBoundingBox()));
+    }
+
+    @Test
+    void aDiagramThatCannotBeLaidOutFailsNamingIt() throws Exception {
+        Model model = model(new long[]{1}, new long[]{}, new long[]{});
+        String noBox = "{\"id\": 10, \"reactomeId\": 1, \"displayName\": \"A\", \"renderableClass\": \"Protein\"}";
+        IllegalStateException e = assertThrows(IllegalStateException.class, () -> LayoutConverter.addLayout(model, diagram(noBox, "", "")));
+        assertEquals("The diagram R-TST-1 cannot be laid out", e.getMessage());
     }
 
     @Test
@@ -230,6 +255,18 @@ class LayoutConverterTest {
         LayoutConverter.Points points = LayoutConverter.reactionPoints(diagram(NODES, twoPoints, "").getEdges().get(0));
         assertEquals(List.of("201,110", "230,110", "260,111"),
                 points.backbone.stream().map(p -> fmt(p.getX()) + "," + fmt(p.getY())).collect(Collectors.toList()));
+    }
+
+    @Test
+    void aTwoPointBackbonesHubIsItsMidpoint() throws Exception {
+        // The relational reaction's validatePosition moved a position at an end to the inserted midpoint
+        Model model = model(new long[]{1, 2}, new long[]{}, new long[]{3});
+        String twoPoints = edge(30, 3, seg(200, 110, 260, 110), at(200, 110),
+                "\"inputs\": [{\"id\": 10}, {\"id\": 20}], \"catalysts\": [{\"id\": 20}]");
+        LayoutConverter.addLayout(model, diagram(NODES, twoPoints, ""));
+        ReactionGlyph rg = layout(model).getReactionGlyph("layout_30");
+        assertEquals("224,104 12x12", box(rg.getBoundingBox()));
+        assertEquals(List.of("230.5,110.5-230,110"), points(rg.getSpeciesReferenceGlyph("layout_30_modifier_0").getCurve()));
     }
 
     @Test
