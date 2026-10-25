@@ -37,6 +37,11 @@ public class Main {
 
     private static DiagramFiles diagrams;
 
+    // A conversion that failed (a species cut short by a missing diagram file, an id that is not a pathway, a species
+    // not found): the run goes on, as it always has, but ends with exit status 1, so that a release step does not
+    // package what is missing.
+    private static boolean failed = false;
+
     public static void main(String[] args) throws Exception {
 
         SimpleJSAP jsap = new SimpleJSAP(Main.class.getName(), "A tool for generating SBML files",
@@ -68,7 +73,12 @@ public class Main {
         String[] target = config.getStringArray("target");
 
         DBInfo dbInfo = ReactomeGraphCore.getService(GeneralService.class).getDBInfo();
-        diagrams = new DiagramFiles(Paths.get(config.getString("diagrams")), config.getInt("diagram-release"), dbInfo.getVersion());
+        try {
+            diagrams = new DiagramFiles(Paths.get(config.getString("diagrams")), config.getInt("diagram-release"), dbInfo.getVersion());
+        } catch (IllegalArgumentException e) {
+            System.err.println(e.getMessage());
+            System.exit(1);
+        }
 
         long start = System.currentTimeMillis();
         if (target.length > 1) {
@@ -92,6 +102,10 @@ public class Main {
             }
         }
         info(String.format("Finished in %s", Utils.getTimeFormatted(System.currentTimeMillis() - start)));
+        if (failed) {
+            System.err.println("A conversion failed: see the log");
+            System.exit(1);
+        }
     }
 
     private static void convertPathways(String[] identifiers, Integer version, String output) {
@@ -139,6 +153,7 @@ public class Main {
             } catch (Exception e) {
                 logger.error(e.getMessage(), e);
                 progressBar.interrupt();
+                failed = true;
             }
         }
     }
@@ -149,6 +164,7 @@ public class Main {
     }
 
     private static void error(String msg){
+        failed = true;
         logger.error(msg);
         if (verbose) System.err.println(msg);
     }
