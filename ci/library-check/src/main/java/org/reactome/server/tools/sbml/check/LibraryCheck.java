@@ -14,9 +14,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 /**
  * US4's independent test (spec 001, T022): converts events with the library alone, as the website's service
@@ -32,11 +34,22 @@ public final class LibraryCheck {
     private LibraryCheck() {
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
         if (args.length < 7) {
             System.err.println("Usage: <bolt-url> <user> <password> <diagram-folder> <diagram-release> <output-folder> <stId>...");
             System.exit(2);
         }
+        try {
+            run(args);
+        } catch (Throwable t) {
+            // graph-core's threads may outlive main: exit, rather than leave CI waiting on them
+            t.printStackTrace();
+            System.exit(1);
+        }
+        System.exit(0);
+    }
+
+    private static void run(String[] args) throws Exception {
         ReactomeGraphCore.initialise(args[0], args[1], args[2], CheckConfig.class);
         DatabaseObjectService ds = ReactomeGraphCore.getService(DatabaseObjectService.class);
         AdvancedDatabaseObjectService ads = ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class);
@@ -48,22 +61,24 @@ public final class LibraryCheck {
         for (String stId : events) convert(stId, ds, ads, version, diagrams, folder(output, "sequence"));
 
         ExecutorService pool = Executors.newFixedThreadPool(2 * events.size());
+        // Every conversion waits for the others, so that they all run at once
+        CyclicBarrier start = new CyclicBarrier(2 * events.size());
         try {
             List<Future<Void>> runs = new ArrayList<>();
             for (String stId : events) {
                 for (String copy : new String[]{"parallel-a", "parallel-b"}) {
                     String into = folder(output, copy);
                     runs.add(pool.submit((Callable<Void>) () -> {
+                        start.await(1, TimeUnit.MINUTES);
                         convert(stId, ds, ads, version, diagrams, into);
                         return null;
                     }));
                 }
             }
-            for (Future<Void> run : runs) run.get();
+            for (Future<Void> run : runs) run.get(10, TimeUnit.MINUTES);
         } finally {
-            pool.shutdown();
+            pool.shutdownNow();
         }
-        System.exit(0);
     }
 
     private static void convert(String stId, DatabaseObjectService ds, AdvancedDatabaseObjectService ads,
