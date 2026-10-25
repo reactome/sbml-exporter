@@ -8,6 +8,7 @@ about them, with every person's name replaced.
   - R-HSA-8932284: a reaction with a catalyst and a regulator;
   - R-HSA-5667111: a black-box event;
   - and release 97's `DBInfo` node, whose version the converter writes.
+- **`expected/`**: the command line's output for the three events from this graph and this folder of diagram files (`--diagrams ci/fixture --diagram-release 97`), with Lipophagy's layout; CI's `validity` job compares its output with them (`ci/compare.py`).
 - **`R-HSA-9613354.json`**: Lipophagy's diagram file, from release 97's download
   directory (`download.reactome.org/97/diagram/R-HSA-9613354.json`, sha256
   `cad296e4…a425d1`), for the layout (T019 onwards).

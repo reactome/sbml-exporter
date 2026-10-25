@@ -96,10 +96,11 @@ jobs:
               run: |
                 docker load --input /tmp/image.tar
                 mkdir -m 777 out
-                docker run --rm --network host -v "$PWD/out:/out" tmp-tag \
+                docker run --rm --network host -v "$PWD/out:/out" -v "$PWD/ci/fixture:/diagrams:ro" tmp-tag \
                   java -Duser.timezone=UTC -Duser.language=en -Duser.country=US \
                   -jar target/sbml-exporter-exec.jar --host bolt://localhost:7687 --user neo4j --password none \
-                  --output /out --target R-HSA-9613354,R-HSA-8932284,R-HSA-5667111
+                  --output /out --diagrams /diagrams --diagram-release 97 \
+                  --target R-HSA-9613354,R-HSA-8932284,R-HSA-5667111
 
             - uses: actions/setup-python@v5
               with:
