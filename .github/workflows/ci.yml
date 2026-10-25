@@ -102,6 +102,19 @@ jobs:
                   --output /out --diagrams /diagrams --diagram-release 97 \
                   --target R-HSA-9613354,R-HSA-8932284,R-HSA-5667111
 
+            # A listed id that fails (here, one not in the graph) fails the run, but the ids
+            # after it are still converted.
+            - name: A failed id fails the run, and the others go on
+              run: |
+                mkdir -m 777 out-failed
+                rc=0
+                docker run --rm --network host -v "$PWD/out-failed:/out" -v "$PWD/ci/fixture:/diagrams:ro" tmp-tag \
+                  java -jar target/sbml-exporter-exec.jar --host bolt://localhost:7687 --user neo4j --password none \
+                  --output /out --diagrams /diagrams --diagram-release 97 \
+                  --target R-HSA-0,R-HSA-9613354 || rc=$?
+                test "$rc" -eq 1 || { echo "exit status $rc, not 1"; exit 1; }
+                test -s out-failed/R-HSA-9613354.sbml || { echo "R-HSA-9613354 was not converted after the failed id"; exit 1; }
+
             - uses: actions/setup-python@v5
               with:
                 python-version: '3.12'

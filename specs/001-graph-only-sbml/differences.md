@@ -44,13 +44,13 @@ one of these.
 
 The whole run then went through the graph (#57): the command line over all 30 events from
 the private copy, with `--diagrams` holding release 97's files for every sample pathway with
-a diagram (18 of the 30; the other 12, reactions and pathways drawn on an
-ancestor's diagram,
-have none), each compared with today's file. It finished without error, all 30 files valid
-(`ci/validate.py`), and its layout differences are those of the six files above but one, the
-hidden compartments' numbering (below). Its model differences are those of the tables above
-and below, no others: EC numbers (957 reactions), cross-references (2,695 entries, still to
-decide), 3 last-modified dates, 1 `isHomologTo`, and the 4 SBO terms below.
+a diagram (18 of the 30; the other 12, reactions and pathways drawn on an ancestor's
+diagram, have none), each compared with today's file. It finished without error, all 30
+files valid (`ci/validate.py`), and its layout differences are those of the six files above
+but one, the hidden compartments' numbering (below). Its model differences are those of the
+tables above and below, no others: EC numbers (957 reactions), cross-references (2,695
+entries, still to decide), 3 last-modified dates, 1 `isHomologTo`, and the 4 SBO terms
+below.
 
 | Difference | Count in the sample | Cause |
 | --- | --- | --- |
