@@ -27,6 +27,8 @@ OUTGOING = {
     "regulatedBy", "regulator", "hasComponent", "hasMember", "hasCandidate", "repeatedUnit",
     "referenceEntity", "referenceDatabase", "hasModifiedResidue", "psiMod", "summation",
     "literatureReference", "goBiologicalProcess", "disease", "compartment", "inferredTo",
+    # A species run finds its pathways through their species (the release's step converts by species)
+    "species",
 }
 # Incoming: an event's history (InstanceEdit -> event) and its authors (Person -> InstanceEdit),
 # and what an entity was inferred from (other -> entity).

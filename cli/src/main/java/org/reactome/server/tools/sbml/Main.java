@@ -143,6 +143,7 @@ public class Main {
     private static void convertSpeciesList(List<Species> speciesList, Integer version, String output) {
         info(String.format("Converting %d species", speciesList.size()));
         SchemaService schemaService = ReactomeGraphCore.getService(SchemaService.class);
+        DatabaseObjectService dbs = ReactomeGraphCore.getService(DatabaseObjectService.class);
         for (Species species : speciesList) {
             Collection<Pathway> pathways = schemaService.getByClass(Pathway.class, species);
             int total = pathways.size();
@@ -152,7 +153,10 @@ public class Main {
             try {
                 // Check from parallel to avoid any thread issues for the time being
 //                pathways.stream().parallel().forEach(pathway -> {
-                pathways.stream().forEach(pathway -> {
+                pathways.stream().forEach(found -> {
+                    // Loaded by id, as a listed id is: getByClass's pathways come without their relationships,
+                    // so their history (created, modified, authored, revised) was left out of the file (T026)
+                    Pathway pathway = dbs.findById(found.getDbId());
                     progressBar.update(pathway.getStId(), i.get());
                     SbmlConverter c = new SbmlConverter(pathway, version, ReactomeGraphCore.getService(DatabaseObjectService.class), ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class), diagrams);
                     c.convert();
