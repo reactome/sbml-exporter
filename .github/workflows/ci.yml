@@ -102,6 +102,17 @@ jobs:
                   --output /out --diagrams /diagrams --diagram-release 97 \
                   --target R-HSA-9613354,R-HSA-8932284,R-HSA-5667111
 
+            # The release's step converts by species, which finds its pathways through their species
+            # rather than by id (T026): the fixture's pathway, by that route, must be as expected too.
+            - name: Convert the fixture's species
+              run: |
+                mkdir -m 777 out-species
+                docker run --rm --network host -v "$PWD/out-species:/out" -v "$PWD/ci/fixture:/diagrams:ro" tmp-tag \
+                  java -Duser.timezone=UTC -Duser.language=en -Duser.country=US \
+                  -jar target/sbml-exporter-exec.jar --host bolt://localhost:7687 --user neo4j --password none \
+                  --output /out --diagrams /diagrams --diagram-release 97 \
+                  --target "Homo sapiens"
+
             # A listed id that fails (here, one not in the graph) fails the run, but the ids
             # after it are still converted.
             - name: A failed id fails the run, and the others go on
@@ -123,9 +134,17 @@ jobs:
               run: |
                 pip install python-libsbml==5.21.2
                 python ci/validate.py out
+                python ci/validate.py out-species
 
             - name: As expected
               run: python ci/compare.py ci/fixture/expected out
+
+            # Its one pathway, and nothing else
+            - name: The species run as expected
+              run: |
+                mkdir expected-species
+                cp ci/fixture/expected/R-HSA-9613354.sbml expected-species/
+                python ci/compare.py expected-species out-species
 
             # US4 (spec 001, T022): a program that depends only on the library (ci/library-check),
             # on JDK 17 as the website's service runs, converts the same events one after another and
