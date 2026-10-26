@@ -294,6 +294,12 @@ public class LayoutConverter {
             if (backbone.isEmpty()) backbone.add(point(segment.getFrom()));
             backbone.add(point(segment.getTo()));
         }
+        // A backbone the relational diagram stored as one repeated point reaches the file as no segments (the
+        // diagram step leaves out those of no length): the relational layout drew it at its hub, as the website does
+        if (backbone.isEmpty() && edge.getPosition() != null) {
+            backbone.add(point(edge.getPosition()));
+            backbone.add(point(edge.getPosition()));
+        }
         Points rtn = new Points(backbone);
         rtn.hub = point(edge.getPosition());
         rtn.inputs = branches(edge.getInputs());

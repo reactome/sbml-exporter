@@ -367,6 +367,20 @@ class LayoutConverterTest {
     }
 
     @Test
+    void aReactionWithNoSegmentsIsDrawnAtItsHub() throws Exception {
+        // The relational diagram stored its backbone as one repeated point, which the diagram step leaves out as
+        // segments of no length: today's layout draws it at its hub (10 reactions of release 97's human pathways)
+        Model model = model(new long[]{1, 2}, new long[]{}, new long[]{3});
+        String noSegments = edge(30, 3, "", at(1176, 411),
+                "\"inputs\": [{\"id\": 10}, {\"id\": 20}], \"outputs\": [{\"id\": 10}, {\"id\": 20}], \"catalysts\": [{\"id\": 20}]");
+        LayoutConverter.addLayout(model, diagram(NODES, noSegments, ""));
+        ReactionGlyph rg = layout(model).getReactionGlyph("layout_30");
+        assertEquals("1170,405 12x12", box(rg.getBoundingBox()));
+        assertEquals(List.of("1176,411-1176,411", "1176,411-1176,411"), points(rg.getCurve()));
+        assertEquals(5, rg.getSpeciesReferenceGlyphCount());
+    }
+
+    @Test
     void theDocumentDeclaresTheLayoutPackageAsNotRequired() throws Exception {
         Model model = model(new long[]{1, 2}, new long[]{}, new long[]{3});
         LayoutConverter.addLayout(model, diagram(NODES, TWO_INPUTS, ""));
