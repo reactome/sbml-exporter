@@ -88,3 +88,42 @@ With the layout valid, libSBML goes on to warn that a set's SBO term, 289 (funct
 | Difference | Decision |
 | --- | --- |
 | A single reaction's model was its first parent pathway (id, name, notes, references, history) | Matched to today's in #37: `no_parent_pathway`, "No parent pathway detected". A reaction can have several parents (733 human reactions in release 97, up to 10), so any one would be arbitrary. Five of the sample's nine reactions now match today's exactly; the other four differ only in EC numbers or cross-references |
+
+## Release 97's full run (T027)
+
+All 23,604 files of the release's `all_species.3.1.sbml.tgz`, from the private copy with the
+release image at `4f39861`, compared with `ci/compare.py`: 13,037 files differ, and every
+difference is one of the kinds above but three, at the scale below. Counts are entries, then
+files.
+
+| Kind (above) | Entries | Files | At full scale |
+| --- | --- | --- | --- |
+| Fewer EC numbers on reactions | 39,220 reactions | 7,553 | A subset of today's in every one; all 288 files the verifier finds 10% smaller, and 560 of the 566 at 5% |
+| A node's box, and the branch and backbone ends that follow it | 32,638 species glyph boxes; 45,109 branches; 9,463 backbones; 1,620 reaction boxes | 5,245 | |
+| Glyph order | 6,284 species and text glyph lists, 5,458 reaction glyph lists | 6,380 | The same sets in another order in all but 96 files (below); 52 of the files are human, the rest inferred species' diagrams |
+| Species drawn today that the diagram file does not hold | 96 species and text glyph lists | 96 | 46 human (as T026) and 50 of other species; ours a subset of today's in every one |
+| SBO term of a drawn species | 5,498 species | 2,351 | 289 and 252 each way (2,410 and 2,405), 289 to 297 (649), and a few others; all but one in species other than human, whose diagrams are inferred from human's: the drawing's class, which the diagram step corrects to the graph's |
+| The hidden compartments: which each stands for, and their anchor | 6,577 targets; 3,088 boxes (with the drawn compartments' positions) | 2,083; 1,082 | |
+| A branch to a part not drawn as a species, left out | 36 lists | 21 | The 21 files libSBML refuses today (6021011) |
+| `isHomologTo` missing for some species | 666 species | 582 | |
+| Reactions' cross-references (open, #36) | 857 reactions | 182 | |
+| A pathway's history | 521 pathways | 521 | Below: the second cause |
+
+**New at full scale:**
+
+- **A pathway's last edit, 18 May 2026, in the graph only** (521 files; 100 of them also with
+  another author list). The graph holds an edit of the pathway itself dated 18 May 2026, by one
+  author, that the published file lacks. In 346 files today's has a later edit (the recorded
+  cause, at scale: the relational database has edits after the graph was made); in 175 (170
+  human, 5 not) today's latest is older, so the graph has an edit the relational database of the
+  release does not. In the data, not the converter: the converter writes the instance's
+  `modified` list as the graph holds it. Not investigated further.
+- **The order of a pathway's two summations in the model's notes** (3 files: R-HSA-166016 and two
+  chicken pathways inferred from human ones). The same characters, the two summations in the other
+  order: the graph's relationship order, not the relational database's. Not a difference of the
+  converter's.
+- **The SBO-term warning (10713) is counted 18 times as often** as on today's files (36,193 against
+  2,018), because libSBML stops before it on the 7,584 of today's files with no layout id or
+  dimensions. Over the 16,015 files valid on both sides the warnings are identical: 2,018 in 805
+  files.
+
