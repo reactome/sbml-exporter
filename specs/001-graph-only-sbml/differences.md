@@ -25,9 +25,9 @@ something different from the relational database of the same release.
 
 | Difference | Count in the sample | Cause |
 | --- | --- | --- |
-| Fewer EC numbers on reactions: a subset of today's, never a different one (254 distinct against 360) | 957 reactions | The graph keeps one `ecNumber` per GO molecular function; the relational database keeps every one. Fixing it is the graph's import, not this converter |
+| Fewer EC numbers on reactions: a subset of today's, never a different one (254 distinct against 360) | 957 reactions; release 97's human run (T026): 5,908 reactions' EC numbers in 904 of 2,883 files, including all 26 files the release verifier finds 10% smaller | The graph keeps one `ecNumber` per GO molecular function; the relational database keeps every one. Fixing it is the graph's import, not this converter |
 | A pathway's history: an earlier last-modified date | 3 pathways | The relational database has later edits (12 June 2026) than the graph (18 May 2026) for these instances |
-| `isHomologTo` missing for one species | 1 species | Its inferred rat and yeast entities are not in the graph |
+| `isHomologTo` missing for one species | 1 species; release 97's human run (T026): 73 entries, 21 species, 45 files | Its inferred rat and yeast entities are not in the graph (checked for the sample's; the human run's are taken to be the same) |
 
 ## The layout
 
@@ -56,13 +56,15 @@ below.
 | --- | --- | --- |
 | A node's box | 46 of 538 species glyphs, in five events | Today's are resized to their label's font (`tightNodes`); the files keep the drawn size (FR-007) |
 | A branch's end, or a backbone's end, a few units off | 67 branch ends, all at a resized node; 24 backbone ends | Follow the resized nodes: today's re-attached to the resized box |
-| The hidden compartments' anchor | R-HSA-112409 | It is the diagram's bottom centre, which a resized node moved |
+| The hidden compartments' anchor | R-HSA-112409; release 97's human run (T026): 246 files, 110 of them with no species box changed, which this cause does not explain (not investigated) | It is the diagram's bottom centre, which a resized node moved |
 | Which compartment each hidden compartment glyph (`layout_hidden_compartment_N`) stands for | 2 of 3 in R-HSA-109606 | They are numbered in the model's compartment order, which differs between the two converters; element order is set aside by design |
 | Glyph order | R-MMU-69620 (its species, reaction and text glyphs) | The relational diagram's order was that of its making; an inferred diagram's is neither its ids' nor the file's. The sets, ids and targets are the same |
 | SBO term of a drawn species: a protein's (252), not a set's (289) | 4 species in R-MMU-69620 | The relational converter took the stored drawing's class, a set copied from the human diagram; the diagram step corrects a class that disagrees with the graph (`fixBrokenRenderableClass`), and these are single proteins in the graph. The stored class is not in the file |
 | A backbone the relational diagram stored with a repeated point: its curve, the reaction's box (its hub moved), and its product's branch | 1 reaction in R-HSA-9839373 | The file's backbone has the point between; the relational one cannot be recovered from it |
-| A reaction the relational diagram stored as a single point: where each participant's branch starts | 10 reactions in 6 of release 97's human pathways (T026, #70) | The file holds no segments for its backbone or its branches. Its glyph is drawn at its hub, as today's is (#70; before it, these reactions had no glyph); each branch starts a little off the hub, the rule for a role with no branches, not where the relational drawing met the node |
-| Species drawn today that the diagram file does not hold | 210 species glyphs in 46 of release 97's 1,137 human pathways with a layout, all on diagrams flagged as disease (31 of them among the 453 drawn as disease diagrams; none in the sample); no reaction glyphs | For a disease diagram (the diagram's `disease` flag), the diagram step keeps only the objects of its normal, disease, crossed, overlaid and loss-of-function lists (`Diagram.addNode`), and drops the rest; the relational converter read every stored object. They cannot be drawn from the file |
+| A reaction the relational diagram stored as a single point: where each participant's branch starts | 10 reactions in 5 of release 97's human pathways (T026, #70) | The file holds no segments for its backbone or its branches. Its glyph is drawn at its hub, as today's is (#70; before it, these reactions had no glyph); each branch starts at the point the file gives for its part, not where the relational drawing met the node |
+| A reaction's hub: the file's position for it | 207 reaction glyphs' boxes in 110 of release 97's human pathways (T026) | The website draws the hub at the file's position. Today's is an end of the file's backbone in 192 of them (165 its first point, 27 its last), and elsewhere in 14, 10 of those in R-HSA-6798695 shifted alike; the file does not say which end |
+| A drawn compartment's position (its size is the same) | 82 compartment glyphs in 77 of release 97's human pathways (T026) | The file's position, where the website draws it |
+| Species drawn today that the diagram file does not hold | 210 species glyphs in 46 of release 97's 1,137 human pathways with a layout, all on diagrams flagged as disease (31 of them among the 453 drawn as disease diagrams; none in the sample); no reaction glyphs. Their species' SBO terms follow (6 species in release 97's human run, T026): a drawn species takes its drawing's term | For a disease diagram (the diagram's `disease` flag), the diagram step keeps only the objects of its normal, disease, crossed, overlaid and loss-of-function lists (`Diagram.addNode`), and drops the rest; the relational converter read every stored object. They cannot be drawn from the file |
 
 Matched to today's (decided 25 Oct 2026: match today, and suggest improvements as issues):
 
