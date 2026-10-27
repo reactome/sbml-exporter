@@ -188,7 +188,7 @@
     <listOfReactions>
       <reaction compartment="compartment_70101" fast="false" id="reaction_8932284" metaid="metaid_8" name="PKC phosphorylates NFE2L2" reversible="false">
         <notes>
-          <p xmlns="http://www.w3.org/1999/xhtml">In response to oxidative stress, protein kinase C (PKC) phosphorylates NFE2L2 (NRF2) at residue serine 40 (Ser-40). It has been demonstrated that NRF2 phosphorylation at Ser-40 facilitates its nuclear translocation (Huang et al. 2002).</p>
+          <p xmlns="http://www.w3.org/1999/xhtml">Placeholder summation 8932357</p>
         </notes>
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">

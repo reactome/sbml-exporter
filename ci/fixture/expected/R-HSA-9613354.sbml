@@ -7,7 +7,7 @@
   </notes>
   <model id="pathway_9613354" metaid="metaid_0" name="Lipophagy">
     <notes>
-      <p xmlns="http://www.w3.org/1999/xhtml">Triglycerides stored in lipid droplets are hydrolysed under nutrient starvation to release fatty acids for energy. The content of lipid droplets may vary but they are all coated with a protective protein called perilipin. When this protein is degraded, lipid droplets associate with autophagic components and breakdown into fatty acids (Ward C et al. 2016, Schulze R J et al. 2017). This process is termed as lipophagy (Singh R et al. 2009).</p>
+      <p xmlns="http://www.w3.org/1999/xhtml">Placeholder summation 9613344</p>
     </notes>
     <annotation>
       <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
@@ -820,7 +820,7 @@
     <listOfReactions>
       <reaction compartment="compartment_70101" fast="false" id="reaction_9613352" metaid="metaid_14" name="PLINs bind HSPA8" reversible="false">
         <notes>
-          <p xmlns="http://www.w3.org/1999/xhtml">Lipophagy is the process of autophagic degradation of lipid droplets into fatty acids. A key step in this process is the elimination of perilipin (PLIN) proteins on lipid droplet surface. This mechanism is initiated when the cytosolic Heat shock cognate 71 kDa protein (HSPA8) binds PLIN2 and PLIN3 on the lipid droplet surface. Consequently, perilipins are phosphorylated and targeted to degradation making the lipid available for hydrolysis (S Kaushik et al. 2015). Experiments confirming this interaction were performed in rats.</p>
+          <p xmlns="http://www.w3.org/1999/xhtml">Placeholder summation 9613336</p>
         </notes>
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
@@ -884,7 +884,7 @@
       </reaction>
       <reaction compartment="compartment_70101" fast="false" id="reaction_9613513" metaid="metaid_15" name="PLINs:HSPA8 binds PRKAA2" reversible="false">
         <notes>
-          <p xmlns="http://www.w3.org/1999/xhtml">Lipophagy is the process of autophagic degradation of lipid droplets into fatty acids. Lipid droplets are coated with perilipin (PLIN) protiens and they need to be eliminated for the degradation of the lipids inside. Cytosolic Heat shock cognate 71 kDa protein (HSPA8) binds PLIN2 and PLIN3 on the lipid droplet surface. Consequently, PRKAA2 bind and phosphorylate perilipins targeting them for lipophagy (S Kaushik et al. 2015, S Kaushik et al. 2016). Experiments confirming this interaction were performed in mouse.</p>
+          <p xmlns="http://www.w3.org/1999/xhtml">Placeholder summation 9613511</p>
         </notes>
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
@@ -949,7 +949,7 @@
       </reaction>
       <reaction compartment="compartment_70101" fast="false" id="reaction_9613530" metaid="metaid_16" name="PRKAA2 phosphorylates PLINs" reversible="false">
         <notes>
-          <p xmlns="http://www.w3.org/1999/xhtml">Lipophagy is the process of autophagic degradation of lipid droplets into fatty acids. Lipid droplets are coated with perilipin (PLIN) proteins and they need to be eliminated for the degradation of the lipids inside. Cytosolic Heat shock cognate 71 kDa protein (HSPA8) binds PLIN2 and PLIN3 on the lipid droplet surface. Subsequently, AMPK binds and phosphorylates perilipins targeting them for lipophagy (S Kaushik et al. 2015, S Kaushik et al. 2016). The precise phosphorylation site(s) on PLINs are unknown. Experiments confirming this finding were performed in mouse models.</p>
+          <p xmlns="http://www.w3.org/1999/xhtml">Placeholder summation 9613536</p>
         </notes>
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
@@ -1028,7 +1028,7 @@
       </reaction>
       <reaction compartment="compartment_70101" fast="false" id="reaction_9613565" metaid="metaid_17" name="PRKAA2 dissociate from p-PLINs:HSPA8" reversible="false">
         <notes>
-          <p xmlns="http://www.w3.org/1999/xhtml">Once phosphorylated, PLINs are believed to dissociate from PRKAA2 and translocate to the cytosol (S Kaushik et al. 2015, S Kaushik et al. 2016). The precise dissociation mechanism of Plins is unclear. The experiments showing this finding were performed in mouse models.</p>
+          <p xmlns="http://www.w3.org/1999/xhtml">Placeholder summation 9613563</p>
         </notes>
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
@@ -1093,7 +1093,7 @@
       </reaction>
       <reaction compartment="compartment_70101" fast="false" id="reaction_9613666" metaid="metaid_18" name="p-PLINs translocate from lipid droplet surface to cytosol" reversible="false">
         <notes>
-          <p xmlns="http://www.w3.org/1999/xhtml">Lipophagy is the process of autophagic degradation of lipid droplets into fatty acids. Lipid droplets are coated with perilipin (PLIN) proteins and they need to be eliminated for the degradation of the lipids inside. Cytosolic Heat shock cognate 71 kDa protein (HSPA8) binds PLIN2 and PLIN3 on the lipid droplet surface. Subsequently, PRKAA2 binds and phosphorylates perilipins. Phosphorylated PLINs dissociate from PRKAA2 and are believed to translocate to the cytosol (S Kaushik et al. 2015, S Kaushik et al. 2016). Experiments suggesting this event were performed in mouse models.</p>
+          <p xmlns="http://www.w3.org/1999/xhtml">Placeholder summation 9613665</p>
         </notes>
         <annotation>
           <rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:vCard="http://www.w3.org/2001/vcard-rdf/3.0#" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:bqbiol="http://biomodels.net/biology-qualifiers/">
