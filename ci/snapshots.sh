@@ -9,7 +9,6 @@
 #   ci/snapshots.sh list    print the list (to update ci/snapshots.sha1 deliberately)
 #   ci/snapshots.sh check   fail if the resolved snapshots differ from ci/snapshots.sha1
 #
-# verifier-lib is left out: the Dockerfile builds it from a pinned commit.
 set -euo pipefail
 
 repo="${MAVEN_LOCAL_REPO:-$HOME/.m2/repository}"
@@ -17,8 +16,7 @@ here="$(cd "$(dirname "$0")" && pwd)"
 
 list() {
     (cd "$repo" &&
-        find . -type f \( -name '*-SNAPSHOT.jar' -o -name '*-SNAPSHOT.pom' \) \
-            -not -path './org/reactome/release/verifier/*' |
+        find . -type f \( -name '*-SNAPSHOT.jar' -o -name '*-SNAPSHOT.pom' \) |
         sed 's|^\./||' | LC_ALL=C sort | xargs sha1sum)
 }
 

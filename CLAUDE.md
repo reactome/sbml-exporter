@@ -54,14 +54,11 @@ Feature-sized work goes through Spec Kit before any code, and the specs live in
 On `graph-only`, CI runs and requires three checks, each seen failing once
 (constitution, Principle II):
 
-- **`docker-build`**: the build and the unit tests. `verifier-lib:1.0-SNAPSHOT`
-  now resolves to a version without the classes `SBMLExportVerifier` uses (the
-  snapshot published on 19 Oct 2026), and fixing the published library is its
-  maintainer's. So the `Dockerfile` builds `verifier-lib` from a fixed commit of
-  `release-verifier-lib`; locally, install that commit first
-  (`mvn install -DskipTests -Dmaven.javadoc.skip=true -Dgpg.skip=true`), then build
-  with `mvn -nsu` so Maven does not fetch the broken snapshot. The build also fails
-  if a snapshot dependency changes under it (`ci/snapshots.sh`).
+- **`docker-build`**: the build and the unit tests. `verifier-lib` is the released
+  1.0.0 from Maven Central (spec 001, T029); before it, the `Dockerfile` built a
+  fixed commit, because the 1.0-SNAPSHOT of 19 Oct 2026 lacked the classes
+  `SBMLExportVerifier` uses. The build also fails if a snapshot dependency changes
+  under it (`ci/snapshots.sh`).
 - **`lint`**: Checkstyle with the repository's `checkstyle.xml`.
 - **`validity`**: the converter over the fixture graph (`ci/fixture`), its output
   valid by libSBML (`ci/validate.py`) and equal to `ci/fixture/expected`

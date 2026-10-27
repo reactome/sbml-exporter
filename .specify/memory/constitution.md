@@ -123,8 +123,8 @@ such as the pom's developer list.
 Every change is to pass the following checks. On `graph-only` they are CI's
 required checks: `docker-build` (the build and unit tests), `lint` and `validity`.
 
-- **The build compiles**, with `verifier-lib` built from a fixed commit until it is
-  released (spec 001, T029).
+- **The build compiles**, against `verifier-lib` 1.0.0 as released (spec 001, T029;
+  until then it was built from a fixed commit).
 - **The unit tests run and pass.** Each fix comes with a test seen failing first.
 - **Checkstyle with the repository's own `checkstyle.xml`.** New code adds no
   violations.

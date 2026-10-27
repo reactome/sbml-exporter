@@ -96,7 +96,7 @@ References kept outside the repository (the private graph copy, today's relation
 
 ## Phase 6: Into `main`
 
-- [ ] T029 When `verifier-lib` is published as a non-snapshot version, depend on it and drop T001's build stage (FR-001).
+- [x] T029 When `verifier-lib` is published as a non-snapshot version, depend on it and drop T001's build stage (FR-001). — #80. `verifier-lib` 1.0.0 (Maven Central) replaces 1.0-SNAPSHOT in `cli/pom.xml`; the Dockerfile's stage that built it from source is gone, and `ci/snapshots.sh` no longer excepts it. The image builds, 55 tests pass and the snapshot check passes.
 - [ ] T030 Ask the maintainers on issue #14 to review the branch and agree the merge. Agree with the release's maintainers its timing, a one-off size baseline for the verifier if T026 or T027 found smaller files, and whether the website's switch (spec 010 and WebsiteAngular spec 015) lands in the same release or a release where the two differ is accepted and recorded (FR-011).
 - [ ] T031 Merge `graph-only` into `main` by pull request, after `main` has been merged into `graph-only` and its checks pass.
 
