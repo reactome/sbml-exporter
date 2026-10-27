@@ -50,14 +50,15 @@ placeholders hide a name from this repository, not from the service.
 
 - **Complete:** the three events converted from the fixture (loaded into a fresh
   `neo4j:4.4.48-community`, database `graph.db`, with `cypher-shell -f`) and from the
-  full graph compare with `ci/compare.py` with no differences but the creators, which
-  are the placeholders. All three files pass `ci/validate.py`.
+  full graph compare with `ci/compare.py` with no differences but the placeholders: the
+  creators, and the eight summations in the notes. All three files pass `ci/validate.py`.
 - **No names, by allowlist (CI):** `check-placeholders.sh` (BioPAX3Exporter's, spec 001
   T006) passes on the fixture. It holds people, edits, summations, publications' display
   names and comments to placeholders; every line to the four shapes `extract.py`
   writes; every node's labels to the graph classes the fixture holds, its `schemaClass`
-  among them; and refuses, on any node, a person-like key (in any capitalisation,
-  underscores and hyphens aside) and any value like an email address or an ORCID. It
+  among them; and refuses, on any node, a key from its list of person-like
+  names (in any capitalisation, underscores and hyphens aside; a longer key containing
+  one, such as `authorName`, is not matched) and any value like an email address or an ORCID. It
   fails on the fixture before this change, whose summations cited authors.
 - **No names, by search (at extraction):** `audit.py` finds none of the fixture's six
   people's real names in it, nor an email or an ORCID. It cannot see a cited author who
