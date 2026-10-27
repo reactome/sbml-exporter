@@ -67,7 +67,7 @@ Until spec 001, none of this repository's checks could pass or fail on a change:
   reported over a thousand existing violations.
 
 On `graph-only` all of them are now real and required, each seen failing once:
-the build (with `verifier-lib` built from a fixed commit), 14 unit tests, lint on
+the build (against `verifier-lib` built from a fixed commit then, 1.0.0 as released since T029), 14 unit tests, lint on
 `checkstyle.xml`, and the validity job over a fixture graph (spec 001, T001–T010).
 `main` is unchanged until the branch merges.
 
@@ -161,4 +161,4 @@ what it cost to learn. A principle with no cost behind it does not belong here.
 
 `CLAUDE.md` carries day-to-day guidance; where the two disagree, this file wins.
 
-**Version**: 1.4.0 | **Ratified**: 2026-10-24 | **Last Amended**: 2026-10-25
+**Version**: 1.4.1 | **Ratified**: 2026-10-24 | **Last Amended**: 2026-10-27
