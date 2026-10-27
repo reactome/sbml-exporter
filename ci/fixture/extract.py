@@ -10,10 +10,11 @@ compartment, a person, a publication, an orthologous entity): they are taken as
 leaves, without their own relationships. The
 `DBInfo` node is taken as it is.
 
-People's names never leave the graph: every `Person` is renamed `Placeholder`
-`PersonN`, its ORCID and project dropped, and every `InstanceEdit`'s display name
-(which carries a surname) and note replaced. `check-placeholders.sh` checks the
-output.
+People's names never leave the graph: every `Person` keeps only its dbId and class
+and is renamed `Placeholder` `PersonN`; every `InstanceEdit`'s display name (which
+carries a surname) and note, every summation's text and display name, every
+publication's display name and every comment are replaced. `check-placeholders.sh`
+checks the output, and `audit.py` searches it for the people's real names.
 """
 import json
 import sys
@@ -80,12 +81,23 @@ def properties(props):
 def anonymise(labels, props, people):
     if "Person" in labels:
         n = people.setdefault(props["dbId"], len(people) + 1)
-        props = {k: v for k, v in props.items() if k not in ("orcidId", "project")}
+        props = {k: v for k, v in props.items() if k in ("dbId", "schemaClass")}
         props.update(firstname="Placeholder", surname=f"Person{n}", initial="P", displayName=f"Person{n}, P")
     if "InstanceEdit" in labels:
         props["displayName"] = f"Placeholder edit {props['dbId']}"
         if "note" in props:
             props["note"] = "Placeholder note"
+    # Free text that can name people: a summation cites authors ("X et al"), and its
+    # display name is the text's opening; a publication's display name begins with its
+    # first author; a comment is free.
+    if "Summation" in labels:
+        for key in ("text", "displayName"):
+            if key in props:
+                props[key] = f"Placeholder summation {props['dbId']}"
+    if "Publication" in labels:
+        props["displayName"] = f"Placeholder publication {props['dbId']}"
+    if "comment" in props:
+        props["comment"] = "Placeholder comment"
     return props
 
 
