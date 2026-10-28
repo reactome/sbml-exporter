@@ -37,7 +37,8 @@ Set aside, as FR-004 says:
 
 Not compared, as today's files have none of them: the layout's own id and
 dimensions (today's layouts have neither, which libSBML refuses; the graph
-converter's have both), general glyphs, and species reference glyphs' boxes.
+converter's have both; --exact compares them), general glyphs, and species
+reference glyphs' boxes.
 
 History creators are compared as hashes, so the report never prints a name.
 Every other difference is printed and fails the comparison.
@@ -139,9 +140,15 @@ def layout(document, at_offset, out, exact=False):
     for n, lay in enumerate(layouts(model)):
         at = f"layout[{n}]"
         if exact:
+            # getDimensions() is never None: a layout without the element reads as 0x0,
+            # so whether it was written is asked separately.
             dimensions = lay.getDimensions()
             out[f"{at}/id"] = lay.getId()
-            out[f"{at}/dimensions"] = (dimensions.getWidth(), dimensions.getHeight()) if dimensions else None
+            out[f"{at}/dimensions"] = (
+                (dimensions.getWidth(), dimensions.getHeight(), dimensions.getDepth())
+                if lay.getDimensionsExplicitlySet()
+                else None
+            )
         kinds = (("compartmentGlyph", lay.getNumCompartmentGlyphs, lay.getCompartmentGlyph, "getCompartmentId"),
                  ("speciesGlyph", lay.getNumSpeciesGlyphs, lay.getSpeciesGlyph, "getSpeciesId"),
                  ("reactionGlyph", lay.getNumReactionGlyphs, lay.getReactionGlyph, "getReactionId"),

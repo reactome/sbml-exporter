@@ -158,11 +158,19 @@ jobs:
               run: |
                 python ci/compare.py ci/test/compare/reference ci/test/compare/same
                 # Each must fail by finding the difference, not by failing to run: its summary says so.
-                fails() { local out; if out="$("$@" 2>&1)"; then echo "passed: $*"; return 1; fi; echo "$out" | tail -1 | grep -q "$expect" || { echo "$out"; return 1; }; }
+                fails() { local out; if out="$("$@" 2>&1)"; then echo "passed: $*"; return 1; fi; echo "$out" | tail -1 | grep -q "${expect:?}" || { echo "$out"; return 1; }; }
                 expect='1 differing' fails python ci/compare.py ci/test/compare/reference ci/test/compare/changed
                 # --exact takes no offset off: the same file, shifted, must fail
                 expect='1 differing' fails python ci/compare.py --exact ci/test/compare/reference ci/test/compare/same
                 python ci/compare.py --exact ci/test/compare/reference ci/test/compare/reference
+                # and --exact compares the layout's own id and extent, each on its own
+                mkdir -p exact-check/id exact-check/extent exact-check/no-extent
+                sed 's/layout:id="layout_0"/layout:id="layout_9"/' ci/test/compare/reference/event.sbml > exact-check/id/event.sbml
+                sed 's/<layout:dimensions layout:height="0" layout:width="0"\/>/<layout:dimensions layout:height="5" layout:width="0"\/>/' ci/test/compare/reference/event.sbml > exact-check/extent/event.sbml
+                sed 's/<layout:dimensions layout:height="0" layout:width="0"\/>//' ci/test/compare/reference/event.sbml > exact-check/no-extent/event.sbml
+                for changed in id extent no-extent; do
+                  expect='1 differing' fails python ci/compare.py --exact ci/test/compare/reference exact-check/$changed
+                done
                 mkdir -p valid-check/ok valid-check/bad
                 cp ci/test/valid.sbml valid-check/ok/
                 cp ci/test/invalid.sbml.txt valid-check/bad/invalid.sbml
