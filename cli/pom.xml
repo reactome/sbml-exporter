@@ -19,6 +19,31 @@
         <verifier.main.class>org.reactome.verifier.SBMLExportVerifier</verifier.main.class>
     </properties>
 
+    <!-- verifier-lib 1.0.0's AWS SDK (2.57.3) declares Apache HttpClient 5.6.4 and HttpCore
+         5.4.3; Spring Boot 2.7's dependency management, through the parent, pulled them down to
+         5.1, and the verifier failed at its first S3 call (NoClassDefFoundError:
+         org/apache/hc/client5/http/ssl/TlsSocketStrategy). Held at the SDK's own versions;
+         CI runs the verifier without a network to see it gets that far. -->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.apache.httpcomponents.client5</groupId>
+                <artifactId>httpclient5</artifactId>
+                <version>5.6.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5</artifactId>
+                <version>5.4.3</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents.core5</groupId>
+                <artifactId>httpcore5-h2</artifactId>
+                <version>5.4.3</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
 
         <dependency>

@@ -102,6 +102,22 @@ jobs:
                   --output /out --diagrams /diagrams --diagram-release 97 \
                   --target R-HSA-9613354,R-HSA-8932284,R-HSA-5667111
 
+            # The verifier's S3 client must at least be made: with no network it has to fail looking
+            # for credentials, never on a missing class. verifier-lib 1.0.0's SDK was given older
+            # Apache HTTP clients by Spring Boot's management, and failed at its first S3 call.
+            - name: The verifier gets as far as asking for credentials
+              run: |
+                out=$(docker run --rm --network none tmp-tag java -jar target/sbml-exporter-verifier.jar \
+                  --releaseNumber 97 --output /tmp 2>&1 || true)
+                if printf '%s' "$out" | grep -E 'NoClassDefFoundError|ClassNotFoundException|NoSuchMethodError|NoSuchFieldError'; then
+                  echo "the verifier is missing a class it needs"; exit 1
+                fi
+                printf '%s' "$out" | grep -q 'Unable to load credentials' || {
+                  printf '%s\n' "$out" | grep -E '^Caused by|Exception in' | head -5
+                  echo "the verifier did not get as far as asking for credentials"; exit 1
+                }
+                echo "the verifier's S3 client is made"
+
             # The release's step converts by species, which finds its pathways through their species
             # rather than by id (T026): the fixture's pathway, by that route, must be as expected too.
             - name: Convert the fixture's species
