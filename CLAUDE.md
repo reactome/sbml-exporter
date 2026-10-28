@@ -50,8 +50,8 @@ Feature-sized work goes through Spec Kit before any code, and the specs live in
 
 ## The checks
 
-On `graph-only`, CI runs and requires three checks, each seen failing once
-(constitution, Principle II):
+On `graph-only`, CI runs and requires four checks, each seen failing once
+(constitution, Principle II; `format` on a local run):
 
 - **`docker-build`**: the build and the unit tests. `verifier-lib` is the released
   1.0.0 from Maven Central (spec 001, T029); before it, the `Dockerfile` built a
@@ -63,7 +63,7 @@ On `graph-only`, CI runs and requires three checks, each seen failing once
   valid by libSBML (`ci/validate.py`) and equal to `ci/fixture/expected`
   (`ci/compare.py`).
 
-CI also runs **`format`**, not yet a required check: Markdown, YAML and JSON as Prettier
+The fourth, **`format`**, checks Markdown, YAML and JSON as Prettier
 3.9.10 writes them (`.prettierrc`, `.prettierignore`; WebsiteAngular's settings). Fix with
 `npx prettier@3.9.10 --write .`, which a Spec Kit run needs afterwards: Spec Kit writes
 `[X]` and `*emphasis*`, which Prettier writes `[x]` and `_emphasis_`.
