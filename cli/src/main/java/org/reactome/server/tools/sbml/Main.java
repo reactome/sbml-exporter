@@ -38,7 +38,7 @@ public class Main {
 
     private static DiagramFiles diagrams;
 
-    // A conversion that failed (a species cut short by a missing diagram file, a listed id that is not in the graph,
+    // A conversion that failed (a pathway of a species, a listed id that is not in the graph,
     // not a pathway or not converted, a species not found): the run goes on, as it always has, but ends with exit
     // status 1, so that a release step does not package what is missing.
     private static boolean failed = false;
@@ -154,13 +154,21 @@ public class Main {
                 // Check from parallel to avoid any thread issues for the time being
 //                pathways.stream().parallel().forEach(pathway -> {
                 pathways.stream().forEach(found -> {
-                    // Loaded by id, as a listed id is: getByClass's pathways come without their relationships,
-                    // so their history (created, modified, authored, revised) was left out of the file (T026)
-                    Pathway pathway = dbs.findById(found.getDbId());
-                    progressBar.update(pathway.getStId(), i.get());
-                    SbmlConverter c = new SbmlConverter(pathway, version, ReactomeGraphCore.getService(DatabaseObjectService.class), ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class), diagrams);
-                    c.convert();
-                    c.writeToFile(output);
+                    // Each pathway on its own: one that failed (a missing diagram file, a query that
+                    // failed) skipped the rest of its species, and a rerun had to redo them all.
+                    try {
+                        // Loaded by id, as a listed id is: getByClass's pathways come without their relationships,
+                        // so their history (created, modified, authored, revised) was left out of the file (T026)
+                        Pathway pathway = dbs.findById(found.getDbId());
+                        progressBar.update(pathway.getStId(), i.get());
+                        SbmlConverter c = new SbmlConverter(pathway, version, ReactomeGraphCore.getService(DatabaseObjectService.class), ReactomeGraphCore.getService(AdvancedDatabaseObjectService.class), diagrams);
+                        c.convert();
+                        c.writeToFile(output);
+                    } catch (RuntimeException e) {
+                        logger.error(found.getStId() + " cannot be converted", e);
+                        if (verbose) System.err.println(found.getStId() + " cannot be converted. Reason: " + e);
+                        failed = true;
+                    }
                     if (i.incrementAndGet() % 10 == 0) ReactomeGraphCore.getService(GeneralService.class).clearCache();
                 });
                 progressBar.done();

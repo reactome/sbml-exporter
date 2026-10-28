@@ -1,6 +1,11 @@
 """Compares two folders of SBML element by element (spec 001, FR-004, T016).
 
-Usage: python ci/compare.py <reference-folder> <folder>
+Usage: python ci/compare.py [--exact] <reference-folder> <folder>
+
+--exact is for comparing the graph converter with its own expected output (CI):
+no offset is taken off the coordinates, and the layout's id and dimensions are
+compared. Without it, a regression that moved every coordinate by the same
+amount, or a wrong extent, passed.
 
 The reference is today's relational output of the same release. Files are
 paired by name. Each file is reduced to a set of (path, value) pairs:
@@ -32,7 +37,8 @@ Set aside, as FR-004 says:
 
 Not compared, as today's files have none of them: the layout's own id and
 dimensions (today's layouts have neither, which libSBML refuses; the graph
-converter's have both), general glyphs, and species reference glyphs' boxes.
+converter's have both; --exact compares them), general glyphs, and species
+reference glyphs' boxes.
 
 History creators are compared as hashes, so the report never prints a name.
 Every other difference is printed and fails the comparison.
@@ -127,12 +133,22 @@ def offset(reference, candidate):
     return max(sorted(set(shifts)), key=shifts.count) if shifts else (0, 0)
 
 
-def layout(document, at_offset, out):
+def layout(document, at_offset, out, exact=False):
     model = document.getModel()
     if document.isPackageEnabled("layout"):
         out["layout/required"] = document.getPackageRequired("layout")
     for n, lay in enumerate(layouts(model)):
         at = f"layout[{n}]"
+        if exact:
+            # getDimensions() is never None: a layout without the element reads as 0x0,
+            # so whether it was written is asked separately.
+            dimensions = lay.getDimensions()
+            out[f"{at}/id"] = lay.getId()
+            out[f"{at}/dimensions"] = (
+                (dimensions.getWidth(), dimensions.getHeight(), dimensions.getDepth())
+                if lay.getDimensionsExplicitlySet()
+                else None
+            )
         kinds = (("compartmentGlyph", lay.getNumCompartmentGlyphs, lay.getCompartmentGlyph, "getCompartmentId"),
                  ("speciesGlyph", lay.getNumSpeciesGlyphs, lay.getSpeciesGlyph, "getSpeciesId"),
                  ("reactionGlyph", lay.getNumReactionGlyphs, lay.getReactionGlyph, "getReactionId"),
@@ -182,7 +198,7 @@ def read(path):
     return document
 
 
-def reduce(document, at_offset=(0, 0)):
+def reduce(document, at_offset=(0, 0), exact=False):
     """Return {path: value} for one file."""
     out = {}
     if document.isSetNotes():
@@ -217,7 +233,7 @@ def reduce(document, at_offset=(0, 0)):
         participants(r.getListOfReactants(), f"{at}/reactant", out)
         participants(r.getListOfProducts(), f"{at}/product", out)
         participants(r.getListOfModifiers(), f"{at}/modifier", out)
-    layout(document, at_offset, out)
+    layout(document, at_offset, out, exact)
     return out
 
 
@@ -226,13 +242,13 @@ def shown(value):
     return value if len(value) <= 160 else value[:157] + "..."
 
 
-def compare(reference, candidate):
+def compare(reference, candidate, exact=False):
     """Return the differences between two files, as printable lines."""
     old_document, new_document = read(reference), read(candidate)
     shift = (0, 0)
-    if old_document.getModel() is not None and new_document.getModel() is not None:
+    if not exact and old_document.getModel() is not None and new_document.getModel() is not None:
         shift = offset(old_document.getModel(), new_document.getModel())
-    old, new = reduce(old_document, shift), reduce(new_document)
+    old, new = reduce(old_document, shift, exact), reduce(new_document, (0, 0), exact)
     lines = []
     for key in sorted(old.keys() | new.keys()):
         if key not in new:
@@ -254,6 +270,9 @@ def compare(reference, candidate):
 
 
 def main(argv):
+    exact = len(argv) > 1 and argv[1] == "--exact"
+    if exact:
+        argv = argv[:1] + argv[2:]
     if len(argv) != 3:
         print(__doc__.strip(), file=sys.stderr)
         return 2
@@ -270,7 +289,7 @@ def main(argv):
     for name in sorted(other - names):
         print(f"{name}: not in the reference")
     for name in sorted(names & other):
-        lines = compare(reference / name, candidate / name)
+        lines = compare(reference / name, candidate / name, exact)
         print(f"{name}: {len(lines)} differences")
         for line in lines:
             print(f"  {line}")

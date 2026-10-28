@@ -10,8 +10,6 @@ import org.reactome.server.tools.sbml.data.model.ReactionBase;
 import org.reactome.server.tools.sbml.data.result.ParticipantDetailsResult;
 import org.reactome.server.tools.sbml.data.result.ParticipantResult;
 import org.reactome.server.tools.sbml.data.result.ReactionBaseResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,8 +22,6 @@ import java.util.List;
  * @author Antonio Fabregat (fabregat@ebi.ac.uk)
  */
 public final class DataFactory {
-
-    private static Logger logger = LoggerFactory.getLogger("sbml-exporter");
 
     private static final String REACTIONS_QUERY = "" +
             "OPTIONAL MATCH (rle1:ReactionLikeEvent{stId:$stId}) " +
@@ -103,8 +99,9 @@ public final class DataFactory {
             }
             return reactionBases;
         } catch (CustomQueryException e) {
-            logger.error(e.getMessage(), e);
-            return new ArrayList<>();
+            // Not an empty list: that wrote a file with the model and none of its reactions,
+            // and the run passed it as converted.
+            throw new IllegalStateException("The reactions of " + eventStId + " could not be read", e);
         }
     }
 
@@ -127,8 +124,8 @@ public final class DataFactory {
             }
             return participantDetails;
         } catch (CustomQueryException e) {
-            logger.error(e.getMessage(), e);
-            return new ArrayList<>();
+            // Not an empty list: that wrote a file with none of the event's species.
+            throw new IllegalStateException("The participants of " + eventStId + " could not be read", e);
         }
     }
 

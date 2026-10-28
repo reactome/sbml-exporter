@@ -8,13 +8,12 @@ where this file and the constitution disagree, the constitution wins.
 
 sbml-exporter writes Reactome's SBML (Level 3 Version 1, with the layout
 package). It is Java, built with Maven, writes with JSBML, and reads through
-graph-core. It holds two converters:
+graph-core. On this branch (`graph-only`) it has one converter; `main` still has
+the relational `SbmlConverterForRel`, which ContentService uses today, until the
+branch merges (T031).
 
-- **`SbmlConverterForRel`** (package `org.reactome.sbml.rel`) is the one used
-  today, by the command line and inside ContentService. It reads its reactions
-  and the layout from the relational release database. It writes a layout only
-  when the event's own diagram draws a reaction.
-- **`SbmlConverter`** (packages `converter` and `data`) reads only the graph:
+- **`SbmlConverter`** (packages `converter` and `data`, in the `lib` module) reads
+  only the graph:
   - two Cypher queries in `DataFactory`;
   - graph-core's domain objects, walked lazily (summations, creators, literature,
     compartments). That needs graph-core's lazy-fetch aspect, which
@@ -23,8 +22,8 @@ graph-core. It holds two converters:
   It is to become the one implementation, for both:
   - **the release's archives:** `all_species.3.1.sbml.tgz` and
     `homo_sapiens.3.1.sbml.tgz`, made by the command line;
-  - **the website's per-event downloads:** made through a library module that
-    does not exist yet.
+  - **the website's per-event downloads:** made through the `lib` module, which
+    WebsiteAngular's java-library service runs.
 
 The plan is in [issue #14](https://github.com/reactome/sbml-exporter/issues/14)
 and in [spec 001](specs/001-graph-only-sbml/spec.md). Its work is on the
@@ -78,9 +77,10 @@ tests, and its lint uses Checkstyle's defaults.
   and order, and the diagram's own coordinates. Spec 002 replaces that: the layout
   is to be compared with the diagram files as the website draws them (constitution,
   Principle I).
-- **Runs need a fixed time zone and locale** (UTC, `en_US`). The generation note
-  uses the default date format, and history dates are parsed in the default
-  zone. Write the output as UTF-8.
+- **Runs keep a fixed locale and write UTF-8.** The generation note and history
+  dates are made in UTC by the converter itself (FR-006); the note's short
+  format is `en_US`'s, which JDK 20 and later spell with a narrow space before
+  AM/PM (JDK 11 and 17 do not), and the comparison sets the timestamp aside.
 - **Runs use a private copy of the release's graph**, never a shared database.
 - **The release's published archives** come from the release's download directory
   (`download.reactome.org/{release}/`). Fetch one at a time, only when a
