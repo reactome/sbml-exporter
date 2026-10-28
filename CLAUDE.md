@@ -51,7 +51,7 @@ Feature-sized work goes through Spec Kit before any code, and the specs live in
 ## The checks
 
 On `graph-only`, CI runs and requires four checks, each seen failing once
-(constitution, Principle II; `format` on a local run):
+(constitution, Principle II; `format` in run 40744132003, on a throwaway branch):
 
 - **`docker-build`**: the build and the unit tests. `verifier-lib` is the released
   1.0.0 from Maven Central (spec 001, T029); before it, the `Dockerfile` built a
