@@ -71,11 +71,14 @@ The fourth, **`format`**, checks Markdown, YAML and JSON as Prettier
 
 The fifth, **`scripts`**, checks the scripts and the workflow, each tool pinned: ShellCheck on
 the shell scripts (Spec Kit's own aside), Ruff's lint and format on `ci/`'s Python
-(`ruff.toml`; fix with `ruff format ci`), and actionlint on the workflow.
+(`ruff.toml`; fix with `pipx run ruff==0.16.7 format ci`), and actionlint on the workflow.
+Each step runs whatever the one before found.
 
 Dependabot opens weekly updates to `graph-only` for Maven, the workflow's actions and the
-`Dockerfile`'s images (`.github/dependabot.yml`). graph-core and reactome-parent are
-pinned by checksum (`ci/snapshots.sh`) and move only by hand.
+`Dockerfile`'s images (`.github/dependabot.yml`, read from `main`; its `target-branch` comes
+out when `graph-only` merges, T031). reactome-parent, and the graph-core and reactome-bom
+versions it brings, are snapshots pinned by checksum (`ci/snapshots.sh`) and move only by
+hand, as do the pinned tools above and the Java version of the images.
 
 `main` is unchanged until `graph-only` merges: its build is broken, it has no
 tests, and its lint uses Checkstyle's defaults.

@@ -1,6 +1,8 @@
-# Version updates, weekly, to graph-only (where the work is until it merges to main).
-# graph-core and reactome-parent are snapshots pinned by checksum (ci/snapshots.sh),
-# so they move only by hand.
+# Version updates, weekly. GitHub reads this file from the default branch (main), and
+# target-branch sends the updates to graph-only, where the work is until it merges to
+# main (spec 001 T031); then target-branch comes out.
+# reactome-parent is a snapshot pinned by checksum (ci/snapshots.sh), as are the
+# graph-core and reactome-bom versions it brings, so it moves only by hand.
 version: 2
 updates:
     - package-ecosystem: maven
@@ -9,7 +11,6 @@ updates:
       schedule:
           interval: weekly
       ignore:
-          - dependency-name: org.reactome.server.graph:graph-core
           - dependency-name: org.reactome.maven:reactome-parent
       groups:
           maven:
@@ -27,3 +28,9 @@ updates:
       target-branch: graph-only
       schedule:
           interval: weekly
+      ignore:
+          # The Java version (the tag's major, 11) is a decision, not an update.
+          - dependency-name: eclipse-temurin
+            update-types: ['version-update:semver-major']
+          - dependency-name: maven
+            update-types: ['version-update:semver-major']

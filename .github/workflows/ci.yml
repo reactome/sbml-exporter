@@ -53,6 +53,8 @@ jobs:
     # this workflow, which also runs ShellCheck on its run: blocks. Each pinned.
     scripts:
         runs-on: ubuntu-latest
+        permissions:
+            contents: read
         steps:
             - uses: actions/checkout@v4
 
@@ -62,12 +64,14 @@ jobs:
                     xargs -0 docker run --rm --network none -v "$PWD:/mnt:ro" -w /mnt \
                       koalaman/shellcheck@sha256:2097951f02e735b613f4a34de20c40f937a6c8f18ecb170612c88c34517221fb
 
-            - name: Ruff
+            - name: Ruff lint
               # Runs whatever the step before found, so one push shows every problem.
               if: success() || failure()
-              run: |
-                  pipx run ruff==0.16.7 check ci
-                  pipx run ruff==0.16.7 format --check ci
+              run: pipx run ruff==0.16.7 check ci
+
+            - name: Ruff format
+              if: success() || failure()
+              run: pipx run ruff==0.16.7 format --check ci
 
             - name: actionlint
               # Runs whatever the step before found, so one push shows every problem.
