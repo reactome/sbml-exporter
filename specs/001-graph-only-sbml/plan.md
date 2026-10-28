@@ -67,7 +67,7 @@ Before the split, tests sit in `src/test/java` and move with their code. `ci/fix
 
 ## Complexity Tracking
 
-| Choice | Why | Simpler alternative rejected because |
-|---|---|---|
-| Building `verifier-lib` from a commit | `main`'s build is broken by a published snapshot | waiting blocks all of this work on another repository |
-| A fixture Neo4j in CI | the converter walks graph-core's lazy relationships, which a mock cannot | mocking only the two queries would not exercise the lazy walk the output depends on |
+| Choice                                | Why                                                                      | Simpler alternative rejected because                                                |
+| ------------------------------------- | ------------------------------------------------------------------------ | ----------------------------------------------------------------------------------- |
+| Building `verifier-lib` from a commit | `main`'s build is broken by a published snapshot                         | waiting blocks all of this work on another repository                               |
+| A fixture Neo4j in CI                 | the converter walks graph-core's lazy relationships, which a mock cannot | mocking only the two queries would not exercise the lazy walk the output depends on |

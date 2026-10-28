@@ -2,7 +2,7 @@
 
 ## SBML Exporter
 
-Code to create an [SBML](http://sbml.org "SBML") file from a pathway drawn from the [Reactome](https://reactome.org/ "Reactome") Graph Database. 
+Code to create an [SBML](http://sbml.org 'SBML') file from a pathway drawn from the [Reactome](https://reactome.org/ 'Reactome') Graph Database.
 
 ## Usage
 
@@ -31,9 +31,9 @@ The SBML exported is SBML Level 3 Version 1 Core.
 
 These are areas that have been identified as either missing information or producing a computational model that is not completely accurate. Further work is on-going to improve both the ReactomeDB and the SBML export of these situations.
 
-1. Identifying the Reactome Compartment containing the Reactome PhysicalEntities that appear as *SBML species* in the resulting *SBML model*. It is not always clear from the database which Compartment is appropriate; as some PhysicalEntities list multiple Compartments to account for their possible location in different places. This issue is being addressed by the Reactome curators.
-2. There are currently no SBOTerms created for any *SBML reaction*. The information in the ReactomeDB is not fine-grained enough to categorise types of Reactome ReactionLikeEvents. Work is progressing to provide this information.
-3. Reactome creates some PhysicalEntities as a set of possible/probably participants in a Reaction. Currently these get encoded as a single *SBML species* and added as a reactant/product/modifier. This is inaccurate in terms of the intended meaning of an *SBML species*. Further thought is being given to how to more accurately portray this information in SBML.
+1. Identifying the Reactome Compartment containing the Reactome PhysicalEntities that appear as _SBML species_ in the resulting _SBML model_. It is not always clear from the database which Compartment is appropriate; as some PhysicalEntities list multiple Compartments to account for their possible location in different places. This issue is being addressed by the Reactome curators.
+2. There are currently no SBOTerms created for any _SBML reaction_. The information in the ReactomeDB is not fine-grained enough to categorise types of Reactome ReactionLikeEvents. Work is progressing to provide this information.
+3. Reactome creates some PhysicalEntities as a set of possible/probably participants in a Reaction. Currently these get encoded as a single _SBML species_ and added as a reactant/product/modifier. This is inaccurate in terms of the intended meaning of an _SBML species_. Further thought is being given to how to more accurately portray this information in SBML.
 
 ### Future enhancements
 
@@ -62,7 +62,7 @@ mkdir outputdir
 java -jar cli/target/sbml-exporter-exec.jar --host bolt://localhost:7687 --user neo4j --password <password> --output outputdir --diagrams <diagram folder> --diagram-release <release>
 ```
 
-3. Compress Homo Sapiens file for the Download Page 
+3. Compress Homo Sapiens file for the Download Page
 
 ```console
 cd outputdir
@@ -71,4 +71,5 @@ tar -czvf homo_sapiens.3.1.sbml.tgz R-HSA-*
 ```
 
 4. Distribute the files
-  - Copy homo_sapiens.3.1.sbml.tgz and all_species.3.1.sbml.tgz to download/current
+
+- Copy homo_sapiens.3.1.sbml.tgz and all_species.3.1.sbml.tgz to download/current

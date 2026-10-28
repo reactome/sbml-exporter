@@ -24,7 +24,7 @@ The website's own half of this work (its routes, its links and the service that 
 - **The work on `graph-only` is provisional** until this repository's maintainers answer issue #14 (spec 015, FR-010). Nothing reaches `main` without their agreement.
 - **`main` keeps what the release uses today** until the whole of this spec is proven (FR-011). Then `graph-only` merges into `main` in one pull request. Because CI publishes the image as `latest` on every push to `main`, and the release runs `latest`, that merge changes the next release run; it is timed with the release's maintainers.
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - The build and its checks work (Priority: P1)
 
@@ -123,7 +123,7 @@ The release's SBML step makes both archives from the graph and the diagram files
 - **Diagram files of another release.** The caller states the diagram folder's release, and the layout refuses it when it differs from the graph's (spec 015, R3).
 - **People's names.** Model history names its creators. Fixtures replace them, and comparisons hash them (constitution, Principle V).
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -176,7 +176,7 @@ The release's SBML step makes both archives from the graph and the diagram files
 - **Diagram files**: the release's `diagram/{stId}.json`, which the website draws, given as a folder.
 - **Recorded difference**: a difference from the reference or today's output that is accepted, with its reason, in this spec's `differences.md`, the one list for SBML (WebsiteAngular spec 015 links to it).
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 

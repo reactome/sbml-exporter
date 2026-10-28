@@ -1,7 +1,7 @@
 name: sbml-exporter ci
 
 on:
-    workflow_dispatch:   
+    workflow_dispatch:
     pull_request:
         types:
             - opened
@@ -28,15 +28,25 @@ jobs:
 
             - name: Run lint
               run: |
-                docker build --build-arg REPO_DIR="$REPO_DIR" --target setup-env -t lint-image .
-                docker run --name lint-container lint-image
-            
+                  docker build --build-arg REPO_DIR="$REPO_DIR" --target setup-env -t lint-image .
+                  docker run --name lint-container lint-image
+
             - name: Display lint errors
               if: failure()
               run: |
-                docker cp lint-container:"$REPO_DIR"/lint.log .
-                while IFS= read -r LINT_MSG; do echo "::warning::${LINT_MSG}"; done < lint.log
-                exit 1
+                  docker cp lint-container:"$REPO_DIR"/lint.log .
+                  while IFS= read -r LINT_MSG; do echo "::warning::${LINT_MSG}"; done < lint.log
+                  exit 1
+
+    # Markdown, YAML and JSON as Prettier writes them (.prettierrc, .prettierignore),
+    # pinned to WebsiteAngular's version. Fix with: npx prettier@3.9.10 --write .
+    format:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Formatted
+              run: npx --yes prettier@3.9.10 --check .
 
     docker-build:
         runs-on: ubuntu-latest
@@ -44,18 +54,18 @@ jobs:
             - uses: actions/checkout@v4
 
             - uses: docker/setup-buildx-action@v3
-            
+
             - uses: docker/build-push-action@v5
               with:
-                context: .
-                file: Dockerfile
-                tags: tmp-tag
-                outputs: type=docker,dest=/tmp/image.tar
+                  context: .
+                  file: Dockerfile
+                  tags: tmp-tag
+                  outputs: type=docker,dest=/tmp/image.tar
 
             - uses: actions/upload-artifact@v4
               with:
-                name: image-artifact
-                path: /tmp/image.tar
+                  name: image-artifact
+                  path: /tmp/image.tar
 
     # Spec 001, T009: the graph converter over the fixture graph (ci/fixture), its output
     # valid (libSBML) and as expected (ci/compare.py against ci/fixture/expected, which
@@ -84,98 +94,98 @@ jobs:
 
             - name: Load the fixture graph
               run: |
-                docker cp ci/fixture/fixture.cypher ${{ job.services.neo4j.id }}:/fixture.cypher
-                docker exec ${{ job.services.neo4j.id }} cypher-shell -d graph.db -f /fixture.cypher
+                  docker cp ci/fixture/fixture.cypher ${{ job.services.neo4j.id }}:/fixture.cypher
+                  docker exec ${{ job.services.neo4j.id }} cypher-shell -d graph.db -f /fixture.cypher
 
             - uses: actions/download-artifact@v4
               with:
-                name: image-artifact
-                path: /tmp
+                  name: image-artifact
+                  path: /tmp
 
             - name: Convert the fixture's events
               run: |
-                docker load --input /tmp/image.tar
-                mkdir -m 777 out
-                docker run --rm --network host -v "$PWD/out:/out" -v "$PWD/ci/fixture:/diagrams:ro" tmp-tag \
-                  java -Duser.timezone=UTC -Duser.language=en -Duser.country=US \
-                  -jar target/sbml-exporter-exec.jar --host bolt://localhost:7687 --user neo4j --password none \
-                  --output /out --diagrams /diagrams --diagram-release 97 \
-                  --target R-HSA-9613354,R-HSA-8932284,R-HSA-5667111
+                  docker load --input /tmp/image.tar
+                  mkdir -m 777 out
+                  docker run --rm --network host -v "$PWD/out:/out" -v "$PWD/ci/fixture:/diagrams:ro" tmp-tag \
+                    java -Duser.timezone=UTC -Duser.language=en -Duser.country=US \
+                    -jar target/sbml-exporter-exec.jar --host bolt://localhost:7687 --user neo4j --password none \
+                    --output /out --diagrams /diagrams --diagram-release 97 \
+                    --target R-HSA-9613354,R-HSA-8932284,R-HSA-5667111
 
             # The verifier's S3 client must at least be made: with no network it has to fail looking
             # for credentials, never on a missing class. verifier-lib 1.0.0's SDK was given older
             # Apache HTTP clients by Spring Boot's management, and failed at its first S3 call.
             - name: The verifier gets as far as asking for credentials
               run: |
-                out=$(docker run --rm --network none tmp-tag java -jar target/sbml-exporter-verifier.jar \
-                  --releaseNumber 97 --output /tmp 2>&1 || true)
-                if printf '%s' "$out" | grep -E 'NoClassDefFoundError|ClassNotFoundException|NoSuchMethodError|NoSuchFieldError'; then
-                  echo "the verifier is missing a class it needs"; exit 1
-                fi
-                printf '%s' "$out" | grep -q 'Unable to load credentials' || {
-                  printf '%s\n' "$out" | grep -E '^Caused by|Exception in' | head -5
-                  echo "the verifier did not get as far as asking for credentials"; exit 1
-                }
-                echo "the verifier's S3 client is made"
+                  out=$(docker run --rm --network none tmp-tag java -jar target/sbml-exporter-verifier.jar \
+                    --releaseNumber 97 --output /tmp 2>&1 || true)
+                  if printf '%s' "$out" | grep -E 'NoClassDefFoundError|ClassNotFoundException|NoSuchMethodError|NoSuchFieldError'; then
+                    echo "the verifier is missing a class it needs"; exit 1
+                  fi
+                  printf '%s' "$out" | grep -q 'Unable to load credentials' || {
+                    printf '%s\n' "$out" | grep -E '^Caused by|Exception in' | head -5
+                    echo "the verifier did not get as far as asking for credentials"; exit 1
+                  }
+                  echo "the verifier's S3 client is made"
 
             # The release's step converts by species, which finds its pathways through their species
             # rather than by id (T026): the fixture's pathway, by that route, must be as expected too.
             - name: Convert the fixture's species
               run: |
-                mkdir -m 777 out-species
-                docker run --rm --network host -v "$PWD/out-species:/out" -v "$PWD/ci/fixture:/diagrams:ro" tmp-tag \
-                  java -Duser.timezone=UTC -Duser.language=en -Duser.country=US \
-                  -jar target/sbml-exporter-exec.jar --host bolt://localhost:7687 --user neo4j --password none \
-                  --output /out --diagrams /diagrams --diagram-release 97 \
-                  --target "Homo sapiens"
+                  mkdir -m 777 out-species
+                  docker run --rm --network host -v "$PWD/out-species:/out" -v "$PWD/ci/fixture:/diagrams:ro" tmp-tag \
+                    java -Duser.timezone=UTC -Duser.language=en -Duser.country=US \
+                    -jar target/sbml-exporter-exec.jar --host bolt://localhost:7687 --user neo4j --password none \
+                    --output /out --diagrams /diagrams --diagram-release 97 \
+                    --target "Homo sapiens"
 
             # A listed id that fails (here, one not in the graph) fails the run, but the ids
             # after it are still converted.
             - name: A failed id fails the run, and the others go on
               run: |
-                mkdir -m 777 out-failed
-                rc=0
-                docker run --rm --network host -v "$PWD/out-failed:/out" -v "$PWD/ci/fixture:/diagrams:ro" tmp-tag \
-                  java -jar target/sbml-exporter-exec.jar --host bolt://localhost:7687 --user neo4j --password none \
-                  --output /out --diagrams /diagrams --diagram-release 97 \
-                  --target R-HSA-0,R-HSA-9613354 || rc=$?
-                test "$rc" -eq 1 || { echo "exit status $rc, not 1"; exit 1; }
-                test -s out-failed/R-HSA-9613354.sbml || { echo "R-HSA-9613354 was not converted after the failed id"; exit 1; }
+                  mkdir -m 777 out-failed
+                  rc=0
+                  docker run --rm --network host -v "$PWD/out-failed:/out" -v "$PWD/ci/fixture:/diagrams:ro" tmp-tag \
+                    java -jar target/sbml-exporter-exec.jar --host bolt://localhost:7687 --user neo4j --password none \
+                    --output /out --diagrams /diagrams --diagram-release 97 \
+                    --target R-HSA-0,R-HSA-9613354 || rc=$?
+                  test "$rc" -eq 1 || { echo "exit status $rc, not 1"; exit 1; }
+                  test -s out-failed/R-HSA-9613354.sbml || { echo "R-HSA-9613354 was not converted after the failed id"; exit 1; }
 
             - uses: actions/setup-python@v5
               with:
-                python-version: '3.12'
+                  python-version: '3.12'
 
             - name: Valid
               run: |
-                pip install python-libsbml==5.21.2
-                python ci/validate.py out
-                python ci/validate.py out-species
+                  pip install python-libsbml==5.21.2
+                  python ci/validate.py out
+                  python ci/validate.py out-species
 
             # The comparison and the validator are checked first on files made to pass and to
             # fail (ci/test): broken so that both sides reduced alike, they passed everything.
             - name: The comparison and the validator do what they say
               run: |
-                python ci/compare.py ci/test/compare/reference ci/test/compare/same
-                # Each must fail by finding the difference, not by failing to run: its summary says so.
-                fails() { local out; if out="$("$@" 2>&1)"; then echo "passed: $*"; return 1; fi; echo "$out" | tail -1 | grep -q "${expect:?}" || { echo "$out"; return 1; }; }
-                expect='1 differing' fails python ci/compare.py ci/test/compare/reference ci/test/compare/changed
-                # --exact takes no offset off: the same file, shifted, must fail
-                expect='1 differing' fails python ci/compare.py --exact ci/test/compare/reference ci/test/compare/same
-                python ci/compare.py --exact ci/test/compare/reference ci/test/compare/reference
-                # and --exact compares the layout's own id and extent, each on its own
-                mkdir -p exact-check/id exact-check/extent exact-check/no-extent
-                sed 's/layout:id="layout_0"/layout:id="layout_9"/' ci/test/compare/reference/event.sbml > exact-check/id/event.sbml
-                sed 's/<layout:dimensions layout:height="0" layout:width="0"\/>/<layout:dimensions layout:height="5" layout:width="0"\/>/' ci/test/compare/reference/event.sbml > exact-check/extent/event.sbml
-                sed 's/<layout:dimensions layout:height="0" layout:width="0"\/>//' ci/test/compare/reference/event.sbml > exact-check/no-extent/event.sbml
-                for changed in id extent no-extent; do
-                  expect='1 differing' fails python ci/compare.py --exact ci/test/compare/reference exact-check/$changed
-                done
-                mkdir -p valid-check/ok valid-check/bad
-                cp ci/test/valid.sbml valid-check/ok/
-                cp ci/test/invalid.sbml.txt valid-check/bad/invalid.sbml
-                python ci/validate.py valid-check/ok
-                expect='1 with errors' fails python ci/validate.py valid-check/bad
+                  python ci/compare.py ci/test/compare/reference ci/test/compare/same
+                  # Each must fail by finding the difference, not by failing to run: its summary says so.
+                  fails() { local out; if out="$("$@" 2>&1)"; then echo "passed: $*"; return 1; fi; echo "$out" | tail -1 | grep -q "${expect:?}" || { echo "$out"; return 1; }; }
+                  expect='1 differing' fails python ci/compare.py ci/test/compare/reference ci/test/compare/changed
+                  # --exact takes no offset off: the same file, shifted, must fail
+                  expect='1 differing' fails python ci/compare.py --exact ci/test/compare/reference ci/test/compare/same
+                  python ci/compare.py --exact ci/test/compare/reference ci/test/compare/reference
+                  # and --exact compares the layout's own id and extent, each on its own
+                  mkdir -p exact-check/id exact-check/extent exact-check/no-extent
+                  sed 's/layout:id="layout_0"/layout:id="layout_9"/' ci/test/compare/reference/event.sbml > exact-check/id/event.sbml
+                  sed 's/<layout:dimensions layout:height="0" layout:width="0"\/>/<layout:dimensions layout:height="5" layout:width="0"\/>/' ci/test/compare/reference/event.sbml > exact-check/extent/event.sbml
+                  sed 's/<layout:dimensions layout:height="0" layout:width="0"\/>//' ci/test/compare/reference/event.sbml > exact-check/no-extent/event.sbml
+                  for changed in id extent no-extent; do
+                    expect='1 differing' fails python ci/compare.py --exact ci/test/compare/reference exact-check/$changed
+                  done
+                  mkdir -p valid-check/ok valid-check/bad
+                  cp ci/test/valid.sbml valid-check/ok/
+                  cp ci/test/invalid.sbml.txt valid-check/bad/invalid.sbml
+                  python ci/validate.py valid-check/ok
+                  expect='1 with errors' fails python ci/validate.py valid-check/bad
 
             # Against the converter's own expected output, so nothing is set aside but what
             # FR-004 sets aside: no offset, and the layout's id and dimensions compared.
@@ -185,17 +195,17 @@ jobs:
             # Its one pathway, and nothing else
             - name: The species run as expected
               run: |
-                mkdir expected-species
-                cp ci/fixture/expected/R-HSA-9613354.sbml expected-species/
-                python ci/compare.py --exact expected-species out-species
+                  mkdir expected-species
+                  cp ci/fixture/expected/R-HSA-9613354.sbml expected-species/
+                  python ci/compare.py --exact expected-species out-species
 
             # US4 (spec 001, T022): a program that depends only on the library (ci/library-check),
             # on JDK 17 as the website's service runs, converts the same events one after another and
             # twice at once. Its files must be the command line's, and the parallel ones the same.
             - uses: actions/setup-java@v4
               with:
-                distribution: temurin
-                java-version: '17'
+                  distribution: temurin
+                  java-version: '17'
 
             - name: The library, built and tested on JDK 17
               run: mvn -B -nsu install -pl lib -am
@@ -203,22 +213,22 @@ jobs:
             - name: The library alone gives the command line's files, in parallel too
               timeout-minutes: 15
               run: |
-                mvn -B -q -nsu -f ci/library-check/pom.xml package
-                java -Duser.timezone=UTC -Duser.language=en -Duser.country=US \
-                  -jar ci/library-check/target/sbml-exporter-library-check-exec.jar \
-                  bolt://localhost:7687 neo4j none ci/fixture 97 library \
-                  R-HSA-9613354 R-HSA-8932284 R-HSA-5667111
-                python ci/compare.py --exact out library/sequence
-                python ci/compare.py --exact library/sequence library/parallel-a
-                python ci/compare.py --exact library/sequence library/parallel-b
-                # The same JVM writes all three folders, so they must be the same bytes but the time
-                # of writing: stricter than compare.py, which sets aside order and metaids.
-                for f in library/sequence/*.sbml; do
-                  for copy in parallel-a parallel-b; do
-                    diff <(sed -E 's/ on [^<]* using / on <date> using /' "$f") \
-                         <(sed -E 's/ on [^<]* using / on <date> using /' "library/$copy/$(basename "$f")")
+                  mvn -B -q -nsu -f ci/library-check/pom.xml package
+                  java -Duser.timezone=UTC -Duser.language=en -Duser.country=US \
+                    -jar ci/library-check/target/sbml-exporter-library-check-exec.jar \
+                    bolt://localhost:7687 neo4j none ci/fixture 97 library \
+                    R-HSA-9613354 R-HSA-8932284 R-HSA-5667111
+                  python ci/compare.py --exact out library/sequence
+                  python ci/compare.py --exact library/sequence library/parallel-a
+                  python ci/compare.py --exact library/sequence library/parallel-b
+                  # The same JVM writes all three folders, so they must be the same bytes but the time
+                  # of writing: stricter than compare.py, which sets aside order and metaids.
+                  for f in library/sequence/*.sbml; do
+                    for copy in parallel-a parallel-b; do
+                      diff <(sed -E 's/ on [^<]* using / on <date> using /' "$f") \
+                           <(sed -E 's/ on [^<]* using / on <date> using /' "library/$copy/$(basename "$f")")
+                    done
                   done
-                done
 
     docker-push:
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
@@ -227,34 +237,34 @@ jobs:
         steps:
             - uses: actions/download-artifact@v4
               with:
-                name: image-artifact
-                path: /tmp
+                  name: image-artifact
+                  path: /tmp
 
             - id: get-hash
               run: |
-                FULL_SHA=${{ github.sha }}
-                echo "SHORT_SHA=${FULL_SHA:0:7}" >> $GITHUB_OUTPUT
-            
+                  FULL_SHA=${{ github.sha }}
+                  echo "SHORT_SHA=${FULL_SHA:0:7}" >> $GITHUB_OUTPUT
+
             - env:
-                AWS_REGION : us-east-1
+                  AWS_REGION: us-east-1
               uses: aws-actions/configure-aws-credentials@v4
               with:
-                role-to-assume: ${{ vars.AWS_ROLE }}
-                aws-region: ${{ env.AWS_REGION }}
-    
+                  role-to-assume: ${{ vars.AWS_ROLE }}
+                  aws-region: ${{ env.AWS_REGION }}
+
             - id: login-ecr
               uses: aws-actions/amazon-ecr-login@v2
               with:
-                registry-type: public
+                  registry-type: public
 
             - env:
-                AWS_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-                AWS_REGISTRY_ALIAS: reactome
-                AWS_REPO: sbml-exporter
-                IMG_TAG: ${{ steps.get-hash.outputs.SHORT_SHA }}
+                  AWS_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+                  AWS_REGISTRY_ALIAS: reactome
+                  AWS_REPO: sbml-exporter
+                  IMG_TAG: ${{ steps.get-hash.outputs.SHORT_SHA }}
               run: |
-                docker load --input /tmp/image.tar
-                docker image tag tmp-tag $AWS_REGISTRY/$AWS_REGISTRY_ALIAS/$AWS_REPO:$IMG_TAG
-                docker image tag tmp-tag $AWS_REGISTRY/$AWS_REGISTRY_ALIAS/$AWS_REPO:latest
-                docker push $AWS_REGISTRY/$AWS_REGISTRY_ALIAS/$AWS_REPO:$IMG_TAG
-                docker push $AWS_REGISTRY/$AWS_REGISTRY_ALIAS/$AWS_REPO:latest
+                  docker load --input /tmp/image.tar
+                  docker image tag tmp-tag $AWS_REGISTRY/$AWS_REGISTRY_ALIAS/$AWS_REPO:$IMG_TAG
+                  docker image tag tmp-tag $AWS_REGISTRY/$AWS_REGISTRY_ALIAS/$AWS_REPO:latest
+                  docker push $AWS_REGISTRY/$AWS_REGISTRY_ALIAS/$AWS_REPO:$IMG_TAG
+                  docker push $AWS_REGISTRY/$AWS_REGISTRY_ALIAS/$AWS_REPO:latest

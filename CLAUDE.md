@@ -63,6 +63,11 @@ On `graph-only`, CI runs and requires three checks, each seen failing once
   valid by libSBML (`ci/validate.py`) and equal to `ci/fixture/expected`
   (`ci/compare.py`).
 
+CI also runs **`format`**, not yet a required check: Markdown, YAML and JSON as Prettier
+3.9.10 writes them (`.prettierrc`, `.prettierignore`; WebsiteAngular's settings). Fix with
+`npx prettier@3.9.10 --write .`, which a Spec Kit run needs afterwards: Spec Kit writes
+`[X]` and `*emphasis*`, which Prettier writes `[x]` and `_emphasis_`.
+
 `main` is unchanged until `graph-only` merges: its build is broken, it has no
 tests, and its lint uses Checkstyle's defaults.
 
