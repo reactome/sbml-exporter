@@ -59,6 +59,8 @@ On `graph-only`, CI runs and requires three checks, each seen failing once
   `SBMLExportVerifier` uses. The build also fails if a snapshot dependency changes
   under it (`ci/snapshots.sh`).
 - **`lint`**: Checkstyle with the repository's `checkstyle.xml`.
+- **`format`**: Markdown, YAML and JSON as Prettier 3.9.10 writes them (`.prettierrc`,
+  `.prettierignore`; WebsiteAngular's settings). Fix with `npx prettier@3.9.10 --write .`
 - **`validity`**: the converter over the fixture graph (`ci/fixture`), its output
   valid by libSBML (`ci/validate.py`) and equal to `ci/fixture/expected`
   (`ci/compare.py`).

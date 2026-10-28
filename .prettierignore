@@ -1,0 +1,11 @@
+# Installed by Spec Kit, not authored: a reinstall would fight the formatter.
+.specify
+.claude
+
+# Data the tests read, not authored.
+ci/fixture/*.json
+ci/fixture/expected
+ci/test
+
+# Build output
+target

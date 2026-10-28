@@ -34,7 +34,7 @@ drawing code measuring labels in whatever font the exporting machine has. Reacto
 moving away from that code (decided 25 Oct 2026), so matching it is no longer the
 goal. The goal is the diagram as the website draws it.
 
-## User Scenarios & Testing *(mandatory)*
+## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - The layout holds the whole diagram the website shows (Priority: P1)
 
@@ -77,6 +77,7 @@ for one, and every glyph's position and size equal the file's.
 
 The same researcher opens the file in a tool that reads SBML render information. The
 diagram looks like the website's:
+
 - each kind of object has its shape (a protein, a complex, a set, a chemical, a gene, an
   RNA, a compartment, a subpathway);
 - colours follow the website's diagram style;
@@ -156,7 +157,7 @@ normally and the rest faded.
 - **Very large diagrams** (Signal Transduction's): the file grows with the new glyphs and
   styles, and its size and conversion time are measured.
 
-## Requirements *(mandatory)*
+## Requirements _(mandatory)_
 
 ### Functional Requirements
 
@@ -217,7 +218,7 @@ normally and the rest faded.
 - **Style**: the shape, colours and marks the website gives a kind of object, carried as
   render information.
 
-## Success Criteria *(mandatory)*
+## Success Criteria _(mandatory)_
 
 ### Measurable Outcomes
 
