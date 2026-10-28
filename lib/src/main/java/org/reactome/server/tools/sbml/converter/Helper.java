@@ -298,7 +298,8 @@ public class Helper {
 
     /**
      * The generation note's time: UTC, in en_US's short format, wherever this runs (spec 001,
-     * FR-006). The reference was made that way.
+     * FR-006). The reference was made that way. JDK 20 and later put a narrow space before
+     * AM/PM in that format; the images run JDK 11 and 17, and the comparison sets it aside.
      */
     static String generationTime(Date date) {
         DateFormat dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, Locale.US);

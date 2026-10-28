@@ -152,15 +152,34 @@ jobs:
                 python ci/validate.py out
                 python ci/validate.py out-species
 
+            # The comparison and the validator are checked first on files made to pass and to
+            # fail (ci/test): broken so that both sides reduced alike, they passed everything.
+            - name: The comparison and the validator do what they say
+              run: |
+                python ci/compare.py ci/test/compare/reference ci/test/compare/same
+                # Each must fail by finding the difference, not by failing to run: its summary says so.
+                fails() { local out; if out="$("$@" 2>&1)"; then echo "passed: $*"; return 1; fi; echo "$out" | tail -1 | grep -q "$expect" || { echo "$out"; return 1; }; }
+                expect='1 differing' fails python ci/compare.py ci/test/compare/reference ci/test/compare/changed
+                # --exact takes no offset off: the same file, shifted, must fail
+                expect='1 differing' fails python ci/compare.py --exact ci/test/compare/reference ci/test/compare/same
+                python ci/compare.py --exact ci/test/compare/reference ci/test/compare/reference
+                mkdir -p valid-check/ok valid-check/bad
+                cp ci/test/valid.sbml valid-check/ok/
+                cp ci/test/invalid.sbml.txt valid-check/bad/invalid.sbml
+                python ci/validate.py valid-check/ok
+                expect='1 with errors' fails python ci/validate.py valid-check/bad
+
+            # Against the converter's own expected output, so nothing is set aside but what
+            # FR-004 sets aside: no offset, and the layout's id and dimensions compared.
             - name: As expected
-              run: python ci/compare.py ci/fixture/expected out
+              run: python ci/compare.py --exact ci/fixture/expected out
 
             # Its one pathway, and nothing else
             - name: The species run as expected
               run: |
                 mkdir expected-species
                 cp ci/fixture/expected/R-HSA-9613354.sbml expected-species/
-                python ci/compare.py expected-species out-species
+                python ci/compare.py --exact expected-species out-species
 
             # US4 (spec 001, T022): a program that depends only on the library (ci/library-check),
             # on JDK 17 as the website's service runs, converts the same events one after another and
@@ -181,9 +200,9 @@ jobs:
                   -jar ci/library-check/target/sbml-exporter-library-check-exec.jar \
                   bolt://localhost:7687 neo4j none ci/fixture 97 library \
                   R-HSA-9613354 R-HSA-8932284 R-HSA-5667111
-                python ci/compare.py out library/sequence
-                python ci/compare.py library/sequence library/parallel-a
-                python ci/compare.py library/sequence library/parallel-b
+                python ci/compare.py --exact out library/sequence
+                python ci/compare.py --exact library/sequence library/parallel-a
+                python ci/compare.py --exact library/sequence library/parallel-b
                 # The same JVM writes all three folders, so they must be the same bytes but the time
                 # of writing: stricter than compare.py, which sets aside order and metaids.
                 for f in library/sequence/*.sbml; do

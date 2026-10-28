@@ -100,6 +100,21 @@ References kept outside the repository (the private graph copy, today's relation
 - [ ] T030 Ask the maintainers on issue #14 to review the branch and agree the merge. Agree with the release's maintainers its timing, a one-off size baseline for the verifier if T026 or T027 found smaller files, and whether the website's switch (spec 010 and WebsiteAngular spec 015) lands in the same release or a release where the two differ is accepted and recorded (FR-011).
 - [ ] T031 Merge `graph-only` into `main` by pull request, after `main` has been merged into `graph-only` and its checks pass.
 
+## Open after the review of 28 Oct
+
+From the review of `graph-only` against its merge base (fixed in #86: a failed query now fails the
+conversion; one pathway's failure no longer skips its species' others; CI checks `compare.py` and
+`validate.py` on their own test files and compares the fixture with `--exact`; CLAUDE.md brought up to
+date). Left open, each to be done with the task it belongs to:
+
+- The fixture has no `Affiliation` (`ci/fixture/extract.py` stops at `Person`), so a lost creator
+  organisation would pass CI. Extracting it needs the private graph copy (T016).
+- `ci/fixture/check-placeholders.sh` refuses only `orcidId` and `project` among people's properties; an
+  allowlist of the properties a placeholder person may carry would refuse anything new.
+- Spring Boot's management also holds netty at 4.1.85 where verifier-lib's SDK declares 4.1.138. The
+  verifier uses only the synchronous S3 client, so the async (netty) client is not loaded; checked again
+  when the verifier first runs over a release's files (T029).
+
 ## Dependencies
 
 - Phase 1 comes first; T001 before every other task, since nothing builds without it. T006 and T007 before T009.
