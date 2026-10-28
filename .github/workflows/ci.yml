@@ -65,7 +65,7 @@ jobs:
                       koalaman/shellcheck@sha256:2097951f02e735b613f4a34de20c40f937a6c8f18ecb170612c88c34517221fb
 
             - name: Ruff lint
-              # Runs whatever the step before found, so one push shows every problem.
+              # Runs even when a step before it fails, so one push shows every problem.
               if: success() || failure()
               run: pipx run ruff==0.16.7 check ci
 
@@ -74,7 +74,7 @@ jobs:
               run: pipx run ruff==0.16.7 format --check ci
 
             - name: actionlint
-              # Runs whatever the step before found, so one push shows every problem.
+              # Runs even when a step before it fails, so one push shows every problem.
               if: success() || failure()
               run: |
                   docker run --rm --network none -v "$PWD:/repo:ro" -w /repo \
