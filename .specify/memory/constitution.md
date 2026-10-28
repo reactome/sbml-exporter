@@ -42,6 +42,7 @@ reference is checked before it is trusted.
   Why today's output and not a fixed copy of the graph converter: the files
   people use are today's, and a reference made by the code under test cannot
   catch what that code gets wrong (decided 24 Oct 2026).
+
 - **The layout** is compared with the diagram files the website draws from, not with
   today's relational layout: one glyph for each object the website draws, at the
   file's position and size (spec 002). Until spec 002 lands, spec 001's port is

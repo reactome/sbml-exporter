@@ -1,11 +1,11 @@
-# Installed by Spec Kit, not authored: a reinstall would fight the formatter.
-.specify
+# Installed by Spec Kit, not authored: a reinstall would fight the formatter. The
+# constitution (.specify/memory) is this project's own, so it is checked.
+.specify/*
+!.specify/memory
 .claude
 
-# Data the tests read, not authored.
+# The diagram file DiagramFilesTest copies as it is.
 ci/fixture/*.json
-ci/fixture/expected
-ci/test
 
 # Build output
 target
