@@ -3,6 +3,8 @@
 # every Person must carry extract.py's placeholders and nothing else that names them,
 # and every InstanceEdit's display name and note must be a placeholder.
 # Usage: ci/fixture/check-placeholders.sh [ci/fixture/fixture.cypher]
+# The grep patterns match the fixture's literal backticks, so single quotes are meant.
+# shellcheck disable=SC2016
 set -euo pipefail
 fixture=${1:-$(dirname "$0")/fixture.cypher}
 status=0

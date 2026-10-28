@@ -43,6 +43,7 @@ reference glyphs' boxes.
 History creators are compared as hashes, so the report never prints a name.
 Every other difference is printed and fails the comparison.
 """
+
 import hashlib
 import pathlib
 import re
@@ -75,7 +76,9 @@ def describe(sbase, path, out):
         out[f"{path}/sboTerm"] = sbase.getSBOTermID()
     if sbase.isSetNotes():
         notes = text(sbase.getNotesString())
-        out[f"{path}/notes"] = STRUCTURE.sub(lambda m: m.group(1) + ", ".join(sorted(m.group(2).split(", "))) + m.group(3), notes)
+        out[f"{path}/notes"] = STRUCTURE.sub(
+            lambda m: m.group(1) + ", ".join(sorted(m.group(2).split(", "))) + m.group(3), notes
+        )
     resources = {}
     for i in range(sbase.getNumCVTerms()):
         term = sbase.getCVTerm(i)
@@ -86,10 +89,15 @@ def describe(sbase, path, out):
         out[f"{path}/{name}"] = sorted(found)
     if sbase.isSetModelHistory():
         history = sbase.getModelHistory()
-        out[f"{path}/creators"] = sorted(creator(history.getCreator(i)) for i in range(history.getNumCreators()))
+        out[f"{path}/creators"] = sorted(
+            creator(history.getCreator(i)) for i in range(history.getNumCreators())
+        )
         if history.isSetCreatedDate():
             out[f"{path}/created"] = history.getCreatedDate().getDateAsString()
-        out[f"{path}/modified"] = sorted(history.getModifiedDate(i).getDateAsString() for i in range(history.getNumModifiedDates()))
+        out[f"{path}/modified"] = sorted(
+            history.getModifiedDate(i).getDateAsString()
+            for i in range(history.getNumModifiedDates())
+        )
 
 
 def number(value):
@@ -100,17 +108,21 @@ def number(value):
 
 def box(glyph, offset):
     b = glyph.getBoundingBox()
-    return (f"{number(b.getX() - offset[0])},{number(b.getY() - offset[1])} "
-            f"{number(b.getWidth())}x{number(b.getHeight())}")
+    return (
+        f"{number(b.getX() - offset[0])},{number(b.getY() - offset[1])} "
+        f"{number(b.getWidth())}x{number(b.getHeight())}"
+    )
 
 
 def curve(glyph, offset):
     if not glyph.isSetCurve():
         return ""
     c = glyph.getCurve()
-    return "; ".join(f"{number(s.getStart().getXOffset() - offset[0])},{number(s.getStart().getYOffset() - offset[1])}-"
-                     f"{number(s.getEnd().getXOffset() - offset[0])},{number(s.getEnd().getYOffset() - offset[1])}"
-                     for s in (c.getCurveSegment(i) for i in range(c.getNumCurveSegments())))
+    return "; ".join(
+        f"{number(s.getStart().getXOffset() - offset[0])},{number(s.getStart().getYOffset() - offset[1])}-"
+        f"{number(s.getEnd().getXOffset() - offset[0])},{number(s.getEnd().getYOffset() - offset[1])}"
+        for s in (c.getCurveSegment(i) for i in range(c.getNumCurveSegments()))
+    )
 
 
 def layouts(model):
@@ -120,9 +132,11 @@ def layouts(model):
 
 def positions(model):
     """Each species glyph's position, by id."""
-    return {g.getId(): (g.getBoundingBox().getX(), g.getBoundingBox().getY())
-            for layout in layouts(model)
-            for g in (layout.getSpeciesGlyph(i) for i in range(layout.getNumSpeciesGlyphs()))}
+    return {
+        g.getId(): (g.getBoundingBox().getX(), g.getBoundingBox().getY())
+        for layout in layouts(model)
+        for g in (layout.getSpeciesGlyph(i) for i in range(layout.getNumSpeciesGlyphs()))
+    }
 
 
 def offset(reference, candidate):
@@ -149,10 +163,17 @@ def layout(document, at_offset, out, exact=False):
                 if lay.getDimensionsExplicitlySet()
                 else None
             )
-        kinds = (("compartmentGlyph", lay.getNumCompartmentGlyphs, lay.getCompartmentGlyph, "getCompartmentId"),
-                 ("speciesGlyph", lay.getNumSpeciesGlyphs, lay.getSpeciesGlyph, "getSpeciesId"),
-                 ("reactionGlyph", lay.getNumReactionGlyphs, lay.getReactionGlyph, "getReactionId"),
-                 ("textGlyph", lay.getNumTextGlyphs, lay.getTextGlyph, "getGraphicalObjectId"))
+        kinds = (
+            (
+                "compartmentGlyph",
+                lay.getNumCompartmentGlyphs,
+                lay.getCompartmentGlyph,
+                "getCompartmentId",
+            ),
+            ("speciesGlyph", lay.getNumSpeciesGlyphs, lay.getSpeciesGlyph, "getSpeciesId"),
+            ("reactionGlyph", lay.getNumReactionGlyphs, lay.getReactionGlyph, "getReactionId"),
+            ("textGlyph", lay.getNumTextGlyphs, lay.getTextGlyph, "getGraphicalObjectId"),
+        )
         for kind, count, get, target in kinds:
             glyphs = [get(i) for i in range(count())]
             out[f"{at}/{kind}s"] = " ".join(g.getId() for g in glyphs)
@@ -165,7 +186,10 @@ def layout(document, at_offset, out, exact=False):
                 out[f"{gat}/box"] = box(g, at_offset)
                 if kind == "reactionGlyph":
                     out[f"{gat}/curve"] = curve(g, at_offset)
-                    refs = [g.getSpeciesReferenceGlyph(i) for i in range(g.getNumSpeciesReferenceGlyphs())]
+                    refs = [
+                        g.getSpeciesReferenceGlyph(i)
+                        for i in range(g.getNumSpeciesReferenceGlyphs())
+                    ]
                     out[f"{gat}/speciesReferenceGlyphs"] = " ".join(r.getId() for r in refs)
                     for r in refs:
                         rat = f"{gat}/speciesReferenceGlyph[{r.getId()}]"
@@ -257,13 +281,25 @@ def compare(reference, candidate, exact=False):
             lines.append(f"+ {key}: only in the new file: {shown(new[key])}")
         elif old[key] != new[key]:
             if isinstance(old[key], list) and isinstance(new[key], list):
-                gone, added = sorted(set(old[key]) - set(new[key])), sorted(set(new[key]) - set(old[key]))
+                gone, added = (
+                    sorted(set(old[key]) - set(new[key])),
+                    sorted(set(new[key]) - set(old[key])),
+                )
                 lines.append(f"~ {key}: reference only {shown(gone)}; new only {shown(added)}")
-            elif isinstance(old[key], str) and isinstance(new[key], str) and len(old[key]) + len(new[key]) > 160:
+            elif (
+                isinstance(old[key], str)
+                and isinstance(new[key], str)
+                and len(old[key]) + len(new[key]) > 160
+            ):
                 # Long text: show where the two first part.
-                at = next((i for i, (a, b) in enumerate(zip(old[key], new[key])) if a != b), min(len(old[key]), len(new[key])))
+                at = next(
+                    (i for i, (a, b) in enumerate(zip(old[key], new[key], strict=False)) if a != b),
+                    min(len(old[key]), len(new[key])),
+                )
                 start = max(0, at - 40)
-                lines.append(f"~ {key}: from character {at}: reference ...{shown(old[key][start:at + 80])}; new ...{shown(new[key][start:at + 80])}")
+                lines.append(
+                    f"~ {key}: from character {at}: reference ...{shown(old[key][start : at + 80])}; new ...{shown(new[key][start : at + 80])}"
+                )
             else:
                 lines.append(f"~ {key}: reference {shown(old[key])}; new {shown(new[key])}")
     return lines

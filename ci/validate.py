@@ -6,6 +6,7 @@ Errors fail the check; warnings are reported and allowed. The units and
 modelling-practice categories are off, as in WebsiteAngular spec 015's R5, so the
 results compare with that baseline. libSBML sets no exit status, so this does.
 """
+
 import pathlib
 import sys
 
