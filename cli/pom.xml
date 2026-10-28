@@ -22,8 +22,9 @@
     <!-- verifier-lib 1.0.0's AWS SDK (2.57.3) declares Apache HttpClient 5.6.4 and HttpCore
          5.4.3; Spring Boot 2.7's dependency management, through the parent, pulled them down to
          5.1, and the verifier failed at its first S3 call (NoClassDefFoundError:
-         org/apache/hc/client5/http/ssl/TlsSocketStrategy). Held at the SDK's own versions;
-         CI runs the verifier without a network to see it gets that far. -->
+         org/apache/hc/client5/http/ssl/TlsSocketStrategy). Held at the SDK's versions or
+         their later patches (Dependabot's); CI runs the verifier without a network to see it
+         gets that far. -->
     <dependencyManagement>
         <dependencies>
             <dependency>
