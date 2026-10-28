@@ -1,0 +1,29 @@
+# Version updates, weekly, to graph-only (where the work is until it merges to main).
+# graph-core and reactome-parent are snapshots pinned by checksum (ci/snapshots.sh),
+# so they move only by hand.
+version: 2
+updates:
+    - package-ecosystem: maven
+      directory: /
+      target-branch: graph-only
+      schedule:
+          interval: weekly
+      ignore:
+          - dependency-name: org.reactome.server.graph:graph-core
+          - dependency-name: org.reactome.maven:reactome-parent
+      groups:
+          maven:
+              patterns: ['*']
+    - package-ecosystem: github-actions
+      directory: /
+      target-branch: graph-only
+      schedule:
+          interval: weekly
+      groups:
+          actions:
+              patterns: ['*']
+    - package-ecosystem: docker
+      directory: /
+      target-branch: graph-only
+      schedule:
+          interval: weekly

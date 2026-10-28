@@ -50,7 +50,7 @@ Feature-sized work goes through Spec Kit before any code, and the specs live in
 
 ## The checks
 
-On `graph-only`, CI runs and requires four checks, each seen failing once
+On `graph-only`, CI runs and requires five checks, each seen failing once
 (constitution, Principle II; `format` in run 40744132003, on a throwaway branch):
 
 - **`docker-build`**: the build and the unit tests. `verifier-lib` is the released
@@ -67,6 +67,14 @@ The fourth, **`format`**, checks Markdown, YAML and JSON as Prettier
 3.9.10 writes them (`.prettierrc`, `.prettierignore`; WebsiteAngular's settings). Fix with
 `npx prettier@3.9.10 --write .`, which a Spec Kit run needs afterwards: Spec Kit writes
 `[X]` and `*emphasis*`, which Prettier writes `[x]` and `_emphasis_`.
+
+The fifth, **`scripts`**, checks the scripts and the workflow, each tool pinned: ShellCheck on
+the shell scripts (Spec Kit's own aside), Ruff's lint and format on `ci/`'s Python
+(`ruff.toml`; fix with `ruff format ci`), and actionlint on the workflow.
+
+Dependabot opens weekly updates to `graph-only` for Maven, the workflow's actions and the
+`Dockerfile`'s images (`.github/dependabot.yml`). graph-core and reactome-parent are
+pinned by checksum (`ci/snapshots.sh`) and move only by hand.
 
 `main` is unchanged until `graph-only` merges: its build is broken, it has no
 tests, and its lint uses Checkstyle's defaults.
