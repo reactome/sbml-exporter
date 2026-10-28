@@ -48,6 +48,38 @@ jobs:
             - name: Formatted
               run: npx --yes prettier@3.9.10 --check .
 
+    # The scripts and the workflow: ShellCheck on the shell scripts (Spec Kit's own
+    # left alone), Ruff's lint and format on ci/'s Python (ruff.toml), and actionlint on
+    # this workflow, which also runs ShellCheck on its run: blocks. Each pinned.
+    scripts:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: ShellCheck
+              run: |
+                  git ls-files -z '*.sh' ':!:.specify' |
+                    xargs -0 docker run --rm --network none -v "$PWD:/mnt:ro" -w /mnt \
+                      koalaman/shellcheck@sha256:2097951f02e735b613f4a34de20c40f937a6c8f18ecb170612c88c34517221fb
+
+            - name: Ruff lint
+              # Runs whatever the step before found, so one push shows every problem.
+              if: success() || failure()
+              run: pipx run ruff==0.16.7 check ci
+
+            - name: Ruff format
+              if: success() || failure()
+              run: pipx run ruff==0.16.7 format --check ci
+
+            - name: actionlint
+              # Runs whatever the step before found, so one push shows every problem.
+              if: success() || failure()
+              run: |
+                  docker run --rm --network none -v "$PWD:/repo:ro" -w /repo \
+                    rhysd/actionlint@sha256:887a259a5a534f3c4f36cb02dca341673c6089431057242cdc931e9f133147e9 -color
+
     docker-build:
         runs-on: ubuntu-latest
         steps:
@@ -243,7 +275,7 @@ jobs:
             - id: get-hash
               run: |
                   FULL_SHA=${{ github.sha }}
-                  echo "SHORT_SHA=${FULL_SHA:0:7}" >> $GITHUB_OUTPUT
+                  echo "SHORT_SHA=${FULL_SHA:0:7}" >> "$GITHUB_OUTPUT"
 
             - env:
                   AWS_REGION: us-east-1
@@ -264,7 +296,7 @@ jobs:
                   IMG_TAG: ${{ steps.get-hash.outputs.SHORT_SHA }}
               run: |
                   docker load --input /tmp/image.tar
-                  docker image tag tmp-tag $AWS_REGISTRY/$AWS_REGISTRY_ALIAS/$AWS_REPO:$IMG_TAG
-                  docker image tag tmp-tag $AWS_REGISTRY/$AWS_REGISTRY_ALIAS/$AWS_REPO:latest
-                  docker push $AWS_REGISTRY/$AWS_REGISTRY_ALIAS/$AWS_REPO:$IMG_TAG
-                  docker push $AWS_REGISTRY/$AWS_REGISTRY_ALIAS/$AWS_REPO:latest
+                  docker image tag tmp-tag "$AWS_REGISTRY/$AWS_REGISTRY_ALIAS/$AWS_REPO:$IMG_TAG"
+                  docker image tag tmp-tag "$AWS_REGISTRY/$AWS_REGISTRY_ALIAS/$AWS_REPO:latest"
+                  docker push "$AWS_REGISTRY/$AWS_REGISTRY_ALIAS/$AWS_REPO:$IMG_TAG"
+                  docker push "$AWS_REGISTRY/$AWS_REGISTRY_ALIAS/$AWS_REPO:latest"

@@ -6,6 +6,9 @@
 set -euo pipefail
 fixture=${1:-$(dirname "$0")/fixture.cypher}
 status=0
+# A Person's and an InstanceEdit's lines: the fixture names labels in backticks.
+person="^CREATE \\(:[^{]*\`Person\`"
+edit="^CREATE \\(:[^{]*\`InstanceEdit\`"
 
 while IFS= read -r line; do
   if ! [[ $line =~ \`firstname\`:\ \"Placeholder\" && $line =~ \`surname\`:\ \"Person[0-9]+\" &&
@@ -14,7 +17,7 @@ while IFS= read -r line; do
     echo "a Person that is not a placeholder: ${line:0:120}"
     status=1
   fi
-done < <(grep -E '^CREATE \(:[^{]*`Person`' "$fixture")
+done < <(grep -E "$person" "$fixture")
 
 while IFS= read -r line; do
   if ! [[ $line =~ \`displayName\`:\ \"Placeholder\ edit\ [0-9]+\" ]] ||
@@ -22,9 +25,9 @@ while IFS= read -r line; do
     echo "an InstanceEdit that is not a placeholder: ${line:0:120}"
     status=1
   fi
-done < <(grep -E '^CREATE \(:[^{]*`InstanceEdit`' "$fixture")
+done < <(grep -E "$edit" "$fixture")
 
-people=$(grep -cE '^CREATE \(:[^{]*`Person`' "$fixture" || true)
-edits=$(grep -cE '^CREATE \(:[^{]*`InstanceEdit`' "$fixture" || true)
+people=$(grep -cE "$person" "$fixture" || true)
+edits=$(grep -cE "$edit" "$fixture" || true)
 echo "$people people, $edits instance edits checked"
 exit $status

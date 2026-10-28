@@ -15,7 +15,8 @@ if [ ! -f "${VERSIONS_FILE_PATH}" ]; then
 fi
 
 # Load versions to be used
-# shellcheck source="${VERSIONS_FILE_PATH}"
+# The versions file is named at run time.
+# shellcheck source=/dev/null
 source "${VERSIONS_FILE_PATH}"
 
 #add parents version and current version
