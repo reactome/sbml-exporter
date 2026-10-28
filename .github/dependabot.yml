@@ -29,8 +29,10 @@ updates:
       schedule:
           interval: weekly
       ignore:
-          # The Java version (the tag's major, 11) is a decision, not an update.
+          # The Java version is a decision, not an update. eclipse-temurin's tag leads with it
+          # (11-jre-focal), so its major updates are held. maven's tag leads with Maven's own
+          # version (3.9.6-eclipse-temurin-11-focal), where Java is not a major and a JDK 17
+          # build image would pass as an update, so maven moves only by hand.
           - dependency-name: eclipse-temurin
             update-types: ['version-update:semver-major']
           - dependency-name: maven
-            update-types: ['version-update:semver-major']
