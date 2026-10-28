@@ -102,7 +102,7 @@ References kept outside the repository (the private graph copy, today's relation
 
 ## Open after the review of 28 Oct
 
-From the review of `graph-only` against its merge base (fixed in #86: a failed query now fails the
+From the review of `graph-only` against its merge base (fixed in #87, which replaced #86: a failed query now fails the
 conversion; one pathway's failure no longer skips its species' others; CI checks `compare.py` and
 `validate.py` on their own test files and compares the fixture with `--exact`; CLAUDE.md brought up to
 date). Left open, each to be done with the task it belongs to:
