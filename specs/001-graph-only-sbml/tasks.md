@@ -96,7 +96,34 @@ References kept outside the repository (the private graph copy, today's relation
 
 - [x] T026 [US5] A dry run for one species (human) from the private copy, compared with the same release's published `homo_sapiens.3.1.sbml.tgz` (fetched once, as in spec 015's T033, kept outside the repository): the same file names, every file valid, a sample of files compared as in T016 and T021, and the release verifier's size check (no file smaller by 5% or more) run against the published archive's entries. Result in the pull request. — #74. Release 97, human, the release image at `f7b1034` from the private copy: exit 0 in 70.5 minutes, its only errors 127 lookups of the `Cell` class (#72). The same 2,883 file names as the published archive. 15 files invalid, the same 15 as the published archive's (29 `Cell` entities with no compartment, #72). The verifier's size check, at its default 10% as the release runs it, fails on 26 files, every one with fewer EC numbers (graph-importer#9), 10 of them also without the history #71 restored; 70 at 5%. It is rerun with #71 in, in T027's run, and what fails then is T030's one-off size baseline unless graph-importer#9 is fixed first. Every file compared with `ci/compare.py`: the recorded kinds, now counted at full scale, and four new ones. Reactions stored as a single point had no glyph (fixed, #70). The species run left the history out of 630 files (fixed, #71, which also adds the species run to CI). The file's positions for 207 reaction hubs and 82 compartments (recorded). The hidden compartments' anchor moves in 110 files with no resized node, which is not yet explained.
 - [x] T027 [US5] The full dry run (`all`), compared with `all_species.3.1.sbml.tgz` in the same way, including the size check; record its time relative to today's step (SC-007). — #77. Release 97, all species, the release image at `4f39861` from the private copy: exit 0 in 6 h 52 min (`Finished in 06:52:04`); today's time for the step is the release maintainers' to give (T030), so SC-007's comparison waits on it. Its only errors 127 lookups of the `Cell` class (#72), all in human, as T026's. The same 23,604 file names as the published archive. 15 files invalid, all `Cell` entities with no compartment (#72) and all among today's invalid files: today's archive has 7,589 invalid, 7,584 of them for the layout's missing id and dimensions, which this converter writes. The verifier's size check fails on 288 files at its default 10% and 566 at 5%; every one of the 288, and 560 of the 566, has fewer EC numbers (graph-importer#9), and the other 6 are human disease diagrams whose species the diagram file does not hold (recorded). Every file compared with `ci/compare.py`: 13,037 differ, by the recorded kinds at full scale and three new ones (in `differences.md`); two causes are not investigated: why the diagram step leaves 50 non-disease inferred diagrams without a node today draws, and the SBO terms' 252-to-289 direction.
-- [ ] T028 [P] Record the results against the success criteria (SC-001 to SC-007) in this file, SC-006 by naming the library version or commit in both the command line and spec 010's service.
+- [x] T028 [P] Record the results against the success criteria (SC-001 to SC-007) in this file, SC-006 by naming the library version or commit in both the command line and spec 010's service. Recorded in #107, on 13 Nov 2026 at `351daee`, from what was measured. Three criteria are met and four are not yet:
+  - **SC-001, met.**
+    - The build, tests, lint and validity check run on every pull request into `graph-only`.
+    - The branch's required checks are `lint`, `docker-build` (which runs the tests), `validity`, `format` and `scripts`.
+    - Each has been seen failing: the build in T001 (#18), the tests in T004 (#21), lint in T005 (#20), and validity in T008 (#29) and T009 (#39).
+  - **SC-002, not yet: one kind is undecided.**
+    - At release 98 (T016, #104), 12 of the sample's 30 files match today's exactly, and 18 differ by 2,856 entries.
+    - Every kind but one is recorded with its reason in `differences.md`.
+    - The exception is the reactions' cross-references: 2,696 entries in 10 files, still to decide in #36.
+  - **SC-003, met in the sample.**
+    - Every layout difference at release 98 (#104) is a recorded one: resized nodes and their ends, glyph order, the hidden compartments, a backbone's repeated point, and SBO terms.
+    - The same holds at release 97 (T021: #47, #51, #52, #57).
+  - **SC-004, not met.**
+    - In T027's full dry run at release 97 (#77), the file names are the same 23,604 as the published archive's.
+    - But 15 files have errors: `Cell` entities with no compartment (#72, open). Today's files have the same errors.
+    - Not yet run at release 98.
+  - **SC-005, met.**
+    - The library's resolved dependency list (81 entries) has no relational reader (the MySQL connector, `reactome-base`, JDOM) and no `verifier-lib`. The build's banned dependencies hold this (#60).
+    - The command line's list (129 entries) has no relational reader either; its one flagged entry is `verifier-lib` 1.0.0, the release's verifier.
+    - The `Jenkinsfile` and `Dockerfile` name no relational database (#30, #65).
+  - **SC-006, not yet.**
+    - The command line takes the library from its own commit: `sbml-exporter-lib` at `${project.version}`, in the same build.
+    - The website's service pins `f7b1034` (WebsiteAngular's `deploy/java/PINS.md`).
+    - The library's code has changed since that commit, in #70 (a reaction stored as a single point is drawn at its hub) and #87 (a failed query fails the conversion).
+    - It is met when both name one commit, or the published version (T025). Moving the website's pin means rerunning its spec 015 T067 comparison.
+  - **SC-007, not yet measured against today.**
+    - T027's full run from the graph took 6 h 52 min (#77, release 97).
+    - Today's time for the step is the release maintainers' to give (T030).
 
 ## Phase 6: Into `main`
 
