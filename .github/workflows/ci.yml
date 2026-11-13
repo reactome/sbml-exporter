@@ -184,6 +184,22 @@ jobs:
                   test "$rc" -eq 1 || { echo "exit status $rc, not 1"; exit 1; }
                   test -s out-failed/R-HSA-9613354.sbml || { echo "R-HSA-9613354 was not converted after the failed id"; exit 1; }
 
+            # A species with no pathways writes nothing and does not fail (T023). The fixture's one
+            # species has pathways, so one without is added, as release 98's graph holds it. Exit 0
+            # also shows it was found: a species not found fails the run.
+            - name: A species with no pathways writes nothing and does not fail
+              run: |
+                  docker exec ${{ job.services.neo4j.id }} cypher-shell -d graph.db \
+                    "CREATE (:DatabaseObject:Taxon:Species {schemaClass: 'Species', displayName: 'Ovis aries', taxId: '9940', dbId: 48901, name: ['Ovis aries', 'sheep', 'domestic sheep'], abbreviation: 'OAR'})"
+                  mkdir -m 777 out-empty
+                  rc=0
+                  docker run --rm --network host -v "$PWD/out-empty:/out" -v "$PWD/ci/fixture:/diagrams:ro" tmp-tag \
+                    java -jar target/sbml-exporter-exec.jar --host bolt://localhost:7687 --user neo4j --password none \
+                    --output /out --diagrams /diagrams --diagram-release 97 \
+                    --target "Ovis aries" || rc=$?
+                  test "$rc" -eq 0 || { echo "exit status $rc, not 0"; exit 1; }
+                  test -z "$(ls -A out-empty)" || { echo "files written for a species with no pathways:"; ls out-empty; exit 1; }
+
             - uses: actions/setup-python@v7
               with:
                   python-version: '3.12'
