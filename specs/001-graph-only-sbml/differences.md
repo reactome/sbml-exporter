@@ -17,17 +17,18 @@ is listed in the script, not here.
   #33 and #34.
 - **Result:** 30 files, all valid (`ci/validate.py`); 3,727 differences after #34, every
   one of them below or fixed since.
+- **Again at release 98** (T016): below, under "Release 98's sample".
 
 ## In the data, not the converter
 
 The converter writes what the graph holds; these differ because the graph holds
 something different from the relational database of the same release.
 
-| Difference                                                                                           | Count in the sample                                                                                                                                                                  | Cause                                                                                                                                                                                                  |
-| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| Fewer EC numbers on reactions: a subset of today's, never a different one (254 distinct against 360) | 957 reactions; release 97's human run (T026): 5,908 reaction entries (1,198 distinct reactions) in 904 of 2,883 files, including all 26 files the release verifier finds 10% smaller | The graph keeps one `ecNumber` per GO molecular function; the relational database keeps every one. Fixing it is the graph's import, not this converter                                                 |
-| A pathway's history: an earlier last-modified date                                                   | 3 pathways                                                                                                                                                                           | The relational database has later edits (12 June 2026) than the graph (18 May 2026) for these instances                                                                                                |
-| `isHomologTo` missing for some species                                                               | 1 species; release 97's human run (T026): 73 entries, 21 species, 45 files                                                                                                           | Its inferred rat and yeast entities are not in the graph (the sample's, checked). The human run's targets are of seven species (human, yeast, mouse, rat and three others); their cause is not checked |
+| Difference                                                                                           | Count in the sample                                                                                                                                                                                                            | Cause                                                                                                                                                                                                  |
+| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Fewer EC numbers on reactions: a subset of today's, never a different one (254 distinct against 360) | 957 reactions at release 97, none at release 98 (below); release 97's human run (T026): 5,908 reaction entries (1,198 distinct reactions) in 904 of 2,883 files, including all 26 files the release verifier finds 10% smaller | The graph keeps one `ecNumber` per GO molecular function; the relational database keeps every one. Fixing it is the graph's import, not this converter                                                 |
+| A pathway's history: an earlier last-modified date                                                   | 3 pathways                                                                                                                                                                                                                     | The relational database has later edits (12 June 2026) than the graph (18 May 2026) for these instances                                                                                                |
+| `isHomologTo` missing for some species                                                               | 1 species; release 97's human run (T026): 73 entries, 21 species, 45 files                                                                                                                                                     | Its inferred rat and yeast entities are not in the graph (the sample's, checked). The human run's targets are of seven species (human, yeast, mouse, rat and three others); their cause is not checked |
 
 ## The layout
 
@@ -88,6 +89,43 @@ With the layout valid, libSBML goes on to warn that a set's SBO term, 289 (funct
 | Difference                                                                                    | Decision                                                                                                                                                                                                                                                                                                                    |
 | --------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | A single reaction's model was its first parent pathway (id, name, notes, references, history) | Matched to today's in #37: `no_parent_pathway`, "No parent pathway detected". A reaction can have several parents (733 human reactions in release 97, up to 10), so any one would be arbitrary. Five of the sample's nine reactions now match today's exactly; the other four differ only in EC numbers or cross-references |
+
+## Release 98's sample (T016)
+
+The sample compared again at release 98, on 13 Nov 2026:
+
+- **The graph converter's files:** the command line at `d4feab0`, from a private copy of release 98's
+  graph, with release 98's diagram files for the 18 sample pathways with a diagram. Exit 0 in
+  12 min 45 s; 30 files, all valid (`ci/validate.py`).
+- **Today's files:** the relational converter's, from a ContentService of release 98 that is not
+  production, one event at a time, with a pause after each and a 600 s limit (the longest,
+  Signal Transduction, took 201 s). Both sides say release 98. Six of today's are invalid, for the
+  layout's missing id and dimensions, as at release 97.
+- **Result:** 12 files identical. 18 differ, by 2,856 entries, every one of a kind recorded above;
+  there is no new kind.
+
+| Kind (above)                                                     | Entries                                                                                           | Files |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ----- |
+| Reactions' cross-references (open, #36)                          | 2,696 (2,667 added, 29 changed): 2,748 more links, 2,626 MONDO and 122 Rhea                       | 10    |
+| A node's box, and the branch and backbone ends that follow it    | 47 species glyph boxes, each resized about its centre; 70 branches; 25 backbones                  | 5     |
+| A backbone stored with a repeated point                          | 1 reaction glyph's box, in R-HSA-9839373                                                          | 1     |
+| Glyph order                                                      | R-HSA-69620 (species and text glyphs) and R-MMU-69620 (species, reaction and text glyphs)         | 2     |
+| The hidden compartments: which each stands for, and their anchor | 4 targets, in R-HSA-9839373; 1 anchor, in R-HSA-112409                                            | 2     |
+| SBO term of a drawn species, 289 to 252                          | 3 species in R-MMU-69620                                                                          | 1     |
+| A pathway's history: an earlier last-modified date               | 3 pathways (R-HSA-112409, R-HSA-176187, R-HSA-69481): today's 9 Oct 2026, the graph's 16 Sep 2026 | 3     |
+| `isHomologTo` missing for some species                           | 1 species, in R-HSA-1280215                                                                       | 1     |
+
+What moved since release 97:
+
+- **The EC numbers no longer differ.** Both sides write the same 219 distinct EC numbers, 1,642
+  entries in all; at release 97 the graph's 254 distinct were a subset of the relational database's 360. The graph still holds one per GO molecular function (all 924 with one are a single string), so
+  it is the relational database of release 98 that now holds the same; graph-importer#9 is not
+  fixed. Whether the full run still has the difference is for the next full dry run.
+- **R-HSA-69620's glyph order differs**, where it matched at release 97: the same 154 species and
+  156 text glyphs, the same ids and targets, in another order. Ours is the file's id order, as at
+  release 97; today's is no longer that order, for a reason not investigated (the recorded cause is
+  the relational diagram's order of making, which the file cannot give back).
+- **The hidden compartments' numbering** is now in R-HSA-9839373, not R-HSA-109606.
 
 ## Release 97's full run (T027)
 
