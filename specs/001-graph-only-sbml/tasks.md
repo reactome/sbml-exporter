@@ -104,7 +104,7 @@ References kept outside the repository (the private graph copy, today's relation
   - **SC-002, not yet: decided, to be measured again.**
     - At release 98 (T016, #104), 12 of the sample's 30 files match today's exactly, and 18 differ by 2,856 entries.
     - Every kind is now recorded with its reason in `differences.md`.
-    - The last undecided one, the reactions' cross-references (2,696 entries in 10 files), is decided in #36's PR (#TBD): curated only, as today's, leaving out the MONDO and Rhea cross-references the release's add-links step adds. The sample's comparison is to be run again to count what is left (47 curated Rhea on release 98 against today's 44).
+    - The last undecided one, the reactions' cross-references (2,696 entries in 10 files), is decided in #36 (#109): curated only, as today's, leaving out the MONDO and Rhea cross-references the release's add-links step adds. The sample's comparison is to be run again to count what is left (47 curated Rhea on release 98 against today's 44).
   - **SC-003, met in the sample.**
     - Every layout difference at release 98 (#104) is a recorded one: resized nodes and their ends, glyph order, the hidden compartments, a backbone's repeated point, and SBO terms.
     - The same holds at release 97 (T021: #47, #51, #52, #57).
