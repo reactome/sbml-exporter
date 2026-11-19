@@ -101,10 +101,10 @@ References kept outside the repository (the private graph copy, today's relation
     - The build, tests, lint and validity check run on every pull request into `graph-only`.
     - The branch's required checks are `lint`, `docker-build` (which runs the tests), `validity`, `format` and `scripts`.
     - Each has been seen failing: the build in T001 (#18), the tests in T004 (#21), lint in T005 (#20), and validity in T008 (#29) and T009 (#39).
-  - **SC-002, not yet: one kind is undecided.**
+  - **SC-002, not yet: decided, to be measured again.**
     - At release 98 (T016, #104), 12 of the sample's 30 files match today's exactly, and 18 differ by 2,856 entries.
-    - Every kind but one is recorded with its reason in `differences.md`.
-    - The exception is the reactions' cross-references: 2,696 entries in 10 files, still to decide in #36.
+    - Every kind is now recorded with its reason in `differences.md`.
+    - The last undecided one, the reactions' cross-references (2,696 entries in 10 files), is decided in #36 (#109): curated only, as today's, leaving out the MONDO and Rhea cross-references the release's add-links step adds. The sample's comparison is to be run again to count what is left (47 curated Rhea on release 98 against today's 44).
   - **SC-003, met in the sample.**
     - Every layout difference at release 98 (#104) is a recorded one: resized nodes and their ends, glyph order, the hidden compartments, a backbone's repeated point, and SBO terms.
     - The same holds at release 97 (T021: #47, #51, #52, #57).

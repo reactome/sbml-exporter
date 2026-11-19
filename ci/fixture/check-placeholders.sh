@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 # Fails if a person's name could have survived in the fixture graph (spec 001, T007):
 # every Person must carry extract.py's placeholders and nothing else that names them,
-# and every InstanceEdit's display name and note must be a placeholder.
+# and every InstanceEdit's display name and note must be a placeholder (or, for a note,
+# the add-links step's own, which names no one).
 # Usage: ci/fixture/check-placeholders.sh [ci/fixture/fixture.cypher]
 set -euo pipefail
 fixture=${1:-$(dirname "$0")/fixture.cypher}
@@ -21,7 +22,8 @@ done < <(grep -E "$person" "$fixture")
 
 while IFS= read -r line; do
   if ! [[ $line =~ \`displayName\`:\ \"Placeholder\ edit\ [0-9]+\" ]] ||
-     { [[ $line =~ \`note\`: ]] && ! [[ $line =~ \`note\`:\ \"Placeholder\ note\" ]]; }; then
+     { [[ $line =~ \`note\`: ]] &&
+       ! [[ $line =~ \`note\`:\ \"(Placeholder\ note|Created\ by\ GraphAddLinks)\" ]]; }; then
     echo "an InstanceEdit that is not a placeholder: ${line:0:120}"
     status=1
   fi

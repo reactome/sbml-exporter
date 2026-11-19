@@ -38,7 +38,11 @@ public final class DataFactory {
             // address, and the event's own references left to its annotation (Helper.addAnnotations).
             "OPTIONAL MATCH (rle)-[:summation]->(:Summation)-[:literatureReference]->(lit:Publication) WHERE NOT (rle)-[:literatureReference]->(lit) " +
             "WITH DISTINCT rle, goTerms, ecNumbers, COLLECT(DISTINCT CASE WHEN lit:URL THEN lit.uniformResourceLocator ELSE \"http://www.ncbi.nlm.nih.gov/pubmed/\" + lit.pubMedIdentifier END) AS literatureRefs " +
-            "OPTIONAL MATCH (rle)-[:crossReference]->(xref:DatabaseIdentifier) " +
+            // Curated cross-references only, as today's files have (#36): the release's add-links step
+            // (reactome/graph-add-links) adds MONDO and Rhea ones to the graph alone, each with an edit
+            // noted "Created by GraphAddLinks", which it links from the identifier to the edit (curated
+            // objects' edits point the other way), so the match takes either direction.
+            "OPTIONAL MATCH (rle)-[:crossReference]->(xref:DatabaseIdentifier) WHERE NOT (xref)-[:created]-(:InstanceEdit{note:\"Created by GraphAddLinks\"}) " +
             "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, COLLECT(DISTINCT xref.url) AS xrefs " +
             "OPTIONAL MATCH (rle)-[:disease]->(d:Disease) " +
             "WITH DISTINCT rle, goTerms, ecNumbers, literatureRefs, xrefs, COLLECT(DISTINCT d.url) AS diseases " +
