@@ -102,7 +102,7 @@ References kept outside the repository (the private graph copy, today's relation
     - The branch's required checks are `lint`, `docker-build` (which runs the tests), `validity`, `format` and `scripts`.
     - Each has been seen failing: the build in T001 (#18), the tests in T004 (#21), lint in T005 (#20), and validity in T008 (#29) and T009 (#39).
   - **SC-002, met in the sample.**
-    - At release 98, after #36's decision (#109): 22 of the sample's 30 files match today's exactly, and 8 differ by 160 entries, every one of a recorded kind (`differences.md`, "Release 98's sample", 19 Nov; #TBD). No cross-reference differs.
+    - At release 98, after #36's decision (#109): 22 of the sample's 30 files match today's exactly, and 8 differ by 160 entries, every one of a recorded kind (`differences.md`, "Release 98's sample", 19 Nov; #110). No cross-reference differs.
     - Before it (T016, #104): 12 identical, 18 differing by 2,856 entries, 2,696 of them the reactions' cross-references.
   - **SC-003, met in the sample.**
     - Every layout difference at release 98 (#104) is a recorded one: resized nodes and their ends, glyph order, the hidden compartments, a backbone's repeated point, and SBO terms.
