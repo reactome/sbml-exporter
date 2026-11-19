@@ -1484,3 +1484,13 @@ MATCH (a:DatabaseObject {dbId: 9830342}), (b:DatabaseObject {dbId: 9613530}) CRE
 MATCH (a:DatabaseObject {dbId: 9830342}), (b:DatabaseObject {dbId: 9613565}) CREATE (a)-[:`modified` {`order`: 0, `stoichiometry`: 1}]->(b);
 MATCH (a:DatabaseObject {dbId: 9830342}), (b:DatabaseObject {dbId: 9613666}) CREATE (a)-[:`modified` {`order`: 0, `stoichiometry`: 1}]->(b);
 MATCH (a:DatabaseObject {dbId: 12828938}), (b:DatabaseObject {dbId: 9613354}) CREATE (a)-[:`modified` {`order`: 0, `stoichiometry`: 1}]->(b);
+// Added by hand, not by extract.py (#36): a MONDO and a Rhea cross-reference on R-HSA-8932284
+// as the release's add-links step makes them, with its edit linked from the identifier. The
+// converter leaves both out, so the expected files do not change.
+CREATE (:`DatabaseIdentifier`:`DatabaseObject` {`databaseName`: "Mondo", `dbId`: 99999001, `displayName`: "Mondo:0005070", `identifier`: "0005070", `schemaClass`: "DatabaseIdentifier", `url`: "https://monarchinitiative.org/MONDO:0005070"});
+CREATE (:`DatabaseIdentifier`:`DatabaseObject` {`databaseName`: "RHEA", `dbId`: 99999002, `displayName`: "RHEA:46608", `identifier`: "46608", `schemaClass`: "DatabaseIdentifier", `url`: "https://www.rhea-db.org/rhea/46608"});
+CREATE (:`DatabaseObject`:`InstanceEdit` {`dateTime`: "2026-10-15 00:00:00", `dbId`: 99999003, `displayName`: "Placeholder edit 99999003", `note`: "Created by GraphAddLinks", `schemaClass`: "InstanceEdit"});
+MATCH (a:DatabaseObject {dbId: 8932284}), (b:DatabaseObject {dbId: 99999001}) CREATE (a)-[:`crossReference` {`order`: 0, `stoichiometry`: 1}]->(b);
+MATCH (a:DatabaseObject {dbId: 8932284}), (b:DatabaseObject {dbId: 99999002}) CREATE (a)-[:`crossReference` {`order`: 1, `stoichiometry`: 1}]->(b);
+MATCH (a:DatabaseObject {dbId: 99999001}), (b:DatabaseObject {dbId: 99999003}) CREATE (a)-[:`created` {`order`: 0, `stoichiometry`: 1}]->(b);
+MATCH (a:DatabaseObject {dbId: 99999002}), (b:DatabaseObject {dbId: 99999003}) CREATE (a)-[:`created` {`order`: 0, `stoichiometry`: 1}]->(b);

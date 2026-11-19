@@ -12,7 +12,7 @@ about them, with every person's name replaced.
 - **`R-HSA-9613354.json`**: Lipophagy's diagram file, from release 97's download
   directory (`download.reactome.org/97/diagram/R-HSA-9613354.json`, sha256
   `cad296e4…a425d1`), for the layout (T019 onwards).
-- **`extract.py`**: wrote `fixture.cypher`.
+- **`extract.py`**: wrote `fixture.cypher`, but for its last lines, added by hand (#36): a MONDO and a Rhea cross-reference on R-HSA-8932284 as the release's add-links step makes them, which the converter leaves out. Keep them when the fixture is extracted again.
 - **`check-placeholders.sh`**: fails if a person's name could have survived.
 
 ## How it was made
