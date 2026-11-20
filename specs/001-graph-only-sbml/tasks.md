@@ -39,8 +39,9 @@ References kept outside the repository (the private graph copy, today's relation
 - [x] T016 [US2] `ci/compare.py` (python-libsbml, as `ci/validate.py`): compares two folders of SBML element by element as US2 says (FR-004), the set-aside list written in the script, names hashed in its report; seen failing on a changed file. Run it over the 30-event sample at release 98: the fixed converter's files from a private copy of release 98's graph, against the relational converter's files for release 98 from a ContentService that is not production, fetched one event at a time with a pause between and a time limit on each. Each difference in `differences.md` (created here; spec 015's `contracts/differences.md` links to it). Result in the pull request.
   - First run at release 97: `ci/compare.py` in #32; reaction literature from summations matched in #33; complexes' parts and identifiers in #34; `differences.md` in #35; a reaction's model without a parent pathway in #37; the cross-references asked in #36.
   - At release 98 in #104: the graph converter at `d4feab0` from the private copy, with release 98's diagram files for the sample's 18 pathways with a diagram: exit 0, 30 files, all valid. Today's 30 files from the ContentService, one at a time (Signal Transduction took 201 s). 12 files identical; 18 differ, by 2,856 entries, every one of a recorded kind (`differences.md`, "Release 98's sample"): no new kind, and no bug to fix. The EC numbers, 957 reactions at release 97, no longer differ.
-- [ ] T017 [US2] Pin graph-core to the version agreed in spec 015's T029 (with spec 010's service and BioPAX3Exporter), update T003's list, and rerun T016. A change in output is a recorded difference, not a reason to regenerate the reference.
+- [x] T017 [US2] Pin graph-core to the version agreed in spec 015's T029 (with spec 010's service and BioPAX3Exporter), update T003's list, and rerun T016. A change in output is a recorded difference, not a reason to regenerate the reference.
   - Not done (#105, 13 Nov 2026): no version is picked here, since spec 015's T029, the agreement with both exporters' maintainers, is not recorded (WebsiteAngular's T029 is open, and #14 records none). All three already build the same graph-core: this repository's `ci/snapshots.sha1` pins `graph-core-3.0.0-20250925.120535-19` (jar `3258c39`), and BioPAX3Exporter's `ci/snapshots.sha1` is the same four lines (graph-core's jar and pom, `reactome-parent` and `reactome-bom` 1.0.5-SNAPSHOT), since its #34; WebsiteAngular's library service builds graph-core from `62aef35`, the commit its `deploy/java/PINS.md` maps that snapshot to. If T029 agrees that build, this task is a record with no change and no rerun; another version means pinning it and rerunning T016.
+  - **Done (19 Nov 2026, #111): the pinned snapshot is the version.** Decided: graph-core stays `3.0.0-SNAPSHOT` as `ci/snapshots.sha1` pins it, the build all three already use. A release of graph-core belongs to later work on Reactome's tree of JAR dependencies, outside this spec. No change and no rerun.
 
 **Checkpoint**: the model is proven.
 
@@ -101,17 +102,16 @@ References kept outside the repository (the private graph copy, today's relation
     - The build, tests, lint and validity check run on every pull request into `graph-only`.
     - The branch's required checks are `lint`, `docker-build` (which runs the tests), `validity`, `format` and `scripts`.
     - Each has been seen failing: the build in T001 (#18), the tests in T004 (#21), lint in T005 (#20), and validity in T008 (#29) and T009 (#39).
-  - **SC-002, not yet: decided, to be measured again.**
-    - At release 98 (T016, #104), 12 of the sample's 30 files match today's exactly, and 18 differ by 2,856 entries.
-    - Every kind is now recorded with its reason in `differences.md`.
-    - The last undecided one, the reactions' cross-references (2,696 entries in 10 files), is decided in #36 (#109): curated only, as today's, leaving out the MONDO and Rhea cross-references the release's add-links step adds. The sample's comparison is to be run again to count what is left (47 curated Rhea on release 98 against today's 44).
+  - **SC-002, met in the sample.**
+    - At release 98, after #36's decision (#109): 22 of the sample's 30 files match today's exactly, and 8 differ by 160 entries, every one of a recorded kind (`differences.md`, "Release 98's sample", 19 Nov; #110). No cross-reference differs.
+    - Before it (T016, #104): 12 identical, 18 differing by 2,856 entries, 2,696 of them the reactions' cross-references.
   - **SC-003, met in the sample.**
     - Every layout difference at release 98 (#104) is a recorded one: resized nodes and their ends, glyph order, the hidden compartments, a backbone's repeated point, and SBO terms.
     - The same holds at release 97 (T021: #47, #51, #52, #57).
   - **SC-004, not met.**
     - In T027's full dry run at release 97 (#77), the file names are the same 23,604 as the published archive's.
     - But 15 files have errors: `Cell` entities with no compartment (#72, open). Today's files have the same errors.
-    - Not yet run at release 98.
+    - At release 98 (19 Nov 2026, #112): the same 23,653 file names as the published archive; 19 files with errors, every one a `Cell` with no compartment (#72): release 97's 15, two human pathways new in release 98 and two chicken pathways inferred from human ones. Every difference from the published files is of a recorded kind but 3 reaction glyph targets (`differences.md`, "Release 98's full run").
   - **SC-005, met.**
     - The library's resolved dependency list (81 entries) has no relational reader (the MySQL connector, `reactome-base`, JDOM) and no `verifier-lib`. The build's banned dependencies hold this (#60).
     - The command line's list (129 entries) has no relational reader either; its one flagged entry is `verifier-lib` 1.0.0, the release's verifier.
@@ -122,6 +122,7 @@ References kept outside the repository (the private graph copy, today's relation
     - WebsiteAngular's spec 015 T067 comparison was run again at that pin on its beta: the sample's 30 files valid, 22 identical to today's and 8 differing by the 160 recorded entries, as #110.
   - **SC-007, not yet measured against today.**
     - T027's full run from the graph took 6 h 52 min (#77, release 97).
+    - Release 98's (#112) took 11 h 6 min on 4 CPUs of a host doing other work: not the step's time.
     - Today's time for the step is the release maintainers' to give (T030).
 
 ## Phase 6: Into `main`

@@ -80,10 +80,10 @@ With the layout valid, libSBML goes on to warn that a set's SBO term, 289 (funct
 
 ## Decided
 
-| Difference                                                                                                                                                          | Decision                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Reactions' cross-references (`bqmodel:hasInstance`): the graph has MONDO and Rhea ones today's files lack (2,626 MONDO and 121 Rhea links in the release 97 sample) | Curated only, as today's, in #36's PR. The extra ones are not curated: the release's add-links step (reactome/graph-add-links) adds them to the graph alone, each with an edit noted "Created by GraphAddLinks", and the converter leaves out every cross-reference with that edit. In release 98's graph, reactions' MONDO cross-references are all add-links' (236 identifiers), and of the Rhea ones 1,084 identifiers are curated and 1,064 add-links'. Curated ones still differ from today's in the sample (47 Rhea on release 98 against today's 44): to be counted at the next comparison |
-| A single reaction's model was its first parent pathway (id, name, notes, references, history)                                                                       | Matched to today's in #37: `no_parent_pathway`, "No parent pathway detected". A reaction can have several parents (733 human reactions in release 97, up to 10), so any one would be arbitrary. Five of the sample's nine reactions now match today's exactly; the other four differ only in EC numbers or cross-references                                                                                                                                                                                                                                                                       |
+| Difference                                                                                                                                                          | Decision                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Reactions' cross-references (`bqmodel:hasInstance`): the graph has MONDO and Rhea ones today's files lack (2,626 MONDO and 121 Rhea links in the release 97 sample) | Curated only, as today's, in #36's PR. The extra ones are not curated: the release's add-links step (reactome/graph-add-links) adds them to the graph alone, each with an edit noted "Created by GraphAddLinks", and the converter leaves out every cross-reference with that edit. In release 98's graph, reactions' MONDO cross-references are all add-links' (236 identifiers), and of the Rhea ones 1,084 identifiers are curated and 1,064 add-links'. With them left out, no cross-reference in release 98's sample differs from today's (19 Nov, under "Release 98's sample") |
+| A single reaction's model was its first parent pathway (id, name, notes, references, history)                                                                       | Matched to today's in #37: `no_parent_pathway`, "No parent pathway detected". A reaction can have several parents (733 human reactions in release 97, up to 10), so any one would be arbitrary. Five of the sample's nine reactions now match today's exactly; the other four differ only in EC numbers or cross-references                                                                                                                                                                                                                                                          |
 
 ## Release 98's sample (T016)
 
@@ -109,6 +109,13 @@ The sample compared again at release 98, on 13 Nov 2026:
 | SBO term of a drawn species, 289 to 252                          | 3 species in R-MMU-69620                                                                          | 1     |
 | A pathway's history: an earlier last-modified date               | 3 pathways (R-HSA-112409, R-HSA-176187, R-HSA-69481): today's 9 Oct 2026, the graph's 16 Sep 2026 | 3     |
 | `isHomologTo` missing for some species                           | 1 species, in R-HSA-1280215                                                                       | 1     |
+
+**Again on 19 Nov 2026, after #109** (curated cross-references only): the command line at
+`172869d` (`graph-only` with #109), from the shared release 98 graph, with release 98's diagram
+files; exit 0 in 9 min 53 s, 30 files, all valid. Today's files are those above, as the release 98
+ContentService keeps them. **22 files identical; 8 differ, by 160 entries**: every row of the
+table above but the first, with the same counts. No cross-reference differs: the curated Rhea
+cross-references are today's, link for link.
 
 What moved since release 97:
 
@@ -160,3 +167,34 @@ entries, then files; "entries" counts what `ci/compare.py` reports as changed (`
   2,018), because libSBML stops before it on the 7,584 of today's files with no layout id or
   dimensions. Over the 16,015 files valid on both sides the warnings are identical: 2,018 in 805
   files.
+
+## Release 98's full run
+
+All 23,653 files of release 98's `all_species.3.1.sbml.tgz`, made on 19 Nov 2026 by the command
+line at `172869d` (`graph-only` with #109) from the shared release 98 graph, with release 98's
+diagram files: exit 0 in 11 h 6 min, on 4 CPUs of a host doing other work, so the time is not the
+step's. The same 23,653 file names as the published archive.
+
+- **Valid:** 19 files have errors, every one libSBML's 20614 (a species with no compartment): the
+  `Cell` entities of #72. The 15 human files of release 97, two human pathways new in release 98
+  (R-HSA-9820460, R-HSA-9985087) and two chicken pathways inferred from human ones (R-GGA-157579,
+  R-GGA-166658). Whether today's release 98 files have the same errors was not checked here.
+- **Compared with `ci/compare.py`:** 8,069 files differ (13,037 at release 97). Every entry is of
+  a kind recorded for release 97's full run, at about the same scale, except as noted:
+
+| Kind (release 97's table)                                        | Entries at release 98                                                               |
+| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Fewer EC numbers on reactions                                    | none                                                                                |
+| A node's box, and the branch and backbone ends that follow it    | 32,773 species glyph boxes; 45,215 branches; 9,389 backbones; 1,563 reaction boxes  |
+| Glyph order                                                      | 6,440 species and text glyph lists, 5,455 reaction glyph lists, 4 compartment lists |
+| Species drawn today that the diagram file does not hold          | 260 species glyphs and their text glyphs                                            |
+| SBO term of a drawn species                                      | 5,452 changed; 5 missing                                                            |
+| The hidden compartments: which each stands for, and their anchor | 6,371 targets; 3,083 boxes                                                          |
+| A branch to a part not drawn as a species, left out              | 43 lists: 50 branches only in today's, 15 only in ours                              |
+| `isHomologTo` missing for some species                           | 679 changed, 58 missing                                                             |
+| Reactions' cross-references (left out, #109)                     | none                                                                                |
+| A pathway's history                                              | 523 last-modified dates, 100 creator lists                                          |
+| The order of a pathway's two summations in the notes             | 3                                                                                   |
+
+Not seen at release 97: 3 reaction glyphs with a target in ours and none in today's
+(for example `reaction_9931163` in R-HSA-9638737). Not investigated.
