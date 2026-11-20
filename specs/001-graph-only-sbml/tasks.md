@@ -111,7 +111,7 @@ References kept outside the repository (the private graph copy, today's relation
   - **SC-004, not met.**
     - In T027's full dry run at release 97 (#77), the file names are the same 23,604 as the published archive's.
     - But 15 files have errors: `Cell` entities with no compartment (#72, open). Today's files have the same errors.
-    - At release 98 (19 Nov 2026, #TBD): the same 23,653 file names as the published archive; 19 files with errors, every one a `Cell` with no compartment (#72): release 97's 15, two human pathways new in release 98 and two chicken pathways inferred from human ones. Every difference from the published files is of a recorded kind but 3 reaction glyph targets (`differences.md`, "Release 98's full run").
+    - At release 98 (19 Nov 2026, #112): the same 23,653 file names as the published archive; 19 files with errors, every one a `Cell` with no compartment (#72): release 97's 15, two human pathways new in release 98 and two chicken pathways inferred from human ones. Every difference from the published files is of a recorded kind but 3 reaction glyph targets (`differences.md`, "Release 98's full run").
   - **SC-005, met.**
     - The library's resolved dependency list (81 entries) has no relational reader (the MySQL connector, `reactome-base`, JDOM) and no `verifier-lib`. The build's banned dependencies hold this (#60).
     - The command line's list (129 entries) has no relational reader either; its one flagged entry is `verifier-lib` 1.0.0, the release's verifier.
@@ -123,7 +123,7 @@ References kept outside the repository (the private graph copy, today's relation
     - It is met when both name one commit, or the published version (T025). Moving the website's pin means rerunning its spec 015 T067 comparison.
   - **SC-007, not yet measured against today.**
     - T027's full run from the graph took 6 h 52 min (#77, release 97).
-    - Release 98's (#TBD) took 11 h 6 min on 4 CPUs of a host doing other work: not the step's time.
+    - Release 98's (#112) took 11 h 6 min on 4 CPUs of a host doing other work: not the step's time.
     - Today's time for the step is the release maintainers' to give (T030).
 
 ## Phase 6: Into `main`
