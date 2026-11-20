@@ -116,11 +116,10 @@ References kept outside the repository (the private graph copy, today's relation
     - The library's resolved dependency list (81 entries) has no relational reader (the MySQL connector, `reactome-base`, JDOM) and no `verifier-lib`. The build's banned dependencies hold this (#60).
     - The command line's list (129 entries) has no relational reader either; its one flagged entry is `verifier-lib` 1.0.0, the release's verifier.
     - The `Jenkinsfile` and `Dockerfile` name no relational database (#30, #65).
-  - **SC-006, not yet.**
+  - **SC-006, met (20 Nov 2026).**
     - The command line takes the library from its own commit: `sbml-exporter-lib` at `${project.version}`, in the same build.
-    - The website's service pins `f7b1034` (WebsiteAngular's `deploy/java/PINS.md`).
-    - The library's code has changed since that commit, in #70 (a reaction stored as a single point is drawn at its hub) and #87 (a failed query fails the conversion).
-    - It is met when both name one commit, or the published version (T025). Moving the website's pin means rerunning its spec 015 T067 comparison.
+    - The website's service pins `172869d` (WebsiteAngular #1019, `deploy/java/PINS.md`), this branch's head with #109, the last change to the library's code; the command line at that commit is what the release 98 runs here (#110, #112) used.
+    - WebsiteAngular's spec 015 T067 comparison was run again at that pin on its beta: the sample's 30 files valid, 22 identical to today's and 8 differing by the 160 recorded entries, as #110.
   - **SC-007, not yet measured against today.**
     - T027's full run from the graph took 6 h 52 min (#77, release 97).
     - Release 98's (#112) took 11 h 6 min on 4 CPUs of a host doing other work: not the step's time.
