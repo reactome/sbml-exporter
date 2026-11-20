@@ -10,6 +10,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -198,20 +199,29 @@ public class Helper {
         addCVTerm(sBase, qualifier, uris == null ? null : uris.toArray(new String[0]));
     }
 
+    /**
+     * A term of the given URLs, none if there are none. A missing URL is passed over: a
+     * literature reference with no PubMed id has none (getUrl() is null), and convertUrl
+     * threw on it, failing the whole pathway (review of 20 Nov).
+     */
     static void addCVTerm(SBase sBase, CVTerm.Qualifier qualifier, String... uris) {
-        if (uris != null && uris.length > 0) {
-            CVTerm term = new CVTerm(qualifier);
-            for (String s : uris) term.addResourceURI(convertUrl(s));
-            sBase.addCVTerm(term);
-        }
+        CVTerm term = termOf(qualifier, uris == null ? List.of() : Arrays.asList(uris));
+        if (term != null) sBase.addCVTerm(term);
     }
 
     private static void addCVTerm(Annotation annotation, CVTerm.Qualifier qualifier, List<String> uris) {
-        if (!uris.isEmpty()) {
-            CVTerm term = new CVTerm(qualifier);
-            for (String s : uris) term.addResourceURI(convertUrl(s));
-            annotation.addCVTerm(term);
+        CVTerm term = termOf(qualifier, uris);
+        if (term != null) annotation.addCVTerm(term);
+    }
+
+    private static CVTerm termOf(CVTerm.Qualifier qualifier, List<String> uris) {
+        CVTerm term = null;
+        for (String s : uris) {
+            if (s == null) continue;
+            if (term == null) term = new CVTerm(qualifier);
+            term.addResourceURI(convertUrl(s));
         }
+        return term;
     }
     
     private static String convertUrl(String url) {
