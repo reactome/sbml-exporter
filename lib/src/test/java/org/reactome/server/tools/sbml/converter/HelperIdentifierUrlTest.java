@@ -51,6 +51,23 @@ class HelperIdentifierUrlTest {
         }
     }
 
+    @Test
+    void aMissingUrlIsPassedOverNotThrownOn() {
+        // a literature reference with no PubMed id has no URL (review of 20 Nov)
+        Species species = new Species("s", 3, 1);
+        Helper.addCVTerm(species, CVTerm.Qualifier.BQB_IS_DESCRIBED_BY, null, CHEBI + "15377", null);
+        assertEquals(1, species.getCVTermCount());
+        assertEquals(1, species.getCVTerm(0).getResourceCount());
+        assertEquals("https://identifiers.org/CHEBI:15377", species.getCVTerm(0).getResourceURI(0));
+    }
+
+    @Test
+    void onlyMissingUrlsMakeNoTerm() {
+        Species species = new Species("s", 3, 1);
+        Helper.addCVTerm(species, CVTerm.Qualifier.BQB_IS_DESCRIBED_BY, (String) null);
+        assertEquals(0, species.getCVTermCount());
+    }
+
     private static String written(String url) {
         Species species = new Species("s", 3, 1);
         Helper.addCVTerm(species, CVTerm.Qualifier.BQB_IS, url);
