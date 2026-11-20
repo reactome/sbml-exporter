@@ -167,3 +167,34 @@ entries, then files; "entries" counts what `ci/compare.py` reports as changed (`
   2,018), because libSBML stops before it on the 7,584 of today's files with no layout id or
   dimensions. Over the 16,015 files valid on both sides the warnings are identical: 2,018 in 805
   files.
+
+## Release 98's full run
+
+All 23,653 files of release 98's `all_species.3.1.sbml.tgz`, made on 19 Nov 2026 by the command
+line at `172869d` (`graph-only` with #109) from the shared release 98 graph, with release 98's
+diagram files: exit 0 in 11 h 6 min, on 4 CPUs of a host doing other work, so the time is not the
+step's. The same 23,653 file names as the published archive.
+
+- **Valid:** 19 files have errors, every one libSBML's 20614 (a species with no compartment): the
+  `Cell` entities of #72. The 15 human files of release 97, two human pathways new in release 98
+  (R-HSA-9820460, R-HSA-9985087) and two chicken pathways inferred from human ones (R-GGA-157579,
+  R-GGA-166658). Whether today's release 98 files have the same errors was not checked here.
+- **Compared with `ci/compare.py`:** 8,069 files differ (13,037 at release 97). Every entry is of
+  a kind recorded for release 97's full run, at about the same scale, except as noted:
+
+| Kind (release 97's table)                                        | Entries at release 98                                                               |
+| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Fewer EC numbers on reactions                                    | none                                                                                |
+| A node's box, and the branch and backbone ends that follow it    | 32,773 species glyph boxes; 45,215 branches; 9,389 backbones; 1,563 reaction boxes  |
+| Glyph order                                                      | 6,440 species and text glyph lists, 5,455 reaction glyph lists, 4 compartment lists |
+| Species drawn today that the diagram file does not hold          | 260 species glyphs and their text glyphs                                            |
+| SBO term of a drawn species                                      | 5,452 changed; 5 missing                                                            |
+| The hidden compartments: which each stands for, and their anchor | 6,371 targets; 3,083 boxes                                                          |
+| A branch to a part not drawn as a species, left out              | 43 lists: 50 branches only in today's, 15 only in ours                              |
+| `isHomologTo` missing for some species                           | 679 changed, 58 missing                                                             |
+| Reactions' cross-references (left out, #109)                     | none                                                                                |
+| A pathway's history                                              | 523 last-modified dates, 100 creator lists                                          |
+| The order of a pathway's two summations in the notes             | 3                                                                                   |
+
+Not seen at release 97: 3 reaction glyphs with a target in ours and none in today's
+(for example `reaction_9931163` in R-HSA-9638737). Not investigated.
