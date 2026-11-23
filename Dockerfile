@@ -15,16 +15,22 @@ SHELL ["/bin/bash", "-c"]
 # run lint if container started
 ENTRYPOINT []
 
-CMD mvn -B -q checkstyle:check | \
-    grep -i --color=never '\.java\|failed to execute goal' > lint.log && \
-    exit 1 || \
-    exit 0
+# Maven's own status decides: a failure that names no .java file (an unresolvable
+# parent, say) fails lint too. lint.log is what CI shows.
+CMD mvn -B -q -nsu checkstyle:check > lint.log 2>&1; \
+    status=$?; \
+    cat lint.log; \
+    exit $status
 
 
 # ===== stage 2 =====
 FROM setup-env AS build-jar
 
-RUN mvn clean package
+# -nsu: no snapshot updates mid-build; ci/snapshots.sh checks what resolved.
+RUN mvn -B -nsu clean package
+
+# Fail if a snapshot dependency changed under the build (spec 001, research R2).
+RUN ci/snapshots.sh check
 
 
 # ===== stage 3 =====
@@ -37,5 +43,6 @@ ARG VERIFIER_JAR_FILE=target/sbml-exporter-verifier.jar
 
 WORKDIR ${REPO_DIR}
 
-COPY --from=build-jar ${REPO_DIR}/${EXEC_JAR_FILE} ./target/
-COPY --from=build-jar ${REPO_DIR}/${VERIFIER_JAR_FILE} ./target/
+# The command line's module builds the jars; the image keeps them where they always were.
+COPY --from=build-jar ${REPO_DIR}/cli/${EXEC_JAR_FILE} ./target/
+COPY --from=build-jar ${REPO_DIR}/cli/${VERIFIER_JAR_FILE} ./target/

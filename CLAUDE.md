@@ -8,13 +8,12 @@ where this file and the constitution disagree, the constitution wins.
 
 sbml-exporter writes Reactome's SBML (Level 3 Version 1, with the layout
 package). It is Java, built with Maven, writes with JSBML, and reads through
-graph-core. It holds two converters:
+graph-core. On this branch (`graph-only`) it has one converter; `main` still has
+the relational `SbmlConverterForRel`, which ContentService uses today, until the
+branch merges (T031).
 
-- **`SbmlConverterForRel`** (package `org.reactome.sbml.rel`) is the one used
-  today, by the command line and inside ContentService. It reads its reactions
-  and the layout from the relational release database. It writes a layout only
-  when the event's own diagram draws a reaction.
-- **`SbmlConverter`** (packages `converter` and `data`) reads only the graph:
+- **`SbmlConverter`** (packages `converter` and `data`, in the `lib` module) reads
+  only the graph:
   - two Cypher queries in `DataFactory`;
   - graph-core's domain objects, walked lazily (summations, creators, literature,
     compartments). That needs graph-core's lazy-fetch aspect, which
@@ -23,11 +22,13 @@ graph-core. It holds two converters:
   It is to become the one implementation, for both:
   - **the release's archives:** `all_species.3.1.sbml.tgz` and
     `homo_sapiens.3.1.sbml.tgz`, made by the command line;
-  - **the website's per-event downloads:** made through a library module that
-    does not exist yet.
+  - **the website's per-event downloads:** made through the `lib` module, which
+    WebsiteAngular's java-library service runs.
 
 The plan is in [issue #14](https://github.com/reactome/sbml-exporter/issues/14)
-and in this repository's specs.
+and in [spec 001](specs/001-graph-only-sbml/spec.md). Its work is on the
+`graph-only` branch, which merges into `main` once it is proven; until then
+`main` is what the release uses.
 
 ## Specs first: use Spec Kit
 
@@ -47,33 +48,57 @@ Feature-sized work goes through Spec Kit before any code, and the specs live in
   this work, and holds the measurements and the reference harness this work
   started from.
 
-## Checks that do not work yet
+## The checks
 
-Don't trust these until the first spec has fixed them (constitution, Principle II):
+On `graph-only`, CI runs and requires five checks, each seen failing once
+(constitution, Principle II; `format` in run 40744132003 and each of `scripts`' three tools in run
+40758551040 (Ruff's format step in run 40760026528), on throwaway branches):
 
-- **The build is broken on `main`.** `verifier-lib:1.0-SNAPSHOT` now resolves to a
-  version without the classes `SBMLExportVerifier` uses. Pin it, or fix the
-  verifier, before anything else.
-- **There are no tests**, so nothing tests the code yet.
-- **The lint stage** runs Checkstyle's default rules, not the repository's
-  `checkstyle.xml`, and reports over a thousand existing violations. New code
-  should add none.
+- **`docker-build`**: the build and the unit tests. `verifier-lib` is the released
+  1.0.0 from Maven Central (spec 001, T029); before it, the `Dockerfile` built a
+  fixed commit, because the 1.0-SNAPSHOT of 19 Oct 2026 lacked the classes
+  `SBMLExportVerifier` uses. The build also fails if a snapshot dependency changes
+  under it (`ci/snapshots.sh`).
+- **`lint`**: Checkstyle with the repository's `checkstyle.xml`.
+- **`validity`**: the converter over the fixture graph (`ci/fixture`), its output
+  valid by libSBML (`ci/validate.py`) and equal to `ci/fixture/expected`
+  (`ci/compare.py`).
+
+The fourth, **`format`**, checks Markdown, YAML and JSON as Prettier
+3.9.10 writes them (`.prettierrc`, `.prettierignore`; WebsiteAngular's settings). Fix with
+`npx prettier@3.9.10 --write .`, which a Spec Kit run needs afterwards: Spec Kit writes
+`[X]` and `*emphasis*`, which Prettier writes `[x]` and `_emphasis_`.
+
+The fifth, **`scripts`**, checks the scripts and the workflow, each tool pinned: ShellCheck on
+the shell scripts (Spec Kit's own aside), Ruff's lint and format on `ci/`'s Python
+(`ruff.toml`; fix with `pipx run ruff==0.16.7 format ci`), and actionlint on the workflow.
+Each step runs even when one before it fails, so one push shows every problem.
+
+Dependabot opens weekly updates to `graph-only` for Maven, the workflow's actions and the
+`Dockerfile`'s images (`.github/dependabot.yml`, read from `main`; its `target-branch` comes
+out when `graph-only` merges, T031). reactome-parent, and the graph-core and reactome-bom
+versions it brings, are snapshots pinned by checksum (`ci/snapshots.sh`) and move only by
+hand, as do the pinned tools above, the build image (`maven`) and the Java version of the
+runtime image.
+
+`main` is unchanged until `graph-only` merges: its build is broken, it has no
+tests, and its lint uses Checkstyle's defaults.
 
 ## Proving what is written
 
-- **The model** is compared byte for byte, the generation note's timestamp set
-  aside. The reference is the graph-only converter with its five defects fixed,
-  run by WebsiteAngular spec 015's reference harness:
-  - with `Helper.setUseIdentifierURL(true)`;
-  - with the outputs kept outside both repositories.
-
-  Issue #14 lists the defects. The reference outputs are not regenerated from
-  the code under test.
+- **The model** is compared element by element with today's relational output
+  of the same release (constitution, Principle I): the timestamp, element order
+  and the layout (compared on its own, below) set aside; every other difference
+  recorded in `specs/001-graph-only-sbml/differences.md` with its reason.
+  `ci/compare.py` does it (T016).
 - **The layout** is compared by meaning with today's: the same glyphs, ids, roles
-  and order, and the diagram's own coordinates.
-- **Runs need a fixed time zone and locale** (UTC, `en_US`). The generation note
-  uses the default date format, and history dates are parsed in the default
-  zone. Write the output as UTF-8.
+  and order, and the diagram's own coordinates. Spec 002 replaces that: the layout
+  is to be compared with the diagram files as the website draws them (constitution,
+  Principle I).
+- **Runs keep a fixed locale and write UTF-8.** The generation note and history
+  dates are made in UTC by the converter itself (FR-006); the note's short
+  format is `en_US`'s, which JDK 20 and later spell with a narrow space before
+  AM/PM (JDK 11 and 17 do not), and the comparison sets the timestamp aside.
 - **Runs use a private copy of the release's graph**, never a shared database.
 - **The release's published archives** come from the release's download directory
   (`download.reactome.org/{release}/`). Fetch one at a time, only when a
@@ -94,7 +119,10 @@ descriptions:
 
 ## Before pushing
 
-- The build compiles and the tests run and pass: see "Checks that do not work
-  yet". Every fix has a test seen failing first.
+- The build compiles and the tests run and pass (`mvn -nsu test`, see "The
+  checks"). Every fix has a test seen failing first.
+- A change to what is written: run `ci/compare.py` against today's files, and put
+  the result in the pull request. If the fixture's output changes, regenerate
+  `ci/fixture/expected` and say why.
 - New code adds no Checkstyle violations.
 - No personal names in fixtures, logs or test output.

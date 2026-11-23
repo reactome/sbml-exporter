@@ -1,0 +1,200 @@
+# Differences from today's SBML
+
+The one list for SBML (FR-004; WebsiteAngular spec 015's `contracts/differences.md`
+links here). Each way the graph-only converter's output differs from today's
+relational output of the same release, with its cause. `ci/compare.py` finds them;
+what it sets aside by design (the timestamp, element order, metaids, and labels' boxes)
+is listed in the script, not here.
+
+## How this was measured
+
+- **Sample:** WebsiteAngular spec 015's 30 events, release 97.
+- **Today's files:** the relational converter's, from a ContentService of release 97
+  that is not production. They match the release's published `homo_sapiens.3.1.sbml.tgz`
+  exactly for the 19 sample pathways it holds (0 differences), so they are the
+  release's own output.
+- **The graph converter's files:** from a private copy of release 97's graph, after
+  #33 and #34.
+- **Result:** 30 files, all valid (`ci/validate.py`); 3,727 differences after #34, every
+  one of them below or fixed since.
+- **Again at release 98** (T016): below, under "Release 98's sample".
+
+## In the data, not the converter
+
+The converter writes what the graph holds; these differ because the graph holds
+something different from the relational database of the same release.
+
+| Difference                                                                                           | Count in the sample                                                                                                                                                                                                            | Cause                                                                                                                                                                                                  |
+| ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Fewer EC numbers on reactions: a subset of today's, never a different one (254 distinct against 360) | 957 reactions at release 97, none at release 98 (below); release 97's human run (T026): 5,908 reaction entries (1,198 distinct reactions) in 904 of 2,883 files, including all 26 files the release verifier finds 10% smaller | The graph keeps one `ecNumber` per GO molecular function; the relational database keeps every one. Fixing it is the graph's import, not this converter                                                 |
+| A pathway's history: an earlier last-modified date                                                   | 3 pathways                                                                                                                                                                                                                     | The relational database has later edits (12 June 2026) than the graph (18 May 2026) for these instances                                                                                                |
+| `isHomologTo` missing for some species                                                               | 1 species; release 97's human run (T026): 73 entries, 21 species, 45 files                                                                                                                                                     | Its inferred rat and yeast entities are not in the graph (the sample's, checked). The human run's targets are of seven species (human, yeast, mouse, rat and three others); their cause is not checked |
+
+## The layout
+
+Measured in #47, #51 and #52 (T021) over the sample's six events with a layout today
+(R-HSA-112409, R-HSA-2894858, R-HSA-9839373, R-HSA-109606, R-MMU-69620, R-HSA-69620): today's
+model of each was laid out again from release 97's diagram file, and `ci/compare.py`
+compared the two. Each file's offset is taken off (today's coordinates are the diagram's
+shifted by a fixed amount per diagram: +3, +24; +53, +27; +22, +71; +113, +38; +48, +29 for
+both R-HSA-69620 and R-MMU-69620), and labels' boxes are set aside (FR-007). The generation
+note differs in all six only because of how the files were laid out again for this
+comparison; it is not a difference of the converter's. Glyph sets, ids, targets, order and
+curves are otherwise the same as today's, R-HSA-2894858's entirely; every other difference is
+one of these.
+
+The whole run then went through the graph (#57): the command line over all 30 events from
+the private copy, with `--diagrams` holding release 97's files for every sample pathway with
+a diagram (18 of the 30; the other 12, reactions and pathways drawn on an ancestor's
+diagram, have none), each compared with today's file. It finished without error, all 30
+files valid (`ci/validate.py`), and its layout differences are those of the six files above
+but one, the hidden compartments' numbering (below). Its model differences are those of the
+tables above and below, no others: EC numbers (957 reactions), cross-references (2,695
+entries, since left out, #36), 3 last-modified dates, 1 `isHomologTo`, and the 4 SBO terms
+below.
+
+| Difference                                                                                                                              | Count in the sample                                                                                                                                                                                                                                                                                                                 | Cause                                                                                                                                                                                                                                                                                             |
+| --------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| A node's box                                                                                                                            | 46 of 538 species glyphs, in five events                                                                                                                                                                                                                                                                                            | Today's are resized to their label's font (`tightNodes`); the files keep the drawn size (FR-007)                                                                                                                                                                                                  |
+| A branch's end, or a backbone's end, a few units off                                                                                    | 67 branch ends, all at a resized node; 24 backbone ends                                                                                                                                                                                                                                                                             | Follow the resized nodes: today's re-attached to the resized box                                                                                                                                                                                                                                  |
+| The hidden compartments' anchor                                                                                                         | R-HSA-112409; release 97's human run (T026): 246 files, 110 of them with no species box changed, which this cause does not explain (not investigated)                                                                                                                                                                               | It is the diagram's bottom centre, which a resized node moved                                                                                                                                                                                                                                     |
+| Which compartment each hidden compartment glyph (`layout_hidden_compartment_N`) stands for                                              | 2 of 3 in R-HSA-109606                                                                                                                                                                                                                                                                                                              | They are numbered in the model's compartment order, which differs between the two converters; element order is set aside by design                                                                                                                                                                |
+| Glyph order                                                                                                                             | R-MMU-69620 (its species, reaction and text glyphs)                                                                                                                                                                                                                                                                                 | The relational diagram's order was that of its making; an inferred diagram's is neither its ids' nor the file's. The sets, ids and targets are the same                                                                                                                                           |
+| SBO term of a drawn species: a protein's (252), not a set's (289)                                                                       | 4 species in R-MMU-69620                                                                                                                                                                                                                                                                                                            | The relational converter took the stored drawing's class, a set copied from the human diagram; the diagram step corrects a class that disagrees with the graph (`fixBrokenRenderableClass`), and these are single proteins in the graph. The stored class is not in the file                      |
+| A backbone the relational diagram stored with a repeated point: its curve, the reaction's box (its hub moved), and its product's branch | 1 reaction in R-HSA-9839373                                                                                                                                                                                                                                                                                                         | The file's backbone has the point between; the relational one cannot be recovered from it                                                                                                                                                                                                         |
+| A reaction the relational diagram stored as a single point: where each participant's branch starts                                      | 10 reactions in 5 of release 97's human pathways (T026, #70)                                                                                                                                                                                                                                                                        | The file holds no segments for its backbone or its branches. Its glyph is drawn at its hub, as today's is (#70; before it, these reactions had no glyph); each branch starts at the point the file gives for its part, not where the relational drawing met the node                              |
+| A reaction's hub: the file's position for it                                                                                            | 207 reaction glyphs' boxes in 110 of release 97's human pathways (T026)                                                                                                                                                                                                                                                             | The website draws the hub at the file's position. Today's is an end of the file's backbone in 193 of them (166 its first point, 27 its last), and elsewhere in 14, 10 of those in R-HSA-6798695 shifted alike; the file does not say which end                                                    |
+| A drawn compartment's position (its size is the same)                                                                                   | 82 compartment glyphs in 77 of release 97's human pathways (T026)                                                                                                                                                                                                                                                                   | The file's position, where the website draws it                                                                                                                                                                                                                                                   |
+| Species drawn today that the diagram file does not hold                                                                                 | 210 species glyphs in 46 of release 97's 1,137 human pathways with a layout, all on diagrams flagged as disease (31 of them among the 453 drawn as disease diagrams; none in the sample); no reaction glyphs. Their species' SBO terms follow (6 species in release 97's human run, T026): a drawn species takes its drawing's term | For a disease diagram (the diagram's `disease` flag), the diagram step keeps only the objects of its normal, disease, crossed, overlaid and loss-of-function lists (`Diagram.addNode`), and drops the rest; the relational converter read every stored object. They cannot be drawn from the file |
+
+Matched to today's (decided 25 Oct 2026: match today, and suggest improvements as issues):
+
+- **The diagram step's copies in a disease diagram are left out.** For a disease diagram not drawn as a normal one, the diagram step (reactome/diagram-converter's `DiagramFetcher`, through reactome-base's `PathwayDiagramXMLGenerator` and `DiseasePathwayImageEditor`) copies the normal reaction's glyph for each disease reaction the stored diagram does not draw, and adds disease nodes over the normal ones it replaces. The relational converter read the stored diagram alone, so its layout has none: in R-HSA-2894858, 2 of the 21 reactions, where the files have 21 (19 reaction and 16 species glyphs copied). The files do not list the copies, but the code guarantees two things of each: its id is above every stored object's (the counter it takes its id from is moved past each stored id as the diagram is read), and it lies exactly over the stored object it copies, which has a lower id (a reaction at its position; a node at its centre, since a node whose label overflows is resized about it). `LayoutConverter.copies` takes the disease objects with both. Measured over every human pathway with a layout in release 97's published `homo_sapiens.3.1.sbml.tgz` (1,137 diagram files fetched; 453 are disease diagrams, 435 of them with copies, 1,452 copies): the objects it takes are exactly those today's layouts leave out, with nothing today draws taken and nothing today leaves out kept. Either condition alone is not enough: an id above every normal object's would also take disease objects the curators drew last (12 diagrams), and lying over an earlier object would take disease reactions the curators drew over their normal ones (2). Drawing the copies, as the website does, is suggested in #48; having the diagram step mark them, in #49.
+
+Fixed, since they make the layout invalid:
+
+- **The layout has an id and dimensions** (the diagram's extent): libSBML refuses a layout without them (6020305, 6020315), and every one of today's has neither.
+- **A branch to a part not drawn as a species is left out**, so that no glyph points at nothing (6021011); the others keep their numbers. None of today's six files has one: the port's own output did, from a disease copy, before the copies were left out.
+
+With the layout valid, libSBML goes on to warn that a set's SBO term, 289 (functional compartment), is not a material entity's (10713): the relational converter's choice for Minerva, kept.
+
+## Decided
+
+| Difference                                                                                                                                                          | Decision                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Reactions' cross-references (`bqmodel:hasInstance`): the graph has MONDO and Rhea ones today's files lack (2,626 MONDO and 121 Rhea links in the release 97 sample) | Curated only, as today's, in #36's PR. The extra ones are not curated: the release's add-links step (reactome/graph-add-links) adds them to the graph alone, each with an edit noted "Created by GraphAddLinks", and the converter leaves out every cross-reference with that edit. In release 98's graph, reactions' MONDO cross-references are all add-links' (236 identifiers), and of the Rhea ones 1,084 identifiers are curated and 1,064 add-links'. With them left out, no cross-reference in release 98's sample differs from today's (19 Nov, under "Release 98's sample") |
+| A single reaction's model was its first parent pathway (id, name, notes, references, history)                                                                       | Matched to today's in #37: `no_parent_pathway`, "No parent pathway detected". A reaction can have several parents (733 human reactions in release 97, up to 10), so any one would be arbitrary. Five of the sample's nine reactions now match today's exactly; the other four differ only in EC numbers or cross-references                                                                                                                                                                                                                                                          |
+
+## Release 98's sample (T016)
+
+The sample compared again at release 98, on 13 Nov 2026:
+
+- **The graph converter's files:** the command line at `d4feab0`, from a private copy of release 98's
+  graph, with release 98's diagram files for the 18 sample pathways with a diagram. Exit 0 in
+  12 min 45 s; 30 files, all valid (`ci/validate.py`).
+- **Today's files:** the relational converter's, from a ContentService of release 98 that is not
+  production, one event at a time, with a pause after each and a 600 s limit (the longest,
+  Signal Transduction, took 201 s). Both sides say release 98. Six of today's are invalid, for the
+  layout's missing id and dimensions, as at release 97.
+- **Result:** 12 files identical. 18 differ, by 2,856 entries, every one of a kind recorded above;
+  there is no new kind.
+
+| Kind (above)                                                     | Entries                                                                                           | Files |
+| ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ----- |
+| Reactions' cross-references (now left out)                       | 2,696 (2,667 added, 29 changed): 2,748 more links, 2,626 MONDO and 122 Rhea                       | 10    |
+| A node's box, and the branch and backbone ends that follow it    | 47 species glyph boxes, each resized about its centre; 70 branches; 25 backbones                  | 5     |
+| A backbone stored with a repeated point                          | 1 reaction glyph's box, in R-HSA-9839373                                                          | 1     |
+| Glyph order                                                      | R-HSA-69620 (species and text glyphs) and R-MMU-69620 (species, reaction and text glyphs)         | 2     |
+| The hidden compartments: which each stands for, and their anchor | 4 targets, in R-HSA-9839373; 1 anchor, in R-HSA-112409                                            | 2     |
+| SBO term of a drawn species, 289 to 252                          | 3 species in R-MMU-69620                                                                          | 1     |
+| A pathway's history: an earlier last-modified date               | 3 pathways (R-HSA-112409, R-HSA-176187, R-HSA-69481): today's 9 Oct 2026, the graph's 16 Sep 2026 | 3     |
+| `isHomologTo` missing for some species                           | 1 species, in R-HSA-1280215                                                                       | 1     |
+
+**Again on 19 Nov 2026, after #109** (curated cross-references only): the command line at
+`172869d` (`graph-only` with #109), from the shared release 98 graph, with release 98's diagram
+files; exit 0 in 9 min 53 s, 30 files, all valid. Today's files are those above, as the release 98
+ContentService keeps them. **22 files identical; 8 differ, by 160 entries**: every row of the
+table above but the first, with the same counts. No cross-reference differs: the curated Rhea
+cross-references are today's, link for link.
+
+What moved since release 97:
+
+- **The EC numbers no longer differ.** Both sides write the same 219 distinct EC numbers, 1,642
+  entries in all; at release 97 the graph's 254 distinct were a subset of the relational database's 360. The graph still holds one per GO molecular function (all 924 with one are a single string), so
+  it is the relational database of release 98 that now holds the same; graph-importer#9 is not
+  fixed. Whether the full run still has the difference is for the next full dry run.
+- **R-HSA-69620's glyph order differs**, where it matched at release 97: the same 154 species and
+  156 text glyphs, the same ids and targets, in another order. Ours is the file's id order, as at
+  release 97; today's is no longer that order, for a reason not investigated (the recorded cause is
+  the relational diagram's order of making, which the file cannot give back).
+- **The hidden compartments' numbering** is now in R-HSA-9839373, not R-HSA-109606.
+
+## Release 97's full run (T027)
+
+All 23,604 files of the release's `all_species.3.1.sbml.tgz`, from the private copy with the
+release image at `4f39861`, compared with `ci/compare.py`: 13,037 files differ. Every difference
+is one of the kinds above, at the scale below, or one of the kinds under it. Counts are
+entries, then files; "entries" counts what `ci/compare.py` reports as changed (`~`), added
+(`+`) or missing (`-`).
+
+| Kind (above)                                                     | Entries                                                                            | Files        | At full scale                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| ---------------------------------------------------------------- | ---------------------------------------------------------------------------------- | ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fewer EC numbers on reactions                                    | 39,220 reactions                                                                   | 7,553        | A subset of today's in every one; all 288 files the verifier finds 10% smaller, and 560 of the 566 at 5%                                                                                                                                                                                                                                                                                                                                                                                                             |
+| A node's box, and the branch and backbone ends that follow it    | 32,638 species glyph boxes; 45,109 branches; 9,463 backbones; 1,620 reaction boxes | 5,320        |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Glyph order                                                      | 6,284 species and text glyph lists, 5,458 reaction glyph lists                     | 6,389        | The same sets in another order in all but the 96 files below; of the 6,293 that only reorder, 9 are human, the rest inferred species' diagrams                                                                                                                                                                                                                                                                                                                                                                       |
+| Species drawn today that the diagram file does not hold          | 260 species glyphs and their text glyphs                                           | 96           | Ours a subset of today's in every one. 46 human files, every one a diagram flagged as disease (as T026). 50 files of other species, none flagged as disease: there the diagram file lacks the node too (R-MMU-1222556's `layout_89963`, a second drawing of a species drawn once in the file), so the converter cannot draw it; why the diagram step leaves those nodes out of an inferred diagram is not investigated. 44 of the 50 glyphs draw a species drawn elsewhere in the file, 6 a species not drawn at all |
+| SBO term of a drawn species                                      | 5,498 species changed; 5 missing                                                   | 2,351; 4     | 289 to 252 (2,410) and 252 to 289 (2,405), 289 to 297 (649), and a few others; all but one in species other than human, whose diagrams are inferred from human's. The recorded cause is the stored drawing's class; the 252-to-289 direction, the opposite of R-MMU-69620's, is not checked against the graph. The 5 missing are in 4 human files among the 96 above: a drawn species takes its drawing's term                                                                                                       |
+| The hidden compartments: which each stands for, and their anchor | 6,577 targets; 3,088 boxes (2,836 hidden, 252 drawn)                               | 2,083; 1,082 |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| A branch to a part not drawn as a species, left out              | 43 branches, in 36 lists                                                           | 21           | The 21 files libSBML refuses today (6021011)                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| `isHomologTo` missing for some species                           | 666 changed, 55 missing                                                            | 609          |                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| Reactions' cross-references (now left out)                       | 857 changed, 14,250 added                                                          | 1,329        | The added ones are every cross-reference the graph holds where today's has none: 11,367 MONDO (`monarchinitiative.org`) and 3,316 Rhea URIs                                                                                                                                                                                                                                                                                                                                                                          |
+| A pathway's history                                              | 521 pathways                                                                       | 521          | Below                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+
+**New at full scale:**
+
+- **A pathway's last edit, dated 18 May 2026** (521 files; 100 of them also with another
+  creator list). The converter writes the pathway's last edit (`getModified()`, Helper.java)
+  with its created and revised dates. Ours is `2026-05-18T04:55:01Z` in all 521, which looks
+  like one bulk edit of the graph's release; today's is another date. In 346 files today's is
+  later (the recorded cause, at scale: the relational database has edits after the graph was
+  made); in 175 (170 human, 5 not) today's is older, dated from 2023 to January 2026, so the
+  graph's last edit of these pathways is one the relational database of the release does not
+  hold as theirs. In the data, not the converter. Not investigated further.
+- **The order of a pathway's two summations in the model's notes** (3 files: R-HSA-166016 and two
+  chicken pathways inferred from human ones): the same characters, the two summations in the
+  other order. Not checked against the graph.
+- **The SBO-term warning (10713) is counted 18 times as often** as on today's files (36,193 against
+  2,018), because libSBML stops before it on the 7,584 of today's files with no layout id or
+  dimensions. Over the 16,015 files valid on both sides the warnings are identical: 2,018 in 805
+  files.
+
+## Release 98's full run
+
+All 23,653 files of release 98's `all_species.3.1.sbml.tgz`, made on 19 Nov 2026 by the command
+line at `172869d` (`graph-only` with #109) from the shared release 98 graph, with release 98's
+diagram files: exit 0 in 11 h 6 min, on 4 CPUs of a host doing other work, so the time is not the
+step's. The same 23,653 file names as the published archive.
+
+- **Valid:** 19 files have errors, every one libSBML's 20614 (a species with no compartment): the
+  `Cell` entities of #72. The 15 human files of release 97, two human pathways new in release 98
+  (R-HSA-9820460, R-HSA-9985087) and two chicken pathways inferred from human ones (R-GGA-157579,
+  R-GGA-166658). Whether today's release 98 files have the same errors was not checked here.
+- **Compared with `ci/compare.py`:** 8,069 files differ (13,037 at release 97). Every entry is of
+  a kind recorded for release 97's full run, at about the same scale, except as noted:
+
+| Kind (release 97's table)                                        | Entries at release 98                                                               |
+| ---------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| Fewer EC numbers on reactions                                    | none                                                                                |
+| A node's box, and the branch and backbone ends that follow it    | 32,773 species glyph boxes; 45,215 branches; 9,389 backbones; 1,563 reaction boxes  |
+| Glyph order                                                      | 6,440 species and text glyph lists, 5,455 reaction glyph lists, 4 compartment lists |
+| Species drawn today that the diagram file does not hold          | 260 species glyphs and their text glyphs                                            |
+| SBO term of a drawn species                                      | 5,452 changed; 5 missing                                                            |
+| The hidden compartments: which each stands for, and their anchor | 6,371 targets; 3,083 boxes                                                          |
+| A branch to a part not drawn as a species, left out              | 43 lists: 50 branches only in today's, 15 only in ours                              |
+| `isHomologTo` missing for some species                           | 679 changed, 58 missing                                                             |
+| Reactions' cross-references (left out, #109)                     | none                                                                                |
+| A pathway's history                                              | 523 last-modified dates, 100 creator lists                                          |
+| The order of a pathway's two summations in the notes             | 3                                                                                   |
+
+Not seen at release 97: 3 reaction glyphs with a target in ours and none in today's
+(for example `reaction_9931163` in R-HSA-9638737). Not investigated.

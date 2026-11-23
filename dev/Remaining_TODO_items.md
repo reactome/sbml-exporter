@@ -1,5 +1,4 @@
-
-# TODO #
+# TODO
 
 These are TODO markers in the code that could not be done by may be possible to address in the future:
 
@@ -12,7 +11,7 @@ function: addSpecies
 line: 598
 
 The PhysicalEntity function getCompartment() returns a List<Compartment> objects. The issue of whether an entity can exist in more than one compartment has been raised and is being considered. At present the SBMLExporter code merely takes the first entry in this list as the compartment in which the entity is located.
- 
+
 ## TODO: Must be a better way to do this
 
 **WriteSBML**
@@ -25,6 +24,6 @@ The WriteSBML class was written to facilitate the possibility of allowing a user
 
 I'm sure the code doing this is not particularly optimal and if this functionality were to be utilised it should be reconsidered.
 
+---
 
------
 This file was last updated in May 2018.

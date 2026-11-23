@@ -2,12 +2,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- The library and the command line (spec 001, research R7). The command line keeps the
+         coordinate org.reactome.server.tools:sbml-exporter; the website uses sbml-exporter-lib. -->
     <groupId>org.reactome.server.tools</groupId>
-    <artifactId>sbml-exporter</artifactId>
-    <version>2.2.7</version>
-    <packaging>jar</packaging>
+    <artifactId>sbml-exporter-parent</artifactId>
+    <version>3.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
-    <name>sbml-exporter</name>
+    <name>sbml-exporter-parent</name>
     <url>https://maven.apache.org</url>
 
     <parent>
@@ -16,11 +18,10 @@
         <version>1.0.5-SNAPSHOT</version>
     </parent>
 
-    <properties>
-        <main.class>org.reactome.server.tools.sbml.Main</main.class>
-        <verifier.main.class>org.reactome.verifier.SBMLExportVerifier</verifier.main.class>
-        <log.file>sbml-exporter.log</log.file>
-    </properties>
+    <modules>
+        <module>lib</module>
+        <module>cli</module>
+    </modules>
 
     <developers>
         <developer>
@@ -44,92 +45,38 @@
     </developers>
 
     <dependencies>
-
-        <dependency>
-            <groupId>org.reactome.server.graph</groupId>
-            <artifactId>graph-core</artifactId>
-        </dependency>
-
-        <!-- Mysql Connector -->
-        <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.reactome.base</groupId>
-            <artifactId>reactome-base</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.apache.xmlgraphics</groupId>
-                    <artifactId>batik-awt-util</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.xmlgraphics</groupId>
-                    <artifactId>batik-constants</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.xmlgraphics</groupId>
-                    <artifactId>batik-dom</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.xmlgraphics</groupId>
-                    <artifactId>batik-i18n</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.xmlgraphics</groupId>
-                    <artifactId>batik-svggen</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.apache.xmlgraphics</groupId>
-                    <artifactId>batik-util</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>commons-httpclient</groupId>
-                    <artifactId>commons-httpclient</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
-        <!-- Cannot update JDOM to latest version 2.X duo to the Reactome-base uses JDOM 1.X and cannot update the Reactome-base-->
-        <dependency>
-            <groupId>org.jdom</groupId>
-            <artifactId>jdom</artifactId>
-        </dependency>
-
-        <!-- SBML lib -->
-        <dependency>
-            <groupId>org.sbml.jsbml</groupId>
-            <artifactId>jsbml</artifactId>
-        </dependency>
-
-        <!--JSAP console reader-->
-        <dependency>
-            <groupId>com.martiansoftware</groupId>
-            <artifactId>jsap</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-collections4</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <!-- Without the engine, Surefire finds no JUnit 5 tests and passes (spec 001, R4). -->
         <dependency>
-            <groupId>org.reactome.release.verifier</groupId>
-            <artifactId>verifier-lib</artifactId>
-            <version>1.0.0</version>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 
     <build>
-        <finalName>${project.name}</finalName>
         <plugins>
+            <!-- Lint on the repository's own rules (spec 001, research R3). Pinned: unpinned,
+                 the plugin's version, and so Checkstyle's, drift under the build. -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>3.6.0</version>
+                <configuration>
+                    <configLocation>${maven.multiModuleProjectDirectory}/checkstyle.xml</configLocation>
+                    <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                    <consoleOutput>true</consoleOutput>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -138,39 +85,6 @@
                     <source>${java.version}</source>
                     <target>${java.version}</target>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <version>${spring-boot.version}</version>
-                <configuration>
-                    <fork>true</fork>
-                    <mainClass>NONE</mainClass>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>primary-exec</id>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>${main.class}</mainClass>
-                            <classifier>exec</classifier>
-                            <skipIfEmpty>true</skipIfEmpty>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>verifier-exec</id>
-                        <goals>
-                            <goal>repackage</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>${verifier.main.class}</mainClass>
-                            <classifier>verifier</classifier>
-                            <skipIfEmpty>true</skipIfEmpty>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

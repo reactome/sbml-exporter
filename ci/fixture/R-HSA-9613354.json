@@ -1,0 +1,1278 @@
+{
+  "dbId" : 9613354,
+  "stableId" : "R-HSA-9613354",
+  "displayName" : "Lipophagy",
+  "nodes" : [ {
+    "id" : 34,
+    "reactomeId" : 9613533,
+    "displayName" : "p-PLINs:HSPA8",
+    "schemaClass" : "Complex",
+    "renderableClass" : "Complex",
+    "position" : {
+      "x" : 364,
+      "y" : 464
+    },
+    "minX" : 309,
+    "maxX" : 466,
+    "minY" : 440,
+    "maxY" : 482,
+    "prop" : {
+      "x" : 309,
+      "y" : 446,
+      "width" : 111,
+      "height" : 36
+    },
+    "textPosition" : {
+      "x" : 315,
+      "y" : 461
+    },
+    "bgColor" : {
+      "r" : 204,
+      "g" : 255,
+      "b" : 255
+    },
+    "interactorsSummary" : {
+      "type" : "TR",
+      "shape" : {
+        "c" : {
+          "x" : 420,
+          "y" : 446
+        },
+        "r" : 6,
+        "type" : "CIRCLE",
+        "empty" : true,
+        "centre" : {
+          "x" : 420,
+          "y" : 446
+        }
+      }
+    },
+    "connectors" : [ {
+      "edgeId" : 33,
+      "type" : "OUTPUT",
+      "segments" : [ {
+        "from" : {
+          "x" : 423,
+          "y" : 463
+        },
+        "to" : {
+          "x" : 466,
+          "y" : 463
+        }
+      } ],
+      "stoichiometry" : {
+        "value" : 1
+      },
+      "endShape" : {
+        "a" : {
+          "x" : 430,
+          "y" : 459
+        },
+        "b" : {
+          "x" : 423,
+          "y" : 463
+        },
+        "c" : {
+          "x" : 430,
+          "y" : 467
+        },
+        "type" : "ARROW",
+        "centre" : {
+          "x" : 430,
+          "y" : 467
+        }
+      }
+    }, {
+      "edgeId" : 43,
+      "type" : "INPUT",
+      "segments" : [ ],
+      "stoichiometry" : {
+        "value" : 1
+      }
+    } ]
+  }, {
+    "id" : 20,
+    "reactomeId" : 200405,
+    "displayName" : "PRKAA2",
+    "schemaClass" : "EntityWithAccessionedSequence",
+    "renderableClass" : "Protein",
+    "position" : {
+      "x" : 711,
+      "y" : 170
+    },
+    "minX" : 466,
+    "maxX" : 920,
+    "minY" : 153,
+    "maxY" : 535,
+    "prop" : {
+      "x" : 659,
+      "y" : 159,
+      "width" : 104,
+      "height" : 22
+    },
+    "textPosition" : {
+      "x" : 683,
+      "y" : 159
+    },
+    "interactorsSummary" : {
+      "type" : "TR",
+      "shape" : {
+        "c" : {
+          "x" : 763,
+          "y" : 159
+        },
+        "r" : 6,
+        "type" : "CIRCLE",
+        "empty" : true,
+        "centre" : {
+          "x" : 763,
+          "y" : 159
+        }
+      }
+    },
+    "connectors" : [ {
+      "edgeId" : 33,
+      "type" : "OUTPUT",
+      "segments" : [ {
+        "from" : {
+          "x" : 766,
+          "y" : 170
+        },
+        "to" : {
+          "x" : 920,
+          "y" : 170
+        }
+      }, {
+        "from" : {
+          "x" : 920,
+          "y" : 170
+        },
+        "to" : {
+          "x" : 919,
+          "y" : 533
+        }
+      }, {
+        "from" : {
+          "x" : 919,
+          "y" : 533
+        },
+        "to" : {
+          "x" : 466,
+          "y" : 535
+        }
+      }, {
+        "from" : {
+          "x" : 466,
+          "y" : 535
+        },
+        "to" : {
+          "x" : 466,
+          "y" : 463
+        }
+      } ],
+      "stoichiometry" : {
+        "value" : 1
+      },
+      "endShape" : {
+        "a" : {
+          "x" : 773,
+          "y" : 166
+        },
+        "b" : {
+          "x" : 766,
+          "y" : 170
+        },
+        "c" : {
+          "x" : 773,
+          "y" : 174
+        },
+        "type" : "ARROW",
+        "centre" : {
+          "x" : 773,
+          "y" : 174
+        }
+      }
+    }, {
+      "edgeId" : 19,
+      "type" : "INPUT",
+      "segments" : [ {
+        "from" : {
+          "x" : 694,
+          "y" : 184
+        },
+        "to" : {
+          "x" : 603,
+          "y" : 241
+        }
+      } ],
+      "stoichiometry" : {
+        "value" : 1
+      }
+    } ]
+  }, {
+    "id" : 21,
+    "reactomeId" : 9613508,
+    "displayName" : "PLINs:HSPA8:PRKAA2",
+    "schemaClass" : "Complex",
+    "renderableClass" : "Complex",
+    "position" : {
+      "x" : 603,
+      "y" : 331
+    },
+    "minX" : 536,
+    "maxX" : 676,
+    "minY" : 307,
+    "maxY" : 375,
+    "prop" : {
+      "x" : 536,
+      "y" : 313,
+      "width" : 134,
+      "height" : 37
+    },
+    "textPosition" : {
+      "x" : 558,
+      "y" : 315
+    },
+    "bgColor" : {
+      "r" : 204,
+      "g" : 255,
+      "b" : 255
+    },
+    "interactorsSummary" : {
+      "type" : "TR",
+      "shape" : {
+        "c" : {
+          "x" : 670,
+          "y" : 313
+        },
+        "r" : 6,
+        "type" : "CIRCLE",
+        "empty" : true,
+        "centre" : {
+          "x" : 670,
+          "y" : 313
+        }
+      }
+    },
+    "connectors" : [ {
+      "edgeId" : 19,
+      "type" : "OUTPUT",
+      "segments" : [ ],
+      "stoichiometry" : {
+        "value" : 1
+      }
+    }, {
+      "edgeId" : 55,
+      "type" : "INPUT",
+      "segments" : [ {
+        "from" : {
+          "x" : 603,
+          "y" : 353
+        },
+        "to" : {
+          "x" : 603,
+          "y" : 375
+        }
+      } ],
+      "stoichiometry" : {
+        "value" : 1
+      }
+    } ]
+  }, {
+    "id" : 23,
+    "reactomeId" : 9613547,
+    "displayName" : "p-PLINs:HSPA8:PRKAA2",
+    "schemaClass" : "Complex",
+    "renderableClass" : "Complex",
+    "position" : {
+      "x" : 603,
+      "y" : 464
+    },
+    "minX" : 540,
+    "maxX" : 672,
+    "minY" : 420,
+    "maxY" : 482,
+    "prop" : {
+      "x" : 540,
+      "y" : 446,
+      "width" : 126,
+      "height" : 36
+    },
+    "textPosition" : {
+      "x" : 552,
+      "y" : 447
+    },
+    "bgColor" : {
+      "r" : 204,
+      "g" : 255,
+      "b" : 255
+    },
+    "interactorsSummary" : {
+      "type" : "TR",
+      "shape" : {
+        "c" : {
+          "x" : 666,
+          "y" : 446
+        },
+        "r" : 6,
+        "type" : "CIRCLE",
+        "empty" : true,
+        "centre" : {
+          "x" : 666,
+          "y" : 446
+        }
+      }
+    },
+    "connectors" : [ {
+      "edgeId" : 33,
+      "type" : "INPUT",
+      "segments" : [ ],
+      "stoichiometry" : {
+        "value" : 1
+      }
+    }, {
+      "edgeId" : 55,
+      "type" : "OUTPUT",
+      "segments" : [ {
+        "from" : {
+          "x" : 603,
+          "y" : 443
+        },
+        "to" : {
+          "x" : 603,
+          "y" : 420
+        }
+      } ],
+      "stoichiometry" : {
+        "value" : 1
+      },
+      "endShape" : {
+        "a" : {
+          "x" : 599,
+          "y" : 436
+        },
+        "b" : {
+          "x" : 603,
+          "y" : 443
+        },
+        "c" : {
+          "x" : 607,
+          "y" : 436
+        },
+        "type" : "ARROW",
+        "centre" : {
+          "x" : 607,
+          "y" : 436
+        }
+      }
+    } ]
+  }, {
+    "id" : 8,
+    "reactomeId" : 264476,
+    "displayName" : "HSPA8",
+    "schemaClass" : "EntityWithAccessionedSequence",
+    "renderableClass" : "Protein",
+    "position" : {
+      "x" : 292,
+      "y" : 59
+    },
+    "minX" : 237,
+    "maxX" : 385,
+    "minY" : 42,
+    "maxY" : 106,
+    "prop" : {
+      "x" : 237,
+      "y" : 48,
+      "width" : 110,
+      "height" : 22
+    },
+    "textPosition" : {
+      "x" : 267,
+      "y" : 48
+    },
+    "interactorsSummary" : {
+      "type" : "TR",
+      "shape" : {
+        "c" : {
+          "x" : 347,
+          "y" : 48
+        },
+        "r" : 6,
+        "type" : "CIRCLE",
+        "empty" : true,
+        "centre" : {
+          "x" : 347,
+          "y" : 48
+        }
+      }
+    },
+    "connectors" : [ {
+      "edgeId" : 7,
+      "type" : "INPUT",
+      "segments" : [ {
+        "from" : {
+          "x" : 313,
+          "y" : 73
+        },
+        "to" : {
+          "x" : 385,
+          "y" : 106
+        }
+      } ],
+      "stoichiometry" : {
+        "value" : 1
+      }
+    } ]
+  }, {
+    "id" : 56,
+    "reactomeId" : 1454683,
+    "displayName" : "AMPK-alpha2:AMPK-beta:AMPK-gamma:AMP",
+    "schemaClass" : "Complex",
+    "renderableClass" : "Complex",
+    "position" : {
+      "x" : 757,
+      "y" : 397
+    },
+    "minX" : 611,
+    "maxX" : 847,
+    "minY" : 370,
+    "maxY" : 418,
+    "prop" : {
+      "x" : 673,
+      "y" : 376,
+      "width" : 168,
+      "height" : 42
+    },
+    "textPosition" : {
+      "x" : 676,
+      "y" : 383
+    },
+    "bgColor" : {
+      "r" : 204,
+      "g" : 255,
+      "b" : 255
+    },
+    "interactorsSummary" : {
+      "type" : "TR",
+      "shape" : {
+        "c" : {
+          "x" : 841,
+          "y" : 376
+        },
+        "r" : 6,
+        "type" : "CIRCLE",
+        "empty" : true,
+        "centre" : {
+          "x" : 841,
+          "y" : 376
+        }
+      }
+    },
+    "connectors" : [ {
+      "edgeId" : 55,
+      "type" : "CATALYST",
+      "segments" : [ {
+        "from" : {
+          "x" : 670,
+          "y" : 397
+        },
+        "to" : {
+          "x" : 619,
+          "y" : 397
+        }
+      } ],
+      "stoichiometry" : {
+        "value" : 1
+      },
+      "endShape" : {
+        "c" : {
+          "x" : 615,
+          "y" : 397
+        },
+        "r" : 4,
+        "type" : "CIRCLE",
+        "empty" : true,
+        "centre" : {
+          "x" : 615,
+          "y" : 397
+        }
+      }
+    } ]
+  }, {
+    "id" : 9,
+    "reactomeId" : 9613328,
+    "displayName" : "PLINs on lipid droplet surface",
+    "schemaClass" : "DefinedSet",
+    "renderableClass" : "EntitySet",
+    "position" : {
+      "x" : 286,
+      "y" : 169
+    },
+    "minX" : 230,
+    "maxX" : 385,
+    "minY" : 106,
+    "maxY" : 194,
+    "prop" : {
+      "x" : 230,
+      "y" : 144,
+      "width" : 112,
+      "height" : 50
+    },
+    "textPosition" : {
+      "x" : 234,
+      "y" : 151
+    },
+    "connectors" : [ {
+      "edgeId" : 7,
+      "type" : "INPUT",
+      "segments" : [ {
+        "from" : {
+          "x" : 325,
+          "y" : 138
+        },
+        "to" : {
+          "x" : 385,
+          "y" : 106
+        }
+      } ],
+      "stoichiometry" : {
+        "value" : 1
+      }
+    } ]
+  }, {
+    "id" : 57,
+    "reactomeId" : 113592,
+    "displayName" : "ATP",
+    "schemaClass" : "SimpleEntity",
+    "renderableClass" : "Chemical",
+    "position" : {
+      "x" : 708,
+      "y" : 351
+    },
+    "minX" : 603,
+    "maxX" : 729,
+    "minY" : 335,
+    "maxY" : 375,
+    "prop" : {
+      "x" : 688,
+      "y" : 336,
+      "width" : 40,
+      "height" : 30
+    },
+    "textPosition" : {
+      "x" : 692,
+      "y" : 340
+    },
+    "interactorsSummary" : {
+      "type" : "TR",
+      "shape" : {
+        "c" : {
+          "x" : 723,
+          "y" : 341
+        },
+        "r" : 6,
+        "type" : "CIRCLE",
+        "empty" : true,
+        "centre" : {
+          "x" : 723,
+          "y" : 341
+        }
+      }
+    },
+    "connectors" : [ {
+      "edgeId" : 55,
+      "type" : "INPUT",
+      "segments" : [ {
+        "from" : {
+          "x" : 685,
+          "y" : 355
+        },
+        "to" : {
+          "x" : 603,
+          "y" : 375
+        }
+      } ],
+      "stoichiometry" : {
+        "value" : 1
+      }
+    } ]
+  }, {
+    "id" : 10,
+    "reactomeId" : 9613350,
+    "displayName" : "PLINs:HSPA8",
+    "schemaClass" : "Complex",
+    "renderableClass" : "Complex",
+    "position" : {
+      "x" : 498,
+      "y" : 169
+    },
+    "minX" : 434,
+    "maxX" : 603,
+    "minY" : 145,
+    "maxY" : 241,
+    "prop" : {
+      "x" : 434,
+      "y" : 151,
+      "width" : 128,
+      "height" : 36
+    },
+    "textPosition" : {
+      "x" : 455,
+      "y" : 166
+    },
+    "bgColor" : {
+      "r" : 204,
+      "g" : 255,
+      "b" : 255
+    },
+    "interactorsSummary" : {
+      "type" : "TR",
+      "shape" : {
+        "c" : {
+          "x" : 562,
+          "y" : 151
+        },
+        "r" : 6,
+        "type" : "CIRCLE",
+        "empty" : true,
+        "centre" : {
+          "x" : 562,
+          "y" : 151
+        }
+      }
+    },
+    "connectors" : [ {
+      "edgeId" : 19,
+      "type" : "INPUT",
+      "segments" : [ {
+        "from" : {
+          "x" : 524,
+          "y" : 190
+        },
+        "to" : {
+          "x" : 603,
+          "y" : 241
+        }
+      } ],
+      "stoichiometry" : {
+        "value" : 1
+      }
+    }, {
+      "edgeId" : 7,
+      "type" : "OUTPUT",
+      "segments" : [ ],
+      "stoichiometry" : {
+        "value" : 1
+      }
+    } ]
+  }, {
+    "id" : 58,
+    "reactomeId" : 29370,
+    "displayName" : "ADP",
+    "schemaClass" : "SimpleEntity",
+    "renderableClass" : "Chemical",
+    "position" : {
+      "x" : 710,
+      "y" : 444
+    },
+    "minX" : 603,
+    "maxX" : 732,
+    "minY" : 420,
+    "maxY" : 459,
+    "prop" : {
+      "x" : 690,
+      "y" : 429,
+      "width" : 41,
+      "height" : 30
+    },
+    "textPosition" : {
+      "x" : 694,
+      "y" : 433
+    },
+    "interactorsSummary" : {
+      "type" : "TR",
+      "shape" : {
+        "c" : {
+          "x" : 726,
+          "y" : 434
+        },
+        "r" : 6,
+        "type" : "CIRCLE",
+        "empty" : true,
+        "centre" : {
+          "x" : 726,
+          "y" : 434
+        }
+      }
+    },
+    "connectors" : [ {
+      "edgeId" : 55,
+      "type" : "OUTPUT",
+      "segments" : [ {
+        "from" : {
+          "x" : 687,
+          "y" : 439
+        },
+        "to" : {
+          "x" : 603,
+          "y" : 420
+        }
+      } ],
+      "stoichiometry" : {
+        "value" : 1
+      },
+      "endShape" : {
+        "a" : {
+          "x" : 679,
+          "y" : 441
+        },
+        "b" : {
+          "x" : 687,
+          "y" : 439
+        },
+        "c" : {
+          "x" : 681,
+          "y" : 434
+        },
+        "type" : "ARROW",
+        "centre" : {
+          "x" : 681,
+          "y" : 434
+        }
+      }
+    } ]
+  }, {
+    "id" : 44,
+    "reactomeId" : 9620192,
+    "displayName" : "p-PLINs:HSPA8",
+    "schemaClass" : "Complex",
+    "renderableClass" : "Complex",
+    "position" : {
+      "x" : 365,
+      "y" : 677
+    },
+    "minX" : 316,
+    "maxX" : 421,
+    "minY" : 653,
+    "maxY" : 695,
+    "prop" : {
+      "x" : 316,
+      "y" : 659,
+      "width" : 99,
+      "height" : 36
+    },
+    "textPosition" : {
+      "x" : 316,
+      "y" : 674
+    },
+    "bgColor" : {
+      "r" : 204,
+      "g" : 255,
+      "b" : 255
+    },
+    "interactorsSummary" : {
+      "type" : "TR",
+      "shape" : {
+        "c" : {
+          "x" : 415,
+          "y" : 659
+        },
+        "r" : 6,
+        "type" : "CIRCLE",
+        "empty" : true,
+        "centre" : {
+          "x" : 415,
+          "y" : 659
+        }
+      }
+    },
+    "connectors" : [ {
+      "edgeId" : 43,
+      "type" : "OUTPUT",
+      "segments" : [ ],
+      "stoichiometry" : {
+        "value" : 1
+      }
+    } ]
+  } ],
+  "edges" : [ {
+    "id" : 33,
+    "reactomeId" : 9613565,
+    "displayName" : "PRKAA2 dissociate from p-PLINs:HSPA8",
+    "schemaClass" : "BlackBoxEvent",
+    "renderableClass" : "Reaction",
+    "position" : {
+      "x" : 502,
+      "y" : 462
+    },
+    "minX" : 466,
+    "maxX" : 537,
+    "minY" : 457,
+    "maxY" : 467,
+    "reactionType" : "omitted",
+    "segments" : [ {
+      "from" : {
+        "x" : 537,
+        "y" : 462
+      },
+      "to" : {
+        "x" : 502,
+        "y" : 462
+      }
+    }, {
+      "from" : {
+        "x" : 502,
+        "y" : 462
+      },
+      "to" : {
+        "x" : 466,
+        "y" : 463
+      }
+    } ],
+    "reactionShape" : {
+      "a" : {
+        "x" : 496,
+        "y" : 456
+      },
+      "b" : {
+        "x" : 508,
+        "y" : 468
+      },
+      "s" : "\\\\",
+      "type" : "BOX",
+      "empty" : true,
+      "centre" : {
+        "x" : 502,
+        "y" : 462
+      }
+    },
+    "inputs" : [ {
+      "id" : 23
+    } ],
+    "outputs" : [ {
+      "id" : 34,
+      "points" : [ {
+        "x" : 423,
+        "y" : 463
+      } ]
+    }, {
+      "id" : 20,
+      "points" : [ {
+        "x" : 766,
+        "y" : 170
+      }, {
+        "x" : 920,
+        "y" : 170
+      }, {
+        "x" : 919,
+        "y" : 533
+      }, {
+        "x" : 466,
+        "y" : 535
+      } ]
+    } ]
+  }, {
+    "id" : 19,
+    "reactomeId" : 9613513,
+    "displayName" : "PLINs:HSPA8 binds PRKAA2",
+    "schemaClass" : "Reaction",
+    "renderableClass" : "Reaction",
+    "position" : {
+      "x" : 603,
+      "y" : 276
+    },
+    "minX" : 598,
+    "maxX" : 608,
+    "minY" : 241,
+    "maxY" : 310,
+    "reactionType" : "binding",
+    "segments" : [ {
+      "from" : {
+        "x" : 603,
+        "y" : 241
+      },
+      "to" : {
+        "x" : 603,
+        "y" : 276
+      }
+    }, {
+      "from" : {
+        "x" : 603,
+        "y" : 276
+      },
+      "to" : {
+        "x" : 603,
+        "y" : 310
+      }
+    } ],
+    "endShape" : {
+      "a" : {
+        "x" : 599,
+        "y" : 303
+      },
+      "b" : {
+        "x" : 603,
+        "y" : 310
+      },
+      "c" : {
+        "x" : 607,
+        "y" : 303
+      },
+      "type" : "ARROW",
+      "centre" : {
+        "x" : 607,
+        "y" : 303
+      }
+    },
+    "reactionShape" : {
+      "c" : {
+        "x" : 603,
+        "y" : 276
+      },
+      "r" : 5,
+      "type" : "CIRCLE",
+      "centre" : {
+        "x" : 603,
+        "y" : 276
+      }
+    },
+    "inputs" : [ {
+      "id" : 20,
+      "points" : [ {
+        "x" : 694,
+        "y" : 184
+      } ]
+    }, {
+      "id" : 10,
+      "points" : [ {
+        "x" : 524,
+        "y" : 190
+      } ]
+    } ],
+    "outputs" : [ {
+      "id" : 21
+    } ]
+  }, {
+    "id" : 55,
+    "reactomeId" : 9613530,
+    "displayName" : "PRKAA2 phosphorylates PLINs",
+    "schemaClass" : "BlackBoxEvent",
+    "renderableClass" : "Reaction",
+    "position" : {
+      "x" : 603,
+      "y" : 397
+    },
+    "minX" : 597,
+    "maxX" : 609,
+    "minY" : 375,
+    "maxY" : 420,
+    "reactionType" : "omitted",
+    "segments" : [ {
+      "from" : {
+        "x" : 603,
+        "y" : 375
+      },
+      "to" : {
+        "x" : 603,
+        "y" : 397
+      }
+    }, {
+      "from" : {
+        "x" : 603,
+        "y" : 397
+      },
+      "to" : {
+        "x" : 603,
+        "y" : 420
+      }
+    } ],
+    "reactionShape" : {
+      "a" : {
+        "x" : 597,
+        "y" : 391
+      },
+      "b" : {
+        "x" : 609,
+        "y" : 403
+      },
+      "s" : "\\\\",
+      "type" : "BOX",
+      "empty" : true,
+      "centre" : {
+        "x" : 603,
+        "y" : 397
+      }
+    },
+    "inputs" : [ {
+      "id" : 57,
+      "points" : [ {
+        "x" : 685,
+        "y" : 355
+      } ]
+    }, {
+      "id" : 21,
+      "points" : [ {
+        "x" : 603,
+        "y" : 353
+      } ]
+    } ],
+    "outputs" : [ {
+      "id" : 23,
+      "points" : [ {
+        "x" : 603,
+        "y" : 443
+      } ]
+    }, {
+      "id" : 58,
+      "points" : [ {
+        "x" : 687,
+        "y" : 439
+      } ]
+    } ],
+    "catalysts" : [ {
+      "id" : 56,
+      "points" : [ {
+        "x" : 670,
+        "y" : 397
+      } ]
+    } ]
+  }, {
+    "id" : 7,
+    "reactomeId" : 9613352,
+    "displayName" : "PLINs bind HSPA8",
+    "schemaClass" : "Reaction",
+    "renderableClass" : "Reaction",
+    "position" : {
+      "x" : 447,
+      "y" : 107
+    },
+    "minX" : 385,
+    "maxX" : 483,
+    "minY" : 102,
+    "maxY" : 148,
+    "reactionType" : "binding",
+    "segments" : [ {
+      "from" : {
+        "x" : 385,
+        "y" : 106
+      },
+      "to" : {
+        "x" : 447,
+        "y" : 107
+      }
+    }, {
+      "from" : {
+        "x" : 447,
+        "y" : 107
+      },
+      "to" : {
+        "x" : 483,
+        "y" : 148
+      }
+    } ],
+    "endShape" : {
+      "a" : {
+        "x" : 475,
+        "y" : 145
+      },
+      "b" : {
+        "x" : 483,
+        "y" : 148
+      },
+      "c" : {
+        "x" : 481,
+        "y" : 140
+      },
+      "type" : "ARROW",
+      "centre" : {
+        "x" : 481,
+        "y" : 140
+      }
+    },
+    "reactionShape" : {
+      "c" : {
+        "x" : 447,
+        "y" : 107
+      },
+      "r" : 5,
+      "type" : "CIRCLE",
+      "centre" : {
+        "x" : 447,
+        "y" : 107
+      }
+    },
+    "inputs" : [ {
+      "id" : 8,
+      "points" : [ {
+        "x" : 313,
+        "y" : 73
+      } ]
+    }, {
+      "id" : 9,
+      "points" : [ {
+        "x" : 325,
+        "y" : 138
+      } ]
+    } ],
+    "outputs" : [ {
+      "id" : 10
+    } ]
+  }, {
+    "id" : 43,
+    "reactomeId" : 9613666,
+    "displayName" : "p-PLINs translocate from lipid droplet surface to cytosol",
+    "schemaClass" : "BlackBoxEvent",
+    "renderableClass" : "Reaction",
+    "position" : {
+      "x" : 364,
+      "y" : 577
+    },
+    "minX" : 358,
+    "maxX" : 370,
+    "minY" : 485,
+    "maxY" : 656,
+    "reactionType" : "omitted",
+    "segments" : [ {
+      "from" : {
+        "x" : 364,
+        "y" : 485
+      },
+      "to" : {
+        "x" : 364,
+        "y" : 577
+      }
+    }, {
+      "from" : {
+        "x" : 364,
+        "y" : 577
+      },
+      "to" : {
+        "x" : 364,
+        "y" : 656
+      }
+    } ],
+    "endShape" : {
+      "a" : {
+        "x" : 360,
+        "y" : 649
+      },
+      "b" : {
+        "x" : 364,
+        "y" : 656
+      },
+      "c" : {
+        "x" : 368,
+        "y" : 649
+      },
+      "type" : "ARROW",
+      "centre" : {
+        "x" : 368,
+        "y" : 649
+      }
+    },
+    "reactionShape" : {
+      "a" : {
+        "x" : 358,
+        "y" : 571
+      },
+      "b" : {
+        "x" : 370,
+        "y" : 583
+      },
+      "s" : "\\\\",
+      "type" : "BOX",
+      "empty" : true,
+      "centre" : {
+        "x" : 364,
+        "y" : 577
+      }
+    },
+    "inputs" : [ {
+      "id" : 34
+    } ],
+    "outputs" : [ {
+      "id" : 44
+    } ]
+  } ],
+  "compartments" : [ {
+    "id" : 53,
+    "reactomeId" : 13977,
+    "displayName" : "lipid droplet",
+    "schemaClass" : "Compartment",
+    "renderableClass" : "Compartment",
+    "position" : {
+      "x" : 447,
+      "y" : 316
+    },
+    "minX" : 273,
+    "maxX" : 622,
+    "minY" : 165,
+    "maxY" : 468,
+    "prop" : {
+      "x" : 273,
+      "y" : 165,
+      "width" : 349,
+      "height" : 303
+    },
+    "textPosition" : {
+      "x" : 402,
+      "y" : 300
+    },
+    "insets" : {
+      "x" : 282,
+      "y" : 175,
+      "width" : 330,
+      "height" : 284
+    },
+    "bgColor" : {
+      "r" : 250,
+      "g" : 240,
+      "b" : 240
+    },
+    "componentIds" : [ 9, 10, 19, 21, 23, 34, 33, 55 ]
+  }, {
+    "id" : 6,
+    "reactomeId" : 70101,
+    "displayName" : "cytosol",
+    "schemaClass" : "Compartment",
+    "renderableClass" : "Compartment",
+    "position" : {
+      "x" : 494,
+      "y" : 367
+    },
+    "minX" : 0,
+    "maxX" : 988,
+    "minY" : 0,
+    "maxY" : 734,
+    "prop" : {
+      "x" : 0,
+      "y" : 0,
+      "width" : 988,
+      "height" : 734
+    },
+    "textPosition" : {
+      "x" : 678,
+      "y" : 650
+    },
+    "insets" : {
+      "x" : 10,
+      "y" : 10,
+      "width" : 968,
+      "height" : 713
+    },
+    "bgColor" : {
+      "r" : 250,
+      "g" : 240,
+      "b" : 240
+    },
+    "componentIds" : [ 7, 8, 20, 53, 44, 43, 56, 57, 58 ]
+  } ],
+  "notes" : [ ],
+  "links" : [ ],
+  "shadows" : [ ],
+  "minX" : 0,
+  "maxX" : 988,
+  "minY" : 0,
+  "maxY" : 734,
+  "disease" : false
+}
