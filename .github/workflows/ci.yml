@@ -279,9 +279,11 @@ jobs:
                     done
                   done
 
+    # After every gate that runs on main's push: an image is published only from a commit
+    # that passed them (review of 25 Nov).
     docker-push:
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-        needs: docker-build
+        needs: [format, scripts, docker-build, validity]
         runs-on: ubuntu-latest
         permissions:
             contents: read
