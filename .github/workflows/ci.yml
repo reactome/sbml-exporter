@@ -13,8 +13,9 @@ on:
             # spec 001's integration branch; docker-push below stays on main only
             - graph-only
 
+# Read only, for every job and pull request; only docker-push, on main, may ask for the
+# registry's credentials (review of 25 Nov).
 permissions:
-    id-token: write
     contents: read
 
 jobs:
@@ -278,10 +279,15 @@ jobs:
                     done
                   done
 
+    # After every gate that runs on main's push: an image is published only from a commit
+    # that passed them (review of 25 Nov).
     docker-push:
         if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
-        needs: docker-build
+        needs: [format, scripts, docker-build, validity]
         runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            id-token: write
         steps:
             - uses: actions/download-artifact@v8
               with:
